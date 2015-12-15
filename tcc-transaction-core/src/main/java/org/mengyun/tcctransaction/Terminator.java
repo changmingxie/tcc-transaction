@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
  */
 public class Terminator implements Serializable {
 
+    private static final long serialVersionUID = -164958655471605778L;
     private InvocationContext confirmInvocationContext;
 
     private InvocationContext cancelInvocationContext;

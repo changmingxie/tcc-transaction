@@ -23,12 +23,12 @@ import java.lang.reflect.Method;
 @Aspect
 public class TccTransactionContextAspect implements Ordered {
 
-    private int order = Ordered.HIGHEST_PRECEDENCE+1;
+    private int order = Ordered.HIGHEST_PRECEDENCE + 1;
 
     @Autowired
     private TransactionConfigurator transactionConfigurator;
 
-    @Pointcut("args(org.mengyun.tcctransaction.api.TransactionContext,..)||@annotation(org.mengyun.tcctransaction.spring.Compensable)")
+    @Pointcut("execution(public * *(org.mengyun.tcctransaction.api.TransactionContext,..))||@annotation(org.mengyun.tcctransaction.spring.Compensable)")
     public void transactionContextCall() {
 
     }
@@ -41,9 +41,8 @@ public class TccTransactionContextAspect implements Ordered {
         if (transaction != null && transaction.getStatus().equals(TransactionStatus.TRYING)) {
 
             TransactionContext transactionContext = CompensableMethodUtils.getTransactionContextFromArgs(pjp.getArgs());
-            MethodSignature signature = (MethodSignature) pjp.getSignature();
-            Method method = signature.getMethod();
-            Compensable compensable = method.getAnnotation(Compensable.class);
+
+            Compensable compensable = getCompensable(pjp);
 
             MethodType methodType = CompensableMethodUtils.calculateMethodType(transactionContext, compensable != null ? true : false);
 
@@ -64,12 +63,11 @@ public class TccTransactionContextAspect implements Ordered {
     }
 
 
-
     private Participant generateAndEnlistRootParticipant(ProceedingJoinPoint pjp) {
 
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
-        Compensable compensable = method.getAnnotation(Compensable.class);
+        Compensable compensable = getCompensable(pjp);
         String confirmMethodName = compensable.confirmMethod();
         String cancelMethodName = compensable.cancelMethod();
 
@@ -145,7 +143,8 @@ public class TccTransactionContextAspect implements Ordered {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
 
-        Compensable compensable = method.getAnnotation(Compensable.class);
+        Compensable compensable = getCompensable(pjp);
+
         String confirmMethodName = compensable.confirmMethod();
         String cancelMethodName = compensable.cancelMethod();
 
@@ -172,6 +171,29 @@ public class TccTransactionContextAspect implements Ordered {
         transactionRepository.update(transaction);
 
         return participant;
+    }
+
+    private Compensable getCompensable(ProceedingJoinPoint pjp) {
+        MethodSignature signature = (MethodSignature) pjp.getSignature();
+        Method method = signature.getMethod();
+
+        Compensable compensable = method.getAnnotation(Compensable.class);
+
+        if (compensable == null) {
+            Method targetMethod = null;
+            try {
+                targetMethod = pjp.getTarget().getClass().getMethod(method.getName(), method.getParameterTypes());
+
+                if (targetMethod != null) {
+                    compensable = targetMethod.getAnnotation(Compensable.class);
+                }
+
+            } catch (NoSuchMethodException e) {
+                compensable = null;
+            }
+
+        }
+        return compensable;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.mengyun.tcctransaction.unittest.client;
 
 import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.unittest.service.AccountServiceImpl;
+import org.mengyun.tcctransaction.unittest.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.concurrent.*;
 public class AccountServiceProxy {
 
     @Autowired
-    AccountServiceImpl accountService;
+    AccountService accountService;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(100);
 
@@ -65,7 +65,7 @@ public class AccountServiceProxy {
                 .submit(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        accountService.transferTo(accountId, amount);
+                        accountService.transferToWithNoTransactionContext(accountId, amount);
                         return true;
                     }
                 });

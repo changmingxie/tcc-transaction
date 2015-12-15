@@ -48,23 +48,28 @@ public class TransactionManager {
         TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
         Transaction transaction = transactionRepository.findByXid(transactionContext.getXid());
 
-        transaction.setStatus(TransactionStatus.valueOf(transactionContext.getStatus()));
+        if (transaction != null) {
+            transaction.setStatus(TransactionStatus.valueOf(transactionContext.getStatus()));
 
-        this.transactionMap.put(Thread.currentThread(), transaction);
-        transactionRepository.update(transaction);
+            this.transactionMap.put(Thread.currentThread(), transaction);
+            transactionRepository.update(transaction);
+        }
     }
 
 
     public void commit() {
 
         Transaction transaction = getCurrentTransaction();
-        transaction.setStatus(TransactionStatus.CONFIRMING);
-        transactionConfigurator.getTransactionRepository().update(transaction);
 
-        transaction.commit();
+        if (transaction != null) {
 
-        transactionConfigurator.getTransactionRepository().delete(transaction);
+            transaction.setStatus(TransactionStatus.CONFIRMING);
+            transactionConfigurator.getTransactionRepository().update(transaction);
 
+            transaction.commit();
+
+            transactionConfigurator.getTransactionRepository().delete(transaction);
+        }
     }
 
     public Transaction getCurrentTransaction() {
@@ -74,12 +79,22 @@ public class TransactionManager {
     public void rollback() {
 
         Transaction transaction = getCurrentTransaction();
-        transaction.setStatus(TransactionStatus.CANCELLING);
 
-        transactionConfigurator.getTransactionRepository().update(transaction);
+        if (transaction != null) {
+            transaction.setStatus(TransactionStatus.CANCELLING);
 
-        transaction.rollback();
+            transactionConfigurator.getTransactionRepository().update(transaction);
 
-        transactionConfigurator.getTransactionRepository().delete(transaction);
+            try {
+                transaction.rollback();
+
+                transactionConfigurator.getTransactionRepository().delete(transaction);
+            } catch (Throwable rollbackException) {
+                if (transaction.getTransactionType().equals(TransactionType.ROOT)) {
+                    transactionConfigurator.getTransactionRepository().addErrorTransaction(transaction);
+                }
+                throw new RuntimeException(rollbackException);
+            }
+        }
     }
 }

@@ -68,7 +68,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Compensable(confirmMethod = "transferToConfirmWithNoTransactionContext", cancelMethod = "transferToCancelWithNoTransactionContext")
-    public void transferTo(long accountId, int amount) {
+    public void transferToWithNoTransactionContext(long accountId, int amount) {
 
         System.out.println("transferToWithNoTransactionContext called");
         SubAccount subAccount = subAccountRepository.findById(accountId);

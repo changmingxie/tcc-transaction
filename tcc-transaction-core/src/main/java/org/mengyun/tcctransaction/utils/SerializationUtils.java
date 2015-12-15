@@ -1,9 +1,6 @@
 package org.mengyun.tcctransaction.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 /**
  * Created by changmingxie on 11/21/15.
@@ -11,28 +8,35 @@ import java.io.ObjectOutputStream;
 public class SerializationUtils {
 
     public static byte[] serialize(Object object) {
-        ObjectOutputStream objectOutputStream = null;
-        ByteArrayOutputStream byteArrayOutputStream = null;
-        try {
+        if(object == null) {
+            return null;
+        } else {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
 
-            byteArrayOutputStream = new ByteArrayOutputStream();
-            objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-            objectOutputStream.writeObject(object);
-            byte[] bytes = byteArrayOutputStream.toByteArray();
-            return bytes;
-        } catch (Exception e) {
-            throw new Error(e);
+            try {
+                ObjectOutputStream ex = new ObjectOutputStream(baos);
+                ex.writeObject(object);
+                ex.flush();
+            } catch (IOException var3) {
+                throw new IllegalArgumentException("Failed to serialize object of type: " + object.getClass(), var3);
+            }
+
+            return baos.toByteArray();
         }
     }
 
     public static Object deserialize(byte[] bytes) {
-        ByteArrayInputStream byteArrayInputStream = null;
-        try {
-            byteArrayInputStream = new ByteArrayInputStream(bytes);
-            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-            return objectInputStream.readObject();
-        } catch (Exception e) {
-            throw new Error(e);
+        if(bytes == null) {
+            return null;
+        } else {
+            try {
+                ObjectInputStream ex = new ObjectInputStream(new ByteArrayInputStream(bytes));
+                return ex.readObject();
+            } catch (IOException var2) {
+                throw new IllegalArgumentException("Failed to deserialize object", var2);
+            } catch (ClassNotFoundException var3) {
+                throw new IllegalStateException("Failed to deserialize object type", var3);
+            }
         }
     }
 }

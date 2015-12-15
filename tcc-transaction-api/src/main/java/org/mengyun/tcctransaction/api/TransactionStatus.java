@@ -1,5 +1,7 @@
 package org.mengyun.tcctransaction.api;
 
+import java.io.Serializable;
+
 /**
  * Created by changmingxie on 10/28/15.
  */

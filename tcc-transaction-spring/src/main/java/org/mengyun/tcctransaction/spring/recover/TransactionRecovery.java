@@ -15,6 +15,9 @@ import java.util.List;
 @Component
 public class TransactionRecovery {
 
+    private static int MAX_RETRY_COUNT = 3;
+
+
     static final Logger logger = Logger.getLogger(TransactionRecovery.class.getSimpleName());
 
     @Autowired
@@ -32,7 +35,18 @@ public class TransactionRecovery {
 
         for (Transaction transaction : rollbackTransactions) {
 
+            if (transaction.getRetriedCount() > MAX_RETRY_COUNT) {
+
+                transactionConfigurator.getTransactionRepository().removeErrorTransaction(transaction);
+                continue;
+            }
+
+
             try {
+
+                transaction.addRetriedCount();
+                transactionConfigurator.getTransactionRepository().update(transaction);
+
                 List<Participant> participants = transaction.getParticipants();
 
                 for (Participant participant : participants) {
@@ -42,7 +56,7 @@ public class TransactionRecovery {
                 transactionConfigurator.getTransactionRepository().delete(transaction);
                 transactionConfigurator.getTransactionRepository().removeErrorTransaction(transaction);
             } catch (Throwable e) {
-                logger.warn("recover failed", e);
+                logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()));
             }
         }
 

@@ -47,12 +47,9 @@ public class JdbcTransactionRepository extends JdbcDaoSupport implements Transac
         if (transaction == null) {
             transaction = doFind(transactionXid);
 
-            if (transaction == null) {
-                throw new Error(String.format("cannot doFind transaction, the xid GTX_ID:%s, BRANCH_ID:%s",
-                        transactionXid.getGlobalTransactionId(),
-                        transactionXid.getBranchQualifier()));
+            if (transaction != null) {
+                transactionXidCompensableTransactionMap.put(transactionXid, transaction);
             }
-            transactionXidCompensableTransactionMap.put(transactionXid, transaction);
         }
 
         return transaction;
@@ -94,8 +91,8 @@ public class JdbcTransactionRepository extends JdbcDaoSupport implements Transac
 
             StringBuilder builder = new StringBuilder();
             builder.append("INSERT INTO TCC_TRANSACTION " +
-                    "(GLOBAL_TX_ID,BRANCH_QUALIFIER,TRANSACTION_TYPE,CONTENT,STATUS)" +
-                    "VALUES(?,?,?,?,?)");
+                    "(GLOBAL_TX_ID,BRANCH_QUALIFIER,TRANSACTION_TYPE,CONTENT,STATUS,RETRIED_COUNT)" +
+                    "VALUES(?,?,?,?,?,0)");
 
             stmt = connection.prepareStatement(builder.toString());
 
@@ -125,14 +122,15 @@ public class JdbcTransactionRepository extends JdbcDaoSupport implements Transac
 
             StringBuilder builder = new StringBuilder();
             builder.append("UPDATE TCC_TRANSACTION SET " +
-                    "CONTENT = ?,STATUS = ? WHERE GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ?");
+                    "CONTENT = ?,STATUS = ?,RETRIED_COUNT = ? WHERE GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ?");
 
             stmt = connection.prepareStatement(builder.toString());
 
             stmt.setBytes(1, SerializationUtils.serialize(transaction));
             stmt.setInt(2, transaction.getStatus().getId());
-            stmt.setBytes(3, transaction.getXid().getGlobalTransactionId());
-            stmt.setBytes(4, transaction.getXid().getBranchQualifier());
+            stmt.setInt(3, transaction.getRetriedCount());
+            stmt.setBytes(4, transaction.getXid().getGlobalTransactionId());
+            stmt.setBytes(5, transaction.getXid().getBranchQualifier());
 
             stmt.executeUpdate();
 
@@ -193,7 +191,7 @@ public class JdbcTransactionRepository extends JdbcDaoSupport implements Transac
             connection = this.getConnection();
 
             StringBuilder builder = new StringBuilder();
-            builder.append("SELECT GLOBAL_TX_ID, BRANCH_QUALIFIER, CONTENT,STATUS,TRANSACTION_TYPE" +
+            builder.append("SELECT GLOBAL_TX_ID, BRANCH_QUALIFIER, CONTENT,STATUS,TRANSACTION_TYPE,RETRIED_COUNT" +
                     "  FROM TCC_TRANSACTION ");
 
             if (!CollectionUtils.isEmpty(xids)) {
@@ -224,9 +222,11 @@ public class JdbcTransactionRepository extends JdbcDaoSupport implements Transac
                 byte[] transactionBytes = resultSet.getBytes(3);
                 int status = resultSet.getInt(4);
                 int transactionType = resultSet.getInt(5);
+                int retriedCount = resultSet.getInt(6);
 
                 Transaction transaction = (Transaction) SerializationUtils.deserialize(transactionBytes);
-
+                transaction.resetRetriedCount(retriedCount);
+                
                 transactions.add(transaction);
             }
         } catch (Throwable e) {

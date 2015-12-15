@@ -1,7 +1,7 @@
 package org.mengyun.tcctransaction.unittest.client;
 
 import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.unittest.thirdservice.AccountRecordServiceImpl;
+import org.mengyun.tcctransaction.unittest.thirdservice.AccountRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ public class AccountRecordServiceProxy {
 
 
     @Autowired
-    private AccountRecordServiceImpl accountRecordService;
+    private AccountRecordService accountRecordService;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(100);
 
@@ -47,7 +47,7 @@ public class AccountRecordServiceProxy {
         } catch (InterruptedException e) {
             throw new Error(e);
         } catch (ExecutionException e) {
-           throw new Error(e);
+            throw new Error(e);
         }
     }
 }

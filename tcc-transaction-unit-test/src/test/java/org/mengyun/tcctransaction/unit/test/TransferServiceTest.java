@@ -168,6 +168,7 @@ public class TransferServiceTest extends AbstractTestCase {
         Assert.assertTrue(accountRecord.getBalanceAmount() == 0);
     }
 
+
     private void buildAccount() {
         SubAccount subAccountFrom = subAccountRepository.findById(1L);
 

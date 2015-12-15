@@ -57,9 +57,15 @@ public class TccCompensableAspect implements Ordered {
             pjp.proceed();
             transactionConfigurator.getTransactionManager().commit();
 
-        } catch (Throwable e) {
-            transactionConfigurator.getTransactionManager().rollback();
-            throw e;
+        } catch (Throwable commitException) {
+
+            try {
+                transactionConfigurator.getTransactionManager().rollback();
+            } catch (Throwable rollbackException) {
+                throw new RuntimeException("compensable transaction rollback failed.", commitException);
+            }
+
+            throw commitException;
         }
     }
 

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  * Created by changmingxie on 10/25/15.
  */
 @Service
-public class AccountRecordServiceImpl {
+public class AccountRecordServiceImpl implements AccountRecordService {
 
     @Autowired
     AccountRecordRepository accountRecordRepository;

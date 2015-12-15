@@ -11,6 +11,7 @@ import java.util.UUID;
  */
 public class TransactionXid implements Xid, Serializable {
 
+    private static final long serialVersionUID = -6817267250789142043L;
     private int formatId = 1;
 
     private byte[] globalTransactionId;

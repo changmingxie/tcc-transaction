@@ -16,11 +16,15 @@ import java.util.List;
  */
 public class Transaction implements Serializable {
 
+    private static final long serialVersionUID = 7291423944314337931L;
+
     private TransactionXid xid;
 
     private TransactionStatus status;
 
     private TransactionType transactionType;
+
+    private volatile int retriedCount = 0;
 
     private List<Participant> participants = new ArrayList<Participant>();
 
@@ -79,5 +83,17 @@ public class Transaction implements Serializable {
         for (Participant participant : participants) {
             participant.rollback();
         }
+    }
+
+    public int getRetriedCount() {
+        return retriedCount;
+    }
+
+    public void addRetriedCount() {
+        this.retriedCount++;
+    }
+
+    public void resetRetriedCount(int retriedCount) {
+        this.retriedCount = retriedCount;
     }
 }

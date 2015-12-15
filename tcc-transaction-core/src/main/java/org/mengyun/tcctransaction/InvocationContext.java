@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 public class InvocationContext implements Serializable {
 
+    private static final long serialVersionUID = -7969140711432461165L;
     private Class targetClass;
 
     private String methodName;
