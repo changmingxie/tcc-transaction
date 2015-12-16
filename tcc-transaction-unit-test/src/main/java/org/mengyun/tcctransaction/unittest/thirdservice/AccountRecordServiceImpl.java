@@ -29,7 +29,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
         accountRecord.setBalanceAmount(amount);
         accountRecord.setStatusId(AccountStatus.TRANSFERING.getId());
 
-        if (UnitTest.EXCEPTION) {
+        if (UnitTest.TRYING_EXCEPTION) {
             throw new RuntimeException("record try failed.");
         }
 
@@ -44,7 +44,7 @@ public class AccountRecordServiceImpl implements AccountRecordService {
     public void recordCancel(TransactionContext transactionContext, long accountId, int amount) {
         System.out.println("recordCancel");
 
-        if (UnitTest.EXCEPTION) {
+        if (UnitTest.TRYING_EXCEPTION) {
             throw new RuntimeException("record cancel failed.");
         }
 

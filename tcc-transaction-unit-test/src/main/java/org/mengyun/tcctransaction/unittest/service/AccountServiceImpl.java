@@ -6,6 +6,7 @@ import org.mengyun.tcctransaction.unittest.client.AccountRecordServiceProxy;
 import org.mengyun.tcctransaction.unittest.entity.AccountStatus;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.mengyun.tcctransaction.unittest.repository.SubAccountRepository;
+import org.mengyun.tcctransaction.unittest.utils.UnitTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -97,6 +98,11 @@ public class AccountServiceImpl implements AccountService {
 
     public void transferToConfirm(TransactionContext transactionContext, long accountId, int amount) {
         System.out.println("transferToConfirm called");
+
+        if(UnitTest.CONFIRMING_EXCEPTION) {
+            throw new RuntimeException("transferToConfirm confirm failed.");
+        }
+
         SubAccount subAccount = subAccountRepository.findById(accountId);
         subAccount.setStatus(AccountStatus.NORMAL.getId());
     }

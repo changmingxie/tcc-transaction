@@ -5,7 +5,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.mengyun.tcctransaction.MethodType;
-import org.mengyun.tcctransaction.Transaction;
+import org.mengyun.tcctransaction.NoExistedTransactionException;
 import org.mengyun.tcctransaction.TransactionConfigurator;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
@@ -33,7 +33,6 @@ public class TccCompensableAspect implements Ordered {
     public void interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
 
         TransactionContext transactionContext = CompensableMethodUtils.getTransactionContextFromArgs(pjp.getArgs());
-        Transaction transaction = transactionConfigurator.getTransactionManager().getCurrentTransaction();
 
         MethodType methodType = CompensableMethodUtils.calculateMethodType(transactionContext, true);
 
@@ -55,18 +54,16 @@ public class TccCompensableAspect implements Ordered {
 
         try {
             pjp.proceed();
-            transactionConfigurator.getTransactionManager().commit();
-
-        } catch (Throwable commitException) {
-
+        } catch (Throwable tryingException) {
             try {
                 transactionConfigurator.getTransactionManager().rollback();
             } catch (Throwable rollbackException) {
-                throw new RuntimeException("compensable transaction rollback failed.", commitException);
+                throw new RuntimeException("compensable transaction rollback failed.", tryingException);
             }
-
-            throw commitException;
+            throw tryingException;
         }
+
+        transactionConfigurator.getTransactionManager().commit();
     }
 
     private void providerMethodProceed(ProceedingJoinPoint pjp, TransactionContext transactionContext) throws Throwable {
@@ -77,15 +74,23 @@ public class TccCompensableAspect implements Ordered {
                 pjp.proceed();
                 break;
             case CONFIRMING:
-                transactionConfigurator.getTransactionManager().propagationExistBegin(transactionContext);
-                transactionConfigurator.getTransactionManager().commit();
+                try {
+                    transactionConfigurator.getTransactionManager().propagationExistBegin(transactionContext);
+                    transactionConfigurator.getTransactionManager().commit();
+                } catch (NoExistedTransactionException excepton) {
+                    //the transaction has been commit,ignore it.
+                }
                 break;
             case CANCELLING:
-                transactionConfigurator.getTransactionManager().propagationExistBegin(transactionContext);
-                transactionConfigurator.getTransactionManager().rollback();
+
+                try {
+                    transactionConfigurator.getTransactionManager().propagationExistBegin(transactionContext);
+                    transactionConfigurator.getTransactionManager().rollback();
+                } catch (NoExistedTransactionException exception) {
+                    //the transaction has been rollback,ignore it.
+                }
                 break;
         }
-
     }
 
     @Override

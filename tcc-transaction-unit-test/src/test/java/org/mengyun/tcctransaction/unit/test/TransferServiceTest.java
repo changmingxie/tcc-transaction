@@ -134,10 +134,10 @@ public class TransferServiceTest extends AbstractTestCase {
 
 
     @Test
-    public void testRecovery() {
+    public void testTryingRecovery() {
 
         //given
-        UnitTest.EXCEPTION = true;
+        UnitTest.TRYING_EXCEPTION = true;
 
         try {
             //given
@@ -153,7 +153,7 @@ public class TransferServiceTest extends AbstractTestCase {
         System.out.println("begin recovery");
 
         //when
-        UnitTest.EXCEPTION = false;
+        UnitTest.TRYING_EXCEPTION = false;
 
         //then
         AccountRecord accountRecord = accountRecordRepository.findById(1L);
@@ -166,6 +166,55 @@ public class TransferServiceTest extends AbstractTestCase {
             throw new Error(e);
         }
         Assert.assertTrue(accountRecord.getBalanceAmount() == 0);
+
+    }
+
+    @Test
+    public void testConfirmingRecovery() {
+
+        //given
+        UnitTest.CONFIRMING_EXCEPTION = true;
+
+        try {
+            //given
+            buildAccount();
+
+            //when
+            transferService.transferWithMultipleConsumer(1, 2, 70);
+
+        } catch (Throwable e) {
+
+        }
+
+        System.out.println("begin recovery");
+
+        //when
+        UnitTest.CONFIRMING_EXCEPTION = false;
+
+        //then
+        AccountRecord accountRecord = accountRecordRepository.findById(1L);
+        Assert.assertTrue(accountRecord.getBalanceAmount() == 70);
+
+        try {
+            //waiting the auto recovery schedule
+            Thread.sleep(1000*60L);
+        } catch (InterruptedException e) {
+            throw new Error(e);
+        }
+
+        Assert.assertTrue(accountRecord.getBalanceAmount() == 70);
+
+        SubAccount subAccountFrom = subAccountRepository.findById(1L);
+
+        SubAccount subAccountTo = subAccountRepository.findById(2L);
+
+        Assert.assertTrue(subAccountFrom.getStatus() == AccountStatus.NORMAL.getId());
+        Assert.assertTrue(subAccountTo.getStatus() == AccountStatus.NORMAL.getId());
+
+        Assert.assertTrue(subAccountFrom.getBalanceAmount() == 30);
+        Assert.assertTrue(subAccountTo.getBalanceAmount() == 270);
+
+
     }
 
 

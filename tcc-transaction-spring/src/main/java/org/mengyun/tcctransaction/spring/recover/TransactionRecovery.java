@@ -1,7 +1,11 @@
 package org.mengyun.tcctransaction.spring.recover;
 
 import org.apache.log4j.Logger;
-import org.mengyun.tcctransaction.*;
+import org.mengyun.tcctransaction.Transaction;
+import org.mengyun.tcctransaction.TransactionConfigurator;
+import org.mengyun.tcctransaction.TransactionRepository;
+import org.mengyun.tcctransaction.TransactionType;
+import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,16 +45,18 @@ public class TransactionRecovery {
                 continue;
             }
 
-
             try {
-
                 transaction.addRetriedCount();
-                transactionConfigurator.getTransactionRepository().update(transaction);
 
-                List<Participant> participants = transaction.getParticipants();
+                if (transaction.getStatus().equals(TransactionStatus.CONFIRMING)) {
+                    transaction.setStatus(TransactionStatus.CONFIRMING);
+                    transactionConfigurator.getTransactionRepository().update(transaction);
+                    transaction.commit();
 
-                for (Participant participant : participants) {
-                    participant.rollback();
+                } else {
+                    transaction.setStatus(TransactionStatus.CANCELLING);
+                    transactionConfigurator.getTransactionRepository().update(transaction);
+                    transaction.rollback();
                 }
 
                 transactionConfigurator.getTransactionRepository().delete(transaction);
@@ -59,7 +65,6 @@ public class TransactionRecovery {
                 logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()));
             }
         }
-
     }
 
     public void setTransactionConfigurator(TransactionConfigurator transactionConfigurator) {

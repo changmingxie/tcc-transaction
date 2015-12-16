@@ -44,7 +44,7 @@ public class TransactionManager {
         transactionConfigurator.getTransactionRepository().create(transaction);
     }
 
-    public void propagationExistBegin(TransactionContext transactionContext) {
+    public void propagationExistBegin(TransactionContext transactionContext) throws NoExistedTransactionException {
         TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
         Transaction transaction = transactionRepository.findByXid(transactionContext.getXid());
 
@@ -53,6 +53,8 @@ public class TransactionManager {
 
             this.transactionMap.put(Thread.currentThread(), transaction);
             transactionRepository.update(transaction);
+        } else {
+            throw new NoExistedTransactionException();
         }
     }
 
@@ -61,14 +63,20 @@ public class TransactionManager {
 
         Transaction transaction = getCurrentTransaction();
 
-        if (transaction != null) {
+        transaction.setStatus(TransactionStatus.CONFIRMING);
+        transactionConfigurator.getTransactionRepository().update(transaction);
 
-            transaction.setStatus(TransactionStatus.CONFIRMING);
-            transactionConfigurator.getTransactionRepository().update(transaction);
-
+        try {
             transaction.commit();
-
             transactionConfigurator.getTransactionRepository().delete(transaction);
+
+        } catch (Throwable commitException) {
+
+            if (transaction.getTransactionType().equals(TransactionType.ROOT)) {
+                transactionConfigurator.getTransactionRepository().addErrorTransaction(transaction);
+            }
+
+            throw new RuntimeException(commitException);
         }
     }
 
@@ -80,21 +88,20 @@ public class TransactionManager {
 
         Transaction transaction = getCurrentTransaction();
 
-        if (transaction != null) {
-            transaction.setStatus(TransactionStatus.CANCELLING);
+        transaction.setStatus(TransactionStatus.CANCELLING);
 
-            transactionConfigurator.getTransactionRepository().update(transaction);
+        transactionConfigurator.getTransactionRepository().update(transaction);
 
-            try {
-                transaction.rollback();
+        try {
+            transaction.rollback();
 
-                transactionConfigurator.getTransactionRepository().delete(transaction);
-            } catch (Throwable rollbackException) {
-                if (transaction.getTransactionType().equals(TransactionType.ROOT)) {
-                    transactionConfigurator.getTransactionRepository().addErrorTransaction(transaction);
-                }
-                throw new RuntimeException(rollbackException);
+            transactionConfigurator.getTransactionRepository().delete(transaction);
+        } catch (Throwable rollbackException) {
+            if (transaction.getTransactionType().equals(TransactionType.ROOT)) {
+                transactionConfigurator.getTransactionRepository().addErrorTransaction(transaction);
             }
+            throw new RuntimeException(rollbackException);
         }
+
     }
 }
