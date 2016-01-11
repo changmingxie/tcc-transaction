@@ -6,7 +6,7 @@
 
     <context:component-scan base-package="org.mengyun.tcctransaction.unittest"/>
 
-    <bean id="transactionRepository" class="org.mengyun.tcctransaction.spring.JdbcTransactionRepository">
+    <bean id="transactionRepository" class="org.mengyun.tcctransaction.spring.repository.CachableJdbcTransactionRepository">
         <property name="dataSource" ref="dataSource"/>
     </bean>
 

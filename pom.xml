@@ -7,7 +7,7 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.4</version>
+    <version>1.0.6</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
@@ -21,17 +21,12 @@
         <java.src.version>1.6</java.src.version>
         <java.target.version>1.6</java.target.version>
         <project.encoding>UTF-8</project.encoding>
-        <!--<repo.internal.snapshots.url>http://repo1.maven.org/maven2-->
-        <!--</repo.internal.snapshots.url>-->
-        <!--<repo.internal.releases.url>http://repo1.maven.org/maven2-->
-        <!--</repo.internal.releases.url>-->
-        <!--<repo.proxy.url>http://repo1.maven.org/maven2</repo.proxy.url>-->
-
-        <repo.internal.snapshots.url>http://artifactory.ximalaya.com/artifactory/thirdparty-snapshots-local/
+        <repo.internal.snapshots.url>http://repo1.maven.org/maven2
         </repo.internal.snapshots.url>
-        <repo.internal.releases.url>http://artifactory.ximalaya.com/artifactory/thirdparty-releases-local/
+        <repo.internal.releases.url>http://repo1.maven.org/maven2
         </repo.internal.releases.url>
-        <repo.proxy.url>http://repo1.maven.org/maven2 http://repo1.maven.org/maven2</repo.proxy.url>
+        <repo.proxy.url>http://repo1.maven.org/maven2</repo.proxy.url>
+
 
         <repo.external.url>http://repo1.maven.org/maven2</repo.external.url>
 
@@ -52,6 +47,11 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>19.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>mysql</groupId>

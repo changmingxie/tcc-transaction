@@ -8,6 +8,7 @@ import java.io.Serializable;
  */
 public abstract class UserShardingId implements Serializable {
 
+    private static final long serialVersionUID = -8923642703284688507L;
     private Long id;
 
     private Long userId;

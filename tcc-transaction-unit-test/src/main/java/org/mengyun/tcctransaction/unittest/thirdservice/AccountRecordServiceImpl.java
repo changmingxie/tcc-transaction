@@ -23,8 +23,6 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 
         System.out.println("record");
 
-
-
         AccountRecord accountRecord = accountRecordRepository.findById(accountId);
         accountRecord.setBalanceAmount(amount);
         accountRecord.setStatusId(AccountStatus.TRANSFERING.getId());
@@ -32,7 +30,6 @@ public class AccountRecordServiceImpl implements AccountRecordService {
         if (UnitTest.TRYING_EXCEPTION) {
             throw new RuntimeException("record try failed.");
         }
-
     }
 
     public void recordConfirm(TransactionContext transactionContext, long accountId, int amount) {

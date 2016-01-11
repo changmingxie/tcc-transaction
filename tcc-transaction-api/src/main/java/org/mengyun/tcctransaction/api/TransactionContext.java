@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TransactionContext implements Serializable {
 
+    private static final long serialVersionUID = -8199390103169700387L;
     private TransactionXid xid;
 
     private int status;
