@@ -1,132 +1,34 @@
 package org.mengyun.tcctransaction.spring.repository;
 
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.api.TransactionXid;
-import org.mengyun.tcctransaction.spring.repository.AbstractJdbcTransactionRepository;
 import org.mengyun.tcctransaction.utils.SerializationUtils;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.util.CollectionUtils;
 
-import javax.transaction.xa.Xid;
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by changmingxie on 10/30/15.
  */
-public class CachableJdbcTransactionRepository extends AbstractJdbcTransactionRepository {
+public class JdbcTransactionRepository extends CachableTransactionRepository {
 
-    private int transactionExpireDurationInSeconds = 300;
+    private DataSource dataSource;
 
-    private int errorTransactionExpireDurationInSeconds = 300;
-
-    private Cache<Xid, Transaction> transactionXidCompensableTransactionCache;
-
-    private Cache<Xid, Transaction> errorTransactionXidCompensableTransactionCache;
-
-    public CachableJdbcTransactionRepository() {
-        transactionXidCompensableTransactionCache = CacheBuilder.newBuilder().expireAfterAccess(transactionExpireDurationInSeconds, TimeUnit.SECONDS).maximumSize(1000).build();
-        errorTransactionXidCompensableTransactionCache = CacheBuilder.newBuilder().expireAfterAccess(errorTransactionExpireDurationInSeconds, TimeUnit.SECONDS).maximumSize(1000).build();
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
-    protected void putToCache(Transaction transaction) {
-        transactionXidCompensableTransactionCache.put(transaction.getXid(), transaction);
+    public DataSource getDataSource() {
+        return dataSource;
     }
 
-    protected void removeFromCache(Transaction transaction) {
-        transactionXidCompensableTransactionCache.invalidate(transaction.getXid());
-    }
-
-    protected Transaction findFromCache(TransactionXid transactionXid) {
-        return transactionXidCompensableTransactionCache.getIfPresent(transactionXid);
-    }
-
-    protected void putToErrorCache(Transaction transaction) {
-        errorTransactionXidCompensableTransactionCache.put(transaction.getXid(), transaction);
-    }
-
-    protected void removeFromErrorCache(Transaction transaction) {
-        errorTransactionXidCompensableTransactionCache.invalidate(transaction.getXid());
-    }
-
-    protected Collection<Transaction> findAllFromErrorCache() {
-        return errorTransactionXidCompensableTransactionCache.asMap().values();
-    }
-
-    public final void setTransactionExpireDurationInSeconds(int durationInSeconds) {
-        this.transactionExpireDurationInSeconds = durationInSeconds;
-    }
-
-    public final void setErrorTransactionExpireDurationInSeconds(int durationInSeconds) {
-        this.errorTransactionExpireDurationInSeconds = durationInSeconds;
-    }
-
-    @Override
-    public void create(Transaction transaction) {
-        doCreate(transaction);
-        putToCache(transaction);
-    }
-
-    @Override
-    public void update(Transaction transaction) {
-        doUpdate(transaction);
-        putToCache(transaction);
-    }
-
-    @Override
-    public void delete(Transaction transaction) {
-        doDelete(transaction);
-        removeFromCache(transaction);
-    }
-
-    @Override
-    public Transaction findByXid(TransactionXid transactionXid) {
-        Transaction transaction = findFromCache(transactionXid);
-
-        if (transaction == null) {
-            transaction = doFind(transactionXid);
-
-            if (transaction != null) {
-                putToCache(transaction);
-            }
-        }
-
-        return transaction;
-    }
-
-    @Override
-    public List<Transaction> findAll() {
-
-        List<Transaction> transactions = doFindAll(null);
-        for (Transaction transaction : transactions) {
-            putToCache(transaction);
-        }
-
-        return transactions;
-    }
-
-    @Override
-    public void addErrorTransaction(Transaction transaction) {
-        putToErrorCache(transaction);
-    }
-
-    @Override
-    public void removeErrorTransaction(Transaction transaction) {
-        removeFromErrorCache(transaction);
-    }
-
-    @Override
-    public Collection<Transaction> findAllErrorTransactions() {
-        return findAllFromErrorCache();
-    }
-
-    private void doCreate(Transaction transaction) {
+    protected void doCreate(Transaction transaction) {
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -151,14 +53,14 @@ public class CachableJdbcTransactionRepository extends AbstractJdbcTransactionRe
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new Error(e);
+            throw new TransactionIOException(e);
         } finally {
             closeStatement(stmt);
             this.releaseConnection(connection);
         }
     }
 
-    private void doUpdate(Transaction transaction) {
+    protected void doUpdate(Transaction transaction) {
         Connection connection = null;
         PreparedStatement stmt = null;
 
@@ -180,14 +82,14 @@ public class CachableJdbcTransactionRepository extends AbstractJdbcTransactionRe
             stmt.executeUpdate();
 
         } catch (Throwable e) {
-            throw new Error(e);
+            throw new TransactionIOException(e);
         } finally {
             closeStatement(stmt);
             this.releaseConnection(connection);
         }
     }
 
-    public void doDelete(Transaction transaction) {
+    protected void doDelete(Transaction transaction) {
         Connection connection = null;
         PreparedStatement stmt = null;
 
@@ -206,26 +108,15 @@ public class CachableJdbcTransactionRepository extends AbstractJdbcTransactionRe
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new Error(e);
+            throw new TransactionIOException(e);
         } finally {
             closeStatement(stmt);
             this.releaseConnection(connection);
         }
     }
 
-    private Transaction doFind(TransactionXid xid) {
 
-        List<TransactionXid> transactionXids = Arrays.asList(xid);
-
-        List<Transaction> transactions = doFindAll(transactionXids);
-
-        if (!CollectionUtils.isEmpty(transactions)) {
-            return transactions.get(0);
-        }
-        return null;
-    }
-
-    private List<Transaction> doFindAll(List<TransactionXid> xids) {
+    protected List<Transaction> doFindAll(List<TransactionXid> xids) {
 
         List<Transaction> transactions = new ArrayList<Transaction>();
 
@@ -275,7 +166,7 @@ public class CachableJdbcTransactionRepository extends AbstractJdbcTransactionRe
                 transactions.add(transaction);
             }
         } catch (Throwable e) {
-            throw new Error(e);
+            throw new TransactionIOException(e);
         } finally {
             closeStatement(stmt);
             this.releaseConnection(connection);
@@ -284,13 +175,26 @@ public class CachableJdbcTransactionRepository extends AbstractJdbcTransactionRe
         return transactions;
     }
 
+    @Override
+    protected List<Transaction> doFindAll() {
+        return doFindAll(null);
+    }
+
+    private Connection getConnection() throws CannotGetJdbcConnectionException {
+        return DataSourceUtils.getConnection(this.getDataSource());
+    }
+
+    private void releaseConnection(Connection con) {
+        DataSourceUtils.releaseConnection(con, this.getDataSource());
+    }
+
     private void closeStatement(Statement stmt) {
-        if (stmt != null) {
-            try {
+        try {
+            if (stmt != null && !stmt.isClosed()) {
                 stmt.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
+        } catch (Exception ex) {
+            throw new TransactionIOException(ex);
         }
     }
 }

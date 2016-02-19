@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.spring;
 
+import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,6 +21,7 @@ import org.springframework.core.Ordered;
 public class TccCompensableAspect implements Ordered {
 
     private int order = Ordered.HIGHEST_PRECEDENCE;
+    static final Logger logger = Logger.getLogger(TccCompensableAspect.class.getSimpleName());
 
     @Autowired
     private TransactionConfigurator transactionConfigurator;
@@ -55,11 +57,14 @@ public class TccCompensableAspect implements Ordered {
         try {
             pjp.proceed();
         } catch (Throwable tryingException) {
+            logger.error("compensable transaction trying failed.", tryingException);
             try {
                 transactionConfigurator.getTransactionManager().rollback();
             } catch (Throwable rollbackException) {
-                throw new RuntimeException("compensable transaction rollback failed.", tryingException);
+                logger.error("compensable transaction rollback failed.", rollbackException);
+                throw rollbackException;
             }
+
             throw tryingException;
         }
 

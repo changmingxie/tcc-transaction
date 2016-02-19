@@ -19,7 +19,7 @@ import java.util.List;
 @Component
 public class TransactionRecovery {
 
-    private static int MAX_RETRY_COUNT = 3;
+    public volatile static int MAX_RETRY_COUNT = 3;
 
 
     static final Logger logger = Logger.getLogger(TransactionRecovery.class.getSimpleName());
@@ -49,12 +49,12 @@ public class TransactionRecovery {
                 transaction.addRetriedCount();
 
                 if (transaction.getStatus().equals(TransactionStatus.CONFIRMING)) {
-                    transaction.setStatus(TransactionStatus.CONFIRMING);
+                    transaction.changeStatus(TransactionStatus.CONFIRMING);
                     transactionConfigurator.getTransactionRepository().update(transaction);
                     transaction.commit();
 
                 } else {
-                    transaction.setStatus(TransactionStatus.CANCELLING);
+                    transaction.changeStatus(TransactionStatus.CANCELLING);
                     transactionConfigurator.getTransactionRepository().update(transaction);
                     transaction.rollback();
                 }
@@ -62,7 +62,7 @@ public class TransactionRecovery {
                 transactionConfigurator.getTransactionRepository().delete(transaction);
                 transactionConfigurator.getTransactionRepository().removeErrorTransaction(transaction);
             } catch (Throwable e) {
-                logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()));
+                logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()), e);
             }
         }
     }

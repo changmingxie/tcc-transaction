@@ -198,7 +198,7 @@ public class TccTransactionContextAspect implements Ordered {
 
     @Override
     public int getOrder() {
-        return -10;
+        return order;
     }
 
     public void setOrder(int order) {

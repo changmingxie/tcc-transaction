@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by changmingxie on 10/26/15.
@@ -26,23 +28,28 @@ public class Transaction implements Serializable {
 
     private volatile int retriedCount = 0;
 
+    private int version = 0;
+
     private List<Participant> participants = new ArrayList<Participant>();
 
-    public Transaction() {
-        this.xid = new TransactionXid();
-    }
+    private Map<String, Object> attachments = new ConcurrentHashMap<String, Object>();
 
     public Transaction(TransactionContext transactionContext) {
         this.xid = transactionContext.getXid();
-        this.status = TransactionStatus.valueOf(transactionContext.getStatus());
+        this.status = TransactionStatus.TRYING;
+        this.transactionType = TransactionType.BRANCH;
     }
 
-    public Transaction(TransactionXid xid, TransactionStatus status, TransactionType transactionType, List<Participant> participants) {
-        this.xid = xid;
-        this.status = status;
+    public Transaction(TransactionType transactionType) {
+        this.xid = new TransactionXid();
+        this.status = TransactionStatus.TRYING;
         this.transactionType = transactionType;
-        this.participants.addAll(participants);
     }
+
+    public void enlistParticipant(Participant participant) {
+        participants.add(participant);
+    }
+
 
     public Xid getXid() {
         return xid.clone();
@@ -52,9 +59,6 @@ public class Transaction implements Serializable {
         return status;
     }
 
-    public void enlistParticipant(Participant participant) {
-        participants.add(participant);
-    }
 
     public List<Participant> getParticipants() {
         return Collections.unmodifiableList(participants);
@@ -64,13 +68,10 @@ public class Transaction implements Serializable {
         return transactionType;
     }
 
-    public void setTransactionType(TransactionType transactionType) {
-        this.transactionType = transactionType;
-    }
-
-    public void setStatus(TransactionStatus status) {
+    public void changeStatus(TransactionStatus status) {
         this.status = status;
     }
+
 
     public void commit() {
 
@@ -96,4 +97,17 @@ public class Transaction implements Serializable {
     public void resetRetriedCount(int retriedCount) {
         this.retriedCount = retriedCount;
     }
+
+    public Map<String, Object> getAttachments() {
+        return attachments;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
 }

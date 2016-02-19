@@ -23,6 +23,12 @@ public class TransferService {
     public TransferService() {
     }
 
+
+    @Compensable
+    @Transactional
+    public void performenceTuningTransfer() {
+    }
+
     @Compensable(confirmMethod = "transferConfirm", cancelMethod = "transferCancel")
     @Transactional
     public void transfer(long fromAccountId, long toAccountId, int amount) {

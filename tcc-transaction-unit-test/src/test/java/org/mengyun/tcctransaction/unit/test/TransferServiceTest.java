@@ -50,6 +50,22 @@ public class TransferServiceTest extends AbstractTestCase {
         Assert.assertTrue(subAccountTo.getBalanceAmount() == 250);
     }
 
+
+    @Test
+    public void performanceTest() {
+
+
+        long currentTime = System.currentTimeMillis();
+
+        for (int i = 0; i < 1000; i++) {
+            transferService.performenceTuningTransfer();
+        }
+
+        long thenTime = System.currentTimeMillis();
+
+        System.out.println(thenTime - currentTime);
+    }
+
     @Test
     public void testTransferWithMultipleTier() {
 
@@ -161,7 +177,7 @@ public class TransferServiceTest extends AbstractTestCase {
 
         try {
             //waiting the auto recovery schedule
-            Thread.sleep(1000*60L);
+            Thread.sleep(1000 * 60L);
         } catch (InterruptedException e) {
             throw new Error(e);
         }
@@ -197,7 +213,7 @@ public class TransferServiceTest extends AbstractTestCase {
 
         try {
             //waiting the auto recovery schedule
-            Thread.sleep(1000*60L);
+            Thread.sleep(1000 * 60L);
         } catch (InterruptedException e) {
             throw new Error(e);
         }

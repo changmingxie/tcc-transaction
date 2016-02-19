@@ -32,7 +32,7 @@ public class TransactionXid implements Xid, Serializable {
         this.globalTransactionId = globalTransactionId;
         this.branchQualifier = branchQualifier;
     }
-    
+
     @Override
     public int getFormatId() {
         return formatId;
@@ -50,11 +50,7 @@ public class TransactionXid implements Xid, Serializable {
 
     @Override
     public String toString() {
-
-        return String.format("formatId:%d,globalTransactionId:%s,branchQualifier:%s",
-                formatId, UUID.nameUUIDFromBytes(globalTransactionId).toString(),
-                UUID.nameUUIDFromBytes(branchQualifier).toString()
-        );
+        return UUID.nameUUIDFromBytes(globalTransactionId).toString() + "|" + UUID.nameUUIDFromBytes(branchQualifier).toString();
     }
 
     public TransactionXid clone() {
