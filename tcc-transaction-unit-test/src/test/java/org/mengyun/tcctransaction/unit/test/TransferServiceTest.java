@@ -2,7 +2,7 @@ package org.mengyun.tcctransaction.unit.test;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mengyun.tcctransaction.spring.recover.TransactionRecovery;
+import org.mengyun.tcctransaction.recover.TransactionRecovery;
 import org.mengyun.tcctransaction.unittest.client.TransferService;
 import org.mengyun.tcctransaction.unittest.entity.AccountRecord;
 import org.mengyun.tcctransaction.unittest.entity.AccountStatus;

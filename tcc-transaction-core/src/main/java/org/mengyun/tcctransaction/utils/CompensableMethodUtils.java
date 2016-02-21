@@ -1,7 +1,6 @@
-package org.mengyun.tcctransaction.spring.utils;
+package org.mengyun.tcctransaction.utils;
 
-import org.mengyun.tcctransaction.MethodType;
-import org.mengyun.tcctransaction.Transaction;
+import org.mengyun.tcctransaction.common.MethodType;
 import org.mengyun.tcctransaction.api.TransactionContext;
 
 /**

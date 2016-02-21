@@ -1,12 +1,10 @@
-package org.mengyun.tcctransaction.spring.repository;
+package org.mengyun.tcctransaction.repository;
 
 
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.api.TransactionXid;
+import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.mengyun.tcctransaction.utils.SerializationUtils;
-import org.springframework.jdbc.CannotGetJdbcConnectionException;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.util.CollectionUtils;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -115,7 +113,6 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         }
     }
 
-
     protected List<Transaction> doFindAll(List<TransactionXid> xids) {
 
         List<Transaction> transactions = new ArrayList<Transaction>();
@@ -180,12 +177,22 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         return doFindAll(null);
     }
 
-    private Connection getConnection() throws CannotGetJdbcConnectionException {
-        return DataSourceUtils.getConnection(this.getDataSource());
+    protected Connection getConnection() {
+        try {
+            return this.dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new TransactionIOException(e);
+        }
     }
 
-    private void releaseConnection(Connection con) {
-        DataSourceUtils.releaseConnection(con, this.getDataSource());
+    protected void releaseConnection(Connection con) {
+        try {
+            if (con != null && !con.isClosed()) {
+                con.close();
+            }
+        } catch (SQLException e) {
+            throw new TransactionIOException(e);
+        }
     }
 
     private void closeStatement(Statement stmt) {

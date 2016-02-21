@@ -8,6 +8,21 @@
     <aop:aspectj-autoproxy/>
 
     <context:component-scan base-package="org.mengyun.tcctransaction.spring"/>
+    
+    <bean id="tccTransactionConfigurator" class="org.mengyun.tcctransaction.spring.support.TccTransactionConfigurator"/>
+
+    <bean id="transactionRecovery" class="org.mengyun.tcctransaction.recover.TransactionRecovery">
+        <property name="transactionConfigurator" ref="tccTransactionConfigurator"/>
+    </bean>
+    <bean id="compensableTransactionInterceptor"
+          class="org.mengyun.tcctransaction.interceptor.CompensableTransactionInterceptor">
+        <property name="transactionConfigurator" ref="tccTransactionConfigurator"/>
+    </bean>
+
+    <bean id="resourceCoordinatorInterceptor"
+          class="org.mengyun.tcctransaction.interceptor.ResourceCoordinatorInterceptor">
+        <property name="transactionConfigurator" ref="tccTransactionConfigurator"/>
+    </bean>
 
     <bean id="tccCompensableAspect" class="org.mengyun.tcctransaction.spring.TccCompensableAspect"/>
 

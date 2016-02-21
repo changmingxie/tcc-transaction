@@ -2,6 +2,8 @@ package org.mengyun.tcctransaction;
 
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
+import org.mengyun.tcctransaction.common.TransactionType;
+import org.mengyun.tcctransaction.support.TransactionConfigurator;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

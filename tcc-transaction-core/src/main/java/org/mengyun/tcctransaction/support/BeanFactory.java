@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction;
+package org.mengyun.tcctransaction.support;
 
 /**
  * Created by changmingxie on 11/20/15.

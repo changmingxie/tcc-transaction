@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.spring.repository;
+package org.mengyun.tcctransaction.repository;
 
 /**
  * Created by hongyuan.wang on 2016/1/26.

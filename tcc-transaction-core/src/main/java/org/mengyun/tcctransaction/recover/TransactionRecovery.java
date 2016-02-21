@@ -1,13 +1,11 @@
-package org.mengyun.tcctransaction.spring.recover;
+package org.mengyun.tcctransaction.recover;
 
 import org.apache.log4j.Logger;
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.TransactionConfigurator;
+import org.mengyun.tcctransaction.support.TransactionConfigurator;
 import org.mengyun.tcctransaction.TransactionRepository;
-import org.mengyun.tcctransaction.TransactionType;
+import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.api.TransactionStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +14,6 @@ import java.util.List;
 /**
  * Created by changmingxie on 11/10/15.
  */
-@Component
 public class TransactionRecovery {
 
     public volatile static int MAX_RETRY_COUNT = 3;
@@ -24,7 +21,6 @@ public class TransactionRecovery {
 
     static final Logger logger = Logger.getLogger(TransactionRecovery.class.getSimpleName());
 
-    @Autowired
     private TransactionConfigurator transactionConfigurator;
 
     private boolean initialized = false;

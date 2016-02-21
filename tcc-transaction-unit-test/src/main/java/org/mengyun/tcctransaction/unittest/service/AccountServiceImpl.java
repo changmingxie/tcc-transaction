@@ -1,7 +1,7 @@
 package org.mengyun.tcctransaction.unittest.service;
 
 import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.spring.Compensable;
+import org.mengyun.tcctransaction.Compensable;
 import org.mengyun.tcctransaction.unittest.client.AccountRecordServiceProxy;
 import org.mengyun.tcctransaction.unittest.entity.AccountStatus;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;

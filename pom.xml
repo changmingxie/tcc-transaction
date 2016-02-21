@@ -7,7 +7,7 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.10</version>
+    <version>1.0.11</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
@@ -21,12 +21,18 @@
         <java.src.version>1.6</java.src.version>
         <java.target.version>1.6</java.target.version>
         <project.encoding>UTF-8</project.encoding>
+        <!--<repo.internal.snapshots.url>http://repo1.maven.org/maven2-->
+        <!--</repo.internal.snapshots.url>-->
+        <!--<repo.internal.releases.url>http://repo1.maven.org/maven2-->
+        <!--</repo.internal.releases.url>-->
+        <!--<repo.proxy.url>http://repo1.maven.org/maven2</repo.proxy.url>-->
 
-        <repo.internal.snapshots.url>http://repo1.maven.org/maven2
+        <repo.internal.snapshots.url>http://artifactory.ximalaya.com/artifactory/thirdparty-snapshots-local/
         </repo.internal.snapshots.url>
-        <repo.internal.releases.url>http://repo1.maven.org/maven2
+        <repo.internal.releases.url>http://artifactory.ximalaya.com/artifactory/thirdparty-releases-local/
         </repo.internal.releases.url>
         <repo.proxy.url>http://repo1.maven.org/maven2</repo.proxy.url>
+
         <repo.external.url>http://repo1.maven.org/maven2</repo.external.url>
 
     </properties>

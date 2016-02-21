@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.spring.utils;
+package org.mengyun.tcctransaction.utils;
 
 import java.lang.reflect.Method;
 

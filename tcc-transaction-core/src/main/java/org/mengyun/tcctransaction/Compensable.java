@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.spring;
+package org.mengyun.tcctransaction;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

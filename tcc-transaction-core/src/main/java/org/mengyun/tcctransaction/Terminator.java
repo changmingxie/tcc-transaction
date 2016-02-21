@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction;
 
+import org.mengyun.tcctransaction.support.BeanFactoryAdapter;
 import org.mengyun.tcctransaction.utils.StringUtils;
 
 import java.io.Serializable;

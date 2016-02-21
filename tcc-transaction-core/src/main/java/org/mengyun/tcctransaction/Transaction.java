@@ -4,6 +4,7 @@ package org.mengyun.tcctransaction;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.TransactionXid;
+import org.mengyun.tcctransaction.common.TransactionType;
 
 import javax.transaction.xa.Xid;
 import java.io.Serializable;

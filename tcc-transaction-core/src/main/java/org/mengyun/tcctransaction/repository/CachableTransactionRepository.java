@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.spring.repository;
+package org.mengyun.tcctransaction.repository;
 
 
 import com.google.common.cache.Cache;
@@ -6,7 +6,7 @@ import com.google.common.cache.CacheBuilder;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionRepository;
 import org.mengyun.tcctransaction.api.TransactionXid;
-import org.springframework.util.CollectionUtils;
+import org.mengyun.tcctransaction.utils.CollectionUtils;
 
 import javax.transaction.xa.Xid;
 import java.util.Arrays;

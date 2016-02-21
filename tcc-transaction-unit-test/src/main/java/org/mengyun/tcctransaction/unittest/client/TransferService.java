@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.unittest.client;
 
-import org.mengyun.tcctransaction.spring.Compensable;
+import org.mengyun.tcctransaction.Compensable;
 import org.mengyun.tcctransaction.unittest.entity.AccountStatus;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.mengyun.tcctransaction.unittest.repository.SubAccountRepository;

@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.spring.support;
 
-import org.mengyun.tcctransaction.BeanFactory;
+import org.mengyun.tcctransaction.support.BeanFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

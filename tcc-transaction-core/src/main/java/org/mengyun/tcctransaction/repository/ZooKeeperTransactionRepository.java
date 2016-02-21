@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.spring.repository;
+package org.mengyun.tcctransaction.repository;
 
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;

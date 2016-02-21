@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.spring.recover;
 
+import org.mengyun.tcctransaction.recover.TransactionRecovery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

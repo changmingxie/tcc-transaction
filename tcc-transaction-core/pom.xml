@@ -5,7 +5,7 @@
     <parent>
         <artifactId>tcc-transaction</artifactId>
         <groupId>org.mengyun</groupId>
-        <version>1.0.10</version>
+        <version>1.0.11</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,6 +21,21 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
         </dependency>
 
     </dependencies>
