@@ -6,10 +6,8 @@ import com.google.common.cache.CacheBuilder;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionRepository;
 import org.mengyun.tcctransaction.api.TransactionXid;
-import org.mengyun.tcctransaction.utils.CollectionUtils;
 
 import javax.transaction.xa.Xid;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +48,7 @@ public abstract class CachableTransactionRepository implements TransactionReposi
         Transaction transaction = findFromCache(transactionXid);
 
         if (transaction == null) {
-            transaction = doFind(transactionXid);
+            transaction = doFindOne(transactionXid);
 
             if (transaction != null) {
                 putToCache(transaction);
@@ -123,25 +121,13 @@ public abstract class CachableTransactionRepository implements TransactionReposi
         this.errorExpireDurationInSeconds = durationInSeconds;
     }
 
-    protected Transaction doFind(TransactionXid xid) {
-
-        List<TransactionXid> transactionXids = Arrays.asList(xid);
-
-        List<Transaction> transactions = doFindAll(transactionXids);
-
-        if (!CollectionUtils.isEmpty(transactions)) {
-            return transactions.get(0);
-        }
-        return null;
-    }
-
     protected abstract void doCreate(Transaction transaction);
 
     protected abstract void doUpdate(Transaction transaction);
 
     protected abstract void doDelete(Transaction transaction);
 
-    protected abstract List<Transaction> doFindAll(List<TransactionXid> xids);
+    protected abstract Transaction doFindOne(Xid xid);
 
     protected abstract List<Transaction> doFindAll();
 }

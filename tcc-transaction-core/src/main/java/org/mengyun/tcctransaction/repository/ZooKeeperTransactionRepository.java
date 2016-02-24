@@ -3,7 +3,6 @@ package org.mengyun.tcctransaction.repository;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.api.TransactionXid;
 import org.mengyun.tcctransaction.utils.SerializationUtils;
 
 import javax.transaction.xa.Xid;
@@ -74,25 +73,21 @@ public class ZooKeeperTransactionRepository extends CachableTransactionRepositor
     }
 
     @Override
-    protected List<Transaction> doFindAll(List<TransactionXid> xids) {
+    protected Transaction doFindOne(Xid xid) {
 
-        List<Transaction> transactions = new ArrayList<Transaction>();
+        byte[] content = null;
+        try {
+            Stat stat = new Stat();
+            content = getZk().getData(getTxidPath(xid), false, stat);
+            Transaction transaction = (Transaction) SerializationUtils.deserialize(content);
+            transaction.setVersion(stat.getVersion());
+            return transaction;
+        } catch (KeeperException.NoNodeException e) {
 
-        for (Xid xid : xids) {
-            byte[] content = null;
-            try {
-                Stat stat = new Stat();
-                content = getZk().getData(getTxidPath(xid), false, stat);
-                Transaction transaction = (Transaction) SerializationUtils.deserialize(content);
-                transaction.setVersion(stat.getVersion());
-                transactions.add(transaction);
-            } catch (KeeperException.NoNodeException e) {
-
-            } catch (Exception e) {
-                throw new TransactionIOException(e);
-            }
+        } catch (Exception e) {
+            throw new TransactionIOException(e);
         }
-        return transactions;
+        return null;
     }
 
     @Override

@@ -2,10 +2,10 @@ package org.mengyun.tcctransaction.recover;
 
 import org.apache.log4j.Logger;
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.support.TransactionConfigurator;
 import org.mengyun.tcctransaction.TransactionRepository;
-import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.api.TransactionStatus;
+import org.mengyun.tcctransaction.common.TransactionType;
+import org.mengyun.tcctransaction.support.TransactionConfigurator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,14 +16,13 @@ import java.util.List;
  */
 public class TransactionRecovery {
 
-    public volatile static int MAX_RETRY_COUNT = 3;
-
+    private int maxRetryCount = 3;
 
     static final Logger logger = Logger.getLogger(TransactionRecovery.class.getSimpleName());
 
     private TransactionConfigurator transactionConfigurator;
 
-    private boolean initialized = false;
+    private volatile boolean initialized = false;
 
     public void startRecover() {
 
@@ -35,7 +34,7 @@ public class TransactionRecovery {
 
         for (Transaction transaction : rollbackTransactions) {
 
-            if (transaction.getRetriedCount() > MAX_RETRY_COUNT) {
+            if (transaction.getRetriedCount() > maxRetryCount) {
 
                 transactionConfigurator.getTransactionRepository().removeErrorTransaction(transaction);
                 continue;
@@ -88,5 +87,9 @@ public class TransactionRecovery {
                 transactionConfigurator.getTransactionRepository().addErrorTransaction(transaction);
             }
         }
+    }
+
+    public void setMaxRetryCount(int maxRetryCount) {
+        this.maxRetryCount = maxRetryCount;
     }
 }

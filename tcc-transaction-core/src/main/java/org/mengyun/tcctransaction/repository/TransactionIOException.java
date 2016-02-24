@@ -5,6 +5,10 @@ package org.mengyun.tcctransaction.repository;
  */
 public class TransactionIOException extends RuntimeException {
 
+    public TransactionIOException(String message) {
+        super(message);
+    }
+
     public TransactionIOException(Throwable e) {
         super(e);
     }

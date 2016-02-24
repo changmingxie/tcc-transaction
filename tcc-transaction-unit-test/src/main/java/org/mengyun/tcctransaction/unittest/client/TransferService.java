@@ -27,6 +27,7 @@ public class TransferService {
     @Compensable
     @Transactional
     public void performenceTuningTransfer() {
+        accountService.performanceTuningTransferTo(null);
     }
 
     @Compensable(confirmMethod = "transferConfirm", cancelMethod = "transferCancel")

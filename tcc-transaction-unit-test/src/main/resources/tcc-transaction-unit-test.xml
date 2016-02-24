@@ -6,26 +6,43 @@
 
     <context:component-scan base-package="org.mengyun.tcctransaction.unittest"/>
 
-    <bean id="transactionRepository" class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">
-    <property name="dataSource" ref="dataSource"/>
-    </bean>
+    <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">-->
+    <!--<property name="dataSource" ref="dataSource"/>-->
+    <!--</bean>-->
 
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-    destroy-method="close">
-    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-    <property name="url" value="jdbc:mysql://127.0.0.1:3306/test"/>
-    <property name="username" value="root"/>
-    <property name="password" value=""/>
-    </bean>
+    <!--<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"-->
+    <!--destroy-method="close">-->
+    <!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
+    <!--<property name="url" value="jdbc:mysql://127.0.0.1:3306/test"/>-->
+    <!--<property name="username" value="root"/>-->
+    <!--<property name="password" value=""/>-->
+    <!--</bean>-->
 
     <!--<bean id="transactionRepository"-->
-          <!--class="org.mengyun.tcctransaction.repository.ZooKeeperTransactionRepository">-->
-        <!--<property name="errorExpireDurationInSeconds" value="300"/>-->
+    <!--class="org.mengyun.tcctransaction.repository.ZooKeeperTransactionRepository">-->
+    <!--<property name="errorExpireDurationInSeconds" value="300"/>-->
+    <!--<property name="expireDurationInSeconds" value="300"/>-->
+    <!--&lt;!&ndash;<property name="zkServers" value="localhost:2181,localhost:2183,localhost:2185"/>&ndash;&gt;-->
+    <!--<property name="zkServers" value="localhost:2181"/>-->
+    <!--<property name="zkTimeout" value="10000"/>-->
+    <!--<property name="zkRootPath" value="/tcc"/>-->
+    <!--</bean>-->
+
+    <!--recommanded way; to use this, make sure redis is safely durable,which means need set redis as AOF mode and always fsync.
+      appendonly yes
+      appendfsync always
+      -->
+    <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">
+    <property name="keyPrefix" value="tcc_"/>
+    <property name="host" value="localhost"/>
+    <property name="errorExpireDurationInSeconds" value="300"/>
+    <property name="expireDurationInSeconds" value="300"/>
+    </bean>
+
+    <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.FileSystemTransactionRepository">-->
+        <!--<property name="rootPath" value="/data/tcc"/>-->
         <!--<property name="expireDurationInSeconds" value="300"/>-->
-        <!--<property name="zkServers" value="localhost:2181"/>-->
-        <!--&lt;!&ndash;<property name="zkServers" value="192.168.3.7:2181"/>&ndash;&gt;-->
-        <!--<property name="zkTimeout" value="10000"/>-->
-        <!--<property name="zkRootPath" value="/tcc"/>-->
+        <!--<property name="errorExpireDurationInSeconds" value="300"/>-->
     <!--</bean>-->
 
 </beans>

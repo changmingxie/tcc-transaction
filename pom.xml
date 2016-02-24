@@ -7,7 +7,7 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.11</version>
+    <version>1.0.12</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
@@ -21,15 +21,9 @@
         <java.src.version>1.6</java.src.version>
         <java.target.version>1.6</java.target.version>
         <project.encoding>UTF-8</project.encoding>
-        <!--<repo.internal.snapshots.url>http://repo1.maven.org/maven2-->
-        <!--</repo.internal.snapshots.url>-->
-        <!--<repo.internal.releases.url>http://repo1.maven.org/maven2-->
-        <!--</repo.internal.releases.url>-->
-        <!--<repo.proxy.url>http://repo1.maven.org/maven2</repo.proxy.url>-->
-
-        <repo.internal.snapshots.url>http://artifactory.ximalaya.com/artifactory/thirdparty-snapshots-local/
+        <repo.internal.snapshots.url>http://repo1.maven.org/maven2
         </repo.internal.snapshots.url>
-        <repo.internal.releases.url>http://artifactory.ximalaya.com/artifactory/thirdparty-releases-local/
+        <repo.internal.releases.url>http://repo1.maven.org/maven2
         </repo.internal.releases.url>
         <repo.proxy.url>http://repo1.maven.org/maven2</repo.proxy.url>
 
@@ -143,6 +137,13 @@
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
                 <version>3.4.6</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>2.8.0</version>
             </dependency>
 
         </dependencies>

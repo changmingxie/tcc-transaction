@@ -2,13 +2,14 @@ package org.mengyun.tcctransaction.repository;
 
 
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.api.TransactionXid;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.mengyun.tcctransaction.utils.SerializationUtils;
 
 import javax.sql.DataSource;
+import javax.transaction.xa.Xid;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -113,7 +114,23 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         }
     }
 
-    protected List<Transaction> doFindAll(List<TransactionXid> xids) {
+    protected Transaction doFindOne(Xid xid) {
+
+        List<Transaction> transactions = doFind(Arrays.asList(xid));
+
+        if (!CollectionUtils.isEmpty(transactions)) {
+            return transactions.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    protected List<Transaction> doFindAll() {
+        return doFind(null);
+    }
+
+
+    protected List<Transaction> doFind(List<Xid> xids) {
 
         List<Transaction> transactions = new ArrayList<Transaction>();
 
@@ -129,7 +146,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
             if (!CollectionUtils.isEmpty(xids)) {
                 builder.append(" WHERE ");
-                for (TransactionXid xid : xids) {
+                for (Xid xid : xids) {
                     builder.append("( GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ? )");
                 }
             }
@@ -140,7 +157,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
                 int i = 0;
 
-                for (TransactionXid xid : xids) {
+                for (Xid xid : xids) {
                     stmt.setBytes(++i, xid.getGlobalTransactionId());
                     stmt.setBytes(++i, xid.getBranchQualifier());
                 }
@@ -172,10 +189,6 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         return transactions;
     }
 
-    @Override
-    protected List<Transaction> doFindAll() {
-        return doFindAll(null);
-    }
 
     protected Connection getConnection() {
         try {
