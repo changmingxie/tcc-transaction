@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+    <context:property-placeholder location="classpath:sample-dubbo-order.properties"/>
+
+    <!--<dubbo:registry id="capitalRpcZk" address="multicast://224.5.6.7:1234?unicast=false"/>-->
+
+    <dubbo:application name="sample-dubbo-order"/>
+
+    <dubbo:registry protocol="zookeeper" address="${zookeeper.address}"
+                    session="${zookeeper.session.timeout}"
+                    timeout="${zookeeper.connect.timeout}" file="./.dubbo/web-cache"/>
+
+    <dubbo:reference id="captialTradeOrderService"
+                     interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService"/>
+
+    <dubbo:reference id="redPacketTradeOrderService"
+                     interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService"/>
+
+</beans>

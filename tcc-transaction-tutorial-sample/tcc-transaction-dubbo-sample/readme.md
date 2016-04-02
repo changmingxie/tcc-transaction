@@ -1,0 +1,11 @@
+本示例演示tcc在使用dubbo作为rpc调用情况下使用。
+
+本示例演示在下完订单后,使用红包帐户和资金帐户来付款，红包帐户服务和资金帐户服务在不同的系统中。示例中，有两个SOA提供方，一个是CapitalTradeOrderService，代表着资金帐户服务,另一个是RedPacketTradeOrderService,代表着红包帐户服务。
+
+下完订单后，订单状态为DRAFT, 在TCC事务中TRY阶段，订单支付服务将订单状态变成PAYING，同时远程调用红包帐户服务和资金帐户服务,将付款方的余额减掉（预留业务资源);
+如果在TRY阶段，任何一个服务失败，tcc-transaction将自动调用这些服务对应的cancel方法，订单支付服务将订单状态变成PAY_FAILED,同时远程调用红包帐户服务和资金帐户服务,将付款方余额减掉的部分增加回去；
+如果TRY阶段正常完成，则进入CONFIRM阶段，在CONFIRM阶段（tcc-transaction自动调用）,订单支付服务将订单状态变成CONFIRMED,同时远程调用红包帐户服务和资金帐户服务对应的CONFIRM方法，将收款方的余额增加。
+
+在运行sample前，需搭建好db环境，运行各个项目下的create_db.sql建立数据库实例及表；还需修改各种项目中jdbc.properties文件中的jdbc连接信息。
+
+如有问题可以在本项目的github issues中提问，会定期回复。

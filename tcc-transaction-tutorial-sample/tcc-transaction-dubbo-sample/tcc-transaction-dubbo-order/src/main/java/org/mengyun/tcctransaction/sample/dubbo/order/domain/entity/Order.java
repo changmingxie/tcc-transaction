@@ -1,0 +1,94 @@
+package org.mengyun.tcctransaction.sample.dubbo.order.domain.entity;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Created by changming.xie on 3/25/16.
+ */
+public class Order {
+
+    private long id;
+
+    private long payerUserId;
+
+    private long payeeUserId;
+
+    private BigDecimal redPacketPayAmount;
+
+    private BigDecimal capitalPayAmount;
+
+    private String status = "DRAFT";
+
+    private String merchantOrderNo;
+
+    private List<OrderLine> orderLines = new ArrayList<OrderLine>();
+
+    public Order(long payerUserId, long payeeUserId) {
+        this.payerUserId = payerUserId;
+        this.payeeUserId = payeeUserId;
+    }
+
+    public long getPayerUserId() {
+        return payerUserId;
+    }
+
+    public long getPayeeUserId() {
+        return payeeUserId;
+    }
+
+    public BigDecimal getTotalAmount() {
+
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        for (OrderLine orderLine : orderLines) {
+
+            totalAmount = totalAmount.add(orderLine.getTotalAmount());
+        }
+        return totalAmount;
+    }
+
+    public void addOrderLine(OrderLine orderLine) {
+        this.orderLines.add(orderLine);
+    }
+
+    public List<OrderLine> getOrderLines() {
+        return Collections.unmodifiableList(this.orderLines);
+    }
+
+    public void pay(BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+        this.redPacketPayAmount = redPacketPayAmount;
+        this.capitalPayAmount = capitalPayAmount;
+        this.status = "PAYING";
+    }
+
+    public BigDecimal getRedPacketPayAmount() {
+        return redPacketPayAmount;
+    }
+
+    public BigDecimal getCapitalPayAmount() {
+        return capitalPayAmount;
+    }
+
+    public String getMerchantOrderNo() {
+        return merchantOrderNo;
+    }
+
+    public void setMerchantOrderNo(String merchantOrderNo) {
+        this.merchantOrderNo = merchantOrderNo;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void confirm() {
+        this.status = "CONFIRMED";
+    }
+
+    public void cancelPayment() {
+        this.status = "PAY_FAILED";
+    }
+}
