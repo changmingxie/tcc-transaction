@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.sample.dubbo.order.domain.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,8 +9,9 @@ import java.util.List;
 /**
  * Created by changming.xie on 3/25/16.
  */
-public class Order {
+public class Order implements Serializable {
 
+    private static final long serialVersionUID = -5908730245224893590L;
     private long id;
 
     private long payerUserId;

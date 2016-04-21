@@ -29,6 +29,7 @@ public class PaymentServiceImpl {
 
     @Compensable(confirmMethod = "confirmMakePayment",cancelMethod = "cancelMakePayment")
     public void makePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+        System.out.println("order try make payment called");
 
         order.pay(redPacketPayAmount, capitalPayAmount);
         orderRepository.updateOrder(order);
@@ -39,12 +40,15 @@ public class PaymentServiceImpl {
 
     public void confirmMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
+        System.out.println("order confirm make payment called");
         order.confirm();
 
         orderRepository.updateOrder(order);
     }
 
     public void cancelMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+
+        System.out.println("order cancel make payment called");
 
         order.cancelPayment();
 
