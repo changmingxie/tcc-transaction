@@ -19,7 +19,9 @@ public class TransactionManager {
         this.transactionConfigurator = transactionConfigurator;
     }
 
-    private final Map<Thread, Transaction> transactionMap = new ConcurrentHashMap<Thread, Transaction>();
+//    private final Map<Thread, Transaction> transactionMap = new ConcurrentHashMap<Thread, Transaction>();
+
+    private ThreadLocal<Transaction> threadLocalTransaction = new ThreadLocal<Transaction>();
 
     public void begin() {
 
@@ -27,7 +29,8 @@ public class TransactionManager {
         TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
         transactionRepository.create(transaction);
 
-        this.transactionMap.put(Thread.currentThread(), transaction);
+//        this.transactionMap.put(Thread.currentThread(), transaction);
+        threadLocalTransaction.set(transaction);
     }
 
     public void propagationNewBegin(TransactionContext transactionContext) {
@@ -35,7 +38,8 @@ public class TransactionManager {
         Transaction transaction = new Transaction(transactionContext);
         transactionConfigurator.getTransactionRepository().create(transaction);
 
-        this.transactionMap.put(Thread.currentThread(), transaction);
+//        this.transactionMap.put(Thread.currentThread(), transaction);
+        threadLocalTransaction.set(transaction);
     }
 
     public void propagationExistBegin(TransactionContext transactionContext) throws NoExistedTransactionException {
@@ -44,7 +48,8 @@ public class TransactionManager {
 
         if (transaction != null) {
             transaction.changeStatus(TransactionStatus.valueOf(transactionContext.getStatus()));
-            this.transactionMap.put(Thread.currentThread(), transaction);
+//            this.transactionMap.put(Thread.currentThread(), transaction);
+            threadLocalTransaction.set(transaction);
         } else {
             throw new NoExistedTransactionException();
         }
@@ -73,7 +78,8 @@ public class TransactionManager {
     }
 
     public Transaction getCurrentTransaction() {
-        return transactionMap.get(Thread.currentThread());
+//        return transactionMap.get(Thread.currentThread());
+        return threadLocalTransaction.get();
     }
 
     public void rollback() {
