@@ -7,7 +7,7 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
@@ -22,6 +22,7 @@
         <java.src.version>1.6</java.src.version>
         <java.target.version>1.6</java.target.version>
         <project.encoding>UTF-8</project.encoding>
+
         <repo.internal.snapshots.url>http://repo1.maven.org/maven2
         </repo.internal.snapshots.url>
         <repo.internal.releases.url>http://repo1.maven.org/maven2

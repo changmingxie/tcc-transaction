@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class TransactionRecovery {
 
-    private int maxRetryCount = 3;
+    private int maxRetryCount = 30;
 
     static final Logger logger = Logger.getLogger(TransactionRecovery.class.getSimpleName());
 
@@ -37,6 +37,7 @@ public class TransactionRecovery {
             if (transaction.getRetriedCount() > maxRetryCount) {
 
                 transactionConfigurator.getTransactionRepository().removeErrorTransaction(transaction);
+                logger.error(String.format("recover failed with max retry count, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()));
                 continue;
             }
 
@@ -57,7 +58,7 @@ public class TransactionRecovery {
                 transactionConfigurator.getTransactionRepository().delete(transaction);
                 transactionConfigurator.getTransactionRepository().removeErrorTransaction(transaction);
             } catch (Throwable e) {
-                logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()), e);
+                logger.warn(String.format("recover failed, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()), e);
             }
         }
     }
