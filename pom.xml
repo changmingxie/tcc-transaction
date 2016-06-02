@@ -7,7 +7,7 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.13</version>
+    <version>1.1.0</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
@@ -23,10 +23,8 @@
         <java.target.version>1.6</java.target.version>
         <project.encoding>UTF-8</project.encoding>
 
-        <repo.internal.snapshots.url>http://repo1.maven.org/maven2
-        </repo.internal.snapshots.url>
-        <repo.internal.releases.url>http://repo1.maven.org/maven2
-        </repo.internal.releases.url>
+        <repo.internal.snapshots.url>http://repo1.maven.org/maven2</repo.internal.snapshots.url>
+        <repo.internal.releases.url>http://repo1.maven.org/maven2</repo.internal.releases.url>
         <repo.proxy.url>http://repo1.maven.org/maven2</repo.proxy.url>
 
         <repo.external.url>http://repo1.maven.org/maven2</repo.external.url>
@@ -46,6 +44,19 @@
                 <groupId>org.mengyun</groupId>
                 <artifactId>tcc-transaction-core</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>1.8.6</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>c3p0</groupId>
+                        <artifactId>c3p0</artifactId>
+                    </exclusion>
+                </exclusions>
+
             </dependency>
 
             <dependency>

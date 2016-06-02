@@ -122,6 +122,7 @@ public class ResourceCoordinatorInterceptor {
         transaction.enlistParticipant(participant);
 
         TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
+
         transactionRepository.update(transaction);
 
         return participant;

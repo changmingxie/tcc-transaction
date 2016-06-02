@@ -13,9 +13,8 @@
 
     <bean id="transactionRecovery" class="org.mengyun.tcctransaction.recover.TransactionRecovery">
         <property name="transactionConfigurator" ref="tccTransactionConfigurator"/>
-        <property name="maxRetryCount" value="3"/>
     </bean>
-    
+
     <bean id="compensableTransactionInterceptor"
           class="org.mengyun.tcctransaction.interceptor.CompensableTransactionInterceptor">
         <property name="transactionConfigurator" ref="tccTransactionConfigurator"/>
@@ -26,10 +25,22 @@
         <property name="transactionConfigurator" ref="tccTransactionConfigurator"/>
     </bean>
 
-    <bean id="tccCompensableAspect" class="org.mengyun.tcctransaction.spring.TccCompensableAspect"/>
+    <bean id="tccCompensableAspect" class="org.mengyun.tcctransaction.spring.TccCompensableAspect">
+        <property name="compensableTransactionInterceptor" ref="compensableTransactionInterceptor"/>
+    </bean>
 
-    <bean id="transactionContextAspect" class="org.mengyun.tcctransaction.spring.TccTransactionContextAspect"/>
+    <bean id="transactionContextAspect" class="org.mengyun.tcctransaction.spring.TccTransactionContextAspect">
+        <property name="resourceCoordinatorInterceptor" ref="resourceCoordinatorInterceptor"/>
+    </bean>
 
     <task:annotation-driven/>
+
+    <bean id="recoverScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"/>
+
+    <bean id="recoverScheduledJob" class="org.mengyun.tcctransaction.spring.recover.RecoverScheduledJob" init-method="init">
+        <property name="transactionConfigurator" ref="tccTransactionConfigurator"/>
+        <property name="transactionRecovery" ref="transactionRecovery"/>
+        <property name="scheduler" ref="recoverScheduler"/>
+    </bean>
 
 </beans>

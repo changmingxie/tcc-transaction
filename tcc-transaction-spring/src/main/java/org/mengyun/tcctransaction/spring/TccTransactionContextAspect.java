@@ -16,7 +16,6 @@ public class TccTransactionContextAspect implements Ordered {
 
     private int order = Ordered.HIGHEST_PRECEDENCE + 1;
 
-    @Autowired
     private ResourceCoordinatorInterceptor resourceCoordinatorInterceptor;
 
     @Pointcut("execution(public * *(org.mengyun.tcctransaction.api.TransactionContext,..))||@annotation(org.mengyun.tcctransaction.Compensable)")
@@ -37,5 +36,9 @@ public class TccTransactionContextAspect implements Ordered {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public void setResourceCoordinatorInterceptor(ResourceCoordinatorInterceptor resourceCoordinatorInterceptor) {
+        this.resourceCoordinatorInterceptor = resourceCoordinatorInterceptor;
     }
 }

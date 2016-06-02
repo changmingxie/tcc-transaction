@@ -161,7 +161,7 @@ public class TransferServiceTest extends AbstractTestCase {
 
         try {
             //waiting the auto recovery schedule
-            Thread.sleep(1000 * 60L);
+            Thread.sleep(1000 * 30L);
         } catch (InterruptedException e) {
             throw new Error(e);
         }
@@ -183,7 +183,7 @@ public class TransferServiceTest extends AbstractTestCase {
             transferService.transferWithMultipleConsumer(1, 2, 70);
 
         } catch (Throwable e) {
-
+            System.out.println(e);
         }
 
         System.out.println("begin recovery");
@@ -197,7 +197,7 @@ public class TransferServiceTest extends AbstractTestCase {
 
         try {
             //waiting the auto recovery schedule
-            Thread.sleep(1000 * 60L);
+            Thread.sleep(1000 * 30L);
         } catch (InterruptedException e) {
             throw new Error(e);
         }

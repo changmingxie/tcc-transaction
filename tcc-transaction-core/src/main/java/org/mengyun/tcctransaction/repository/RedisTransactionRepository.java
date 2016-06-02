@@ -1,17 +1,18 @@
 package org.mengyun.tcctransaction.repository;
 
 import org.mengyun.tcctransaction.Transaction;
+import org.mengyun.tcctransaction.common.TransactionType;
+import org.mengyun.tcctransaction.utils.ByteUtils;
 import org.mengyun.tcctransaction.utils.SerializationUtils;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import javax.transaction.xa.Xid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by changming.xie on 2/24/16.
- *
+ * <p/>
  * As the storage of transaction need safely durable,make sure the redis server is set as AOF mode and always fsync.
  * set below directives in your redis.conf
  * appendonly yes
@@ -19,15 +20,7 @@ import java.util.Set;
  */
 public class RedisTransactionRepository extends CachableTransactionRepository {
 
-    private String host = "localhost";
-
-    private int port = 6379;
-
-    private int connectionTimeout = 2000;
-
-    private int soTimeout = 2000;
-
-    private Jedis jedis;
+    private JedisPool jedisPool;
 
     private String keyPrefix = "tcc_";
 
@@ -35,44 +28,20 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
         this.keyPrefix = keyPrefix;
     }
 
-    public void setJedis(Jedis jedis) {
-        this.jedis = jedis;
-    }
+    @Override
+    protected int doCreate(final Transaction transaction) {
 
-    public void setHost(String host) {
-        this.host = host;
-    }
+        try {
+            final byte[] key = getRedisKey(transaction.getXid());
+            Long statusCode = execute(new JedisCallback<Long>() {
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void setConnectionTimeout(int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    public void setSoTimeout(int soTimeout) {
-        this.soTimeout = soTimeout;
-    }
-
-    protected Jedis getJedis() {
-
-        if (jedis == null) {
-            synchronized (RedisTransactionRepository.class) {
-                if (jedis == null) {
-                    jedis = new Jedis(host, port, connectionTimeout, soTimeout);
+                @Override
+                public Long doInJedis(Jedis jedis) {
+                    return jedis.hsetnx(key, ByteUtils.longToBytes(transaction.getVersion()), SerializationUtils.serialize(transaction));
                 }
-            }
-        }
-        return jedis;
-    }
+            });
 
-    @Override
-    protected void doCreate(Transaction transaction) {
-
-        try {
-            byte[] key = getRedisKey(transaction.getXid());
-            getJedis().set(key, SerializationUtils.serialize(transaction));
+            return statusCode.intValue();
         } catch (Exception e) {
             throw new TransactionIOException(e);
         }
@@ -80,20 +49,36 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
 
     @Override
-    protected void doUpdate(Transaction transaction) {
+    protected int doUpdate(final Transaction transaction) {
+
         try {
-            byte[] key = getRedisKey(transaction.getXid());
-            getJedis().set(key, SerializationUtils.serialize(transaction));
+            final byte[] key = getRedisKey(transaction.getXid());
+            Long statusCode = execute(new JedisCallback<Long>() {
+                @Override
+                public Long doInJedis(Jedis jedis) {
+                    transaction.updateTime();
+                    transaction.updateVersion();
+                    return jedis.hsetnx(key, ByteUtils.longToBytes(transaction.getVersion()), SerializationUtils.serialize(transaction));
+                }
+            });
+
+            return statusCode.intValue();
         } catch (Exception e) {
             throw new TransactionIOException(e);
         }
     }
 
     @Override
-    protected void doDelete(Transaction transaction) {
+    protected int doDelete(Transaction transaction) {
         try {
-            byte[] key = getRedisKey(transaction.getXid());
-            getJedis().del(key);
+            final byte[] key = getRedisKey(transaction.getXid());
+            Long result = execute(new JedisCallback<Long>() {
+                @Override
+                public Long doInJedis(Jedis jedis) {
+                    return jedis.del(key);
+                }
+            });
+            return result.intValue();
         } catch (Exception e) {
             throw new TransactionIOException(e);
         }
@@ -103,8 +88,13 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
     protected Transaction doFindOne(Xid xid) {
 
         try {
-            byte[] key = getRedisKey(xid);
-            byte[] content = getJedis().get(key);
+            final byte[] key = getRedisKey(xid);
+            byte[] content = execute(new JedisCallback<byte[]>() {
+                @Override
+                public byte[] doInJedis(Jedis jedis) {
+                    return getKeyValue(key);
+                }
+            });
 
             if (content != null) {
                 return (Transaction) SerializationUtils.deserialize(content);
@@ -116,14 +106,36 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
     }
 
     @Override
+    protected List<Transaction> doFindAllUnmodifiedSince(Date date) {
+
+        List<Transaction> allTransactions = doFindAll();
+
+        List<Transaction> allUnmodifiedSince = new ArrayList<Transaction>();
+
+        for (Transaction transaction : allTransactions) {
+            if (transaction.getTransactionType().equals(TransactionType.ROOT)
+                    && transaction.getLastUpdateTime().compareTo(date) < 0) {
+                allUnmodifiedSince.add(transaction);
+            }
+        }
+
+        return allUnmodifiedSince;
+    }
+
+    //    @Override
     protected List<Transaction> doFindAll() {
 
         try {
             List<Transaction> transactions = new ArrayList<Transaction>();
-            Set<byte[]> keys = getJedis().keys((keyPrefix + "*").getBytes());
+            Set<byte[]> keys = execute(new JedisCallback<Set<byte[]>>() {
+                @Override
+                public Set<byte[]> doInJedis(Jedis jedis) {
+                    return jedis.keys((keyPrefix + "*").getBytes());
+                }
+            });
 
-            for (byte[] key : keys) {
-                byte[] content = getJedis().get(key);
+            for (final byte[] key : keys) {
+                byte[] content = getKeyValue(key);
 
                 if (content != null) {
                     transactions.add((Transaction) SerializationUtils.deserialize(content));
@@ -136,6 +148,30 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
         }
     }
 
+    private byte[] getKeyValue(final byte[] key) {
+        return execute(new JedisCallback<byte[]>() {
+                           @Override
+                           public byte[] doInJedis(Jedis jedis) {
+
+                               Map<byte[], byte[]> fieldValueMap = jedis.hgetAll(key);
+
+                               List<Map.Entry<byte[], byte[]>> entries = new ArrayList<Map.Entry<byte[], byte[]>>(fieldValueMap.entrySet());
+                               Collections.sort(entries, new Comparator<Map.Entry<byte[], byte[]>>() {
+                                   @Override
+                                   public int compare(Map.Entry<byte[], byte[]> entry1, Map.Entry<byte[], byte[]> entry2) {
+                                       return (int) (ByteUtils.bytesToLong(entry1.getKey()) - ByteUtils.bytesToLong(entry2.getKey()));
+                                   }
+                               });
+
+
+                               byte[] content = entries.get(entries.size() - 1).getValue();
+
+                               return content;
+                           }
+                       }
+        );
+    }
+
     private byte[] getRedisKey(Xid xid) {
         byte[] prefix = keyPrefix.getBytes();
         byte[] globalTransactionId = xid.getGlobalTransactionId();
@@ -146,5 +182,30 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
         System.arraycopy(globalTransactionId, 0, key, prefix.length, globalTransactionId.length);
         System.arraycopy(branchQualifier, 0, key, prefix.length + globalTransactionId.length, branchQualifier.length);
         return key;
+    }
+
+    private <T> T execute(JedisCallback<T> callback) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            return callback.doInJedis(jedis);
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    public JedisPool getJedisPool() {
+        return jedisPool;
+    }
+
+    public void setJedisPool(JedisPool jedisPool) {
+        this.jedisPool = jedisPool;
+    }
+
+    interface JedisCallback<T> {
+
+        public T doInJedis(Jedis jedis);
     }
 }

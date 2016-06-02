@@ -8,7 +8,8 @@ import org.mengyun.tcctransaction.TransactionRepository;
 import org.mengyun.tcctransaction.api.TransactionXid;
 
 import javax.transaction.xa.Xid;
-import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -17,30 +18,37 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class CachableTransactionRepository implements TransactionRepository {
 
-    private int expireDurationInSeconds = 300;
-
-    private int errorExpireDurationInSeconds = 300;
+    private int expireDuration = 300;
 
     private Cache<Xid, Transaction> transactionXidCompensableTransactionCache;
 
-    private Cache<Xid, Transaction> errorTransactionXidCompensableTransactionCache;
-
     @Override
-    public void create(Transaction transaction) {
-        doCreate(transaction);
-        putToCache(transaction);
+    public int create(Transaction transaction) {
+        int result = doCreate(transaction);
+        if (result > 0) {
+            putToCache(transaction);
+        }
+        return result;
     }
 
     @Override
-    public void update(Transaction transaction) {
-        doUpdate(transaction);
-        putToCache(transaction);
+    public int update(Transaction transaction) {
+        int result = doUpdate(transaction);
+        if (result > 0) {
+            putToCache(transaction);
+        } else {
+            throw new ConcurrentModificationException();
+        }
+        return result;
     }
 
     @Override
-    public void delete(Transaction transaction) {
-        doDelete(transaction);
-        removeFromCache(transaction);
+    public int delete(Transaction transaction) {
+        int result = doDelete(transaction);
+        if (result > 0) {
+            removeFromCache(transaction);
+        }
+        return result;
     }
 
     @Override
@@ -59,34 +67,35 @@ public abstract class CachableTransactionRepository implements TransactionReposi
     }
 
     @Override
-    public List<Transaction> findAll() {
+    public List<Transaction> findAllUnmodifiedSince(Date date) {
 
-        List<Transaction> transactions = doFindAll();
+        List<Transaction> transactions = doFindAllUnmodifiedSince(date);
+
         for (Transaction transaction : transactions) {
             putToCache(transaction);
         }
 
         return transactions;
     }
-
-    @Override
-    public void addErrorTransaction(Transaction transaction) {
-        putToErrorCache(transaction);
-    }
-
-    @Override
-    public void removeErrorTransaction(Transaction transaction) {
-        removeFromErrorCache(transaction);
-    }
-
-    @Override
-    public Collection<Transaction> findAllErrorTransactions() {
-        return findAllFromErrorCache();
-    }
+//
+//    @Override
+//    public void addErrorTransaction(Transaction transaction) {
+//        putToErrorCache(transaction);
+//    }
+//
+//    @Override
+//    public void removeErrorTransaction(Transaction transaction) {
+//        removeFromErrorCache(transaction);
+//    }
+//
+//    @Override
+//    public Collection<Transaction> findAllErrorTransactions() {
+//        return findAllFromErrorCache();
+//    }
 
     public CachableTransactionRepository() {
-        transactionXidCompensableTransactionCache = CacheBuilder.newBuilder().expireAfterAccess(expireDurationInSeconds, TimeUnit.SECONDS).maximumSize(1000).build();
-        errorTransactionXidCompensableTransactionCache = CacheBuilder.newBuilder().expireAfterAccess(errorExpireDurationInSeconds, TimeUnit.SECONDS).maximumSize(1000).build();
+        transactionXidCompensableTransactionCache = CacheBuilder.newBuilder().expireAfterAccess(expireDuration, TimeUnit.SECONDS).maximumSize(1000).build();
+//        errorTransactionXidCompensableTransactionCache = CacheBuilder.newBuilder().expireAfterAccess(expireDuration, TimeUnit.SECONDS).maximumSize(1000).build();
     }
 
     protected void putToCache(Transaction transaction) {
@@ -100,34 +109,30 @@ public abstract class CachableTransactionRepository implements TransactionReposi
     protected Transaction findFromCache(TransactionXid transactionXid) {
         return transactionXidCompensableTransactionCache.getIfPresent(transactionXid);
     }
+//
+//    protected void putToErrorCache(Transaction transaction) {
+//        errorTransactionXidCompensableTransactionCache.put(transaction.getXid(), transaction);
+//    }
+//
+//    protected void removeFromErrorCache(Transaction transaction) {
+//        errorTransactionXidCompensableTransactionCache.invalidate(transaction.getXid());
+//    }
+//
+//    protected Collection<Transaction> findAllFromErrorCache() {
+//        return errorTransactionXidCompensableTransactionCache.asMap().values();
+//    }
 
-    protected void putToErrorCache(Transaction transaction) {
-        errorTransactionXidCompensableTransactionCache.put(transaction.getXid(), transaction);
+    public final void setExpireDuration(int durationInSeconds) {
+        this.expireDuration = durationInSeconds;
     }
 
-    protected void removeFromErrorCache(Transaction transaction) {
-        errorTransactionXidCompensableTransactionCache.invalidate(transaction.getXid());
-    }
+    protected abstract int doCreate(Transaction transaction);
 
-    protected Collection<Transaction> findAllFromErrorCache() {
-        return errorTransactionXidCompensableTransactionCache.asMap().values();
-    }
+    protected abstract int doUpdate(Transaction transaction);
 
-    public final void setExpireDurationInSeconds(int durationInSeconds) {
-        this.expireDurationInSeconds = durationInSeconds;
-    }
-
-    public final void setErrorExpireDurationInSeconds(int durationInSeconds) {
-        this.errorExpireDurationInSeconds = durationInSeconds;
-    }
-
-    protected abstract void doCreate(Transaction transaction);
-
-    protected abstract void doUpdate(Transaction transaction);
-
-    protected abstract void doDelete(Transaction transaction);
+    protected abstract int doDelete(Transaction transaction);
 
     protected abstract Transaction doFindOne(Xid xid);
 
-    protected abstract List<Transaction> doFindAll();
+    protected abstract List<Transaction> doFindAllUnmodifiedSince(Date date);
 }

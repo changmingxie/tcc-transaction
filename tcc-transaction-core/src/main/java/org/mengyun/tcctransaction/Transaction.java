@@ -8,10 +8,7 @@ import org.mengyun.tcctransaction.common.TransactionType;
 
 import javax.transaction.xa.Xid;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,7 +26,11 @@ public class Transaction implements Serializable {
 
     private volatile int retriedCount = 0;
 
-    private int version = 0;
+    private Date createTime = new Date();
+
+    private Date lastUpdateTime = new Date();
+
+    private long version = 1;
 
     private List<Participant> participants = new ArrayList<Participant>();
 
@@ -103,12 +104,25 @@ public class Transaction implements Serializable {
         return attachments;
     }
 
-    public int getVersion() {
+    public long getVersion() {
         return version;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
+    public void updateVersion() {
+        this.version++;
     }
+
+    public Date getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void updateTime() {
+        this.lastUpdateTime = new Date();
+    }
+
 
 }

@@ -4,11 +4,11 @@ import org.apache.log4j.Logger;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionRepository;
 import org.mengyun.tcctransaction.api.TransactionStatus;
-import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,28 +16,51 @@ import java.util.List;
  */
 public class TransactionRecovery {
 
-    private int maxRetryCount = 30;
-
     static final Logger logger = Logger.getLogger(TransactionRecovery.class.getSimpleName());
 
     private TransactionConfigurator transactionConfigurator;
 
-    private volatile boolean initialized = false;
+    public void setTransactionConfigurator(TransactionConfigurator transactionConfigurator) {
+        this.transactionConfigurator = transactionConfigurator;
+    }
 
     public void startRecover() {
 
-        this.fireInitializationIfNecessary();
+        List<Transaction> transactions = loadErrorTransactions();
 
-        Collection<Transaction> transactions = transactionConfigurator.getTransactionRepository().findAllErrorTransactions();
+        recoverErrorTransactions(transactions);
+    }
 
-        List<Transaction> rollbackTransactions = new ArrayList<Transaction>(transactions);
+    private List<Transaction> loadErrorTransactions() {
 
-        for (Transaction transaction : rollbackTransactions) {
+        TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
 
-            if (transaction.getRetriedCount() > maxRetryCount) {
+        long currentTimeInMillis = Calendar.getInstance().getTimeInMillis();
 
-                transactionConfigurator.getTransactionRepository().removeErrorTransaction(transaction);
-                logger.error(String.format("recover failed with max retry count, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()));
+        List<Transaction> transactions = transactionRepository.findAllUnmodifiedSince(new Date(currentTimeInMillis - transactionConfigurator.getRecoverConfig().getRecoverDuration() * 1000));
+
+        List<Transaction> recoverTransactions = new ArrayList<Transaction>();
+
+        for (Transaction transaction : transactions) {
+
+            int result = transactionRepository.update(transaction);
+
+            if (result > 0) {
+                recoverTransactions.add(transaction);
+            }
+        }
+
+        return transactions;
+    }
+
+    private void recoverErrorTransactions(List<Transaction> transactions) {
+
+
+        for (Transaction transaction : transactions) {
+
+            if (transaction.getRetriedCount() > transactionConfigurator.getRecoverConfig().getMaxRetryCount()) {
+
+                logger.error(String.format("recover failed with max retry count,will not try again. txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()));
                 continue;
             }
 
@@ -56,41 +79,10 @@ public class TransactionRecovery {
                 }
 
                 transactionConfigurator.getTransactionRepository().delete(transaction);
-                transactionConfigurator.getTransactionRepository().removeErrorTransaction(transaction);
             } catch (Throwable e) {
                 logger.warn(String.format("recover failed, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()), e);
             }
         }
     }
 
-    public void setTransactionConfigurator(TransactionConfigurator transactionConfigurator) {
-        this.transactionConfigurator = transactionConfigurator;
-    }
-
-    private void fireInitializationIfNecessary() {
-        if (this.initialized == false) {
-            this.processStartupRecover();
-            this.initialized = true;
-        }
-    }
-
-    private synchronized void processStartupRecover() {
-
-        TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
-
-        List<Transaction> transactions = transactionRepository.findAll();
-
-        for (int i = 0; i < transactions.size(); i++) {
-
-            Transaction transaction = transactions.get(i);
-
-            if (transaction.getTransactionType().equals(TransactionType.ROOT)) {
-                transactionConfigurator.getTransactionRepository().addErrorTransaction(transaction);
-            }
-        }
-    }
-
-    public void setMaxRetryCount(int maxRetryCount) {
-        this.maxRetryCount = maxRetryCount;
-    }
 }

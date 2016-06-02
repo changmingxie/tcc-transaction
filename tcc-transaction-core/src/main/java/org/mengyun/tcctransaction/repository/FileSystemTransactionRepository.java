@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.repository;
 
 import org.mengyun.tcctransaction.Transaction;
+import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.utils.SerializationUtils;
 
 import javax.transaction.xa.Xid;
@@ -11,10 +12,12 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by changming.xie on 2/24/16.
+ * this repository is suitable for single node, not for cluster nodes
  */
 public class FileSystemTransactionRepository extends CachableTransactionRepository {
 
@@ -27,24 +30,30 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
     }
 
     @Override
-    protected void doCreate(Transaction transaction) {
-
+    protected int doCreate(Transaction transaction) {
         writeFile(transaction);
+        return 1;
     }
 
     @Override
-    protected void doUpdate(Transaction transaction) {
+    protected int doUpdate(Transaction transaction) {
+
+        transaction.updateVersion();
+        transaction.updateTime();
+
         writeFile(transaction);
+        return 1;
     }
 
     @Override
-    protected void doDelete(Transaction transaction) {
+    protected int doDelete(Transaction transaction) {
 
         String fullFileName = getFullFileName(transaction.getXid());
         File file = new File(fullFileName);
         if (file.exists()) {
             file.delete();
         }
+        return 1;
     }
 
     @Override
@@ -61,6 +70,23 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
     }
 
     @Override
+    protected List<Transaction> doFindAllUnmodifiedSince(Date date) {
+
+        List<Transaction> allTransactions = doFindAll();
+
+        List<Transaction> allUnmodifiedSince = new ArrayList<Transaction>();
+
+        for (Transaction transaction : allTransactions) {
+            if (transaction.getTransactionType().equals(TransactionType.ROOT)
+                    && transaction.getLastUpdateTime().compareTo(date) < 0) {
+                allUnmodifiedSince.add(transaction);
+            }
+        }
+
+        return allUnmodifiedSince;
+    }
+
+
     protected List<Transaction> doFindAll() {
 
         List<Transaction> transactions = new ArrayList<Transaction>();

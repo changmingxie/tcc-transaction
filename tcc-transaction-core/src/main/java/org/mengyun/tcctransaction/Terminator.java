@@ -23,37 +23,32 @@ public class Terminator implements Serializable {
 
     public void commit() {
 
-        try {
-            invoke(confirmInvocationContext);
-        } catch (Throwable throwable) {
-            throw new Error(throwable);
-        }
+        invoke(confirmInvocationContext);
     }
 
     public void rollback() {
-        try {
-            invoke(cancelInvocationContext);
-        } catch (Throwable throwable) {
-            throw new Error(throwable);
-        }
+        invoke(cancelInvocationContext);
     }
 
     private Object invoke(InvocationContext invocationContext) {
 
         if (StringUtils.isNotEmpty(invocationContext.getMethodName())) {
-            try {
 
+            try {
                 Object target = BeanFactoryAdapter.getBean(invocationContext.getTargetClass());
 
                 if (target == null && !invocationContext.getTargetClass().isInterface()) {
                     target = invocationContext.getTargetClass().newInstance();
                 }
 
-                Method method = target.getClass().getMethod(invocationContext.getMethodName(), invocationContext.getParameterTypes());
+                Method method = null;
+
+                method = target.getClass().getMethod(invocationContext.getMethodName(), invocationContext.getParameterTypes());
+
                 return method.invoke(target, invocationContext.getArgs());
 
-            } catch (Throwable e) {
-                throw new Error(e);
+            } catch (Exception e) {
+                throw new SystemException(e);
             }
         }
         return null;

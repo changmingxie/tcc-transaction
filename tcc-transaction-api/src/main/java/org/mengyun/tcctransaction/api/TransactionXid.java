@@ -3,6 +3,7 @@ package org.mengyun.tcctransaction.api;
 
 import javax.transaction.xa.Xid;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -19,13 +20,13 @@ public class TransactionXid implements Xid, Serializable {
     private byte[] branchQualifier;
 
     public TransactionXid() {
-        globalTransactionId = UUID.randomUUID().toString().getBytes();
-        branchQualifier = UUID.randomUUID().toString().getBytes();
+        globalTransactionId = uuidToByteArray(UUID.randomUUID());
+        branchQualifier = uuidToByteArray(UUID.randomUUID());
     }
 
     public TransactionXid(byte[] globalTransactionId) {
         this.globalTransactionId = globalTransactionId;
-        branchQualifier = UUID.randomUUID().toString().getBytes();
+        branchQualifier = uuidToByteArray(UUID.randomUUID());
     }
 
     public TransactionXid(byte[] globalTransactionId, byte[] branchQualifier) {
@@ -50,6 +51,7 @@ public class TransactionXid implements Xid, Serializable {
 
     @Override
     public String toString() {
+        
         return UUID.nameUUIDFromBytes(globalTransactionId).toString() + "|" + UUID.nameUUIDFromBytes(branchQualifier).toString();
     }
 
@@ -92,6 +94,20 @@ public class TransactionXid implements Xid, Serializable {
             return false;
         }
         return true;
+    }
+
+    public static byte[] uuidToByteArray(UUID uuid) {
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        return bb.array();
+    }
+
+    public static UUID byteArrayToUUID(byte[] bytes) {
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        long firstLong = bb.getLong();
+        long secondLong = bb.getLong();
+        return new UUID(firstLong, secondLong);
     }
 }
 

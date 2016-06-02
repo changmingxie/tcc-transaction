@@ -23,12 +23,13 @@ public class OrderController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public void placeOrder() {
+    public String placeOrder() {
 
         PlaceOrderRequest request = buildRequest();
 
         placeOrderService.placeOrder(request.getPayerUserId(), request.getShopId(),
                 request.getProductQuantities(), request.getRedPacketPayAmount());
+        return "success";
     }
 
     private PlaceOrderRequest buildRequest() {

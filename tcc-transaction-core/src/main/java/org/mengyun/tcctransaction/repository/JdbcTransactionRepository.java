@@ -27,7 +27,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         return dataSource;
     }
 
-    protected void doCreate(Transaction transaction) {
+    protected int doCreate(Transaction transaction) {
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -37,10 +37,13 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
             StringBuilder builder = new StringBuilder();
             builder.append("INSERT INTO TCC_TRANSACTION " +
-                    "(GLOBAL_TX_ID,BRANCH_QUALIFIER,TRANSACTION_TYPE,CONTENT,STATUS,RETRIED_COUNT)" +
-                    "VALUES(?,?,?,?,?,0)");
+                    "(GLOBAL_TX_ID,BRANCH_QUALIFIER,TRANSACTION_TYPE,CONTENT,STATUS,RETRIED_COUNT,CREATE_TIME,LAST_UPDATE_TIME,VERSION)" +
+                    "VALUES(?,?,?,?,?,?,?,?,?)");
 
             stmt = connection.prepareStatement(builder.toString());
+
+//            stmt.setString(1, transaction.getXid().getGlobalTransactionId().toString());
+//            stmt.setString(2, transaction.getXid().getBranchQualifier().toString());
 
             stmt.setBytes(1, transaction.getXid().getGlobalTransactionId());
             stmt.setBytes(2, transaction.getXid().getBranchQualifier());
@@ -48,8 +51,12 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
             stmt.setInt(3, transaction.getTransactionType().getId());
             stmt.setBytes(4, SerializationUtils.serialize(transaction));
             stmt.setInt(5, transaction.getStatus().getId());
+            stmt.setInt(6, transaction.getRetriedCount());
+            stmt.setTimestamp(7, new java.sql.Timestamp(transaction.getCreateTime().getTime()));
+            stmt.setTimestamp(8, new java.sql.Timestamp(transaction.getLastUpdateTime().getTime()));
+            stmt.setLong(9, transaction.getVersion());
 
-            stmt.executeUpdate();
+            return stmt.executeUpdate();
 
         } catch (SQLException e) {
             throw new TransactionIOException(e);
@@ -59,26 +66,35 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         }
     }
 
-    protected void doUpdate(Transaction transaction) {
+    protected int doUpdate(Transaction transaction) {
         Connection connection = null;
         PreparedStatement stmt = null;
+
+
+        transaction.updateTime();
+        transaction.updateVersion();
 
         try {
             connection = this.getConnection();
 
             StringBuilder builder = new StringBuilder();
             builder.append("UPDATE TCC_TRANSACTION SET " +
-                    "CONTENT = ?,STATUS = ?,RETRIED_COUNT = ? WHERE GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ?");
+                    "CONTENT = ?,STATUS = ?,LAST_UPDATE_TIME = ?, RETRIED_COUNT = ?,VERSION = VERSION+1 WHERE GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ? AND VERSION = ?");
 
             stmt = connection.prepareStatement(builder.toString());
 
             stmt.setBytes(1, SerializationUtils.serialize(transaction));
             stmt.setInt(2, transaction.getStatus().getId());
-            stmt.setInt(3, transaction.getRetriedCount());
-            stmt.setBytes(4, transaction.getXid().getGlobalTransactionId());
-            stmt.setBytes(5, transaction.getXid().getBranchQualifier());
+            stmt.setTimestamp(3, new Timestamp(transaction.getLastUpdateTime().getTime()));
 
-            stmt.executeUpdate();
+            stmt.setInt(4, transaction.getRetriedCount());
+            stmt.setBytes(5, transaction.getXid().getGlobalTransactionId());
+            stmt.setBytes(6, transaction.getXid().getBranchQualifier());
+            stmt.setLong(7, transaction.getVersion() - 1);
+
+            int result = stmt.executeUpdate();
+
+            return result;
 
         } catch (Throwable e) {
             throw new TransactionIOException(e);
@@ -88,7 +104,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         }
     }
 
-    protected void doDelete(Transaction transaction) {
+    protected int doDelete(Transaction transaction) {
         Connection connection = null;
         PreparedStatement stmt = null;
 
@@ -104,7 +120,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
             stmt.setBytes(1, transaction.getXid().getGlobalTransactionId());
             stmt.setBytes(2, transaction.getXid().getBranchQualifier());
 
-            stmt.executeUpdate();
+            return stmt.executeUpdate();
 
         } catch (SQLException e) {
             throw new TransactionIOException(e);
@@ -125,10 +141,40 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
     }
 
     @Override
-    protected List<Transaction> doFindAll() {
-        return doFind(null);
-    }
+    protected List<Transaction> doFindAllUnmodifiedSince(java.util.Date date) {
 
+        List<Transaction> transactions = new ArrayList<Transaction>();
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+
+        try {
+            connection = this.getConnection();
+
+            StringBuilder builder = new StringBuilder();
+            builder.append("SELECT GLOBAL_TX_ID, BRANCH_QUALIFIER, CONTENT,STATUS,TRANSACTION_TYPE,CREATE_TIME,LAST_UPDATE_TIME,RETRIED_COUNT,VERSION" +
+                    "  FROM TCC_TRANSACTION WHERE LAST_UPDATE_TIME < ? AND TRANSACTION_TYPE = 1");
+
+            stmt = connection.prepareStatement(builder.toString());
+
+            stmt.setTimestamp(1, new Timestamp(date.getTime()));
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            while (resultSet.next()) {
+                byte[] transactionBytes = resultSet.getBytes(3);
+                Transaction transaction = (Transaction) SerializationUtils.deserialize(transactionBytes);
+                transactions.add(transaction);
+            }
+        } catch (Throwable e) {
+            throw new TransactionIOException(e);
+        } finally {
+            closeStatement(stmt);
+            this.releaseConnection(connection);
+        }
+
+        return transactions;
+    }
 
     protected List<Transaction> doFind(List<Xid> xids) {
 
@@ -141,7 +187,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
             connection = this.getConnection();
 
             StringBuilder builder = new StringBuilder();
-            builder.append("SELECT GLOBAL_TX_ID, BRANCH_QUALIFIER, CONTENT,STATUS,TRANSACTION_TYPE,RETRIED_COUNT" +
+            builder.append("SELECT GLOBAL_TX_ID, BRANCH_QUALIFIER, CONTENT,STATUS,TRANSACTION_TYPE,CREATE_TIME,LAST_UPDATE_TIME,RETRIED_COUNT,VERSION" +
                     "  FROM TCC_TRANSACTION ");
 
             if (!CollectionUtils.isEmpty(xids)) {
@@ -167,16 +213,8 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
             while (resultSet.next()) {
 
-                byte[] globalTxid = resultSet.getBytes(1);
-                byte[] branchQualifier = resultSet.getBytes(2);
                 byte[] transactionBytes = resultSet.getBytes(3);
-                int status = resultSet.getInt(4);
-                int transactionType = resultSet.getInt(5);
-                int retriedCount = resultSet.getInt(6);
-
                 Transaction transaction = (Transaction) SerializationUtils.deserialize(transactionBytes);
-                transaction.resetRetriedCount(retriedCount);
-
                 transactions.add(transaction);
             }
         } catch (Throwable e) {
