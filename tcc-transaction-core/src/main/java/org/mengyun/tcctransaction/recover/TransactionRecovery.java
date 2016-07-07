@@ -50,7 +50,7 @@ public class TransactionRecovery {
             }
         }
 
-        return transactions;
+        return recoverTransactions;
     }
 
     private void recoverErrorTransactions(List<Transaction> transactions) {
