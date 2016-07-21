@@ -3,13 +3,12 @@ package org.mengyun.tcctransaction.interceptor;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.mengyun.tcctransaction.NoExistedTransactionException;
+import org.mengyun.tcctransaction.OptimisticLockException;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.common.MethodType;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
 import org.mengyun.tcctransaction.utils.CompensableMethodUtils;
-
-import java.util.ConcurrentModificationException;
 
 /**
  * Created by changmingxie on 10/30/15.
@@ -51,17 +50,11 @@ public class CompensableTransactionInterceptor {
 
         try {
             pjp.proceed();
-        } catch (ConcurrentModificationException e) {
+        } catch (OptimisticLockException e) {
             throw e; //do not rollback, waiting for recovery job
         } catch (Throwable tryingException) {
             logger.warn("compensable transaction trying failed.", tryingException);
-            try {
-                transactionConfigurator.getTransactionManager().rollback();
-            } catch (Throwable rollbackException) {
-                logger.error("compensable transaction rollback failed.", rollbackException);
-                throw rollbackException;
-            }
-
+            transactionConfigurator.getTransactionManager().rollback();
             throw tryingException;
         }
 

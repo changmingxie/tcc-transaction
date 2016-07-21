@@ -1,16 +1,18 @@
 package org.mengyun.tcctransaction;
 
+import org.apache.log4j.Logger;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
 
-import java.util.ConcurrentModificationException;
-
 /**
  * Created by changmingxie on 10/26/15.
  */
 public class TransactionManager {
+
+
+    static final Logger logger = Logger.getLogger(TransactionManager.class.getSimpleName());
 
     private TransactionConfigurator transactionConfigurator;
 
@@ -56,8 +58,13 @@ public class TransactionManager {
 
         transactionConfigurator.getTransactionRepository().update(transaction);
 
-        transaction.commit();
-        transactionConfigurator.getTransactionRepository().delete(transaction);
+        try {
+            transaction.commit();
+            transactionConfigurator.getTransactionRepository().delete(transaction);
+        } catch (Throwable commitException) {
+            logger.error("compensable transaction confirm failed.", commitException);
+            throw new ConfirmingException(commitException);
+        }
     }
 
     public Transaction getCurrentTransaction() {
@@ -70,10 +77,13 @@ public class TransactionManager {
         transaction.changeStatus(TransactionStatus.CANCELLING);
 
         transactionConfigurator.getTransactionRepository().update(transaction);
-
-
-        transaction.rollback();
-        transactionConfigurator.getTransactionRepository().delete(transaction);
-
+        
+        try {
+            transaction.rollback();
+            transactionConfigurator.getTransactionRepository().delete(transaction);
+        } catch (Throwable rollbackException) {
+            logger.error("compensable transaction rollback failed.", rollbackException);
+            throw new CancellingException(rollbackException);
+        }
     }
 }

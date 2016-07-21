@@ -1,4 +1,5 @@
 
+
 Try: 尝试执行业务
 
     完成所有业务检查（一致性）
@@ -24,7 +25,7 @@ Cancel: 取消执行业务
 
 示例说明:
 
-tcc-transaction-tutorial-sample示例演示了在使用dubbo作为rpc调用情况下如何使用tcc-transaction。
+tcc-transaction-tutorial-sample示例演示了在使用dubbo作为rpc调用情况下如何使用tcc-transaction(tcc-transaction不和底层使用的rpc框架耦合，也就是使用doubbo,thrift,web service,http等都可)。
 
 本示例演示在下完订单后,使用红包帐户和资金帐户来付款，红包帐户服务和资金帐户服务在不同的系统中。示例中，有两个SOA提供方，一个是CapitalTradeOrderService，代表着资金帐户服务,另一个是RedPacketTradeOrderService,代表着红包帐户服务。
 

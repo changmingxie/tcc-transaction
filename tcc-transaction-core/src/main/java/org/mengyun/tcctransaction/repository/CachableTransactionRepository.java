@@ -3,12 +3,12 @@ package org.mengyun.tcctransaction.repository;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.mengyun.tcctransaction.OptimisticLockException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionRepository;
 import org.mengyun.tcctransaction.api.TransactionXid;
 
 import javax.transaction.xa.Xid;
-import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +37,7 @@ public abstract class CachableTransactionRepository implements TransactionReposi
         if (result > 0) {
             putToCache(transaction);
         } else {
-            throw new ConcurrentModificationException();
+            throw new OptimisticLockException();
         }
         return result;
     }
