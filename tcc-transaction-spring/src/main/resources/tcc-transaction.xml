@@ -9,7 +9,8 @@
 
     <context:component-scan base-package="org.mengyun.tcctransaction.spring"/>
 
-    <bean id="tccTransactionConfigurator" class="org.mengyun.tcctransaction.spring.support.TccTransactionConfigurator"/>
+    <bean id="tccTransactionConfigurator" class="org.mengyun.tcctransaction.spring.support.TccTransactionConfigurator">
+    </bean>
 
     <bean id="transactionRecovery" class="org.mengyun.tcctransaction.recover.TransactionRecovery">
         <property name="transactionConfigurator" ref="tccTransactionConfigurator"/>
@@ -37,7 +38,8 @@
 
     <bean id="recoverScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"/>
 
-    <bean id="recoverScheduledJob" class="org.mengyun.tcctransaction.spring.recover.RecoverScheduledJob" init-method="init">
+    <bean id="recoverScheduledJob" class="org.mengyun.tcctransaction.spring.recover.RecoverScheduledJob"
+          init-method="init">
         <property name="transactionConfigurator" ref="tccTransactionConfigurator"/>
         <property name="transactionRecovery" ref="transactionRecovery"/>
         <property name="scheduler" ref="recoverScheduler"/>

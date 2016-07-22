@@ -2,8 +2,9 @@ package org.mengyun.tcctransaction.repository;
 
 
 import org.mengyun.tcctransaction.Transaction;
+import org.mengyun.tcctransaction.serializer.KryoTransactionSerializer;
+import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
-import org.mengyun.tcctransaction.utils.SerializationUtils;
 
 import javax.sql.DataSource;
 import javax.transaction.xa.Xid;
@@ -18,6 +19,12 @@ import java.util.List;
 public class JdbcTransactionRepository extends CachableTransactionRepository {
 
     private DataSource dataSource;
+
+    private ObjectSerializer serializer = new KryoTransactionSerializer();
+
+    public void setSerializer(ObjectSerializer serializer) {
+        this.serializer = serializer;
+    }
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -42,14 +49,11 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
             stmt = connection.prepareStatement(builder.toString());
 
-//            stmt.setString(1, transaction.getXid().getGlobalTransactionId().toString());
-//            stmt.setString(2, transaction.getXid().getBranchQualifier().toString());
-
             stmt.setBytes(1, transaction.getXid().getGlobalTransactionId());
             stmt.setBytes(2, transaction.getXid().getBranchQualifier());
 
             stmt.setInt(3, transaction.getTransactionType().getId());
-            stmt.setBytes(4, SerializationUtils.serialize(transaction));
+            stmt.setBytes(4, serializer.serialize(transaction));
             stmt.setInt(5, transaction.getStatus().getId());
             stmt.setInt(6, transaction.getRetriedCount());
             stmt.setTimestamp(7, new java.sql.Timestamp(transaction.getCreateTime().getTime()));
@@ -83,7 +87,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
             stmt = connection.prepareStatement(builder.toString());
 
-            stmt.setBytes(1, SerializationUtils.serialize(transaction));
+            stmt.setBytes(1, serializer.serialize(transaction));
             stmt.setInt(2, transaction.getStatus().getId());
             stmt.setTimestamp(3, new Timestamp(transaction.getLastUpdateTime().getTime()));
 
@@ -163,7 +167,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
             while (resultSet.next()) {
                 byte[] transactionBytes = resultSet.getBytes(3);
-                Transaction transaction = (Transaction) SerializationUtils.deserialize(transactionBytes);
+                Transaction transaction = (Transaction) serializer.deserialize(transactionBytes);
                 transactions.add(transaction);
             }
         } catch (Throwable e) {
@@ -214,7 +218,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
             while (resultSet.next()) {
 
                 byte[] transactionBytes = resultSet.getBytes(3);
-                Transaction transaction = (Transaction) SerializationUtils.deserialize(transactionBytes);
+                Transaction transaction = (Transaction) serializer.deserialize(transactionBytes);
                 transactions.add(transaction);
             }
         } catch (Throwable e) {
@@ -255,4 +259,6 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
             throw new TransactionIOException(ex);
         }
     }
+
+
 }

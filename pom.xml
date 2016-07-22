@@ -7,7 +7,7 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.0</version>
+    <version>1.1.2</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
@@ -57,6 +57,12 @@
                     </exclusion>
                 </exclusions>
 
+            </dependency>
+
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>kryo</artifactId>
+                <version>4.0.0</version>
             </dependency>
 
             <dependency>

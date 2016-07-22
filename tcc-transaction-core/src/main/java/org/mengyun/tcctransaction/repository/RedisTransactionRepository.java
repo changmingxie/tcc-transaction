@@ -2,8 +2,9 @@ package org.mengyun.tcctransaction.repository;
 
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.common.TransactionType;
+import org.mengyun.tcctransaction.serializer.KryoTransactionSerializer;
+import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import org.mengyun.tcctransaction.utils.ByteUtils;
-import org.mengyun.tcctransaction.utils.SerializationUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -28,6 +29,12 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
         this.keyPrefix = keyPrefix;
     }
 
+    private ObjectSerializer serializer = new KryoTransactionSerializer();
+
+    public void setSerializer(ObjectSerializer serializer) {
+        this.serializer = serializer;
+    }
+
     @Override
     protected int doCreate(final Transaction transaction) {
 
@@ -37,7 +44,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
                 @Override
                 public Long doInJedis(Jedis jedis) {
-                    return jedis.hsetnx(key, ByteUtils.longToBytes(transaction.getVersion()), SerializationUtils.serialize(transaction));
+                    return jedis.hsetnx(key, ByteUtils.longToBytes(transaction.getVersion()), serializer.serialize(transaction));
                 }
             });
 
@@ -58,7 +65,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                 public Long doInJedis(Jedis jedis) {
                     transaction.updateTime();
                     transaction.updateVersion();
-                    return jedis.hsetnx(key, ByteUtils.longToBytes(transaction.getVersion()), SerializationUtils.serialize(transaction));
+                    return jedis.hsetnx(key, ByteUtils.longToBytes(transaction.getVersion()), serializer.serialize(transaction));
                 }
             });
 
@@ -97,7 +104,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
             });
 
             if (content != null) {
-                return (Transaction) SerializationUtils.deserialize(content);
+                return (Transaction) serializer.deserialize(content);
             }
             return null;
         } catch (Exception e) {
@@ -138,7 +145,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                 byte[] content = getKeyValue(key);
 
                 if (content != null) {
-                    transactions.add((Transaction) SerializationUtils.deserialize(content));
+                    transactions.add((Transaction) serializer.deserialize(content));
                 }
             }
 

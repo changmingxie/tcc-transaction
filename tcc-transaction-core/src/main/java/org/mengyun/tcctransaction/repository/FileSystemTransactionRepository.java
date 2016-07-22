@@ -2,7 +2,8 @@ package org.mengyun.tcctransaction.repository;
 
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.common.TransactionType;
-import org.mengyun.tcctransaction.utils.SerializationUtils;
+import org.mengyun.tcctransaction.serializer.KryoTransactionSerializer;
+import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 
 import javax.transaction.xa.Xid;
 import java.io.File;
@@ -24,6 +25,12 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
     private String rootPath = "/tcc";
 
     private volatile boolean initialized;
+
+    private ObjectSerializer serializer = new KryoTransactionSerializer();
+
+    public void setSerializer(ObjectSerializer serializer) {
+        this.serializer = serializer;
+    }
 
     public void setRootPath(String rootPath) {
         this.rootPath = rootPath;
@@ -135,7 +142,7 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
         FileChannel channel = null;
         RandomAccessFile raf = null;
 
-        byte[] content = SerializationUtils.serialize(transaction);
+        byte[] content = serializer.serialize(transaction);
         try {
             raf = new RandomAccessFile(file, "rw");
             channel = raf.getChannel();
@@ -172,7 +179,7 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
             fis.read(content);
 
             if (content != null) {
-                return (Transaction) SerializationUtils.deserialize(content);
+                return (Transaction) serializer.deserialize(content);
             }
         } catch (Exception e) {
             throw new TransactionIOException(e);

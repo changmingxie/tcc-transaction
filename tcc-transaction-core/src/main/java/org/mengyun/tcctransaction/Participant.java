@@ -14,6 +14,10 @@ public class Participant implements Serializable {
 
     private Terminator terminator;
 
+    public Participant() {
+
+    }
+
     public Participant(TransactionXid xid, Terminator terminator) {
         this.xid = xid;
         this.terminator = terminator;

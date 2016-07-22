@@ -36,6 +36,10 @@ public class Transaction implements Serializable {
 
     private Map<String, Object> attachments = new ConcurrentHashMap<String, Object>();
 
+    public Transaction() {
+
+    }
+
     public Transaction(TransactionContext transactionContext) {
         this.xid = transactionContext.getXid();
         this.status = TransactionStatus.TRYING;

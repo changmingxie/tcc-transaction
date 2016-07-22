@@ -16,6 +16,10 @@ public class Terminator implements Serializable {
 
     private InvocationContext cancelInvocationContext;
 
+    public Terminator() {
+
+    }
+
     public Terminator(InvocationContext confirmInvocationContext, InvocationContext cancelInvocationContext) {
         this.confirmInvocationContext = confirmInvocationContext;
         this.cancelInvocationContext = cancelInvocationContext;

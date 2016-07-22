@@ -16,6 +16,10 @@ public class InvocationContext implements Serializable {
 
     private Object[] args;
 
+    public InvocationContext() {
+
+    }
+
     public InvocationContext(Class targetClass, String methodName, Class[] parameterTypes, Object... args) {
         this.methodName = methodName;
         this.parameterTypes = parameterTypes;

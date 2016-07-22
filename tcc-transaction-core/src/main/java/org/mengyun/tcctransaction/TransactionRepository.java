@@ -20,10 +20,4 @@ public interface TransactionRepository {
     Transaction findByXid(TransactionXid xid);
 
     List<Transaction> findAllUnmodifiedSince(Date date);
-
-//    void addErrorTransaction(Transaction transaction);
-//
-//    void removeErrorTransaction(Transaction transaction);
-//
-//    Collection<Transaction> findAllErrorTransactions();
 }

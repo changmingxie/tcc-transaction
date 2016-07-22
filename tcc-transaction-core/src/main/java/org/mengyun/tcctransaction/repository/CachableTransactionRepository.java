@@ -77,25 +77,9 @@ public abstract class CachableTransactionRepository implements TransactionReposi
 
         return transactions;
     }
-//
-//    @Override
-//    public void addErrorTransaction(Transaction transaction) {
-//        putToErrorCache(transaction);
-//    }
-//
-//    @Override
-//    public void removeErrorTransaction(Transaction transaction) {
-//        removeFromErrorCache(transaction);
-//    }
-//
-//    @Override
-//    public Collection<Transaction> findAllErrorTransactions() {
-//        return findAllFromErrorCache();
-//    }
 
     public CachableTransactionRepository() {
         transactionXidCompensableTransactionCache = CacheBuilder.newBuilder().expireAfterAccess(expireDuration, TimeUnit.SECONDS).maximumSize(1000).build();
-//        errorTransactionXidCompensableTransactionCache = CacheBuilder.newBuilder().expireAfterAccess(expireDuration, TimeUnit.SECONDS).maximumSize(1000).build();
     }
 
     protected void putToCache(Transaction transaction) {
@@ -109,18 +93,6 @@ public abstract class CachableTransactionRepository implements TransactionReposi
     protected Transaction findFromCache(TransactionXid transactionXid) {
         return transactionXidCompensableTransactionCache.getIfPresent(transactionXid);
     }
-//
-//    protected void putToErrorCache(Transaction transaction) {
-//        errorTransactionXidCompensableTransactionCache.put(transaction.getXid(), transaction);
-//    }
-//
-//    protected void removeFromErrorCache(Transaction transaction) {
-//        errorTransactionXidCompensableTransactionCache.invalidate(transaction.getXid());
-//    }
-//
-//    protected Collection<Transaction> findAllFromErrorCache() {
-//        return errorTransactionXidCompensableTransactionCache.asMap().values();
-//    }
 
     public final void setExpireDuration(int durationInSeconds) {
         this.expireDuration = durationInSeconds;

@@ -1,14 +1,14 @@
-package org.mengyun.tcctransaction.utils;
+package org.mengyun.tcctransaction.serializer;
 
 import java.io.*;
 
 /**
- * Created by changmingxie on 11/21/15.
+ * Created by changming.xie on 7/22/16.
  */
-public class SerializationUtils {
-
-    public static byte[] serialize(Object object) {
-        if(object == null) {
+public class JdkSerializationSerializer<T> implements ObjectSerializer<T> {
+    @Override
+    public byte[] serialize(T object) {
+        if (object == null) {
             return null;
         } else {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
@@ -25,13 +25,14 @@ public class SerializationUtils {
         }
     }
 
-    public static Object deserialize(byte[] bytes) {
-        if(bytes == null) {
+    @Override
+    public T deserialize(byte[] bytes) {
+        if (bytes == null) {
             return null;
         } else {
             try {
                 ObjectInputStream ex = new ObjectInputStream(new ByteArrayInputStream(bytes));
-                return ex.readObject();
+                return (T) ex.readObject();
             } catch (IOException var2) {
                 throw new IllegalArgumentException("Failed to deserialize object", var2);
             } catch (ClassNotFoundException var3) {
