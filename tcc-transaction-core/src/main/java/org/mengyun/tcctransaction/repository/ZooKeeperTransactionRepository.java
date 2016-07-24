@@ -4,7 +4,7 @@ import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.common.TransactionType;
-import org.mengyun.tcctransaction.serializer.KryoTransactionSerializer;
+import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 
 import javax.transaction.xa.Xid;
@@ -25,7 +25,7 @@ public class ZooKeeperTransactionRepository extends CachableTransactionRepositor
 
     private volatile ZooKeeper zk;
 
-    private ObjectSerializer serializer = new KryoTransactionSerializer();
+    private ObjectSerializer serializer = new JdkSerializationSerializer();
 
     public ZooKeeperTransactionRepository() {
         super();

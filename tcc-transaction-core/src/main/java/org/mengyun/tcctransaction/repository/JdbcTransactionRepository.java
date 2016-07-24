@@ -2,7 +2,7 @@ package org.mengyun.tcctransaction.repository;
 
 
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.serializer.KryoTransactionSerializer;
+import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
 
@@ -20,7 +20,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
     private DataSource dataSource;
 
-    private ObjectSerializer serializer = new KryoTransactionSerializer();
+    private ObjectSerializer serializer = new JdkSerializationSerializer();
 
     public void setSerializer(ObjectSerializer serializer) {
         this.serializer = serializer;
