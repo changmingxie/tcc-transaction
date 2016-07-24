@@ -28,6 +28,10 @@ public class Order implements Serializable {
 
     private List<OrderLine> orderLines = new ArrayList<OrderLine>();
 
+    public Order() {
+
+    }
+
     public Order(long payerUserId, long payeeUserId) {
         this.payerUserId = payerUserId;
         this.payeeUserId = payeeUserId;

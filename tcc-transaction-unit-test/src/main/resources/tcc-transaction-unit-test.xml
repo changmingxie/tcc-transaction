@@ -16,8 +16,12 @@
     <bean id="transactionRepository"
           class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">
         <property name="dataSource" ref="dataSource"/>
-        <!--<property name="serializer" ref="transactionSerializer"/>-->
+        <property name="serializer" ref="transactionSerializer"/>
     </bean>
+
+    <bean id="transactionSerializer" class="org.mengyun.tcctransaction.serializer.JdkSerializationSerializer"/>
+
+
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">
