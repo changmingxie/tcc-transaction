@@ -20,7 +20,7 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
 
     @Override
     @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord")
-    public void record(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
+    public String record(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
         System.out.println("capital try record called");
 
         CapitalAccount transferFromAccount = capitalAccountRepository.findByUserId(tradeOrderDto.getSelfUserId());
@@ -28,6 +28,7 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
         transferFromAccount.transferFrom(tradeOrderDto.getAmount());
 
         capitalAccountRepository.save(transferFromAccount);
+        return "success";
     }
 
     public void confirmRecord(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {

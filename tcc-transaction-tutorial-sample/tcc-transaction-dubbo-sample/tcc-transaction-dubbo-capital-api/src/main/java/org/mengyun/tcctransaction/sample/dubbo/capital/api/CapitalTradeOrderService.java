@@ -8,5 +8,5 @@ import org.mengyun.tcctransaction.api.TransactionContext;
  */
 public interface CapitalTradeOrderService {
 
-    public void record(TransactionContext transactionContext,CapitalTradeOrderDto tradeOrderDto);
+    public String record(TransactionContext transactionContext,CapitalTradeOrderDto tradeOrderDto);
 }

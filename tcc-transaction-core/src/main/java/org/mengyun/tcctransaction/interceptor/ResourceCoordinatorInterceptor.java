@@ -3,6 +3,7 @@ package org.mengyun.tcctransaction.interceptor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.*;
+import org.mengyun.tcctransaction.Terminator;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.TransactionXid;
@@ -24,7 +25,7 @@ public class ResourceCoordinatorInterceptor {
         this.transactionConfigurator = transactionConfigurator;
     }
 
-    public void interceptTransactionContextMethod(ProceedingJoinPoint pjp) throws Throwable {
+    public Object interceptTransactionContextMethod(ProceedingJoinPoint pjp) throws Throwable {
 
         Transaction transaction = transactionConfigurator.getTransactionManager().getCurrentTransaction();
 
@@ -49,7 +50,7 @@ public class ResourceCoordinatorInterceptor {
             }
         }
 
-        pjp.proceed(pjp.getArgs());
+        return pjp.proceed(pjp.getArgs());
     }
 
     private Participant generateAndEnlistRootParticipant(ProceedingJoinPoint pjp) {

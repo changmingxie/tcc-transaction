@@ -24,9 +24,9 @@ public class TccCompensableAspect implements Ordered {
     }
 
     @Around("compensableService()")
-    public void interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
+    public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
 
-        compensableTransactionInterceptor.interceptCompensableMethod(pjp);
+        return compensableTransactionInterceptor.interceptCompensableMethod(pjp);
     }
 
     @Override

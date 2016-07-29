@@ -24,9 +24,9 @@ public class TccTransactionContextAspect implements Ordered {
     }
 
     @Around("transactionContextCall()")
-    public void interceptTransactionContextMethod(ProceedingJoinPoint pjp) throws Throwable {
+    public Object interceptTransactionContextMethod(ProceedingJoinPoint pjp) throws Throwable {
 
-        resourceCoordinatorInterceptor.interceptTransactionContextMethod(pjp);
+        return resourceCoordinatorInterceptor.interceptTransactionContextMethod(pjp);
     }
 
     @Override

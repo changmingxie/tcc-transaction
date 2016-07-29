@@ -20,7 +20,7 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
 
     @Override
     @Compensable(confirmMethod = "confirmRecord",cancelMethod = "cancelRecord")
-    public void record(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
+    public String record(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
         System.out.println("red packet try record called");
 
         RedPacketAccount transferFromAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getSelfUserId());
@@ -28,6 +28,8 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
         transferFromAccount.transferFrom(tradeOrderDto.getAmount());
 
         redPacketAccountRepository.save(transferFromAccount);
+
+        return "success";
     }
 
     public void confirmRecord(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {

@@ -2,6 +2,7 @@ package org.mengyun.tcctransaction.interceptor;
 
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.NoExistedTransactionException;
 import org.mengyun.tcctransaction.OptimisticLockException;
 import org.mengyun.tcctransaction.api.TransactionContext;
@@ -9,6 +10,9 @@ import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.common.MethodType;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
 import org.mengyun.tcctransaction.utils.CompensableMethodUtils;
+import org.mengyun.tcctransaction.utils.ReflectionUtils;
+
+import java.lang.reflect.Method;
 
 /**
  * Created by changmingxie on 10/30/15.
@@ -25,7 +29,7 @@ public class CompensableTransactionInterceptor {
         this.transactionConfigurator = transactionConfigurator;
     }
 
-    public void interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
+    public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
 
 
         TransactionContext transactionContext = CompensableMethodUtils.getTransactionContextFromArgs(pjp.getArgs());
@@ -34,22 +38,21 @@ public class CompensableTransactionInterceptor {
 
         switch (methodType) {
             case ROOT:
-                rootMethodProceed(pjp);
-                break;
+                return rootMethodProceed(pjp);
             case PROVIDER:
-                providerMethodProceed(pjp, transactionContext);
-                break;
+                return providerMethodProceed(pjp, transactionContext);
             default:
-                pjp.proceed();
+                return pjp.proceed();
         }
     }
 
-    private void rootMethodProceed(ProceedingJoinPoint pjp) throws Throwable {
+    private Object rootMethodProceed(ProceedingJoinPoint pjp) throws Throwable {
 
         transactionConfigurator.getTransactionManager().begin();
 
+        Object returnValue = null;
         try {
-            pjp.proceed();
+            returnValue = pjp.proceed();
         } catch (OptimisticLockException e) {
             throw e; //do not rollback, waiting for recovery job
         } catch (Throwable tryingException) {
@@ -59,15 +62,16 @@ public class CompensableTransactionInterceptor {
         }
 
         transactionConfigurator.getTransactionManager().commit();
+
+        return returnValue;
     }
 
-    private void providerMethodProceed(ProceedingJoinPoint pjp, TransactionContext transactionContext) throws Throwable {
+    private Object providerMethodProceed(ProceedingJoinPoint pjp, TransactionContext transactionContext) throws Throwable {
 
         switch (TransactionStatus.valueOf(transactionContext.getStatus())) {
             case TRYING:
                 transactionConfigurator.getTransactionManager().propagationNewBegin(transactionContext);
-                pjp.proceed();
-                break;
+                return pjp.proceed();
             case CONFIRMING:
                 try {
                     transactionConfigurator.getTransactionManager().propagationExistBegin(transactionContext);
@@ -86,7 +90,10 @@ public class CompensableTransactionInterceptor {
                 }
                 break;
         }
-    }
 
+        Method method = ((MethodSignature) (pjp.getSignature())).getMethod();
+
+        return ReflectionUtils.getNullValue(method.getReturnType());
+    }
 
 }

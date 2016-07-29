@@ -27,15 +27,15 @@ public class PaymentServiceImpl {
     @Autowired
     OrderRepository orderRepository;
 
-    @Compensable(confirmMethod = "confirmMakePayment",cancelMethod = "cancelMakePayment")
+    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment")
     public void makePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
         System.out.println("order try make payment called");
 
         order.pay(redPacketPayAmount, capitalPayAmount);
         orderRepository.updateOrder(order);
 
-        capitalTradeOrderService.record(null, buildCapitalTradeOrderDto(order));
-        redPacketTradeOrderService.record(null, buildRedPacketTradeOrderDto(order));
+        String result = capitalTradeOrderService.record(null, buildCapitalTradeOrderDto(order));
+        String result2 = redPacketTradeOrderService.record(null, buildRedPacketTradeOrderDto(order));
     }
 
     public void confirmMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
