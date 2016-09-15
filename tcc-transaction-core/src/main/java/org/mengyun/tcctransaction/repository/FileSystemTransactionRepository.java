@@ -2,6 +2,7 @@ package org.mengyun.tcctransaction.repository;
 
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.common.TransactionType;
+import org.mengyun.tcctransaction.repository.helper.TransactionSerializer;
 import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 
@@ -142,7 +143,7 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
         FileChannel channel = null;
         RandomAccessFile raf = null;
 
-        byte[] content = serializer.serialize(transaction);
+        byte[] content = TransactionSerializer.serialize(serializer, transaction);
         try {
             raf = new RandomAccessFile(file, "rw");
             channel = raf.getChannel();
@@ -179,7 +180,7 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
             fis.read(content);
 
             if (content != null) {
-                return (Transaction) serializer.deserialize(content);
+                return TransactionSerializer.deserialize(serializer, content);
             }
         } catch (Exception e) {
             throw new TransactionIOException(e);

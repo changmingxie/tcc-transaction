@@ -32,15 +32,28 @@
         <property name="cronExpression" value="0 */1 * * * ?"/>
     </bean>
 
-
     <bean id="transactionRepository"
     class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">
-    <property name="dataSource" ref="orderDataSource"/>
+    <property name="dataSource" ref="tccDataSource"/>
+    <property name="domain" value="ORDER"/>
+    <property name="tbSuffix" value="_ORD"/>
     </bean>
 
+    <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.FileSystemTransactionRepository">-->
+        <!--<property name="rootPath" value="/data/tcc"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="transactionRepository"-->
+          <!--class="org.mengyun.tcctransaction.repository.ZooKeeperTransactionRepository">-->
+        <!--&lt;!&ndash;<property name="zkServers" value="localhost:2181,localhost:2183,localhost:2185"/>&ndash;&gt;-->
+        <!--<property name="zkServers" value="localhost:2181"/>-->
+        <!--<property name="zkTimeout" value="10000"/>-->
+        <!--<property name="zkRootPath" value="/tcc_ut"/>-->
+    <!--</bean>-->
+
     <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">-->
-        <!--<property name="keyPrefix" value="tcc_order"/>-->
-        <!--<property name="jedisPool" ref="jedisPool"/>-->
+    <!--<property name="keyPrefix" value="TCC:ORD:"/>-->
+    <!--<property name="jedisPool" ref="jedisPool"/>-->
     <!--</bean>-->
 
     <!--<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">-->
@@ -56,7 +69,7 @@
         <!--<constructor-arg index="4" type="java.lang.String">-->
             <!--<null/>-->
         <!--</constructor-arg>-->
-        <!--<constructor-arg index="5" value="1" type="int"/>-->
+        <!--<constructor-arg index="5" value="0" type="int"/>-->
     <!--</bean>-->
 
 </beans>

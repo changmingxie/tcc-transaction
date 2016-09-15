@@ -116,8 +116,16 @@ public class Transaction implements Serializable {
         this.version++;
     }
 
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
     public Date getLastUpdateTime() {
         return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(Date date) {
+        this.lastUpdateTime = date;
     }
 
     public Date getCreateTime() {
