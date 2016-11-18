@@ -60,7 +60,7 @@ public class TransactionController {
         modelAndView.addObject("pageSize", DEFAULT_PAGE_SIZE);
         modelAndView.addObject("pages", pages);
         modelAndView.addObject("domain",domain);
-        modelAndView.addObject("urlWithoutPaging", tccDomain + "/manager/domain/" + domain);
+        modelAndView.addObject("urlWithoutPaging", tccDomain + "/management/domain/" + domain);
         return modelAndView;
     }
 

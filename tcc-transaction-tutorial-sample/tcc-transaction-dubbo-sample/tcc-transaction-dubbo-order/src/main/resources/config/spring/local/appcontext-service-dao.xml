@@ -26,6 +26,12 @@
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
 
+    <bean id="productDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface"
+                  value="org.mengyun.tcctransaction.sample.dubbo.order.infrastructure.dao.ProductDao"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
     <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
         <property name="maxRetryCount" value="30"/>
         <property name="recoverDuration" value="120"/>

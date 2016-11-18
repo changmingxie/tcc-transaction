@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mengyun.tcctransaction.sample.dubbo.order.infrastructure.dao.ProductDao">
+
+    <resultMap id="result"
+               type="org.mengyun.tcctransaction.sample.dubbo.order.domain.entity.Product">
+        <id property="productId" javaType="java.lang.Long" column="PRODUCT_ID"/>
+        <result property="shopId" column="SHOP_ID"/>
+        <result property="productName" column="PRODUCT_NAME"/>
+        <result property="price" column="PRICE"/>
+    </resultMap>
+
+    <sql id="sql_select">
+        SELECT
+        PRODUCT_ID,
+        SHOP_ID,
+        PRODUCT_NAME,
+        PRICE
+        FROM
+        ORD_PRODUCT
+    </sql>
+
+    <select id="findById" resultMap="result">
+        <include refid="sql_select"/>
+        WHERE PRODUCT_ID = #{productId,javaType=java.lang.Long,jdbcType=BIGINT}
+    </select>
+
+    <select id="findByShopId" resultMap="result">
+        <include refid="sql_select"/>
+        WHERE SHOP_ID = #{shopId,javaType=java.lang.Long,jdbcType=BIGINT}
+    </select>
+</mapper>

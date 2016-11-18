@@ -10,4 +10,6 @@ public interface OrderDao {
     public void insert(Order order);
 
     public void update(Order order);
+
+    Order findByMerchantOrderNo(String merchantOrderNo);
 }

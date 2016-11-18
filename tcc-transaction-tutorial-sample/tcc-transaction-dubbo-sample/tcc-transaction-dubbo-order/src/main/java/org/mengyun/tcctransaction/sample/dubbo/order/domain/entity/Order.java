@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by changming.xie on 3/25/16.
@@ -35,6 +37,7 @@ public class Order implements Serializable {
     public Order(long payerUserId, long payeeUserId) {
         this.payerUserId = payerUserId;
         this.payeeUserId = payeeUserId;
+        this.merchantOrderNo = UUID.randomUUID().toString();
     }
 
     public long getPayerUserId() {
@@ -90,6 +93,10 @@ public class Order implements Serializable {
         return id;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     public void confirm() {
         this.status = "CONFIRMED";
     }
@@ -97,4 +104,6 @@ public class Order implements Serializable {
     public void cancelPayment() {
         this.status = "PAY_FAILED";
     }
+
+
 }

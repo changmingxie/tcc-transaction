@@ -29,8 +29,9 @@ public class PlaceOrderServiceImpl {
     @Autowired
     PaymentServiceImpl paymentService;
 
-    public void placeOrder(long payerUserId, long shopId, List<Pair<Long, Integer>> productQuantities, BigDecimal redPacketPayAmount) {
+    public String placeOrder(long payerUserId, long shopId, List<Pair<Long, Integer>> productQuantities, BigDecimal redPacketPayAmount) {
         Shop shop = shopRepository.findById(shopId);
+
         Order order = orderService.createOrder(payerUserId, shop.getOwnerUserId(), productQuantities);
 
         Boolean result = false;
@@ -41,7 +42,7 @@ public class PlaceOrderServiceImpl {
 
         } catch (ConfirmingException confirmingException) {
             //exception throws with the tcc transaction status is CONFIRMING,
-            //when tcc transaction is under confirming status,
+            //when tcc transaction is confirming status,
             // the tcc transaction recovery will try to confirm the whole transaction to ensure eventually consistent.
 
             result = true;
@@ -53,5 +54,7 @@ public class PlaceOrderServiceImpl {
             //other exceptions throws at TRYING stage.
             //you can retry or cancel the operation.
         }
+
+        return order.getMerchantOrderNo();
     }
 }

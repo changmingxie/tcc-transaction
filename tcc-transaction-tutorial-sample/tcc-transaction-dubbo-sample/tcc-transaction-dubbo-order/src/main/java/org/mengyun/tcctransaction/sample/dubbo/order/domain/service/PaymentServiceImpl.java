@@ -9,6 +9,7 @@ import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrder
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.dto.RedPacketTradeOrderDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -28,6 +29,7 @@ public class PaymentServiceImpl {
     OrderRepository orderRepository;
 
     @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment")
+    @Transactional
     public void makePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
         System.out.println("order try make payment called");
 

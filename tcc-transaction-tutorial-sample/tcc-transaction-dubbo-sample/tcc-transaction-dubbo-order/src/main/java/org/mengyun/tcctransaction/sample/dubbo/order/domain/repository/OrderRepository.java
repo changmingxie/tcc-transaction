@@ -30,4 +30,8 @@ public class OrderRepository {
     public void updateOrder(Order order) {
         orderDao.update(order);
     }
+
+    public Order findByMerchantOrderNo(String merchantOrderNo){
+        return orderDao.findByMerchantOrderNo(merchantOrderNo);
+    }
 }

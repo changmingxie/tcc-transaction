@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mengyun.tcctransaction.sample.dubbo.redpacket.infrastructure.dao.TradeOrderDao">
+
+    <resultMap id="result"
+               type="org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.entity.TradeOrder">
+        <id property="id" javaType="java.lang.Long" column="ID"/>
+        <result property="selfUserId" column="SELF_USER_ID"/>
+        <result property="oppositeUserId" column="OPPOSITE_USER_ID"/>
+        <result property="merchantOrderNo" column="MERCHANT_ORDER_NO"/>
+        <result property="amount" column="AMOUNT"/>
+        <result property="status" column="STATUS"/>
+    </resultMap>
+
+    <sql id="sql_select">
+        SELECT
+        ID,
+        SELF_USER_ID,
+        OPPOSITE_USER_ID,
+        MERCHANT_ORDER_NO,
+        AMOUNT,
+        STATUS
+        FROM
+        RED_TRADE_ORDER
+    </sql>
+
+    <select id="findByMerchantOrderNo" resultMap="result">
+        <include refid="sql_select"/>
+        WHERE MERCHANT_ORDER_NO = #{merchantOrderNo}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.entity.TradeOrder">
+        INSERT INTO RED_TRADE_ORDER
+        (
+        SELF_USER_ID,
+        OPPOSITE_USER_ID,
+        MERCHANT_ORDER_NO,
+        AMOUNT,
+        STATUS
+        )
+        VALUES
+        (
+        #{selfUserId},
+        #{oppositeUserId},
+        #{merchantOrderNo},
+        #{amount},
+        #{status}
+        )
+    </insert>
+
+    <update id="update" parameterType="org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.entity.TradeOrder">
+        UPDATE
+        RED_TRADE_ORDER
+        SET
+        STATUS = #{status}
+        WHERE ID = #{id}
+    </update>
+</mapper>

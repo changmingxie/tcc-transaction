@@ -29,6 +29,10 @@
     <dubbo:service interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService"
                    registry="redPacketRpcZk"
                    ref="redPacketTradeOrderService" timeout="60000" retries="0"/>
+
+    <dubbo:service interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketAccountService"
+                   registry="redPacketRpcZk"
+                   ref="redPacketAccountService" timeout="60000" retries="0"/>
     <!--<bean id="redPacketTradeOrderService"-->
           <!--class="org.mengyun.tcctransaction.sample.dubbo.redpacket.service.RedPacketTradeOrderServiceImpl"/>-->
 

@@ -26,4 +26,10 @@
     <dubbo:reference id="redPacketTradeOrderService"
                      interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService"/>
 
+    <dubbo:reference id="redPacketAccountService"
+                     interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketAccountService"/>
+
+    <dubbo:reference id="capitalAccountService"
+                     interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalAccountService"/>
+
 </beans>

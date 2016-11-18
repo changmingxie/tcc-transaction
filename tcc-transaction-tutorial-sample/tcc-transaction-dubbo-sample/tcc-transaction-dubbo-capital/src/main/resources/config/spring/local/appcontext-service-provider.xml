@@ -26,6 +26,10 @@
     <dubbo:service interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService"
                    registry="capitalRpcZk"
                    ref="capitalTradeOrderService" timeout="60000" retries="0"/>
+    <dubbo:service interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalAccountService"
+                   registry="capitalRpcZk"
+                   ref="capitalAccountService" timeout="60000" retries="0"/>
+
     <!--<bean id="capitalTradeOrderService"-->
           <!--class="org.mengyun.tcctransaction.sample.dubbo.capital.service.CapitalTradeOrderServiceImpl"/>-->
 

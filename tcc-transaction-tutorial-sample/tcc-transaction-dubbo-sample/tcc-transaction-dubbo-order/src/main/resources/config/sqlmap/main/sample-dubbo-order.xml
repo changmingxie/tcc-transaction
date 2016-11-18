@@ -36,6 +36,11 @@
         WHERE ORDER_ID = #{id,javaType=java.lang.Long,jdbcType=BIGINT}
     </select>
 
+    <select id="findByMerchantOrderNo" resultMap="result">
+        <include refid="sql_select"/>
+        WHERE MERCHANT_ORDER_NO = #{findByMerchantOrderNo}
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO ORD_ORDER
         (
