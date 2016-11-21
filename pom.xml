@@ -50,12 +50,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.mengyun</groupId>
-                <artifactId>tcc-transaction-transactioncontext</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>1.8.6</version>
