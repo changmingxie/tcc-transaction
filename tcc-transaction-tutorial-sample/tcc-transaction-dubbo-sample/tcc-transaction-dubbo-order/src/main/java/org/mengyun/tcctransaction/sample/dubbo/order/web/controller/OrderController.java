@@ -35,6 +35,12 @@ public class OrderController {
     @Autowired
     OrderServiceImpl orderService;
 
+    @RequestMapping(value = "/",method = RequestMethod.GET)
+    public ModelAndView index() {
+        ModelAndView mv = new ModelAndView("/index");
+        return mv;
+    }
+
     @RequestMapping(value = "/user/{userId}/shop/{shopId}",method = RequestMethod.GET)
     public ModelAndView getProductsInShop(@PathVariable long userId,
                                           @PathVariable long shopId){

@@ -4,13 +4,13 @@ import org.mengyun.tcctransaction.support.BeanFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * Created by changmingxie on 11/22/15.
  */
-@Component
-public class TccApplicationContext implements BeanFactory, ApplicationContextAware {
+public class SpringBeanFactory implements BeanFactory, ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
@@ -20,7 +20,13 @@ public class TccApplicationContext implements BeanFactory, ApplicationContextAwa
     }
 
     @Override
-    public Object getBean(Class<?> aClass) {
-        return this.applicationContext.getBean(aClass);
+    public boolean isFactoryOf(Class clazz) {
+        Map map = this.applicationContext.getBeansOfType(clazz);
+        return map.size() > 0;
+    }
+
+    @Override
+    public <T> T getBean(Class<T> var1) {
+        return this.applicationContext.getBean(var1);
     }
 }

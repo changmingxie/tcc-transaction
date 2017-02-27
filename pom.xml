@@ -7,14 +7,15 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.5</version>
+    <version>1.2.0-SNAPSHOT</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
         <module>tcc-transaction-spring</module>
-        <!--<module>tcc-transaction-unit-test</module>-->
+        <module>tcc-transaction-unit-test</module>
         <module>tcc-transaction-tutorial-sample</module>
         <module>tcc-transaction-server</module>
+        <module>tcc-transaction-dubbo</module>
     </modules>
 
     <properties>
@@ -50,6 +51,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.mengyun</groupId>
+                <artifactId>tcc-transaction-transactioncontext</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>1.8.6</version>
@@ -75,6 +82,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>0.9.5-pre10</version>
+            </dependency>
+
+            <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>5.1.33</version>
@@ -84,6 +97,12 @@
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
                 <version>1.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.23</version>
             </dependency>
 
             <dependency>
@@ -104,12 +123,6 @@
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>1.2.17</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.mchange</groupId>
-                <artifactId>c3p0</artifactId>
-                <version>0.9.5-pre10</version>
             </dependency>
 
             <dependency>

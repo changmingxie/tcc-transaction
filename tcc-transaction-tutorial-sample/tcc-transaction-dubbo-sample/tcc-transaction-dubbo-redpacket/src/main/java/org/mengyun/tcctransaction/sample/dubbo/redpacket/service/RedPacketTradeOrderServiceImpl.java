@@ -1,12 +1,12 @@
 package org.mengyun.tcctransaction.sample.dubbo.redpacket.service;
 
-import org.mengyun.tcctransaction.Compensable;
-import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
+import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService;
+import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.dto.RedPacketTradeOrderDto;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.entity.RedPacketAccount;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.entity.TradeOrder;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.repository.RedPacketAccountRepository;
-import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService;
-import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.dto.RedPacketTradeOrderDto;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.repository.TradeOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +25,9 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     TradeOrderRepository tradeOrderRepository;
 
     @Override
-    @Compensable(confirmMethod = "confirmRecord",cancelMethod = "cancelRecord")
+    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
     @Transactional
-    public String record(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
+    public String record(RedPacketTradeOrderDto tradeOrderDto) {
         System.out.println("red packet try record called");
 
         TradeOrder tradeOrder = new TradeOrder(
@@ -49,7 +49,7 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     }
 
     @Transactional
-    public void confirmRecord(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
+    public void confirmRecord(RedPacketTradeOrderDto tradeOrderDto) {
         System.out.println("red packet confirm record called");
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
@@ -65,12 +65,12 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     }
 
     @Transactional
-    public void cancelRecord(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
+    public void cancelRecord(RedPacketTradeOrderDto tradeOrderDto) {
         System.out.println("red packet cancel record called");
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
-        if(null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
+        if (null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
             tradeOrder.cancel();
             tradeOrderRepository.update(tradeOrder);
 

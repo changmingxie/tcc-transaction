@@ -3,7 +3,6 @@ package org.mengyun.tcctransaction.spring.recover;
 import org.mengyun.tcctransaction.SystemException;
 import org.mengyun.tcctransaction.recover.TransactionRecovery;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
-import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.springframework.scheduling.quartz.CronTriggerBean;
 import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean;
@@ -35,7 +34,7 @@ public class RecoverScheduledJob {
             cronTrigger.setCronExpression(transactionConfigurator.getRecoverConfig().getCronExpression());
             cronTrigger.afterPropertiesSet();
 
-            scheduler.scheduleJob((JobDetail) jobDetail.getObject(), cronTrigger);
+            scheduler.scheduleJob(jobDetail.getObject(), cronTrigger);
 
             scheduler.start();
 
@@ -48,15 +47,15 @@ public class RecoverScheduledJob {
         this.transactionRecovery = transactionRecovery;
     }
 
-    public void setTransactionConfigurator(TransactionConfigurator transactionConfigurator) {
-        this.transactionConfigurator = transactionConfigurator;
-    }
-
     public Scheduler getScheduler() {
         return scheduler;
     }
 
     public void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
+    }
+
+    public void setTransactionConfigurator(TransactionConfigurator transactionConfigurator) {
+        this.transactionConfigurator = transactionConfigurator;
     }
 }

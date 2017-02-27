@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.sample.dubbo.order.domain.service;
 
-import org.mengyun.tcctransaction.Compensable;
+import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.dto.CapitalTradeOrderDto;
 import org.mengyun.tcctransaction.sample.dubbo.order.domain.entity.Order;
@@ -36,8 +36,8 @@ public class PaymentServiceImpl {
         order.pay(redPacketPayAmount, capitalPayAmount);
         orderRepository.updateOrder(order);
 
-        String result = capitalTradeOrderService.record(null, buildCapitalTradeOrderDto(order));
-        String result2 = redPacketTradeOrderService.record(null, buildRedPacketTradeOrderDto(order));
+        String result = capitalTradeOrderService.record(buildCapitalTradeOrderDto(order));
+        String result2 = redPacketTradeOrderService.record(buildRedPacketTradeOrderDto(order));
     }
 
     public void confirmMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {

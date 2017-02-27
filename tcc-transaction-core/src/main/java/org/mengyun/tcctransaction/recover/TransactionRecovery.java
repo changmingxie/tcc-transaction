@@ -20,10 +20,6 @@ public class TransactionRecovery {
 
     private TransactionConfigurator transactionConfigurator;
 
-    public void setTransactionConfigurator(TransactionConfigurator transactionConfigurator) {
-        this.transactionConfigurator = transactionConfigurator;
-    }
-
     public void startRecover() {
 
         List<Transaction> transactions = loadErrorTransactions();
@@ -33,11 +29,13 @@ public class TransactionRecovery {
 
     private List<Transaction> loadErrorTransactions() {
 
-        TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
 
         long currentTimeInMillis = Calendar.getInstance().getTimeInMillis();
 
-        List<Transaction> transactions = transactionRepository.findAllUnmodifiedSince(new Date(currentTimeInMillis - transactionConfigurator.getRecoverConfig().getRecoverDuration() * 1000));
+        TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
+        RecoverConfig recoverConfig = transactionConfigurator.getRecoverConfig();
+        
+        List<Transaction> transactions = transactionRepository.findAllUnmodifiedSince(new Date(currentTimeInMillis - recoverConfig.getRecoverDuration() * 1000));
 
         List<Transaction> recoverTransactions = new ArrayList<Transaction>();
 
@@ -56,9 +54,12 @@ public class TransactionRecovery {
     private void recoverErrorTransactions(List<Transaction> transactions) {
 
 
+        TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
+        RecoverConfig recoverConfig = transactionConfigurator.getRecoverConfig();
+
         for (Transaction transaction : transactions) {
 
-            if (transaction.getRetriedCount() > transactionConfigurator.getRecoverConfig().getMaxRetryCount()) {
+            if (transaction.getRetriedCount() > recoverConfig.getMaxRetryCount()) {
 
                 logger.error(String.format("recover failed with max retry count,will not try again. txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()));
                 continue;
@@ -69,20 +70,23 @@ public class TransactionRecovery {
 
                 if (transaction.getStatus().equals(TransactionStatus.CONFIRMING)) {
                     transaction.changeStatus(TransactionStatus.CONFIRMING);
-                    transactionConfigurator.getTransactionRepository().update(transaction);
+                    transactionRepository.update(transaction);
                     transaction.commit();
 
                 } else {
                     transaction.changeStatus(TransactionStatus.CANCELLING);
-                    transactionConfigurator.getTransactionRepository().update(transaction);
+                    transactionRepository.update(transaction);
                     transaction.rollback();
                 }
 
-                transactionConfigurator.getTransactionRepository().delete(transaction);
+                transactionRepository.delete(transaction);
             } catch (Throwable e) {
                 logger.warn(String.format("recover failed, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()), e);
             }
         }
     }
 
+    public void setTransactionConfigurator(TransactionConfigurator transactionConfigurator) {
+        this.transactionConfigurator = transactionConfigurator;
+    }
 }

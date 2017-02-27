@@ -32,16 +32,17 @@ public class AccountServiceProxy {
     }
 
     public void transferToWithMultipleTier(final TransactionContext transactionContext, final long accountId, final int amount) {
-        Future<Boolean> future = this.executorService
-                .submit(new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() throws Exception {
-                        accountService.transferToWithMultipleTier(transactionContext, accountId, amount);
-                        return true;
-                    }
-                });
-
-        handleResult(future);
+//        Future<Boolean> future = this.executorService
+//                .submit(new Callable<Boolean>() {
+//                    @Override
+//                    public Boolean call() throws Exception {
+//                        accountService.transferToWithMultipleTier(transactionContext, accountId, amount);
+//                        return true;
+//                    }
+//                });
+//
+//        handleResult(future);
+        accountService.transferToWithMultipleTier(transactionContext, accountId, amount);
     }
 
     public void performanceTuningTransferTo(TransactionContext transactionContext) {
@@ -49,44 +50,49 @@ public class AccountServiceProxy {
 
     public void transferTo(final TransactionContext transactionContext, final long accountId, final int amount) {
 
-        Future<Boolean> future = this.executorService
-                .submit(new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() throws Exception {
-                        accountService.transferTo(transactionContext, accountId, amount);
-                        return true;
-                    }
-                });
-
-        handleResult(future);
+//        Future<Boolean> future = this.executorService
+//                .submit(new Callable<Boolean>() {
+//                    @Override
+//                    public Boolean call() throws Exception {
+//                        accountService.transferTo(transactionContext, accountId, amount);
+//                        return true;
+//                    }
+//                });
+//
+//        handleResult(future);
+        accountService.transferTo(transactionContext, accountId, amount);
     }
 
     public void transferTo(final long accountId, final int amount) {
 
-        Future<Boolean> future = this.executorService
-                .submit(new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() throws Exception {
-                        accountService.transferToWithNoTransactionContext(accountId, amount);
-                        return true;
-                    }
-                });
+//        Future<Boolean> future = this.executorService
+//                .submit(new Callable<Boolean>() {
+//                    @Override
+//                    public Boolean call() throws Exception {
+//                        accountService.transferToWithNoTransactionContext(accountId, amount);
+//                        return true;
+//                    }
+//                });
+//
+//        handleResult(future);
 
-        handleResult(future);
+        accountService.transferToWithNoTransactionContext(accountId, amount);
     }
 
     public void transferFrom(final TransactionContext transactionContext, final long accountId, final int amount) {
 
-        Future<Boolean> future = this.executorService
-                .submit(new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() throws Exception {
-                        accountService.transferFrom(transactionContext, accountId, amount);
-                        return true;
-                    }
-                });
+//        Future<Boolean> future = this.executorService
+//                .submit(new Callable<Boolean>() {
+//                    @Override
+//                    public Boolean call() throws Exception {
+//                        accountService.transferFrom(transactionContext, accountId, amount);
+//                        return true;
+//                    }
+//                });
+//
+//        handleResult(future);
 
-        handleResult(future);
+        accountService.transferFrom(transactionContext, accountId, amount);
     }
 
 

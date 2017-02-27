@@ -1,7 +1,8 @@
 package org.mengyun.tcctransaction.unittest.service;
 
+import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.Propagation;
 import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.Compensable;
 import org.mengyun.tcctransaction.unittest.client.AccountRecordServiceProxy;
 import org.mengyun.tcctransaction.unittest.entity.AccountStatus;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
@@ -34,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Compensable(confirmMethod = "transferToConfirm", cancelMethod = "transferToCancel")
+    @Compensable(propagation = Propagation.REQUIRED, confirmMethod = "transferToConfirm", cancelMethod = "transferToCancel")
     public void transferTo(TransactionContext transactionContext, long accountId, int amount) {
 
         System.out.println("transferTo called");
@@ -68,7 +69,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    @Compensable(confirmMethod = "transferToConfirmWithNoTransactionContext", cancelMethod = "transferToCancelWithNoTransactionContext")
+    @Compensable(propagation = Propagation.REQUIRES_NEW, confirmMethod = "transferToConfirmWithNoTransactionContext", cancelMethod = "transferToCancelWithNoTransactionContext")
     public void transferToWithNoTransactionContext(long accountId, int amount) {
 
         System.out.println("transferToWithNoTransactionContext called");
@@ -99,7 +100,7 @@ public class AccountServiceImpl implements AccountService {
     public void transferToConfirm(TransactionContext transactionContext, long accountId, int amount) {
         System.out.println("transferToConfirm called");
 
-        if(UnitTest.CONFIRMING_EXCEPTION) {
+        if (UnitTest.CONFIRMING_EXCEPTION) {
             throw new RuntimeException("transferToConfirm confirm failed.");
         }
 

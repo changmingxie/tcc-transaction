@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.unittest.client;
 
-import org.mengyun.tcctransaction.Compensable;
+import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.Propagation;
 import org.mengyun.tcctransaction.unittest.entity.AccountStatus;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.mengyun.tcctransaction.unittest.repository.SubAccountRepository;
@@ -28,6 +29,19 @@ public class TransferService {
     @Transactional
     public void performenceTuningTransfer() {
         accountService.performanceTuningTransferTo(null);
+    }
+
+    @Compensable(propagation = Propagation.MANDATORY)
+    public void transferWithMandatoryPropagation(long fromAccountId, long toAccountId, int amount) {
+        System.out.println("transfer called");
+
+        SubAccount subAccount = subAccountRepository.findById(fromAccountId);
+
+        subAccount.setStatus(AccountStatus.TRANSFERING.getId());
+
+        subAccount.setBalanceAmount(subAccount.getBalanceAmount() - amount);
+
+        accountService.transferTo(null, toAccountId, amount);
     }
 
     @Compensable(confirmMethod = "transferConfirm", cancelMethod = "transferCancel")

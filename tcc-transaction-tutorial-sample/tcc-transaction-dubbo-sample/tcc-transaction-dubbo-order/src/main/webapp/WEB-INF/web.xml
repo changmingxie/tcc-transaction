@@ -7,7 +7,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath*:config/spring/local/appcontext-*.xml,classpath:tcc-transaction.xml
+        <param-value>classpath*:config/spring/local/appcontext-*.xml,classpath:tcc-transaction.xml,classpath:tcc-transaction-dubbo.xml
         </param-value>
     </context-param>
 
@@ -60,7 +60,7 @@
 
     <servlet-mapping>
         <servlet-name>springmvc</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
 </web-app>

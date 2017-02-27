@@ -20,16 +20,18 @@
                     session="${zookeeper.session.timeout}"
                     timeout="${zookeeper.connect.timeout}" file="./.dubbo/web-cache"/>
 
+    <!--<dubbo:consumer proxy="tccJavassist" />-->
+
     <dubbo:reference id="captialTradeOrderService"
-                     interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService"/>
+                     interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService" timeout="60000"/>
 
     <dubbo:reference id="redPacketTradeOrderService"
-                     interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService"/>
+                     interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService" timeout="60000"/>
 
     <dubbo:reference id="redPacketAccountService"
-                     interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketAccountService"/>
+                     interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketAccountService" timeout="60000"/>
 
     <dubbo:reference id="capitalAccountService"
-                     interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalAccountService"/>
+                     interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalAccountService" timeout="60000"/>
 
 </beans>

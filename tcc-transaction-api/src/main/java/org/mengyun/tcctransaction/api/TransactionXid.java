@@ -13,6 +13,7 @@ import java.util.UUID;
 public class TransactionXid implements Xid, Serializable {
 
     private static final long serialVersionUID = -6817267250789142043L;
+
     private int formatId = 1;
 
     private byte[] globalTransactionId;
@@ -22,6 +23,14 @@ public class TransactionXid implements Xid, Serializable {
     public TransactionXid() {
         globalTransactionId = uuidToByteArray(UUID.randomUUID());
         branchQualifier = uuidToByteArray(UUID.randomUUID());
+    }
+
+    public void setGlobalTransactionId(byte[] globalTransactionId) {
+        this.globalTransactionId = globalTransactionId;
+    }
+
+    public void setBranchQualifier(byte[] branchQualifier) {
+        this.branchQualifier = branchQualifier;
     }
 
     public TransactionXid(byte[] globalTransactionId) {
@@ -51,18 +60,28 @@ public class TransactionXid implements Xid, Serializable {
 
     @Override
     public String toString() {
-        
-        return UUID.nameUUIDFromBytes(globalTransactionId).toString() + "|" + UUID.nameUUIDFromBytes(branchQualifier).toString();
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("globalTransactionId:").append(UUID.nameUUIDFromBytes(globalTransactionId).toString());
+        stringBuilder.append(",").append("branchQualifier:").append(UUID.nameUUIDFromBytes(branchQualifier).toString());
+
+        return stringBuilder.toString();
     }
 
     public TransactionXid clone() {
 
+        byte[] cloneGlobalTransactionId = null;
+        byte[] cloneBranchQualifier = null;
 
-        byte[] cloneGlobalTransactionId = new byte[globalTransactionId.length];
-        byte[] cloneBranchQualifier = new byte[branchQualifier.length];
+        if (globalTransactionId != null) {
+            cloneGlobalTransactionId = new byte[globalTransactionId.length];
+            System.arraycopy(globalTransactionId, 0, cloneGlobalTransactionId, 0, globalTransactionId.length);
+        }
 
-        System.arraycopy(globalTransactionId, 0, cloneGlobalTransactionId, 0, globalTransactionId.length);
-        System.arraycopy(branchQualifier, 0, cloneBranchQualifier, 0, branchQualifier.length);
+        if (branchQualifier != null) {
+            cloneBranchQualifier = new byte[branchQualifier.length];
+            System.arraycopy(branchQualifier, 0, cloneBranchQualifier, 0, branchQualifier.length);
+        }
 
         TransactionXid clone = new TransactionXid(cloneGlobalTransactionId, cloneBranchQualifier);
         return clone;

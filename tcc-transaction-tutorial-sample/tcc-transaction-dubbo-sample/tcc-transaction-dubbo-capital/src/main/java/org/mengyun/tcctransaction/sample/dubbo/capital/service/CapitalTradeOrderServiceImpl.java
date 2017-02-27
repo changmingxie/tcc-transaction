@@ -1,7 +1,7 @@
 package org.mengyun.tcctransaction.sample.dubbo.capital.service;
 
-import org.mengyun.tcctransaction.Compensable;
-import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.dto.CapitalTradeOrderDto;
 import org.mengyun.tcctransaction.sample.dubbo.capital.domain.entity.CapitalAccount;
@@ -25,9 +25,9 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     TradeOrderRepository tradeOrderRepository;
 
     @Override
-    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord")
+    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
     @Transactional
-    public String record(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
+    public String record(CapitalTradeOrderDto tradeOrderDto) {
         System.out.println("capital try record called");
 
         TradeOrder tradeOrder = new TradeOrder(
@@ -48,7 +48,7 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     }
 
     @Transactional
-    public void confirmRecord(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
+    public void confirmRecord(CapitalTradeOrderDto tradeOrderDto) {
         System.out.println("capital confirm record called");
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
@@ -64,12 +64,12 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     }
 
     @Transactional
-    public void cancelRecord(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
+    public void cancelRecord(CapitalTradeOrderDto tradeOrderDto) {
         System.out.println("capital cancel record called");
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
-        if(null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
+        if (null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
             tradeOrder.cancel();
             tradeOrderRepository.update(tradeOrder);
 

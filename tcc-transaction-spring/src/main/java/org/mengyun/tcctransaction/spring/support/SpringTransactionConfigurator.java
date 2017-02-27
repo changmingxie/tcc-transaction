@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by changmingxie on 11/11/15.
  */
-public class TccTransactionConfigurator implements TransactionConfigurator {
+public class SpringTransactionConfigurator implements TransactionConfigurator {
+
 
     @Autowired
     private TransactionRepository transactionRepository;
@@ -18,7 +19,13 @@ public class TccTransactionConfigurator implements TransactionConfigurator {
     @Autowired(required = false)
     private RecoverConfig recoverConfig = DefaultRecoverConfig.INSTANCE;
 
-    private TransactionManager transactionManager = new TransactionManager(this);
+
+    private TransactionManager transactionManager;
+
+    public void init() {
+        transactionManager = new TransactionManager();
+        transactionManager.setTransactionRepository(transactionRepository);
+    }
 
     @Override
     public TransactionManager getTransactionManager() {

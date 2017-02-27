@@ -1,14 +1,45 @@
 package org.mengyun.tcctransaction.utils;
 
-import org.mengyun.tcctransaction.common.MethodType;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.Propagation;
 import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.common.MethodType;
+
+import java.lang.reflect.Method;
 
 /**
  * Created by changmingxie on 11/21/15.
  */
 public class CompensableMethodUtils {
 
-    public static MethodType calculateMethodType( TransactionContext transactionContext, boolean isCompensable) {
+    public static Method getCompensableMethod(ProceedingJoinPoint pjp) {
+        Method method = ((MethodSignature) (pjp.getSignature())).getMethod();
+
+        if (method.getAnnotation(Compensable.class) == null) {
+            try {
+                method = pjp.getTarget().getClass().getMethod(method.getName(), method.getParameterTypes());
+            } catch (NoSuchMethodException e) {
+                return null;
+            }
+        }
+        return method;
+    }
+
+    public static MethodType calculateMethodType(Propagation propagation, boolean isTransactionActive, TransactionContext transactionContext) {
+
+        if ((propagation.equals(Propagation.REQUIRED) && !isTransactionActive && transactionContext == null) ||
+                propagation.equals(Propagation.REQUIRES_NEW)) {
+            return MethodType.ROOT;
+        } else if ((propagation.equals(Propagation.REQUIRED) || propagation.equals(Propagation.MANDATORY)) && !isTransactionActive && transactionContext != null) {
+            return MethodType.PROVIDER;
+        } else {
+            return MethodType.NORMAL;
+        }
+    }
+
+    public static MethodType calculateMethodType(TransactionContext transactionContext, boolean isCompensable) {
 
         if (transactionContext == null && isCompensable) {
             //isRootTransactionMethod

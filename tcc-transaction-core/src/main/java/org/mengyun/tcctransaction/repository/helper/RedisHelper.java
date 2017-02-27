@@ -42,8 +42,6 @@ public class RedisHelper {
                             }
                         });
 
-                        if (entries.isEmpty())
-                            return null;
 
                         byte[] content = entries.get(entries.size() - 1).getValue();
 
@@ -64,9 +62,6 @@ public class RedisHelper {
                 return (int) (ByteUtils.bytesToLong(entry1.getKey()) - ByteUtils.bytesToLong(entry2.getKey()));
             }
         });
-
-        if (entries.isEmpty())
-            return null;
 
         byte[] content = entries.get(entries.size() - 1).getValue();
 

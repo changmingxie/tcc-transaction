@@ -2,6 +2,7 @@ package org.mengyun.tcctransaction.unit.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mengyun.tcctransaction.SystemException;
 import org.mengyun.tcctransaction.recover.TransactionRecovery;
 import org.mengyun.tcctransaction.unittest.client.TransferService;
 import org.mengyun.tcctransaction.unittest.entity.AccountRecord;
@@ -48,6 +49,20 @@ public class TransferServiceTest extends AbstractTestCase {
 
         Assert.assertTrue(subAccountFrom.getBalanceAmount() == 50);
         Assert.assertTrue(subAccountTo.getBalanceAmount() == 250);
+    }
+
+    @Test
+    public void testTransferWithMandatoryPropagtion() throws InterruptedException {
+
+        //given
+        buildAccount();
+
+        //when
+        try {
+            transferService.transferWithMandatoryPropagation(1, 2, 50);
+        } catch (SystemException e) {
+            Assert.assertTrue(e.getMessage().startsWith("no active compensable transaction while propagation is mandatory for method"));
+        }
     }
 
     @Test
@@ -183,7 +198,7 @@ public class TransferServiceTest extends AbstractTestCase {
             transferService.transferWithMultipleConsumer(1, 2, 70);
 
         } catch (Throwable e) {
-            System.out.println(e);
+
         }
 
         System.out.println("begin recovery");

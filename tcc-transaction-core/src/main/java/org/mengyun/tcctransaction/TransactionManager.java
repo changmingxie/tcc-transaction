@@ -4,47 +4,46 @@ import org.apache.log4j.Logger;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.common.TransactionType;
-import org.mengyun.tcctransaction.support.TransactionConfigurator;
+
+import java.util.Deque;
+import java.util.LinkedList;
 
 /**
  * Created by changmingxie on 10/26/15.
  */
 public class TransactionManager {
 
-
     static final Logger logger = Logger.getLogger(TransactionManager.class.getSimpleName());
 
-    private TransactionConfigurator transactionConfigurator;
+    private TransactionRepository transactionRepository;
 
-    public TransactionManager(TransactionConfigurator transactionConfigurator) {
-        this.transactionConfigurator = transactionConfigurator;
+    private static final ThreadLocal<Deque<Transaction>> CURRENT = new ThreadLocal<Deque<Transaction>>();
+
+    public void setTransactionRepository(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
     }
-
-    private ThreadLocal<Transaction> threadLocalTransaction = new ThreadLocal<Transaction>();
 
     public void begin() {
 
         Transaction transaction = new Transaction(TransactionType.ROOT);
-        TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
         transactionRepository.create(transaction);
-        threadLocalTransaction.set(transaction);
+        registerTransaction(transaction);
     }
 
     public void propagationNewBegin(TransactionContext transactionContext) {
 
         Transaction transaction = new Transaction(transactionContext);
-        transactionConfigurator.getTransactionRepository().create(transaction);
+        transactionRepository.create(transaction);
 
-        threadLocalTransaction.set(transaction);
+        registerTransaction(transaction);
     }
 
     public void propagationExistBegin(TransactionContext transactionContext) throws NoExistedTransactionException {
-        TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
         Transaction transaction = transactionRepository.findByXid(transactionContext.getXid());
 
         if (transaction != null) {
             transaction.changeStatus(TransactionStatus.valueOf(transactionContext.getStatus()));
-            threadLocalTransaction.set(transaction);
+            registerTransaction(transaction);
         } else {
             throw new NoExistedTransactionException();
         }
@@ -56,11 +55,11 @@ public class TransactionManager {
 
         transaction.changeStatus(TransactionStatus.CONFIRMING);
 
-        transactionConfigurator.getTransactionRepository().update(transaction);
+        transactionRepository.update(transaction);
 
         try {
             transaction.commit();
-            transactionConfigurator.getTransactionRepository().delete(transaction);
+            transactionRepository.delete(transaction);
         } catch (Throwable commitException) {
             logger.error("compensable transaction confirm failed.", commitException);
             throw new ConfirmingException(commitException);
@@ -68,7 +67,15 @@ public class TransactionManager {
     }
 
     public Transaction getCurrentTransaction() {
-        return threadLocalTransaction.get();
+        if (isTransactionActive()) {
+            return CURRENT.get().peek();
+        }
+        return null;
+    }
+
+    public boolean isTransactionActive() {
+        Deque<Transaction> transactions = CURRENT.get();
+        return transactions != null && !transactions.isEmpty();
     }
 
     public void rollback() {
@@ -76,14 +83,34 @@ public class TransactionManager {
         Transaction transaction = getCurrentTransaction();
         transaction.changeStatus(TransactionStatus.CANCELLING);
 
-        transactionConfigurator.getTransactionRepository().update(transaction);
-        
+        transactionRepository.update(transaction);
+
         try {
             transaction.rollback();
-            transactionConfigurator.getTransactionRepository().delete(transaction);
+            transactionRepository.delete(transaction);
         } catch (Throwable rollbackException) {
             logger.error("compensable transaction rollback failed.", rollbackException);
             throw new CancellingException(rollbackException);
         }
+    }
+
+    private void registerTransaction(Transaction transaction) {
+
+        if (CURRENT.get() == null) {
+            CURRENT.set(new LinkedList<Transaction>());
+        }
+
+        CURRENT.get().push(transaction);
+    }
+
+    public void cleanAfterCompletion() {
+        CURRENT.get().pop();
+    }
+
+
+    public void enlistParticipant(Participant participant) {
+        Transaction transaction = this.getCurrentTransaction();
+        transaction.enlistParticipant(participant);
+        transactionRepository.update(transaction);
     }
 }
