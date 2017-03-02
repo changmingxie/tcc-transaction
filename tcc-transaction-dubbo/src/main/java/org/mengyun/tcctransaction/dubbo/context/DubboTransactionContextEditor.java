@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  */
 public class DubboTransactionContextEditor implements TransactionContextEditor {
     @Override
-    public TransactionContext get() {
+    public TransactionContext get(Object target, Method method, Object[] args) {
 
         String context = RpcContext.getContext().getAttachment(TransactionContextConstants.TRANSACTION_CONTEXT);
 

@@ -24,7 +24,7 @@ public @interface Compensable {
     class NullableTransactionContextEditor implements TransactionContextEditor {
 
         @Override
-        public TransactionContext get() {
+        public TransactionContext get(Object target, Method method, Object[] args) {
             return null;
         }
 
