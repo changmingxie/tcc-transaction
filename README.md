@@ -9,6 +9,7 @@
 1.2.x 版本不向下兼容1.1.x，主要在声明tcc服务方法的注解有改变。1.2.x不同于1.1.x主要的地方在于发布服务时不再强制要求服务方法参数必须有TransactionContext参数，从而减少对业务代码的侵入。
 
 
+
 Try: 尝试执行业务
 
     完成所有业务检查（一致性）
@@ -42,5 +43,4 @@ tcc-transaction-tutorial-sample示例演示了在使用dubbo作为rpc调用情�
 
 在运行sample前，需搭建好db环境，运行dbscripts目录下的create_db.sql建立数据库实例及表；还需修改各种项目中jdbc.properties文件中的jdbc连接信息。
 
-使用指南：https://github.com/changmingxie/tcc-transaction/wiki/%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97
 如有问题可以在本项目的github issues中提问。
