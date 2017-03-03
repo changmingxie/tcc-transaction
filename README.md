@@ -31,4 +31,4 @@ tcc-transaction-tutorial-sample示例演示了在使用dubbo作为rpc调用情�
 
 在运行sample前，需搭建好db环境，运行dbscripts目录下的create_db.sql建立数据库实例及表；还需修改各种项目中jdbc.properties文件中的jdbc连接信息。
 
-如有问题可以在本项目的github issues中提问。
+如有问题可以在本项目的github issues中提问。或是加微信:changmingxie，为便于识别，麻烦在备注中写下 在tcc-transaction中声明一个tcc的方法时需要加的注解类的名字，作者尽量回答疑问。 
