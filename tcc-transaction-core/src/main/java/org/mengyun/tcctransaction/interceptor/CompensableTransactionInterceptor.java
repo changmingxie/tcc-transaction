@@ -1,10 +1,13 @@
 package org.mengyun.tcctransaction.interceptor;
 
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.NoExistedTransactionException;
 import org.mengyun.tcctransaction.OptimisticLockException;
+import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.common.MethodType;
@@ -53,11 +56,17 @@ public class CompensableTransactionInterceptor {
         Object returnValue = null;
         try {
             returnValue = pjp.proceed();
-        } catch (OptimisticLockException e) {
-            throw e; //do not rollback, waiting for recovery job
         } catch (Throwable tryingException) {
-            logger.warn("compensable transaction trying failed.", tryingException);
-            transactionConfigurator.getTransactionManager().rollback();
+            if (tryingException instanceof OptimisticLockException
+                    || ExceptionUtils.getRootCause(tryingException) instanceof OptimisticLockException) {
+                //do not rollback, waiting for recovery job
+
+            } else {
+                Transaction transaction = transactionConfigurator.getTransactionManager().getCurrentTransaction();
+                logger.warn(String.format("compensable transaction trying failed. transaction content:%s", JSON.toJSONString(transaction)), tryingException);
+                transactionConfigurator.getTransactionManager().rollback();
+            }
+
             throw tryingException;
         }
 

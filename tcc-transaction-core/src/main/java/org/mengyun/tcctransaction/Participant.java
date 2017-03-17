@@ -31,4 +31,12 @@ public class Participant implements Serializable {
         terminator.commit();
     }
 
+    public Terminator getTerminator() {
+        return terminator;
+    }
+
+    public TransactionXid getXid() {
+        return xid;
+    }
+
 }

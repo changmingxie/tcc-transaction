@@ -8,7 +8,10 @@ import org.mengyun.tcctransaction.common.TransactionType;
 
 import javax.transaction.xa.Xid;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -67,7 +70,7 @@ public class Transaction implements Serializable {
 
 
     public List<Participant> getParticipants() {
-        return Collections.unmodifiableList(participants);
+        return participants;
     }
 
     public TransactionType getTransactionType() {

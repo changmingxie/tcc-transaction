@@ -7,12 +7,12 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.5</version>
+    <version>1.1.6.1</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
         <module>tcc-transaction-spring</module>
-        <!--<module>tcc-transaction-unit-test</module>-->
+        <module>tcc-transaction-unit-test</module>
         <module>tcc-transaction-tutorial-sample</module>
         <module>tcc-transaction-server</module>
     </modules>
@@ -46,6 +46,12 @@
             <dependency>
                 <groupId>org.mengyun</groupId>
                 <artifactId>tcc-transaction-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mengyun</groupId>
+                <artifactId>tcc-transaction-transactioncontext</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -90,6 +96,12 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>2.5.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.23</version>
             </dependency>
 
             <dependency>
