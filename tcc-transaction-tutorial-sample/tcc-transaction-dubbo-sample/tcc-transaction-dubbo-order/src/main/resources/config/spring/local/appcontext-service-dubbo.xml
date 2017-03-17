@@ -20,7 +20,7 @@
                     session="${zookeeper.session.timeout}"
                     timeout="${zookeeper.connect.timeout}" file="./.dubbo/web-cache"/>
 
-    <!--<dubbo:consumer proxy="tccJavassist" />-->
+    <!--<dubbo:consumer proxy="javassist" />-->
 
     <dubbo:reference id="captialTradeOrderService"
                      interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService" timeout="60000"/>

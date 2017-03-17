@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.sample.dubbo.capital.service;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService;
@@ -11,6 +12,8 @@ import org.mengyun.tcctransaction.sample.dubbo.capital.domain.repository.TradeOr
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Calendar;
 
 /**
  * Created by changming.xie on 4/2/16.
@@ -28,7 +31,12 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
     @Transactional
     public String record(CapitalTradeOrderDto tradeOrderDto) {
-        System.out.println("capital try record called");
+        System.out.println("capital try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+        try {
+            Thread.sleep(1000l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         TradeOrder tradeOrder = new TradeOrder(
                 tradeOrderDto.getSelfUserId(),
@@ -49,7 +57,12 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
 
     @Transactional
     public void confirmRecord(CapitalTradeOrderDto tradeOrderDto) {
-        System.out.println("capital confirm record called");
+        System.out.println("capital confirm record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+        try {
+            Thread.sleep(1000l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
@@ -65,7 +78,12 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
 
     @Transactional
     public void cancelRecord(CapitalTradeOrderDto tradeOrderDto) {
-        System.out.println("capital cancel record called");
+        System.out.println("capital cancel record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+        try {
+            Thread.sleep(1000l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 

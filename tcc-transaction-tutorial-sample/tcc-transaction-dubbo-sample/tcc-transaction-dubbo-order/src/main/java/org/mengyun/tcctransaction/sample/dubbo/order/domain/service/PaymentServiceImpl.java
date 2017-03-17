@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.sample.dubbo.order.domain.service;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.dto.CapitalTradeOrderDto;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 
 /**
  * Created by changming.xie on 4/1/16.
@@ -31,7 +33,13 @@ public class PaymentServiceImpl {
     @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment")
     @Transactional
     public void makePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
-        System.out.println("order try make payment called");
+        System.out.println("order try make payment called.time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+
+        try {
+            Thread.sleep(1000l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         order.pay(redPacketPayAmount, capitalPayAmount);
         orderRepository.updateOrder(order);
@@ -42,7 +50,14 @@ public class PaymentServiceImpl {
 
     public void confirmMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
-        System.out.println("order confirm make payment called");
+        System.out.println("order confirm make payment called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+
+        try {
+            Thread.sleep(1000l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         order.confirm();
 
         orderRepository.updateOrder(order);
@@ -50,7 +65,13 @@ public class PaymentServiceImpl {
 
     public void cancelMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
-        System.out.println("order cancel make payment called");
+        System.out.println("order cancel make payment called.time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+
+        try {
+            Thread.sleep(1000l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         order.cancelPayment();
 

@@ -1,12 +1,14 @@
 package org.mengyun.tcctransaction.recover;
 
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
+import org.mengyun.tcctransaction.OptimisticLockException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionRepository;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,21 +36,10 @@ public class TransactionRecovery {
 
         TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
         RecoverConfig recoverConfig = transactionConfigurator.getRecoverConfig();
-        
+
         List<Transaction> transactions = transactionRepository.findAllUnmodifiedSince(new Date(currentTimeInMillis - recoverConfig.getRecoverDuration() * 1000));
 
-        List<Transaction> recoverTransactions = new ArrayList<Transaction>();
-
-        for (Transaction transaction : transactions) {
-
-            int result = transactionRepository.update(transaction);
-
-            if (result > 0) {
-                recoverTransactions.add(transaction);
-            }
-        }
-
-        return recoverTransactions;
+        return transactions;
     }
 
     private void recoverErrorTransactions(List<Transaction> transactions) {
@@ -61,7 +52,7 @@ public class TransactionRecovery {
 
             if (transaction.getRetriedCount() > recoverConfig.getMaxRetryCount()) {
 
-                logger.error(String.format("recover failed with max retry count,will not try again. txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()));
+                logger.error(String.format("recover failed with max retry count,will not try again. txid:%s, status:%s,retried count:%d,transaction content:%s", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(), JSON.toJSONString(transaction)));
                 continue;
             }
 
@@ -80,8 +71,15 @@ public class TransactionRecovery {
                 }
 
                 transactionRepository.delete(transaction);
-            } catch (Throwable e) {
-                logger.warn(String.format("recover failed, txid:%s, status:%s,retried count:%d", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount()), e);
+                
+            } catch (Throwable throwable) {
+
+                if (throwable instanceof OptimisticLockException
+                        || ExceptionUtils.getRootCause(throwable) instanceof OptimisticLockException) {
+                    logger.warn(String.format("optimisticLockException happened while recover. txid:%s, status:%s,retried count:%d,transaction content:%s", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(), JSON.toJSON(transaction)), throwable);
+                } else {
+                    logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d,transaction content:%s", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(),JSON.toJSON(transaction)), throwable);
+                }
             }
         }
     }
