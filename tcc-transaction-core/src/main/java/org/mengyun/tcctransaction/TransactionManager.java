@@ -23,27 +23,30 @@ public class TransactionManager {
         this.transactionRepository = transactionRepository;
     }
 
-    public void begin() {
+    public Transaction begin() {
 
         Transaction transaction = new Transaction(TransactionType.ROOT);
         transactionRepository.create(transaction);
         registerTransaction(transaction);
+        return transaction;
     }
 
-    public void propagationNewBegin(TransactionContext transactionContext) {
+    public Transaction propagationNewBegin(TransactionContext transactionContext) {
 
         Transaction transaction = new Transaction(transactionContext);
         transactionRepository.create(transaction);
 
         registerTransaction(transaction);
+        return transaction;
     }
 
-    public void propagationExistBegin(TransactionContext transactionContext) throws NoExistedTransactionException {
+    public Transaction propagationExistBegin(TransactionContext transactionContext) throws NoExistedTransactionException {
         Transaction transaction = transactionRepository.findByXid(transactionContext.getXid());
 
         if (transaction != null) {
             transaction.changeStatus(TransactionStatus.valueOf(transactionContext.getStatus()));
             registerTransaction(transaction);
+            return transaction;
         } else {
             throw new NoExistedTransactionException();
         }
@@ -103,8 +106,15 @@ public class TransactionManager {
         CURRENT.get().push(transaction);
     }
 
-    public void cleanAfterCompletion() {
-        CURRENT.get().pop();
+    public void cleanAfterCompletion(Transaction transaction) {
+        if (isTransactionActive() && transaction != null) {
+            Transaction currentTransaction = getCurrentTransaction();
+            if (currentTransaction == transaction) {
+                CURRENT.get().pop();
+            } else {
+                throw new SystemException("Illegal transaction when clean after completion");
+            }
+        }
     }
 
 
