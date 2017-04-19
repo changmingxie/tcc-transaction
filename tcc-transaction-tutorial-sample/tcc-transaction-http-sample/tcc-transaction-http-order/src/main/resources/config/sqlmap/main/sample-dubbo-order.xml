@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mengyun.tcctransaction.sample.http.order.infrastructure.dao.OrderDao">
+
+    <resultMap id="result"
+               type="org.mengyun.tcctransaction.sample.http.order.domain.entity.Order">
+        <id property="id" javaType="java.lang.Long" column="ORDER_ID"/>
+        <result property="payerUserId" column="PAYER_USER_ID"/>
+        <result property="payeeUserId" column="PAYEE_USER_ID"/>
+        <result property="redPacketPayAmount" column="RED_PACKET_PAY_AMOUNT"/>
+        <result property="capitalPayAmount" column="CAPITAL_PAY_AMOUNT"/>
+        <result property="status" column="STATUS"/>
+        <result property="merchantOrderNo" column="MERCHANT_ORDER_NO"/>
+    </resultMap>
+
+    <sql id="sql_select">
+        SELECT
+        ORDER_ID,
+        PAYER_USER_ID,
+        PAYEE_USER_ID,
+        RED_PACKET_PAY_AMOUNT,
+        CAPITAL_PAY_AMOUNT,
+        STATUS,
+        MERCHANT_ORDER_NO
+        FROM
+        ORD_ORDER
+    </sql>
+
+
+    <select id="findAll" resultMap="result">
+        <include refid="sql_select"/>
+    </select>
+
+    <select id="findById" resultMap="result">
+        <include refid="sql_select"/>
+        WHERE ORDER_ID = #{id,javaType=java.lang.Long,jdbcType=BIGINT}
+    </select>
+
+    <select id="findByMerchantOrderNo" resultMap="result">
+        <include refid="sql_select"/>
+        WHERE MERCHANT_ORDER_NO = #{findByMerchantOrderNo}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ORD_ORDER
+        (
+        PAYER_USER_ID,
+        PAYEE_USER_ID,
+        RED_PACKET_PAY_AMOUNT,
+        CAPITAL_PAY_AMOUNT,
+        STATUS,
+        MERCHANT_ORDER_NO
+        )
+        VALUES
+            (
+            #{payerUserId},
+            #{payeeUserId},
+            #{redPacketPayAmount},
+            #{capitalPayAmount},
+            #{status},
+            #{merchantOrderNo}
+            )
+    </insert>
+
+    <update id="update" parameterType="org.mengyun.tcctransaction.sample.http.order.domain.entity.Order">
+        UPDATE
+        ORD_ORDER
+        SET
+        STATUS = #{status},
+        RED_PACKET_PAY_AMOUNT = #{redPacketPayAmount},
+        CAPITAL_PAY_AMOUNT = #{capitalPayAmount}
+        WHERE ORDER_ID = #{id}
+    </update>
+</mapper>

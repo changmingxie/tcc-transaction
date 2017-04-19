@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+       <mvc:annotation-driven/>
+       <context:component-scan base-package="org.mengyun.tcctransaction.sample.http"/>
+       <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+
+       <bean id="contentNegotiationManager"
+             class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+              <property name="favorParameter" value="false"/>
+              <property name="ignoreAcceptHeader" value="true"/>
+              <property name="favorPathExtension" value="false"/>
+              <property name="mediaTypes">
+                     <value>
+                            json=application/json
+                            html=text/html
+                     </value>
+              </property>
+              <property name="defaultContentType" value="text/html"/>
+       </bean>
+
+       <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+              <property name="contentNegotiationManager" ref="contentNegotiationManager"/>
+              <property name="order" value="1"/>
+              <property name="viewResolvers">
+                     <list>
+                            <!-- ===================================================== -->
+                            <!-- ViewResolver For FreeMarker -->
+                            <!-- ===================================================== -->
+                            <bean id="freemarkerResolver"
+                                  class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+
+                                   <property name="suffix" value=".ftl"/>
+                                   <property name="contentType" value="text/html;charset=utf-8"/>
+                                   <property name="viewClass">
+                                          <value>org.springframework.web.servlet.view.freemarker.FreeMarkerView</value>
+                                   </property>
+                                   <!--<property name="attributesMap">
+                                       <map>
+                                           <entry key="truncate"><bean class="com.rj8g.linkage.renba.web.TruncateTemplateMethodModel" /></entry>
+                                       </map>
+                                   </property>-->
+                            </bean>
+                     </list>
+              </property>
+
+              <!--<property name="defaultViews">-->
+                     <!--<list>-->
+                            <!--<bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>-->
+                     <!--</list>-->
+              <!--</property>-->
+       </bean>
+
+       <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+              <property name="templateLoaderPath">
+                     <value>/WEB-INF/ftl/</value>
+              </property>
+              <property name="freemarkerSettings"><!-- 设置FreeMarker环境属性 -->
+                     <props>
+                            <prop key="template_update_delay">5</prop>
+                            <!--刷新模板的周期，单位为秒 -->
+                            <prop key="default_encoding">UTF-8</prop>
+                            <!--模板的编码格式 -->
+                            <prop key="locale">UTF-8</prop>
+                            <!-- 本地化设置 -->
+                            <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+                            <prop key="time_format">HH:mm:ss</prop>
+                            <prop key="number_format">0.####</prop>
+                            <prop key="boolean_format">true,false</prop>
+                            <prop key="whitespace_stripping">true</prop>
+                            <prop key="tag_syntax">auto_detect</prop>
+                            <prop key="url_escaping_charset">UTF-8</prop>
+                            <prop key="classic_compatible">true</prop>
+                     </props>
+              </property>
+
+              <property name="freemarkerVariables">
+                     <map>
+                            <entry key="xml_escape" value-ref="fmXmlEscape"/>
+                            <entry key="html_escape" value-ref="fmHtmlEscape"/>
+                     </map>
+              </property>
+
+       </bean>
+
+       <bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape"/>
+       <bean id="fmHtmlEscape" class="freemarker.template.utility.HtmlEscape"/>
+</beans>

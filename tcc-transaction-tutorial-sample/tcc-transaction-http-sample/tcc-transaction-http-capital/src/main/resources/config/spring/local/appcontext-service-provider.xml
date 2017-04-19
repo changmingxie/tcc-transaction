@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean name="capitalAccountRepository"
+          class="org.mengyun.tcctransaction.sample.http.capital.domain.repository.CapitalAccountRepository"/>
+
+    <bean name="tradeOrderRepository"
+          class="org.mengyun.tcctransaction.sample.http.capital.domain.repository.TradeOrderRepository"/>
+
+    <bean name="capitalTradeOrderService"
+          class="org.mengyun.tcctransaction.sample.http.capital.service.CapitalTradeOrderServiceImpl"/>
+
+    <bean name="capitalAccountService"
+          class="org.mengyun.tcctransaction.sample.http.capital.service.CapitalAccountServiceImpl"/>
+
+    <bean name="capitalTradeOrderServiceExporter"
+          class="org.springframework.remoting.httpinvoker.SimpleHttpInvokerServiceExporter">
+        <property name="service" ref="capitalTradeOrderService"/>
+        <property name="serviceInterface"
+                  value="org.mengyun.tcctransaction.sample.http.capital.api.CapitalTradeOrderService"/>
+    </bean>
+
+    <bean name="capitalAccountServiceExporter"
+          class="org.springframework.remoting.httpinvoker.SimpleHttpInvokerServiceExporter">
+        <property name="service" ref="capitalAccountService"/>
+        <property name="serviceInterface"
+                  value="org.mengyun.tcctransaction.sample.http.capital.api.CapitalAccountService"/>
+    </bean>
+
+
+    <bean id="httpServer"
+          class="org.springframework.remoting.support.SimpleHttpServerFactoryBean">
+        <property name="contexts">
+            <util:map>
+                <entry key="/remoting/CapitalTradeOrderService" value-ref="capitalTradeOrderServiceExporter"/>
+                <entry key="/remoting/CapitalAccountService" value-ref="capitalAccountServiceExporter"/>
+            </util:map>
+        </property>
+        <property name="port" value="8081"/>
+    </bean>
+
+</beans>

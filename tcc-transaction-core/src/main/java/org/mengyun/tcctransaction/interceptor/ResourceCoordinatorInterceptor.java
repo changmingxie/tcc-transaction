@@ -45,7 +45,7 @@ public class ResourceCoordinatorInterceptor {
             }
         }
 
-        return pjp.proceed();
+        return pjp.proceed(pjp.getArgs());
     }
 
     private void enlistParticipant(ProceedingJoinPoint pjp) throws IllegalAccessException, InstantiationException {

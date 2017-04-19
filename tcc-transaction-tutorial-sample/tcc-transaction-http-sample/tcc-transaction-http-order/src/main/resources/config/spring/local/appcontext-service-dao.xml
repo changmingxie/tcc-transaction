@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="orderDataSource"/>
+        <property name="mapperLocations" value="classpath*:config/sqlmap/main/sample-dubbo-*.xml"/>
+    </bean>
+
+    <bean id="orderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface"
+                  value="org.mengyun.tcctransaction.sample.http.order.infrastructure.dao.OrderDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+
+    <bean id="orderLineDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface"
+                  value="org.mengyun.tcctransaction.sample.http.order.infrastructure.dao.OrderLineDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+
+    <bean id="shopDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface"
+                  value="org.mengyun.tcctransaction.sample.http.order.infrastructure.dao.ShopDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+
+    <bean id="productDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface"
+                  value="org.mengyun.tcctransaction.sample.http.order.infrastructure.dao.ProductDao"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
+        <property name="maxRetryCount" value="30"/>
+        <property name="recoverDuration" value="120"/>
+        <property name="cronExpression" value="0 */1 * * * ?"/>
+    </bean>
+
+    <bean id="transactionRepository"
+    class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">
+    <property name="dataSource" ref="tccDataSource"/>
+    <property name="domain" value="ORDER"/>
+    <property name="tbSuffix" value="_ORD"/>
+    </bean>
+
+    <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.FileSystemTransactionRepository">-->
+        <!--<property name="rootPath" value="/data/tcc"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="transactionRepository"-->
+          <!--class="org.mengyun.tcctransaction.repository.ZooKeeperTransactionRepository">-->
+        <!--&lt;!&ndash;<property name="zkServers" value="localhost:2181,localhost:2183,localhost:2185"/>&ndash;&gt;-->
+        <!--<property name="zkServers" value="localhost:2181"/>-->
+        <!--<property name="zkTimeout" value="10000"/>-->
+        <!--<property name="zkRootPath" value="/tcc_ut"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">-->
+    <!--<property name="keyPrefix" value="TCC:ORD:"/>-->
+    <!--<property name="jedisPool" ref="jedisPool"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">-->
+        <!--<property name="maxTotal" value="1000"/>-->
+        <!--<property name="maxWaitMillis" value="1000"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="jedisPool" class="redis.clients.jedis.JedisPool">-->
+        <!--<constructor-arg index="0" ref="jedisPoolConfig"/>-->
+        <!--<constructor-arg index="1" value="127.0.0.1"/>-->
+        <!--<constructor-arg index="2" value="6379" type="int"/>-->
+        <!--<constructor-arg index="3" value="1000" type="int"/>-->
+        <!--<constructor-arg index="4" type="java.lang.String">-->
+            <!--<null/>-->
+        <!--</constructor-arg>-->
+        <!--<constructor-arg index="5" value="0" type="int"/>-->
+    <!--</bean>-->
+
+</beans>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mengyun.tcctransaction.sample.http.order.infrastructure.dao.ShopDao">
+
+    <resultMap id="result"
+               type="org.mengyun.tcctransaction.sample.http.order.domain.entity.Shop">
+        <id property="id" javaType="java.lang.Long" column="SHOP_ID"/>
+        <result property="ownerUserId" column="OWNER_USER_ID"/>
+    </resultMap>
+
+    <sql id="sql_select">
+        SELECT
+        SHOP_ID,
+        OWNER_USER_ID
+        FROM
+        ORD_SHOP
+    </sql>
+
+    <select id="findById" resultMap="result">
+        <include refid="sql_select"/>
+        WHERE SHOP_ID = #{id,javaType=java.lang.Long,jdbcType=BIGINT}
+    </select>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+    <bean name="redPacketAccountRepository"
+          class="org.mengyun.tcctransaction.sample.http.redpacket.domain.repository.RedPacketAccountRepository"/>
+
+    <bean name="tradeOrderRepository"
+          class="org.mengyun.tcctransaction.sample.http.redpacket.domain.repository.TradeOrderRepository"/>
+
+    <bean name="redPacketAccountService"
+          class="org.mengyun.tcctransaction.sample.http.redpacket.service.RedPacketAccountServiceImpl"/>
+
+    <bean name="redPacketTradeOrderService"
+          class="org.mengyun.tcctransaction.sample.http.redpacket.service.RedPacketTradeOrderServiceImpl"/>
+
+    <bean name="redPacketAccountServiceExporter"
+          class="org.springframework.remoting.httpinvoker.SimpleHttpInvokerServiceExporter">
+        <property name="service" ref="redPacketAccountService"/>
+        <property name="serviceInterface"
+                  value="org.mengyun.tcctransaction.sample.http.redpacket.api.RedPacketAccountService"/>
+    </bean>
+
+    <bean name="redPacketTradeOrderServiceExporter"
+          class="org.springframework.remoting.httpinvoker.SimpleHttpInvokerServiceExporter">
+        <property name="service" ref="redPacketTradeOrderService"/>
+        <property name="serviceInterface"
+                  value="org.mengyun.tcctransaction.sample.http.redpacket.api.RedPacketTradeOrderService"/>
+    </bean>
+
+    <bean id="httpServer"
+          class="org.springframework.remoting.support.SimpleHttpServerFactoryBean">
+        <property name="contexts">
+            <util:map>
+                <entry key="/remoting/RedPacketTradeOrderService" value-ref="redPacketTradeOrderServiceExporter"/>
+                <entry key="/remoting/RedPacketAccountService" value-ref="redPacketAccountServiceExporter"/>
+            </util:map>
+        </property>
+        <property name="port" value="8082"/>
+    </bean>
+
+
+</beans>

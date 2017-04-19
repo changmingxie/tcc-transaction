@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mengyun.tcctransaction.sample.http.capital.infrastructure.dao.CapitalAccountDao">
+
+    <resultMap id="result"
+               type="org.mengyun.tcctransaction.sample.http.capital.domain.entity.CapitalAccount">
+        <id property="id" javaType="java.lang.Long" column="CAPITAL_ACCOUNT_ID"/>
+        <result property="balanceAmount" column="BALANCE_AMOUNT"/>
+        <result property="userId" column="USER_ID"/>
+    </resultMap>
+
+    <sql id="sql_select">
+        SELECT
+        CAPITAL_ACCOUNT_ID,
+        BALANCE_AMOUNT,
+        USER_ID
+        FROM
+        CAP_CAPITAL_ACCOUNT
+    </sql>
+
+
+    <select id="findAll" resultMap="result">
+        <include refid="sql_select"/>
+    </select>
+
+    <select id="findByUserId" resultMap="result">
+        <include refid="sql_select"/>
+        WHERE USER_ID = #{id,javaType=java.lang.Long,jdbcType=BIGINT}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO CAP_CAPITAL_ACCOUNT
+        (
+        BALANCE_AMOUNT,
+        USER_ID
+        )
+        VALUES
+            (
+            #{balanceAmount},
+            #{userId}
+            )
+    </insert>
+
+    <update id="update" parameterType="org.mengyun.tcctransaction.sample.http.capital.domain.entity.CapitalAccount">
+        UPDATE
+        CAP_CAPITAL_ACCOUNT
+        SET
+        BALANCE_AMOUNT = #{balanceAmount}
+        WHERE CAPITAL_ACCOUNT_ID = #{id}
+    </update>
+</mapper>
