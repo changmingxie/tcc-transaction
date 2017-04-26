@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="orderDataSource"/>
@@ -36,6 +36,11 @@
         <property name="maxRetryCount" value="30"/>
         <property name="recoverDuration" value="120"/>
         <property name="cronExpression" value="0 */1 * * * ?"/>
+        <property name="delayCancelExceptions">
+            <util:list list-class="java.util.ArrayList" value-type="java.lang.Class">
+                <value>com.alibaba.dubbo.remoting.TimeoutException</value>
+            </util:list>
+        </property>
     </bean>
 
     <bean id="transactionRepository"

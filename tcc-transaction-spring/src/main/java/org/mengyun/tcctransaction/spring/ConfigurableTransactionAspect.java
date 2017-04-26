@@ -2,11 +2,9 @@ package org.mengyun.tcctransaction.spring;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.mengyun.tcctransaction.TransactionManager;
-import org.mengyun.tcctransaction.TransactionRepository;
 import org.mengyun.tcctransaction.interceptor.CompensableTransactionAspect;
 import org.mengyun.tcctransaction.interceptor.CompensableTransactionInterceptor;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
 /**
@@ -23,6 +21,7 @@ public class ConfigurableTransactionAspect extends CompensableTransactionAspect 
 
         CompensableTransactionInterceptor compensableTransactionInterceptor = new CompensableTransactionInterceptor();
         compensableTransactionInterceptor.setTransactionManager(transactionManager);
+        compensableTransactionInterceptor.setDelayCancelExceptions(transactionConfigurator.getRecoverConfig().getDelayCancelExceptions());
 
         this.setCompensableTransactionInterceptor(compensableTransactionInterceptor);
     }

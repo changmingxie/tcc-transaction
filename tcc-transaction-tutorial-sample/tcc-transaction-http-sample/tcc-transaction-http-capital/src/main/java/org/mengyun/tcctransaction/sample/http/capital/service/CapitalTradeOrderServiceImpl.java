@@ -31,6 +31,11 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     @Transactional
     public String record(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
         System.out.println("capital try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+
+        if (1 == 1) {
+            throw new MyException();
+        }
+
         try {
             Thread.sleep(1000l);
         } catch (InterruptedException e) {

@@ -17,6 +17,7 @@ import org.mengyun.tcctransaction.utils.ReflectionUtils;
 import org.mengyun.tcctransaction.utils.TransactionUtils;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Created by changmingxie on 10/30/15.
@@ -27,9 +28,16 @@ public class CompensableTransactionInterceptor {
 
     private TransactionManager transactionManager;
 
+    private List<Class<? extends Exception>> delayCancelExceptions;
+
     public void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
+
+    public void setDelayCancelExceptions(List<Class<? extends Exception>> delayCancelExceptions) {
+        this.delayCancelExceptions = delayCancelExceptions;
+    }
+
 
     public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
 
@@ -72,8 +80,13 @@ public class CompensableTransactionInterceptor {
                 returnValue = pjp.proceed();
             } catch (Throwable tryingException) {
                 if (tryingException instanceof OptimisticLockException
-                        || ExceptionUtils.getRootCause(tryingException) instanceof OptimisticLockException) {
-
+                        || ExceptionUtils.getRootCause(tryingException) instanceof OptimisticLockException
+                        || tryingException instanceof DelayCancelException
+                        || ExceptionUtils.getRootCause(tryingException) instanceof DelayCancelException
+                        ) {
+                } else if (isDelayException(tryingException)) {
+                    logger.error("Delay Cancel Exception happened.", tryingException);
+                    throw new DelayCancelException();
                 } else {
                     logger.warn(String.format("compensable transaction trying failed. transaction content:%s", JSON.toJSONString(transaction)), tryingException);
 
@@ -120,6 +133,16 @@ public class CompensableTransactionInterceptor {
                     break;
             }
 
+        } catch (Exception e) {
+            if (e instanceof OptimisticLockException
+                    || ExceptionUtils.getRootCause(e) instanceof OptimisticLockException
+                    || e instanceof DelayCancelException
+                    || ExceptionUtils.getRootCause(e) instanceof DelayCancelException
+                    ) {
+            } else if (isDelayException(e)) {
+                logger.error("Delay Cancel Exception happened.", e);
+                throw new DelayCancelException();
+            }
         } finally {
             transactionManager.cleanAfterCompletion(transaction);
         }
@@ -129,5 +152,19 @@ public class CompensableTransactionInterceptor {
         return ReflectionUtils.getNullValue(method.getReturnType());
     }
 
+    private boolean isDelayException(Throwable throwable) {
+
+        if (delayCancelExceptions != null) {
+            for (Class delayCancelException : delayCancelExceptions) {
+
+                if (delayCancelException.isAssignableFrom(throwable.getClass())
+                        || delayCancelException.isAssignableFrom(ExceptionUtils.getRootCause(throwable).getClass())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
 }

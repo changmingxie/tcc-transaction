@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.sample.dubbo.capital.service;
 
+import com.mchange.util.Base64FormatException;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
@@ -32,8 +33,13 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     @Transactional
     public String record(CapitalTradeOrderDto tradeOrderDto) {
         System.out.println("capital try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+
+        if (1 == 1) {
+            throw new Base64FormatException();
+        }
+
         try {
-            Thread.sleep(1000l);
+            Thread.sleep(6000l);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -80,7 +86,7 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     public void cancelRecord(CapitalTradeOrderDto tradeOrderDto) {
         System.out.println("capital cancel record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
         try {
-            Thread.sleep(1000l);
+            Thread.sleep(10000l);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
