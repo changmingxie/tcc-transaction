@@ -5,7 +5,10 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.mengyun.tcctransaction.*;
+import org.mengyun.tcctransaction.NoExistedTransactionException;
+import org.mengyun.tcctransaction.SystemException;
+import org.mengyun.tcctransaction.Transaction;
+import org.mengyun.tcctransaction.TransactionManager;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.Propagation;
 import org.mengyun.tcctransaction.api.TransactionContext;
@@ -17,7 +20,7 @@ import org.mengyun.tcctransaction.utils.ReflectionUtils;
 import org.mengyun.tcctransaction.utils.TransactionUtils;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by changmingxie on 10/30/15.
@@ -28,16 +31,15 @@ public class CompensableTransactionInterceptor {
 
     private TransactionManager transactionManager;
 
-    private List<Class<? extends Exception>> delayCancelExceptions;
+    private Set<Class<? extends Exception>> delayCancelExceptions;
 
     public void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
-    public void setDelayCancelExceptions(List<Class<? extends Exception>> delayCancelExceptions) {
+    public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayCancelExceptions) {
         this.delayCancelExceptions = delayCancelExceptions;
     }
-
 
     public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
 
@@ -79,14 +81,9 @@ public class CompensableTransactionInterceptor {
             try {
                 returnValue = pjp.proceed();
             } catch (Throwable tryingException) {
-                if (tryingException instanceof OptimisticLockException
-                        || ExceptionUtils.getRootCause(tryingException) instanceof OptimisticLockException
-                        || tryingException instanceof DelayCancelException
-                        || ExceptionUtils.getRootCause(tryingException) instanceof DelayCancelException
-                        ) {
-                } else if (isDelayException(tryingException)) {
-                    logger.error("Delay Cancel Exception happened.", tryingException);
-                    throw new DelayCancelException();
+
+                if (isDelayCancelException(tryingException)) {
+
                 } else {
                     logger.warn(String.format("compensable transaction trying failed. transaction content:%s", JSON.toJSONString(transaction)), tryingException);
 
@@ -133,16 +130,6 @@ public class CompensableTransactionInterceptor {
                     break;
             }
 
-        } catch (Exception e) {
-            if (e instanceof OptimisticLockException
-                    || ExceptionUtils.getRootCause(e) instanceof OptimisticLockException
-                    || e instanceof DelayCancelException
-                    || ExceptionUtils.getRootCause(e) instanceof DelayCancelException
-                    ) {
-            } else if (isDelayException(e)) {
-                logger.error("Delay Cancel Exception happened.", e);
-                throw new DelayCancelException();
-            }
         } finally {
             transactionManager.cleanAfterCompletion(transaction);
         }
@@ -152,13 +139,15 @@ public class CompensableTransactionInterceptor {
         return ReflectionUtils.getNullValue(method.getReturnType());
     }
 
-    private boolean isDelayException(Throwable throwable) {
+    private boolean isDelayCancelException(Throwable throwable) {
 
         if (delayCancelExceptions != null) {
             for (Class delayCancelException : delayCancelExceptions) {
 
+                Throwable rootCause = ExceptionUtils.getRootCause(throwable);
+
                 if (delayCancelException.isAssignableFrom(throwable.getClass())
-                        || delayCancelException.isAssignableFrom(ExceptionUtils.getRootCause(throwable).getClass())) {
+                        || (rootCause != null && delayCancelException.isAssignableFrom(rootCause.getClass()))) {
                     return true;
                 }
             }

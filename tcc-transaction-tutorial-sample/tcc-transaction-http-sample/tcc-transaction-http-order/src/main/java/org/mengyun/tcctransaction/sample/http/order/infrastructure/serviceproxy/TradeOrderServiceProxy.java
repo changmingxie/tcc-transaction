@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.sample.http.order.infrastructure.serviceproxy;
 
 import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.Propagation;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.context.MethodTransactionContextEditor;
 import org.mengyun.tcctransaction.sample.http.capital.api.CapitalTradeOrderService;
@@ -22,12 +23,15 @@ public class TradeOrderServiceProxy {
     @Autowired
     RedPacketTradeOrderService redPacketTradeOrderService;
 
-    @Compensable(confirmMethod = "record", cancelMethod = "record", transactionContextEditor = MethodTransactionContextEditor.class)
+    /*the propagation need set Propagation.SUPPORTS,otherwise the recover doesn't work,
+      The default value is Propagation.REQUIRED, which means will begin new transaction when recover.
+    */
+    @Compensable(propagation = Propagation.SUPPORTS, confirmMethod = "record", cancelMethod = "record", transactionContextEditor = MethodTransactionContextEditor.class)
     public String record(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
         return capitalTradeOrderService.record(transactionContext, tradeOrderDto);
     }
 
-    @Compensable(confirmMethod = "record", cancelMethod = "record", transactionContextEditor = MethodTransactionContextEditor.class)
+    @Compensable(propagation = Propagation.SUPPORTS, confirmMethod = "record", cancelMethod = "record", transactionContextEditor = MethodTransactionContextEditor.class)
     public String record(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
         return redPacketTradeOrderService.record(transactionContext, tradeOrderDto);
     }

@@ -31,13 +31,14 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
     @Transactional
     public String record(RedPacketTradeOrderDto tradeOrderDto) {
-        System.out.println("red packet try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
         try {
             Thread.sleep(1000l);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("red packet try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
         TradeOrder tradeOrder = new TradeOrder(
                 tradeOrderDto.getSelfUserId(),
@@ -59,13 +60,14 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
 
     @Transactional
     public void confirmRecord(RedPacketTradeOrderDto tradeOrderDto) {
-        System.out.println("red packet confirm record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
         try {
             Thread.sleep(1000l);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("red packet confirm record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
@@ -81,13 +83,14 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
 
     @Transactional
     public void cancelRecord(RedPacketTradeOrderDto tradeOrderDto) {
-        System.out.println("red packet cancel record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(),"yyyy-MM-dd HH:mm:ss"));
 
         try {
             Thread.sleep(1000l);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("red packet cancel record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(),"yyyy-MM-dd HH:mm:ss"));
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 

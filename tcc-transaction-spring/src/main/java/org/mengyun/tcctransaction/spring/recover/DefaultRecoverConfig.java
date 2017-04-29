@@ -1,8 +1,11 @@
 package org.mengyun.tcctransaction.spring.recover;
 
+import org.mengyun.tcctransaction.OptimisticLockException;
 import org.mengyun.tcctransaction.recover.RecoverConfig;
 
-import java.util.List;
+import java.net.SocketTimeoutException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by changming.xie on 6/1/16.
@@ -17,7 +20,12 @@ public class DefaultRecoverConfig implements RecoverConfig {
 
     private String cronExpression = "0 */1 * * * ?";
 
-    private List<Class<? extends Exception>> delayCancelExceptions;
+    private Set<Class<? extends Exception>> delayCancelExceptions = new HashSet<Class<? extends Exception>>();
+
+    public DefaultRecoverConfig() {
+        delayCancelExceptions.add(OptimisticLockException.class);
+        delayCancelExceptions.add(SocketTimeoutException.class);
+    }
 
     @Override
     public int getMaxRetryCount() {
@@ -34,6 +42,7 @@ public class DefaultRecoverConfig implements RecoverConfig {
         return cronExpression;
     }
 
+
     public void setMaxRetryCount(int maxRetryCount) {
         this.maxRetryCount = maxRetryCount;
     }
@@ -46,11 +55,13 @@ public class DefaultRecoverConfig implements RecoverConfig {
         this.cronExpression = cronExpression;
     }
 
-    public List<Class<? extends Exception>> getDelayCancelExceptions() {
-        return delayCancelExceptions;
+    @Override
+    public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayCancelExceptions) {
+        this.delayCancelExceptions.addAll(delayCancelExceptions);
     }
 
-    public void setDelayCancelExceptions(List<Class<? extends Exception>> delayCancelExceptions) {
-        this.delayCancelExceptions = delayCancelExceptions;
+    @Override
+    public Set<Class<? extends Exception>> getDelayCancelExceptions() {
+        return this.delayCancelExceptions;
     }
 }

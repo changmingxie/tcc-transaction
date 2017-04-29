@@ -7,7 +7,7 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
@@ -225,6 +225,24 @@
                 <groupId>com.101tec</groupId>
                 <artifactId>zkclient</artifactId>
                 <version>0.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>3.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.10</version>
             </dependency>
 
             <dependency>

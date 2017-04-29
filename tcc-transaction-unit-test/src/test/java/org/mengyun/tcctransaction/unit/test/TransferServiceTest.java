@@ -176,7 +176,7 @@ public class TransferServiceTest extends AbstractTestCase {
 
         try {
             //waiting the auto recovery schedule
-            Thread.sleep(1000 * 30L);
+            Thread.sleep(1000 * 10);
         } catch (InterruptedException e) {
             throw new Error(e);
         }
@@ -212,7 +212,7 @@ public class TransferServiceTest extends AbstractTestCase {
 
         try {
             //waiting the auto recovery schedule
-            Thread.sleep(1000 * 30L);
+            Thread.sleep(1000 * 10L);
         } catch (InterruptedException e) {
             throw new Error(e);
         }

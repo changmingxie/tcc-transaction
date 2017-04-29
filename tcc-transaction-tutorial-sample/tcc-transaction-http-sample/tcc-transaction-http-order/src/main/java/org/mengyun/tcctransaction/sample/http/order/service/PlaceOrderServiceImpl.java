@@ -8,7 +8,6 @@ import org.mengyun.tcctransaction.sample.http.order.domain.entity.Shop;
 import org.mengyun.tcctransaction.sample.http.order.domain.repository.ShopRepository;
 import org.mengyun.tcctransaction.sample.http.order.domain.service.OrderServiceImpl;
 import org.mengyun.tcctransaction.sample.http.order.domain.service.PaymentServiceImpl;
-import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +28,7 @@ public class PlaceOrderServiceImpl {
 
     @Autowired
     PaymentServiceImpl paymentService;
+
 
     public String placeOrder(long payerUserId, long shopId, List<Pair<Long, Integer>> productQuantities, BigDecimal redPacketPayAmount) {
         Shop shop = shopRepository.findById(shopId);
@@ -53,6 +53,7 @@ public class PlaceOrderServiceImpl {
         } catch (Throwable e) {
             //other exceptions throws at TRYING stage.
             //you can retry or cancel the operation.
+            e.printStackTrace();
         }
 
         return order.getMerchantOrderNo();

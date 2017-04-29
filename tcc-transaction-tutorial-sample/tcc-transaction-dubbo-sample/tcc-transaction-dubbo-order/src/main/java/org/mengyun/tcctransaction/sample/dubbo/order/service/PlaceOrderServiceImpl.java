@@ -53,6 +53,7 @@ public class PlaceOrderServiceImpl {
         } catch (Throwable e) {
             //other exceptions throws at TRYING stage.
             //you can retry or cancel the operation.
+            e.printStackTrace();
         }
 
         return order.getMerchantOrderNo();

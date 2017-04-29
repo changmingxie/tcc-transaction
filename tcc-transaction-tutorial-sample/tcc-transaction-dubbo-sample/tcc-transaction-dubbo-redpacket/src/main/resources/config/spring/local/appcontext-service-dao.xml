@@ -23,11 +23,12 @@
         <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 
-    <!--<bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">-->
-    <!--<property name="maxRetryCount" value="30"/>-->
-    <!--<property name="recoverDuration" value="120"/>-->
-    <!--<property name="cronExpression" value="0 */1 * * * ?"/>-->
-    <!--</bean>-->
+    <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
+        <property name="maxRetryCount" value="30"/>
+        <property name="recoverDuration" value="60"/>
+        <property name="cronExpression" value="0/30 * * * * ?"/>
+    </bean>
+    
 
     <bean id="transactionRepository"
           class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">

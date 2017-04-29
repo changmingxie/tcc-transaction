@@ -60,12 +60,14 @@ public class TransactionRecovery {
                 transaction.addRetriedCount();
 
                 if (transaction.getStatus().equals(TransactionStatus.CONFIRMING)) {
+                    //Need update the transaction version, ensure that only this recover job runs.
                     transaction.changeStatus(TransactionStatus.CONFIRMING);
                     transactionRepository.update(transaction);
                     transaction.commit();
 
                 } else {
                     transaction.changeStatus(TransactionStatus.CANCELLING);
+                    //Need update the transaction version, ensure that only this recover job runs.
                     transactionRepository.update(transaction);
                     transaction.rollback();
                 }

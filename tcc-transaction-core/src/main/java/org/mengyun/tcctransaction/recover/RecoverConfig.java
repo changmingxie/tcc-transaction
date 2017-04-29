@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.recover;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by changming.xie on 6/1/16.
@@ -13,7 +13,7 @@ public interface RecoverConfig {
 
     public String getCronExpression();
 
-    public List<Class<? extends Exception>> getDelayCancelExceptions();
+    public Set<Class<? extends Exception>> getDelayCancelExceptions();
 
-    public void setDelayCancelExceptions(List<Class<? extends Exception>> delayRecoverExceptions);
+    public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayRecoverExceptions);
 }

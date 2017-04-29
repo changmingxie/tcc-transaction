@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class CachableTransactionRepository implements TransactionRepository {
 
-    private int expireDuration = 300;
+    private int expireDuration = 120;
 
     private Cache<Xid, Transaction> transactionXidCompensableTransactionCache;
 
@@ -59,9 +59,7 @@ public abstract class CachableTransactionRepository implements TransactionReposi
             result = doDelete(transaction);
 
         } finally {
-            if (result <= 0) {
-                removeFromCache(transaction);
-            }
+            removeFromCache(transaction);
         }
         return result;
     }
@@ -109,7 +107,7 @@ public abstract class CachableTransactionRepository implements TransactionReposi
         return transactionXidCompensableTransactionCache.getIfPresent(transactionXid);
     }
 
-    public final void setExpireDuration(int durationInSeconds) {
+    public void setExpireDuration(int durationInSeconds) {
         this.expireDuration = durationInSeconds;
     }
 

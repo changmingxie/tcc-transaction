@@ -2,8 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.mengyun.tcctransaction.sample.dubbo"/>
 
@@ -26,13 +25,8 @@
 
     <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
         <property name="maxRetryCount" value="30"/>
-        <property name="recoverDuration" value="120"/>
-        <property name="cronExpression" value="0 */1 * * * ?"/>
-        <property name="delayCancelExceptions">
-            <util:list>
-                <value>com.alibaba.dubbo.remoting.TimeoutException</value>
-            </util:list>
-        </property>
+        <property name="recoverDuration" value="60"/>
+        <property name="cronExpression" value="0/30 * * * * ?"/>
     </bean>
 
     <bean id="transactionRepository"
