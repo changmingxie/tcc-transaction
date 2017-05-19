@@ -7,6 +7,7 @@ import org.mengyun.tcctransaction.OptimisticLockException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionRepository;
 import org.mengyun.tcctransaction.api.TransactionStatus;
+import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
 
 import java.util.Calendar;
@@ -45,42 +46,48 @@ public class TransactionRecovery {
     private void recoverErrorTransactions(List<Transaction> transactions) {
 
 
-        TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
-        RecoverConfig recoverConfig = transactionConfigurator.getRecoverConfig();
-
         for (Transaction transaction : transactions) {
 
-            if (transaction.getRetriedCount() > recoverConfig.getMaxRetryCount()) {
+            if (transaction.getRetriedCount() > transactionConfigurator.getRecoverConfig().getMaxRetryCount()) {
 
                 logger.error(String.format("recover failed with max retry count,will not try again. txid:%s, status:%s,retried count:%d,transaction content:%s", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(), JSON.toJSONString(transaction)));
                 continue;
             }
 
+            if (transaction.getTransactionType().equals(TransactionType.BRANCH)
+                    && (transaction.getCreateTime().getTime() +
+                    transactionConfigurator.getRecoverConfig().getMaxRetryCount() *
+                            transactionConfigurator.getRecoverConfig().getRecoverDuration() * 1000
+                    > System.currentTimeMillis())) {
+                continue;
+            }
+            
             try {
                 transaction.addRetriedCount();
 
                 if (transaction.getStatus().equals(TransactionStatus.CONFIRMING)) {
-                    //Need update the transaction version, ensure that only this recover job runs.
-                    transaction.changeStatus(TransactionStatus.CONFIRMING);
-                    transactionRepository.update(transaction);
-                    transaction.commit();
 
-                } else {
+                    transaction.changeStatus(TransactionStatus.CONFIRMING);
+                    transactionConfigurator.getTransactionRepository().update(transaction);
+                    transaction.commit();
+                    transactionConfigurator.getTransactionRepository().delete(transaction);
+
+                } else if (transaction.getStatus().equals(TransactionStatus.CANCELLING)
+                        || transaction.getTransactionType().equals(TransactionType.ROOT)) {
+
                     transaction.changeStatus(TransactionStatus.CANCELLING);
-                    //Need update the transaction version, ensure that only this recover job runs.
-                    transactionRepository.update(transaction);
+                    transactionConfigurator.getTransactionRepository().update(transaction);
                     transaction.rollback();
+                    transactionConfigurator.getTransactionRepository().delete(transaction);
                 }
 
-                transactionRepository.delete(transaction);
-                
             } catch (Throwable throwable) {
 
                 if (throwable instanceof OptimisticLockException
                         || ExceptionUtils.getRootCause(throwable) instanceof OptimisticLockException) {
-                    logger.warn(String.format("optimisticLockException happened while recover. txid:%s, status:%s,retried count:%d,transaction content:%s", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(), JSON.toJSON(transaction)), throwable);
+                    logger.warn(String.format("optimisticLockException happened while recover. txid:%s, status:%s,retried count:%d,transaction content:%s", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(), JSON.toJSONString(transaction)), throwable);
                 } else {
-                    logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d,transaction content:%s", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(),JSON.toJSON(transaction)), throwable);
+                    logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d,transaction content:%s", transaction.getXid(), transaction.getStatus().getId(), transaction.getRetriedCount(), JSON.toJSONString(transaction)), throwable);
                 }
             }
         }

@@ -85,8 +85,7 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
         List<Transaction> allUnmodifiedSince = new ArrayList<Transaction>();
 
         for (Transaction transaction : allTransactions) {
-            if (transaction.getTransactionType().equals(TransactionType.ROOT)
-                    && transaction.getLastUpdateTime().compareTo(date) < 0) {
+            if (transaction.getLastUpdateTime().compareTo(date) < 0) {
                 allUnmodifiedSince.add(transaction);
             }
         }
