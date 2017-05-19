@@ -1,10 +1,9 @@
 package org.mengyun.tcctransaction.repository;
 
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.repository.helper.JedisCallback;
-import org.mengyun.tcctransaction.repository.helper.TransactionSerializer;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
+import org.mengyun.tcctransaction.repository.helper.TransactionSerializer;
 import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import org.mengyun.tcctransaction.utils.ByteUtils;
@@ -129,8 +128,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
         List<Transaction> allUnmodifiedSince = new ArrayList<Transaction>();
 
         for (Transaction transaction : allTransactions) {
-            if (transaction.getTransactionType().equals(TransactionType.ROOT)
-                    && transaction.getLastUpdateTime().compareTo(date) < 0) {
+            if (transaction.getLastUpdateTime().compareTo(date) < 0) {
                 allUnmodifiedSince.add(transaction);
             }
         }

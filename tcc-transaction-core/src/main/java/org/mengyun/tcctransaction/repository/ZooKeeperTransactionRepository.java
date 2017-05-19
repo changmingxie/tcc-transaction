@@ -3,7 +3,6 @@ package org.mengyun.tcctransaction.repository;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.repository.helper.TransactionSerializer;
 import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
@@ -109,8 +108,7 @@ public class ZooKeeperTransactionRepository extends CachableTransactionRepositor
         List<Transaction> allUnmodifiedSince = new ArrayList<Transaction>();
 
         for (Transaction transaction : allTransactions) {
-            if (transaction.getTransactionType().equals(TransactionType.ROOT)
-                    && transaction.getLastUpdateTime().compareTo(date) < 0) {
+            if (transaction.getLastUpdateTime().compareTo(date) < 0) {
                 allUnmodifiedSince.add(transaction);
             }
         }
@@ -135,7 +133,7 @@ public class ZooKeeperTransactionRepository extends CachableTransactionRepositor
             try {
                 Stat stat = new Stat();
                 content = getZk().getData(getTxidPath(znodePath), false, stat);
-                Transaction transaction =  TransactionSerializer.deserialize(serializer, content);
+                Transaction transaction = TransactionSerializer.deserialize(serializer, content);
                 transactions.add(transaction);
             } catch (Exception e) {
                 throw new TransactionIOException(e);
