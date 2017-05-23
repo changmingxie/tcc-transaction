@@ -213,15 +213,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
             ResultSet resultSet = stmt.executeQuery();
 
-            while (resultSet.next()) {
-                byte[] transactionBytes = resultSet.getBytes(3);
-                Transaction transaction = (Transaction) serializer.deserialize(transactionBytes);
-                transaction.changeStatus(TransactionStatus.valueOf(resultSet.getInt(4)));
-                transaction.setLastUpdateTime(resultSet.getDate(7));
-                transaction.setVersion(resultSet.getLong(9));
-                transaction.resetRetriedCount(resultSet.getInt(8));
-                transactions.add(transaction);
-            }
+            this.constructTransactions(resultSet, transactions);
         } catch (Throwable e) {
             throw new TransactionIOException(e);
         } finally {
@@ -276,17 +268,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
             ResultSet resultSet = stmt.executeQuery();
 
-            while (resultSet.next()) {
-
-                byte[] transactionBytes = resultSet.getBytes(3);
-                Transaction transaction = (Transaction) serializer.deserialize(transactionBytes);
-                transaction.changeStatus(TransactionStatus.valueOf(resultSet.getInt(4)));
-                transaction.setLastUpdateTime(resultSet.getDate(7));
-                transaction.setVersion(resultSet.getLong(9));
-                transaction.resetRetriedCount(resultSet.getInt(8));
-
-                transactions.add(transaction);
-            }
+            this.constructTransactions(resultSet, transactions);
         } catch (Throwable e) {
             throw new TransactionIOException(e);
         } finally {
@@ -295,6 +277,18 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         }
 
         return transactions;
+    }
+
+    protected void constructTransactions(ResultSet resultSet, List<Transaction> transactions) throws SQLException {
+        while (resultSet.next()) {
+            byte[] transactionBytes = resultSet.getBytes(3);
+            Transaction transaction = (Transaction) serializer.deserialize(transactionBytes);
+            transaction.changeStatus(TransactionStatus.valueOf(resultSet.getInt(4)));
+            transaction.setLastUpdateTime(resultSet.getDate(7));
+            transaction.setVersion(resultSet.getLong(9));
+            transaction.resetRetriedCount(resultSet.getInt(8));
+            transactions.add(transaction);
+        }
     }
 
 

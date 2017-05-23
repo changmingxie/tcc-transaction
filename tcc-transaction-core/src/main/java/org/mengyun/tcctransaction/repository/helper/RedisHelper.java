@@ -1,13 +1,15 @@
 package org.mengyun.tcctransaction.repository.helper;
 
-import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import org.mengyun.tcctransaction.utils.ByteUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import javax.transaction.xa.Xid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Comparator;
 
 /**
  * Created by changming.xie on 9/15/16.
@@ -31,23 +33,7 @@ public class RedisHelper {
         return execute(jedisPool, new JedisCallback<byte[]>() {
                     @Override
                     public byte[] doInJedis(Jedis jedis) {
-
-                        Map<byte[], byte[]> fieldValueMap = jedis.hgetAll(key);
-
-                        List<Map.Entry<byte[], byte[]>> entries = new ArrayList<Map.Entry<byte[], byte[]>>(fieldValueMap.entrySet());
-                        Collections.sort(entries, new Comparator<Map.Entry<byte[], byte[]>>() {
-                            @Override
-                            public int compare(Map.Entry<byte[], byte[]> entry1, Map.Entry<byte[], byte[]> entry2) {
-                                return (int) (ByteUtils.bytesToLong(entry1.getKey()) - ByteUtils.bytesToLong(entry2.getKey()));
-                            }
-                        });
-
-                        if (entries.isEmpty())
-                            return null;
-
-                        byte[] content = entries.get(entries.size() - 1).getValue();
-
-                        return content;
+                        return getKeyValue(jedis, key);
                     }
                 }
         );
@@ -65,12 +51,11 @@ public class RedisHelper {
             }
         });
 
-        if (entries.isEmpty())
+        if (entries.isEmpty()) {
             return null;
+        }
 
-        byte[] content = entries.get(entries.size() - 1).getValue();
-
-        return content;
+        return entries.get(entries.size() - 1).getValue();
     }
 
     public static <T> T execute(JedisPool jedisPool, JedisCallback<T> callback) {

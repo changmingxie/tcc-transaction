@@ -20,7 +20,7 @@ public enum TransactionType {
         return id;
     }
 
-    public  static TransactionType  valueOf(int id) {
+    public static TransactionType valueOf(int id) {
         switch (id) {
             case 1:
                 return ROOT;
