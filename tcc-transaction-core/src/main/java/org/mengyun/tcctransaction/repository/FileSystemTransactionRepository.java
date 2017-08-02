@@ -59,7 +59,7 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
         String fullFileName = getFullFileName(transaction.getXid());
         File file = new File(fullFileName);
         if (file.exists()) {
-            file.delete();
+            return file.delete() ? 1 : 0;
         }
         return 1;
     }
@@ -112,7 +112,7 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
         return String.format("%s/%s", rootPath, xid);
     }
 
-    private void makeDirIfNecessory() {
+    private void makeDirIfNecessary() {
         if (!initialized) {
             synchronized (FileSystemTransactionRepository.class) {
                 if (!initialized) {
@@ -135,7 +135,7 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
     }
 
     private void writeFile(Transaction transaction) {
-        makeDirIfNecessory();
+        makeDirIfNecessary();
 
         String file = getFullFileName(transaction.getXid());
 

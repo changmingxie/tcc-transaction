@@ -83,8 +83,7 @@ public class TransactionXid implements Xid, Serializable {
             System.arraycopy(branchQualifier, 0, cloneBranchQualifier, 0, branchQualifier.length);
         }
 
-        TransactionXid clone = new TransactionXid(cloneGlobalTransactionId, cloneBranchQualifier);
-        return clone;
+        return new TransactionXid(cloneGlobalTransactionId, cloneBranchQualifier);
     }
 
     public int hashCode() {
@@ -107,9 +106,9 @@ public class TransactionXid implements Xid, Serializable {
         TransactionXid other = (TransactionXid) obj;
         if (this.getFormatId() != other.getFormatId()) {
             return false;
-        } else if (Arrays.equals(branchQualifier, other.branchQualifier) == false) {
+        } else if (!Arrays.equals(branchQualifier, other.branchQualifier)) {
             return false;
-        } else if (Arrays.equals(globalTransactionId, other.globalTransactionId) == false) {
+        } else if (!Arrays.equals(globalTransactionId, other.globalTransactionId)) {
             return false;
         }
         return true;

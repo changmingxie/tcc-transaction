@@ -51,6 +51,9 @@ public class ResourceCoordinatorInterceptor {
     private void enlistParticipant(ProceedingJoinPoint pjp) throws IllegalAccessException, InstantiationException {
 
         Method method = CompensableMethodUtils.getCompensableMethod(pjp);
+        if (method == null) {
+            throw new RuntimeException(String.format("join point not found method, point is : %s", pjp.getSignature().getName()));
+        }
         Compensable compensable = method.getAnnotation(Compensable.class);
 
         String confirmMethodName = compensable.confirmMethod();

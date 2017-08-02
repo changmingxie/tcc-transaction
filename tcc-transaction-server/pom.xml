@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>tcc-transaction-server</artifactId>
     <packaging>war</packaging>
-    <name>tcc-transaction-server Maven Webapp</name>
+    <name>tcc-transaction-server</name>
     <url>http://maven.apache.org</url>
     <dependencies>
 
