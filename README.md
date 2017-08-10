@@ -51,5 +51,4 @@ tcc-transaction不和底层使用的rpc框架耦合，也就是使用doubbo,thri
 
 ### Donate
 You can show your appreciation for TCC-TRANSACTION and support future development by donating! We strongly feel that TCC-TRANSACTION should remain free of charge as our gift to the online community. We ask for a donation of  10.00 RMB, but of course we appreciate any amount, thanks.
-
 ![捐款微信二维码](https://github.com/changmingxie/aggregate-framework/blob/master/doc/weixin-donate.png)
