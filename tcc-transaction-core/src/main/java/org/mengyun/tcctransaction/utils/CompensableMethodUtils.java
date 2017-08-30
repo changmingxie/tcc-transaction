@@ -57,14 +57,15 @@ public class CompensableMethodUtils {
 
     public static int getTransactionContextParamPosition(Class<?>[] parameterTypes) {
 
-        int i = -1;
+        int position = -1;
 
-        for (i = 0; i < parameterTypes.length; i++) {
+        for (int i = 0; i < parameterTypes.length; i++) {
             if (parameterTypes[i].equals(org.mengyun.tcctransaction.api.TransactionContext.class)) {
+                position = i;
                 break;
             }
         }
-        return i;
+        return position;
     }
 
     public static TransactionContext getTransactionContextFromArgs(Object[] args) {

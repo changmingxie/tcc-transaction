@@ -19,7 +19,7 @@ public @interface Compensable {
 
     public String cancelMethod() default "";
 
-    public Class<? extends TransactionContextEditor> transactionContextEditor() default NullableTransactionContextEditor.class;
+    public Class<? extends TransactionContextEditor> transactionContextEditor() default DefaultTransactionContextEditor.class;
 
     class NullableTransactionContextEditor implements TransactionContextEditor {
 
@@ -31,6 +31,56 @@ public @interface Compensable {
         @Override
         public void set(TransactionContext transactionContext, Object target, Method method, Object[] args) {
 
+        }
+    }
+
+    class DefaultTransactionContextEditor implements TransactionContextEditor {
+
+        @Override
+        public TransactionContext get(Object target, Method method, Object[] args) {
+            int position = getTransactionContextParamPosition(method.getParameterTypes());
+
+            if (position >= 0) {
+                return (TransactionContext) args[position];
+            }
+
+            return null;
+        }
+
+        @Override
+        public void set(TransactionContext transactionContext, Object target, Method method, Object[] args) {
+
+            int position = getTransactionContextParamPosition(method.getParameterTypes());
+            if (position >= 0) {
+                args[position] = transactionContext;
+            }
+        }
+
+        public static int getTransactionContextParamPosition(Class<?>[] parameterTypes) {
+
+            int position = -1;
+
+            for (int i = 0; i < parameterTypes.length; i++) {
+                if (parameterTypes[i].equals(org.mengyun.tcctransaction.api.TransactionContext.class)) {
+                    position = i;
+                    break;
+                }
+            }
+            return position;
+        }
+
+        public static TransactionContext getTransactionContextFromArgs(Object[] args) {
+
+            TransactionContext transactionContext = null;
+
+            for (Object arg : args) {
+                if (arg != null && org.mengyun.tcctransaction.api.TransactionContext.class.isAssignableFrom(arg.getClass())) {
+
+                    transactionContext = (org.mengyun.tcctransaction.api.TransactionContext) arg;
+                }
+            }
+
+            return transactionContext;
         }
     }
 }

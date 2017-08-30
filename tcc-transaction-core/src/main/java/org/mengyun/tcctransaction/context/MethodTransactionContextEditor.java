@@ -8,7 +8,9 @@ import java.lang.reflect.Method;
 
 /**
  * Created by changming.xie on 1/18/17.
+ * this class is replaced by org.mengyun.tcctransaction.api.Compensable.DefaultTransactionContextEditor
  */
+@Deprecated
 public class MethodTransactionContextEditor implements TransactionContextEditor {
 
     @Override
