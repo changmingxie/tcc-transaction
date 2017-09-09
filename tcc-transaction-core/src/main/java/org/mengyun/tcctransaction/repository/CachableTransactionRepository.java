@@ -33,20 +33,35 @@ public abstract class CachableTransactionRepository implements TransactionReposi
 
     @Override
     public int update(Transaction transaction) {
-        int result = doUpdate(transaction);
-        if (result > 0) {
-            putToCache(transaction);
-        } else {
-            throw new OptimisticLockException();
+        int result = 0;
+
+        try {
+            result = doUpdate(transaction);
+            if (result > 0) {
+                putToCache(transaction);
+            } else {
+                throw new OptimisticLockException();
+            }
+        } finally {
+            if (result <= 0) {
+                removeFromCache(transaction);
+            }
         }
+
         return result;
     }
 
     @Override
     public int delete(Transaction transaction) {
-        int result = doDelete(transaction);
-        if (result > 0) {
-            removeFromCache(transaction);
+        int result = 0;
+
+        try {
+            result = doDelete(transaction);
+
+        } finally {
+            if (result <= 0) {
+                removeFromCache(transaction);
+            }
         }
         return result;
     }

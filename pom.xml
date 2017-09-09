@@ -7,12 +7,12 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.5</version>
+    <version>1.1.6.5</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
         <module>tcc-transaction-spring</module>
-        <!--<module>tcc-transaction-unit-test</module>-->
+        <module>tcc-transaction-unit-test</module>
         <module>tcc-transaction-tutorial-sample</module>
         <module>tcc-transaction-server</module>
     </modules>
@@ -52,7 +52,7 @@
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
-                <version>1.8.6</version>
+                <version>2.2.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>c3p0</groupId>
@@ -90,6 +90,12 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>2.5.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.23</version>
             </dependency>
 
             <dependency>
@@ -183,7 +189,7 @@
                 <artifactId>freemarker</artifactId>
                 <version>2.3.21</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.sitemesh</groupId>
                 <artifactId>sitemesh</artifactId>
