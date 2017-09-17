@@ -3,45 +3,58 @@ package org.mengyun.tcctransaction.serializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.mengyun.tcctransaction.InvocationContext;
-import org.mengyun.tcctransaction.Participant;
-import org.mengyun.tcctransaction.Terminator;
-import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.api.TransactionStatus;
-import org.mengyun.tcctransaction.api.TransactionXid;
-import org.mengyun.tcctransaction.common.TransactionType;
+import org.mengyun.tcctransaction.serializer.ObjectSerializer;
+import org.objenesis.strategy.StdInstantiatorStrategy;
 
-/**
- * Created by changming.xie on 7/22/16.
- */
-public class KryoTransactionSerializer implements ObjectSerializer<Transaction> {
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
-    private static Kryo kryo = null;
+public class KryoTransactionSerializer<T> implements ObjectSerializer<T> {
 
-    static {
-        kryo = new Kryo();
+    private static final ThreadLocal<Kryo> kryoLocal = new ThreadLocal<Kryo>() {
+        @Override
+        protected Kryo initialValue() {
+            Kryo kryo = new Kryo();
+            kryo.setReferences(true);
+            kryo.setRegistrationRequired(false);
+            //Fix the NPE bug when deserializing Collections.
+            ((Kryo.DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy())
+                    .setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
 
-        kryo.register(Transaction.class);
-        kryo.register(TransactionXid.class);
-        kryo.register(TransactionStatus.class);
-        kryo.register(TransactionType.class);
-        kryo.register(Participant.class);
-        kryo.register(Terminator.class);
-        kryo.register(InvocationContext.class);
+            return kryo;
+        }
+    };
+
+    public static Kryo getInstance() {
+        return kryoLocal.get();
     }
 
+    public static <T> byte[] writeToByteArray(T obj) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        Output output = new Output(byteArrayOutputStream);
 
-    @Override
-    public byte[] serialize(Transaction transaction) {
-        Output output = new Output(256, -1);
-        kryo.writeObject(output, transaction);
-        return output.toBytes();
+        Kryo kryo = getInstance();
+        kryo.writeClassAndObject(output, obj);
+        output.flush();
+
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    public static <T> T readFromByteArray(byte[] byteArray) {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArray);
+        Input input = new Input(byteArrayInputStream);
+
+        Kryo kryo = getInstance();
+        return (T) kryo.readClassAndObject(input);
     }
 
     @Override
-    public Transaction deserialize(byte[] bytes) {
-        Input input = new Input(bytes);
-        Transaction transaction = kryo.readObject(input, Transaction.class);
-        return transaction;
+    public byte[] serialize(T t) {
+        return writeToByteArray(t);
+    }
+
+    @Override
+    public T deserialize(byte[] data) {
+        return readFromByteArray(data);
     }
 }
