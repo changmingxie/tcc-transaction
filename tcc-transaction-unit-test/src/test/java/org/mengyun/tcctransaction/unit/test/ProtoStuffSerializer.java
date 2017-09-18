@@ -26,5 +26,10 @@ public class ProtoStuffSerializer implements ObjectSerializer<Transaction> {
         ProtobufIOUtil.mergeFrom(data, t, runtimeSchema);
         return t;
     }
+
+    @Override
+    public Transaction clone(Transaction object) {
+        throw new UnsupportedOperationException();
+    }
 }
 
