@@ -49,6 +49,10 @@ public class CompensableTransactionInterceptor {
         Propagation propagation = compensable.propagation();
         TransactionContext transactionContext = FactoryBuilder.factoryOf(compensable.transactionContextEditor()).getInstance().get(pjp.getTarget(), method, pjp.getArgs());
 
+        boolean asyncConfirm = compensable.asyncConfirm();
+
+        boolean asyncCancel = compensable.asyncCancel();
+
         boolean isTransactionActive = transactionManager.isTransactionActive();
 
         if (!TransactionUtils.isLegalTransactionContext(isTransactionActive, propagation, transactionContext)) {
@@ -59,16 +63,16 @@ public class CompensableTransactionInterceptor {
 
         switch (methodType) {
             case ROOT:
-                return rootMethodProceed(pjp);
+                return rootMethodProceed(pjp, asyncConfirm, asyncCancel);
             case PROVIDER:
-                return providerMethodProceed(pjp, transactionContext);
+                return providerMethodProceed(pjp, transactionContext, asyncConfirm, asyncCancel);
             default:
                 return pjp.proceed();
         }
     }
 
 
-    private Object rootMethodProceed(ProceedingJoinPoint pjp) throws Throwable {
+    private Object rootMethodProceed(ProceedingJoinPoint pjp, boolean asyncConfirm, boolean asyncCancel) throws Throwable {
 
         Object returnValue = null;
 
@@ -87,13 +91,13 @@ public class CompensableTransactionInterceptor {
                 } else {
                     logger.warn(String.format("compensable transaction trying failed. transaction content:%s", JSON.toJSONString(transaction)), tryingException);
 
-                    transactionManager.rollback();
+                    transactionManager.rollback(asyncCancel);
                 }
 
                 throw tryingException;
             }
 
-            transactionManager.commit();
+            transactionManager.commit(asyncConfirm);
 
         } finally {
             transactionManager.cleanAfterCompletion(transaction);
@@ -102,7 +106,7 @@ public class CompensableTransactionInterceptor {
         return returnValue;
     }
 
-    private Object providerMethodProceed(ProceedingJoinPoint pjp, TransactionContext transactionContext) throws Throwable {
+    private Object providerMethodProceed(ProceedingJoinPoint pjp, TransactionContext transactionContext, boolean asyncConfirm, boolean asyncCancel) throws Throwable {
 
         Transaction transaction = null;
         try {
@@ -114,7 +118,7 @@ public class CompensableTransactionInterceptor {
                 case CONFIRMING:
                     try {
                         transaction = transactionManager.propagationExistBegin(transactionContext);
-                        transactionManager.commit();
+                        transactionManager.commit(asyncConfirm);
                     } catch (NoExistedTransactionException excepton) {
                         //the transaction has been commit,ignore it.
                     }
@@ -123,7 +127,7 @@ public class CompensableTransactionInterceptor {
 
                     try {
                         transaction = transactionManager.propagationExistBegin(transactionContext);
-                        transactionManager.rollback();
+                        transactionManager.rollback(asyncCancel);
                     } catch (NoExistedTransactionException exception) {
                         //the transaction has been rollback,ignore it.
                     }

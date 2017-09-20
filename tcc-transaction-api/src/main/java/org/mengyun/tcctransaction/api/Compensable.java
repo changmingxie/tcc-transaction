@@ -21,6 +21,10 @@ public @interface Compensable {
 
     public Class<? extends TransactionContextEditor> transactionContextEditor() default DefaultTransactionContextEditor.class;
 
+    public boolean asyncConfirm() default false;
+
+    public boolean asyncCancel() default false;
+
     class NullableTransactionContextEditor implements TransactionContextEditor {
 
         @Override
