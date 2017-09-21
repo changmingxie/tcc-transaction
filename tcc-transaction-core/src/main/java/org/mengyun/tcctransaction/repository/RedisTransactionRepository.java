@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.repository;
 
-import org.mengyun.tcctransaction.SystemException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.repository.helper.ExpandTransactionSerializer;
 import org.mengyun.tcctransaction.repository.helper.JedisCallback;
@@ -13,7 +12,6 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 
 import javax.transaction.xa.Xid;
-import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -147,7 +145,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                 }
             });
 
-            if (content != null) {
+            if (content != null && content.size() > 0) {
                 return ExpandTransactionSerializer.deserialize(serializer, content);
             }
             return null;
@@ -198,11 +196,12 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
                     List<Transaction> list = new ArrayList<Transaction>();
                     for (Object data : result) {
-                        try {
+
+                        if (data != null && ((Map<byte[], byte[]>) data).size() > 0) {
+
                             list.add(ExpandTransactionSerializer.deserialize(serializer, (Map<byte[], byte[]>) data));
-                        } catch (ParseException e) {
-                            throw new SystemException(e);
                         }
+
                     }
 
                     return list;

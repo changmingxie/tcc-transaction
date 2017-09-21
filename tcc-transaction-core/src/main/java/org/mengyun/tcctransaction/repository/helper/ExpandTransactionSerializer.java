@@ -3,6 +3,7 @@ package org.mengyun.tcctransaction.repository.helper;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.mengyun.tcctransaction.SystemException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
@@ -34,13 +35,19 @@ public class ExpandTransactionSerializer {
         return map;
     }
 
-    public static Transaction deserialize(ObjectSerializer serializer, Map<byte[], byte[]> map) throws ParseException {
+    public static Transaction deserialize(ObjectSerializer serializer, Map<byte[], byte[]> map) {
 
         byte[] content = map.get("CONTENT".getBytes());
         Transaction transaction = (Transaction) serializer.deserialize(content);
         transaction.changeStatus(TransactionStatus.valueOf(ByteUtils.bytesToInt(map.get("STATUS".getBytes()))));
         transaction.resetRetriedCount(ByteUtils.bytesToInt(map.get("RETRIED_COUNT".getBytes())));
-        transaction.setLastUpdateTime(DateUtils.parseDate(new String(map.get("LAST_UPDATE_TIME".getBytes())), "yyyy-MM-dd HH:mm:ss"));
+
+        try {
+            transaction.setLastUpdateTime(DateUtils.parseDate(new String(map.get("LAST_UPDATE_TIME".getBytes())), "yyyy-MM-dd HH:mm:ss"));
+        } catch (ParseException e) {
+            throw new SystemException(e);
+        }
+
         transaction.setVersion(ByteUtils.bytesToLong(map.get("VERSION".getBytes())));
         return transaction;
     }
