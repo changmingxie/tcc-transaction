@@ -1,19 +1,21 @@
 package org.mengyun.tcctransaction.server.dao;
 
+import org.apache.commons.lang3.time.DateUtils;
+import org.mengyun.tcctransaction.SystemException;
 import org.mengyun.tcctransaction.api.TransactionXid;
+import org.mengyun.tcctransaction.repository.TransactionIOException;
 import org.mengyun.tcctransaction.repository.helper.JedisCallback;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
-import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
-import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
 import org.mengyun.tcctransaction.utils.ByteUtils;
+import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.*;
 
-import javax.xml.bind.DatatypeConverter;
+import javax.transaction.xa.Xid;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -24,8 +26,6 @@ public class RedisTransactionDao implements TransactionDao {
 
     @Autowired
     private JedisPool jedisPool;
-
-    private ObjectSerializer serializer = new JdkSerializationSerializer();
 
     @Value("#{redisDomainKeyPrefix}")
     private Properties domainKeyPrefix;
@@ -51,27 +51,52 @@ public class RedisTransactionDao implements TransactionDao {
                     end = allKeys.size();
                 }
 
-                List<byte[]> keys = allKeys.subList(start, end);
+                final List<byte[]> keys = allKeys.subList(start, end);
 
-                List<TransactionVo> transactionVos = new ArrayList<TransactionVo>();
+                try {
 
-                for (byte[] key : keys) {
+                    return RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
+                        @Override
+                        public List<TransactionVo> doInJedis(Jedis jedis) {
 
-                    byte[] content = RedisHelper.getKeyValue(jedis, key);
-                    Map<String, Object> map = (Map<String, Object>) serializer.deserialize(content);
+                            Pipeline pipeline = jedis.pipelined();
 
-                    TransactionVo transactionVo = new TransactionVo();
-                    transactionVo.setDomain(domain);
-                    transactionVo.setGlobalTxId(DatatypeConverter.printHexBinary((byte[]) map.get("GLOBAL_TX_ID")));
-                    transactionVo.setBranchQualifier(DatatypeConverter.printHexBinary((byte[]) map.get("BRANCH_QUALIFIER")));
-                    transactionVo.setStatus((Integer) map.get("STATUS"));
-                    transactionVo.setTransactionType((Integer) map.get("TRANSACTION_TYPE"));
-                    transactionVo.setRetriedCount((Integer) map.get("RETRIED_COUNT"));
-                    transactionVo.setCreateTime((Date) map.get("CREATE_TIME"));
-                    transactionVo.setLastUpdateTime((Date) map.get("LAST_UPDATE_TIME"));
-                    transactionVos.add(transactionVo);
+                            for (final byte[] key : keys) {
+                                pipeline.hgetAll(key);
+                            }
+                            Response<List<Object>> result = pipeline.exec();
+
+                            List<TransactionVo> list = new ArrayList<TransactionVo>();
+                            for (Object data : result.get()) {
+                                try {
+
+                                    Map<byte[], byte[]> map = (Map<byte[], byte[]>) data;
+
+                                    TransactionVo transactionVo = new TransactionVo();
+                                    transactionVo.setDomain(domain);
+                                    transactionVo.setGlobalTxId(UUID.nameUUIDFromBytes(map.get("GLOBAL_TX_ID".getBytes())).toString());
+                                    transactionVo.setBranchQualifier(UUID.nameUUIDFromBytes(map.get("BRANCH_QUALIFIER".getBytes())).toString());
+                                    transactionVo.setStatus(ByteUtils.bytesToInt(map.get("STATUS".getBytes())));
+                                    transactionVo.setTransactionType(ByteUtils.bytesToInt(map.get("TRANSACTION_TYPE".getBytes())));
+                                    transactionVo.setRetriedCount(ByteUtils.bytesToInt(map.get("RETRIED_COUNT".getBytes())));
+                                    transactionVo.setCreateTime(DateUtils.parseDate(new String(map.get("CREATE_TIME".getBytes())), "yyyy-MM-dd HH:mm:ss"));
+                                    transactionVo.setLastUpdateTime(DateUtils.parseDate(new String(map.get("LAST_UPDATE_TIME".getBytes())), "yyyy-MM-dd HH:mm:ss"));
+                                    transactionVo.setContentView(new String(map.get("CONTENT_VIEW".getBytes())));
+                                    list.add(transactionVo);
+
+                                } catch (ParseException e) {
+                                    throw new SystemException(e);
+                                }
+                            }
+
+                            return list;
+                        }
+                    });
+
+                } catch (Exception e) {
+                    throw new TransactionIOException(e);
                 }
-                return transactionVos;
+
             }
         });
     }
@@ -98,22 +123,30 @@ public class RedisTransactionDao implements TransactionDao {
             return false;
         }
 
+        final Xid xid = new TransactionXid(globalTxId, branchQualifier);
+
         return RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
             @Override
             public Boolean doInJedis(Jedis jedis) {
 
-                byte[] key = RedisHelper.getRedisKey(domainKeyPrefix.getProperty(domain), new TransactionXid(globalTxId, branchQualifier));
-                byte[] content = RedisHelper.getKeyValue(jedis, key);
+                byte[] key = RedisHelper.getRedisKey(domainKeyPrefix.getProperty(domain), xid);
+                byte[] versionKey = RedisHelper.getVersionKey(domainKeyPrefix.getProperty(domain), xid);
 
-                Map<String, Object> map = (Map<String, Object>) serializer.deserialize(content);
+                byte[] versionBytes = jedis.get(versionKey);
 
-                map.put("RETRIED_COUNT", 0);
-                map.put("LAST_UPDATE_TIME", new Date());
-                map.put("VERSION", ((Long) map.get("VERSION")) + 1);
+                jedis.watch(versionKey);
 
-                Long result = jedis.hsetnx(key, ByteUtils.longToBytes((Long) map.get("VERSION")), serializer.serialize(map));
+                Transaction multi = jedis.multi();
 
-                return result > 0;
+                multi.set(versionKey, ByteUtils.longToBytes(ByteUtils.bytesToLong(versionBytes) + 1));
+                multi.hset(key, "VERSION".getBytes(), ByteUtils.longToBytes(ByteUtils.bytesToLong(versionBytes) + 1));
+                multi.hset(key, "RETRIED_COUNT".getBytes(), ByteUtils.intToBytes(0));
+                List<Object> result = multi.exec();
+
+                if (!CollectionUtils.isEmpty(result)) {
+                    return true;
+                }
+                return false;
             }
         });
     }

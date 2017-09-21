@@ -23,6 +23,8 @@ public class TransactionVo {
 
     private Date lastUpdateTime;
 
+    private String contentView;
+
     public String getDomain() {
         return domain;
     }
@@ -85,5 +87,13 @@ public class TransactionVo {
 
     public void setLastUpdateTime(Date lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public String getContentView() {
+        return contentView;
+    }
+
+    public void setContentView(String contentView) {
+        this.contentView = contentView;
     }
 }

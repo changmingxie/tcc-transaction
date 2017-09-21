@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.spring.support;
 
 import org.mengyun.tcctransaction.support.BeanFactory;
+import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -17,6 +18,7 @@ public class SpringBeanFactory implements BeanFactory, ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        FactoryBuilder.registerBeanFactory(this);
     }
 
     @Override

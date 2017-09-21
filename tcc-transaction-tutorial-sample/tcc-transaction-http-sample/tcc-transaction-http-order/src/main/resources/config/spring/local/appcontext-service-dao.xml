@@ -33,13 +33,13 @@
     </bean>
 
     <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
-        <property name="maxRetryCount" value="5"/>
-        <property name="recoverDuration" value="60"/>
-        <property name="cronExpression" value="0/30 * * * * ?"/>
+        <property name="maxRetryCount" value="30"/>
+        <property name="recoverDuration" value="5"/>
+        <property name="cronExpression" value="0/5 * * * * ?"/>
     </bean>
 
 
-    <bean id="kryoSerializer" class="org.mengyun.tcctransaction.serializer.KryoTransactionSerializer"/>
+    <bean id="kryoSerializer" class="org.mengyun.tcctransaction.serializer.KryoPoolSerializer"/>
 
 
     <!--<bean id="transactionRepository"-->
