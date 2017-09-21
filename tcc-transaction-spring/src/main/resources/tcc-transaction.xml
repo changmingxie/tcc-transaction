@@ -8,8 +8,6 @@
 
     <bean id="springBeanFactory" class="org.mengyun.tcctransaction.spring.support.SpringBeanFactory"/>
 
-    <bean id="springPostProcessor" class="org.mengyun.tcctransaction.spring.support.SpringPostProcessor"/>
-
 
     <bean id="transactionConfigurator" class="org.mengyun.tcctransaction.spring.support.SpringTransactionConfigurator"
           init-method="init"/>
