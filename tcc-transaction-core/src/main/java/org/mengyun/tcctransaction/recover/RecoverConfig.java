@@ -16,4 +16,6 @@ public interface RecoverConfig {
     public Set<Class<? extends Exception>> getDelayCancelExceptions();
 
     public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayRecoverExceptions);
+
+    public int getAsyncTerminateThreadPoolSize();
 }

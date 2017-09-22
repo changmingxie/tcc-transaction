@@ -20,6 +20,8 @@ public class DefaultRecoverConfig implements RecoverConfig {
 
     private String cronExpression = "0 */1 * * * ?";
 
+    private int asyncTerminateThreadPoolSize = 1024;
+
     private Set<Class<? extends Exception>> delayCancelExceptions = new HashSet<Class<? extends Exception>>();
 
     public DefaultRecoverConfig() {
@@ -63,5 +65,13 @@ public class DefaultRecoverConfig implements RecoverConfig {
     @Override
     public Set<Class<? extends Exception>> getDelayCancelExceptions() {
         return this.delayCancelExceptions;
+    }
+
+    public int getAsyncTerminateThreadPoolSize() {
+        return asyncTerminateThreadPoolSize;
+    }
+
+    public void setAsyncTerminateThreadPoolSize(int asyncTerminateThreadPoolSize) {
+        this.asyncTerminateThreadPoolSize = asyncTerminateThreadPoolSize;
     }
 }
