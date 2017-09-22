@@ -24,13 +24,12 @@ public class SpringTransactionConfigurator implements TransactionConfigurator {
     private TransactionManager transactionManager;
 
     public void init() {
-        transactionManager = new TransactionManager();
+        transactionManager = new TransactionManager(recoverConfig.getAsyncTerminateThreadPoolSize());
         transactionManager.setTransactionRepository(transactionRepository);
 
         if (transactionRepository instanceof CachableTransactionRepository) {
             ((CachableTransactionRepository) transactionRepository).setExpireDuration(recoverConfig.getRecoverDuration());
         }
-
     }
 
     @Override
