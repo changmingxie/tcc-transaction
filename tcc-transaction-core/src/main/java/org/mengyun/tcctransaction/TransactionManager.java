@@ -23,16 +23,17 @@ public class TransactionManager {
 
     private static final ThreadLocal<Deque<Transaction>> CURRENT = new ThreadLocal<Deque<Transaction>>();
 
-    ExecutorService executorService = null;
+    private ExecutorService executorService;
 
     public void setTransactionRepository(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
-    public TransactionManager(int asyncTerminateThreadPoolSize) {
-        executorService = new ThreadPoolExecutor(asyncTerminateThreadPoolSize, asyncTerminateThreadPoolSize,
-                0L, TimeUnit.SECONDS,
-                new SynchronousQueue<Runnable>());
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
+    public TransactionManager() {
     }
 
     public Transaction begin() {
@@ -81,7 +82,7 @@ public class TransactionManager {
                     }
                 });
             } catch (Throwable commitException) {
-                logger.error("compensable transaction async submit confirm failed.", commitException);
+                logger.warn("compensable transaction async submit confirm failed, recovery job will try to confirm later.", commitException);
                 throw new ConfirmingException(commitException);
             }
         } else {
@@ -106,7 +107,7 @@ public class TransactionManager {
                     }
                 });
             } catch (Throwable rollbackException) {
-                logger.error("compensable transaction async rollback failed.", rollbackException);
+                logger.warn("compensable transaction async rollback failed, recovery job will try to rollback later.", rollbackException);
                 throw new CancellingException(rollbackException);
             }
         } else {
@@ -121,7 +122,7 @@ public class TransactionManager {
             transaction.commit();
             transactionRepository.delete(transaction);
         } catch (Throwable commitException) {
-            logger.error("compensable transaction confirm failed.", commitException);
+            logger.warn("compensable transaction confirm failed, recovery job will try to confirm later.", commitException);
             throw new ConfirmingException(commitException);
         }
     }
@@ -131,7 +132,7 @@ public class TransactionManager {
             transaction.rollback();
             transactionRepository.delete(transaction);
         } catch (Throwable rollbackException) {
-            logger.error("compensable transaction rollback failed.", rollbackException);
+            logger.warn("compensable transaction rollback failed, recovery job will try to rollback later.", rollbackException);
             throw new CancellingException(rollbackException);
         }
     }

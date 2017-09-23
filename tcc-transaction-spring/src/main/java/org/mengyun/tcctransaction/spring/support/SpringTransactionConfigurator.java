@@ -8,6 +8,11 @@ import org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by changmingxie on 11/11/15.
  */
@@ -24,8 +29,14 @@ public class SpringTransactionConfigurator implements TransactionConfigurator {
     private TransactionManager transactionManager;
 
     public void init() {
-        transactionManager = new TransactionManager(recoverConfig.getAsyncTerminateThreadPoolSize());
+        transactionManager = new TransactionManager();
         transactionManager.setTransactionRepository(transactionRepository);
+        ExecutorService executorService = new ThreadPoolExecutor(recoverConfig.getAsyncTerminateThreadPoolSize(),
+                recoverConfig.getAsyncTerminateThreadPoolSize(),
+                0L, TimeUnit.SECONDS,
+                new SynchronousQueue<Runnable>());
+
+        transactionManager.setExecutorService(executorService);
 
         if (transactionRepository instanceof CachableTransactionRepository) {
             ((CachableTransactionRepository) transactionRepository).setExpireDuration(recoverConfig.getRecoverDuration());
