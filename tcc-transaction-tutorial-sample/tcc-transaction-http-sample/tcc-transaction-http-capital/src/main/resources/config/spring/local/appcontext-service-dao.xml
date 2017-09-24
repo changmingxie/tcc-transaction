@@ -30,13 +30,13 @@
     </bean>
 
     <!--<bean id="transactionRepository"-->
-          <!--class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">-->
-        <!--<property name="dataSource" ref="tccDataSource"/>-->
-        <!--<property name="domain" value="CAPITAL"/>-->
-        <!--<property name="tbSuffix" value="_CAP"/>-->
+    <!--class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">-->
+    <!--<property name="dataSource" ref="tccDataSource"/>-->
+    <!--<property name="domain" value="CAPITAL"/>-->
+    <!--<property name="tbSuffix" value="_CAP"/>-->
     <!--</bean>-->
 
-    <bean id="kryoSerializer" class="org.mengyun.tcctransaction.serializer.KryoTransactionSerializer"/>
+    <bean id="kryoSerializer" class="org.mengyun.tcctransaction.serializer.KryoPoolSerializer"/>
 
     <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">
         <property name="keyPrefix" value="TCC:CAP:"/>
