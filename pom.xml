@@ -12,9 +12,9 @@
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
         <module>tcc-transaction-spring</module>
-        <!--<module>tcc-transaction-unit-test</module>-->
-        <!--<module>tcc-transaction-tutorial-sample</module>-->
-        <!--<module>tcc-transaction-server</module>-->
+        <module>tcc-transaction-unit-test</module>
+        <module>tcc-transaction-tutorial-sample</module>
+        <module>tcc-transaction-server</module>
         <module>tcc-transaction-dubbo</module>
     </modules>
 
