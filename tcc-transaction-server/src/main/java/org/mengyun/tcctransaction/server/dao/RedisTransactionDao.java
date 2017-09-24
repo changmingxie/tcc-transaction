@@ -70,18 +70,25 @@ public class RedisTransactionDao implements TransactionDao {
                             for (Object data : result.get()) {
                                 try {
 
-                                    Map<byte[], byte[]> map = (Map<byte[], byte[]>) data;
+                                    Map<byte[], byte[]> map1 = (Map<byte[], byte[]>) data;
+
+                                    Map<String, byte[]> propertyMap = new HashMap<String, byte[]>();
+
+                                    for (Map.Entry<byte[], byte[]> entry : map1.entrySet()) {
+                                        propertyMap.put(new String(entry.getKey()), entry.getValue());
+                                    }
+
 
                                     TransactionVo transactionVo = new TransactionVo();
                                     transactionVo.setDomain(domain);
-                                    transactionVo.setGlobalTxId(UUID.nameUUIDFromBytes(map.get("GLOBAL_TX_ID".getBytes())).toString());
-                                    transactionVo.setBranchQualifier(UUID.nameUUIDFromBytes(map.get("BRANCH_QUALIFIER".getBytes())).toString());
-                                    transactionVo.setStatus(ByteUtils.bytesToInt(map.get("STATUS".getBytes())));
-                                    transactionVo.setTransactionType(ByteUtils.bytesToInt(map.get("TRANSACTION_TYPE".getBytes())));
-                                    transactionVo.setRetriedCount(ByteUtils.bytesToInt(map.get("RETRIED_COUNT".getBytes())));
-                                    transactionVo.setCreateTime(DateUtils.parseDate(new String(map.get("CREATE_TIME".getBytes())), "yyyy-MM-dd HH:mm:ss"));
-                                    transactionVo.setLastUpdateTime(DateUtils.parseDate(new String(map.get("LAST_UPDATE_TIME".getBytes())), "yyyy-MM-dd HH:mm:ss"));
-                                    transactionVo.setContentView(new String(map.get("CONTENT_VIEW".getBytes())));
+                                    transactionVo.setGlobalTxId(UUID.nameUUIDFromBytes(propertyMap.get("GLOBAL_TX_ID")).toString());
+                                    transactionVo.setBranchQualifier(UUID.nameUUIDFromBytes(propertyMap.get("BRANCH_QUALIFIER")).toString());
+                                    transactionVo.setStatus(ByteUtils.bytesToInt(propertyMap.get("STATUS")));
+                                    transactionVo.setTransactionType(ByteUtils.bytesToInt(propertyMap.get("TRANSACTION_TYPE")));
+                                    transactionVo.setRetriedCount(ByteUtils.bytesToInt(propertyMap.get("RETRIED_COUNT")));
+                                    transactionVo.setCreateTime(DateUtils.parseDate(new String(propertyMap.get("CREATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
+                                    transactionVo.setLastUpdateTime(DateUtils.parseDate(new String(propertyMap.get("LAST_UPDATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
+                                    transactionVo.setContentView(new String(propertyMap.get("CONTENT_VIEW")));
                                     list.add(transactionVo);
 
                                 } catch (ParseException e) {

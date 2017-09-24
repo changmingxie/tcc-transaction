@@ -35,20 +35,26 @@ public class ExpandTransactionSerializer {
         return map;
     }
 
-    public static Transaction deserialize(ObjectSerializer serializer, Map<byte[], byte[]> map) {
+    public static Transaction deserialize(ObjectSerializer serializer, Map<byte[], byte[]> map1) {
 
-        byte[] content = map.get("CONTENT".getBytes());
+        Map<String, byte[]> propertyMap = new HashMap<String, byte[]>();
+
+        for (Map.Entry<byte[], byte[]> entry : map1.entrySet()) {
+            propertyMap.put(new String(entry.getKey()), entry.getValue());
+        }
+
+        byte[] content = propertyMap.get("CONTENT");
         Transaction transaction = (Transaction) serializer.deserialize(content);
-        transaction.changeStatus(TransactionStatus.valueOf(ByteUtils.bytesToInt(map.get("STATUS".getBytes()))));
-        transaction.resetRetriedCount(ByteUtils.bytesToInt(map.get("RETRIED_COUNT".getBytes())));
+        transaction.changeStatus(TransactionStatus.valueOf(ByteUtils.bytesToInt(propertyMap.get("STATUS"))));
+        transaction.resetRetriedCount(ByteUtils.bytesToInt(propertyMap.get("RETRIED_COUNT")));
 
         try {
-            transaction.setLastUpdateTime(DateUtils.parseDate(new String(map.get("LAST_UPDATE_TIME".getBytes())), "yyyy-MM-dd HH:mm:ss"));
+            transaction.setLastUpdateTime(DateUtils.parseDate(new String(propertyMap.get("LAST_UPDATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
         } catch (ParseException e) {
             throw new SystemException(e);
         }
 
-        transaction.setVersion(ByteUtils.bytesToLong(map.get("VERSION".getBytes())));
+        transaction.setVersion(ByteUtils.bytesToLong(propertyMap.get("VERSION")));
         return transaction;
     }
 }
