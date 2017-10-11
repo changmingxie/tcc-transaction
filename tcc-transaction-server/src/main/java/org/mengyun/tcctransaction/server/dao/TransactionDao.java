@@ -9,10 +9,12 @@ import java.util.List;
  */
 public interface TransactionDao {
 
-    public List<TransactionVo> findTransactions(String domain, Integer pageNum, int pageSize);
+    public List<TransactionVo> findTransactions(Integer pageNum, int pageSize);
 
-    public Integer countOfFindTransactions(String domain);
+    public Integer countOfFindTransactions();
 
-    public boolean resetRetryCount(String domain, byte[] globalTxId, byte[] branchQualifier);
+    public boolean resetRetryCount(byte[] globalTxId, byte[] branchQualifier);
+
+    public String getDomain();
 }
 

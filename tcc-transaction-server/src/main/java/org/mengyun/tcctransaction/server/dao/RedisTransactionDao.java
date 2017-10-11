@@ -9,10 +9,10 @@ import org.mengyun.tcctransaction.repository.helper.RedisHelper;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
 import org.mengyun.tcctransaction.utils.ByteUtils;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
-import redis.clients.jedis.*;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Transaction;
 
 import javax.transaction.xa.Xid;
 import java.text.ParseException;
@@ -21,17 +21,22 @@ import java.util.*;
 /**
  * Created by changming.xie on 9/7/16.
  */
-@Repository("redisTransactionDao")
 public class RedisTransactionDao implements TransactionDao {
 
-    @Autowired
+    private String KEY_NAME_SPACE = "TCC:";
+
     private JedisPool jedisPool;
 
-    @Value("#{redisDomainKeyPrefix}")
-    private Properties domainKeyPrefix;
+    private String keySuffix;
+
+    private String domain;
+
+    private String getKeyPrefix() {
+        return KEY_NAME_SPACE + ":" + keySuffix + ":";
+    }
 
     @Override
-    public List<TransactionVo> findTransactions(final String domain, final Integer pageNum, final int pageSize) {
+    public List<TransactionVo> findTransactions(final Integer pageNum, final int pageSize) {
 
 
         return RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
@@ -41,7 +46,7 @@ public class RedisTransactionDao implements TransactionDao {
                 int start = (pageNum - 1) * pageSize;
                 int end = pageNum * pageSize;
 
-                ArrayList<byte[]> allKeys = new ArrayList<byte[]>(jedis.keys((domainKeyPrefix.getProperty(domain) + "*").getBytes()));
+                ArrayList<byte[]> allKeys = new ArrayList<byte[]>(jedis.keys((getKeyPrefix() + "*").getBytes()));
 
                 if (allKeys.size() < start) {
                     return Collections.emptyList();
@@ -64,10 +69,10 @@ public class RedisTransactionDao implements TransactionDao {
                             for (final byte[] key : keys) {
                                 pipeline.hgetAll(key);
                             }
-                            Response<List<Object>> result = pipeline.exec();
+                            List<Object> result = pipeline.syncAndReturnAll();
 
                             List<TransactionVo> list = new ArrayList<TransactionVo>();
-                            for (Object data : result.get()) {
+                            for (Object data : result) {
                                 try {
 
                                     Map<byte[], byte[]> map1 = (Map<byte[], byte[]>) data;
@@ -109,11 +114,11 @@ public class RedisTransactionDao implements TransactionDao {
     }
 
     @Override
-    public Integer countOfFindTransactions(String domain) {
+    public Integer countOfFindTransactions() {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
-            return jedis.keys((domainKeyPrefix.getProperty(domain) + "*").getBytes()).size();
+            return jedis.keys((getKeyPrefix() + "*").getBytes()).size();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -124,11 +129,7 @@ public class RedisTransactionDao implements TransactionDao {
     }
 
     @Override
-    public boolean resetRetryCount(final String domain, final byte[] globalTxId, final byte[] branchQualifier) {
-
-        if (domainKeyPrefix.getProperty(domain) == null) {
-            return false;
-        }
+    public boolean resetRetryCount(final byte[] globalTxId, final byte[] branchQualifier) {
 
         final Xid xid = new TransactionXid(globalTxId, branchQualifier);
 
@@ -136,8 +137,8 @@ public class RedisTransactionDao implements TransactionDao {
             @Override
             public Boolean doInJedis(Jedis jedis) {
 
-                byte[] key = RedisHelper.getRedisKey(domainKeyPrefix.getProperty(domain), xid);
-                byte[] versionKey = RedisHelper.getVersionKey(domainKeyPrefix.getProperty(domain), xid);
+                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), xid);
+                byte[] versionKey = RedisHelper.getVersionKey(getKeyPrefix(), xid);
 
                 byte[] versionBytes = jedis.get(versionKey);
 
@@ -156,5 +157,26 @@ public class RedisTransactionDao implements TransactionDao {
                 return false;
             }
         });
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public void setJedisPool(JedisPool jedisPool) {
+        this.jedisPool = jedisPool;
+    }
+
+    public String getKeySuffix() {
+        return keySuffix;
+    }
+
+    public void setKeySuffix(String keySuffix) {
+        this.keySuffix = keySuffix;
     }
 }

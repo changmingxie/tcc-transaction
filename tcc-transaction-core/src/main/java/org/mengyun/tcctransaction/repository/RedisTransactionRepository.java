@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.repository;
 
+import org.apache.log4j.Logger;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.repository.helper.ExpandTransactionSerializer;
 import org.mengyun.tcctransaction.repository.helper.JedisCallback;
@@ -23,6 +24,8 @@ import java.util.*;
  * appendfsync always
  */
 public class RedisTransactionRepository extends CachableTransactionRepository {
+
+    static final Logger logger = Logger.getLogger(RedisTransactionRepository.class.getSimpleName());
 
     private JedisPool jedisPool;
 
@@ -49,8 +52,9 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
     @Override
     protected int doCreate(final Transaction transaction) {
 
-        try {
 
+        try {
+            Long startTime = System.currentTimeMillis();
             Long statusCode = RedisHelper.execute(jedisPool, new JedisCallback<Long>() {
 
                 @Override
@@ -69,7 +73,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                     }
                 }
             });
-
+            logger.info("redis create cost time :" + (System.currentTimeMillis() - startTime));
             return statusCode.intValue();
         } catch (Exception e) {
             throw new TransactionIOException(e);
@@ -80,6 +84,8 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
     protected int doUpdate(final Transaction transaction) {
 
         try {
+            Long startTime = System.currentTimeMillis();
+
             Long statusCode = RedisHelper.execute(jedisPool, new JedisCallback<Long>() {
                 @Override
                 public Long doInJedis(Jedis jedis) {
@@ -101,6 +107,8 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                 }
             });
 
+            logger.info("redis update cost time :" + (System.currentTimeMillis() - startTime));
+
             return statusCode.intValue();
         } catch (Exception e) {
             throw new TransactionIOException(e);
@@ -110,6 +118,8 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
     @Override
     protected int doDelete(final Transaction transaction) {
         try {
+            Long startTime = System.currentTimeMillis();
+
             Long result = RedisHelper.execute(jedisPool, new JedisCallback<Long>() {
                 @Override
                 public Long doInJedis(Jedis jedis) {
@@ -127,6 +137,9 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                     }
                 }
             });
+
+            logger.info("redis delete cost time :" + (System.currentTimeMillis() - startTime));
+
             return result.intValue();
         } catch (Exception e) {
             throw new TransactionIOException(e);
@@ -137,13 +150,14 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
     protected Transaction doFindOne(final Xid xid) {
 
         try {
-
+            Long startTime = System.currentTimeMillis();
             Map<byte[], byte[]> content = RedisHelper.execute(jedisPool, new JedisCallback<Map<byte[], byte[]>>() {
                 @Override
                 public Map<byte[], byte[]> doInJedis(Jedis jedis) {
                     return jedis.hgetAll(RedisHelper.getRedisKey(keyPrefix, xid));
                 }
             });
+            logger.info("redis find cost time :" + (System.currentTimeMillis() - startTime));
 
             if (content != null && content.size() > 0) {
                 return ExpandTransactionSerializer.deserialize(serializer, content);

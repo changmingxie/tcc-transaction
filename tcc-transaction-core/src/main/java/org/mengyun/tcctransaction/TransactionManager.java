@@ -8,9 +8,6 @@ import org.mengyun.tcctransaction.common.TransactionType;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by changmingxie on 10/26/15.
@@ -75,12 +72,15 @@ public class TransactionManager {
 
         if (asyncCommit) {
             try {
+                Long statTime = System.currentTimeMillis();
+
                 executorService.submit(new Runnable() {
                     @Override
                     public void run() {
                         commitTransaction(transaction);
                     }
                 });
+                logger.info("async submit cost time:" + (System.currentTimeMillis() - statTime));
             } catch (Throwable commitException) {
                 logger.warn("compensable transaction async submit confirm failed, recovery job will try to confirm later.", commitException);
                 throw new ConfirmingException(commitException);

@@ -24,8 +24,6 @@
         <property name="validationQuery" value="SELECT NOW() FROM DUAL"/>
     </bean>
 
-    <bean id="transactionDao" class="org.mengyun.tcctransaction.server.dao.JdbcTransactionDao"/>
-
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
         <property name="maxTotal" value="300"/>
         <property name="maxIdle" value="100"/>
@@ -44,5 +42,41 @@
         <constructor-arg index="5" value="${redis.db}" type="int"/>
     </bean>
 
+    <bean class="org.mengyun.tcctransaction.server.dao.DaoRepository"/>
 
+    <bean id="jdbcOrderDao" class="org.mengyun.tcctransaction.server.dao.JdbcTransactionDao">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="tableSuffix" value="ORD"/>
+        <property name="domain" value="JDBC_ORD"/>
+    </bean>
+
+    <bean id="redisOrderDao" class="org.mengyun.tcctransaction.server.dao.RedisTransactionDao">
+        <property name="jedisPool" ref="jedisPool"/>
+        <property name="keySuffix" value="ORD"/>
+        <property name="domain" value="REDIS_ORD"/>
+    </bean>
+
+    <bean id="jdbcRedPacketDao" class="org.mengyun.tcctransaction.server.dao.JdbcTransactionDao">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="tableSuffix" value="RED"/>
+        <property name="domain" value="JDBC_RED"/>
+    </bean>
+
+    <bean id="redisRedPacketDao" class="org.mengyun.tcctransaction.server.dao.RedisTransactionDao">
+        <property name="jedisPool" ref="jedisPool"/>
+        <property name="keySuffix" value="RED"/>
+        <property name="domain" value="REDIS_RED"/>
+    </bean>
+
+    <bean id="jdbcCaptialDao" class="org.mengyun.tcctransaction.server.dao.JdbcTransactionDao">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="tableSuffix" value="CAP"/>
+        <property name="domain" value="JDBC_CAP"/>
+    </bean>
+
+    <bean id="redisCaptialDao" class="org.mengyun.tcctransaction.server.dao.RedisTransactionDao">
+        <property name="jedisPool" ref="jedisPool"/>
+        <property name="keySuffix" value="CAP"/>
+        <property name="domain" value="REDIS_CAP"/>
+    </bean>
 </beans>

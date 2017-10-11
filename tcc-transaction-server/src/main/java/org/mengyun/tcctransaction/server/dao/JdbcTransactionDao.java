@@ -3,9 +3,6 @@ package org.mengyun.tcctransaction.server.dao;
 
 import org.mengyun.tcctransaction.server.vo.PageVo;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import javax.xml.bind.DatatypeConverter;
@@ -14,34 +11,41 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Created by cheng.zeng on 2016/9/2.
  */
-@Repository("jdbcTransactionDao")
 public class JdbcTransactionDao implements TransactionDao {
 
-    @Autowired
+    private static String KEY_NAME_SPACE = "TCC_TRANSACTION";
+
     private DataSource dataSource;
 
-    private static final String TABLE_NAME_PREFIX = "TCC_TRANSACTION";
+    private String tableSuffix;
 
-    @Value("#{jdbcDomainSuffix}")
-    private Properties domainSuffix;
+    private String domain;
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    private String getTableName() {
+        return KEY_NAME_SPACE + "_" + tableSuffix;
+    }
 
     @Override
-    public List<TransactionVo> findTransactions(String domain, Integer pageNum, int pageSize) {
-        if (domainSuffix.getProperty(domain) == null) {
-            return Collections.emptyList();
-        }
+    public List<TransactionVo> findTransactions(Integer pageNum, int pageSize) {
+
         Connection connection = getConnection();
         List<TransactionVo> transactionVos = new ArrayList<TransactionVo>();
         PreparedStatement preparedStatement = null;
         try {
-            String tableName = TABLE_NAME_PREFIX + domainSuffix.getProperty(domain);
+            String tableName = getTableName();
             String sql = "select DOMAIN," +
                     "GLOBAL_TX_ID," +
                     "BRANCH_QUALIFIER," +
@@ -79,10 +83,8 @@ public class JdbcTransactionDao implements TransactionDao {
     }
 
     @Override
-    public Integer countOfFindTransactions(String domain) {
-        if (domainSuffix.getProperty(domain) == null) {
-            return 0;
-        }
+    public Integer countOfFindTransactions() {
+
         Connection connection = getConnection();
         PageVo<TransactionVo> pageVo = new PageVo<TransactionVo>();
         List<TransactionVo> transactionVos = new ArrayList<TransactionVo>();
@@ -90,7 +92,7 @@ public class JdbcTransactionDao implements TransactionDao {
         PreparedStatement preparedStatement = null;
 
         try {
-            String tableName = TABLE_NAME_PREFIX + domainSuffix.getProperty(domain);
+            String tableName = getTableName();
 
             preparedStatement = connection.prepareStatement("select COUNT(*) as count from " + tableName);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -107,15 +109,13 @@ public class JdbcTransactionDao implements TransactionDao {
     }
 
     @Override
-    public boolean resetRetryCount(String domain, byte[] globalTxId, byte[] branchQualifier) {
-        if (domainSuffix.getProperty(domain) == null) {
-            return false;
-        }
+    public boolean resetRetryCount(byte[] globalTxId, byte[] branchQualifier) {
+
         Connection connection = getConnection();
         PreparedStatement preparedStatement = null;
         try {
-            String tableName = TABLE_NAME_PREFIX + domainSuffix.getProperty(domain);
-            ;
+            String tableName = getTableName();
+
             String sql = "UPDATE " + tableName +
                     " SET RETRIED_COUNT=0" +
                     " WHERE GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ?";
@@ -130,6 +130,11 @@ public class JdbcTransactionDao implements TransactionDao {
             closeStatement(preparedStatement);
             releaseConnection(connection);
         }
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
     }
 
     private void releaseConnection(Connection connection) {
@@ -162,4 +167,12 @@ public class JdbcTransactionDao implements TransactionDao {
         return connection;
     }
 
+
+    public String getTableSuffix() {
+        return tableSuffix;
+    }
+
+    public void setTableSuffix(String tableSuffix) {
+        this.tableSuffix = tableSuffix;
+    }
 }

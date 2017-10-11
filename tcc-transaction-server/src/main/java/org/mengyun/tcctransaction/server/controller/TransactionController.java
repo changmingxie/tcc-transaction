@@ -1,10 +1,9 @@
 package org.mengyun.tcctransaction.server.controller;
 
-import org.mengyun.tcctransaction.server.dao.TransactionDao;
+import org.mengyun.tcctransaction.server.dao.DaoRepository;
 import org.mengyun.tcctransaction.server.vo.CommonResponse;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +23,7 @@ import java.util.List;
 public class TransactionController {
 
     @Autowired
-    @Qualifier("jdbcTransactionDao")
-    private TransactionDao transactionDao;
+    private DaoRepository daoRepository;
 
     @Value("${tcc_domain}")
     private String tccDomain;
@@ -49,17 +47,17 @@ public class TransactionController {
     public ModelAndView manager(@PathVariable String domain, @PathVariable Integer pageNum) {
         ModelAndView modelAndView = new ModelAndView("manager");
 
-        List<TransactionVo> transactionVos = transactionDao.findTransactions(domain, pageNum, DEFAULT_PAGE_SIZE);
-        Integer totalCount = transactionDao.countOfFindTransactions(domain);
-        Integer pages = totalCount/DEFAULT_PAGE_SIZE;
+        List<TransactionVo> transactionVos = daoRepository.getDao(domain).findTransactions(pageNum, DEFAULT_PAGE_SIZE);
+        Integer totalCount = daoRepository.getDao(domain).countOfFindTransactions();
+        Integer pages = totalCount / DEFAULT_PAGE_SIZE;
         if (totalCount % DEFAULT_PAGE_SIZE > 0) {
             pages++;
         }
         modelAndView.addObject("transactionVos", transactionVos);
-        modelAndView.addObject("pageNum",pageNum);
+        modelAndView.addObject("pageNum", pageNum);
         modelAndView.addObject("pageSize", DEFAULT_PAGE_SIZE);
         modelAndView.addObject("pages", pages);
-        modelAndView.addObject("domain",domain);
+        modelAndView.addObject("domain", domain);
         modelAndView.addObject("urlWithoutPaging", tccDomain + "/management/domain/" + domain);
         return modelAndView;
     }
@@ -68,13 +66,12 @@ public class TransactionController {
     @ResponseBody
     public CommonResponse<Void> reset(@PathVariable String domain, String globalTxId, String branchQualifier) {
 
-        transactionDao.resetRetryCount(domain,
+        daoRepository.getDao(domain).resetRetryCount(
                 DatatypeConverter.parseHexBinary(globalTxId),
                 DatatypeConverter.parseHexBinary(branchQualifier));
 
         return new CommonResponse<Void>();
     }
-
 
 
 }

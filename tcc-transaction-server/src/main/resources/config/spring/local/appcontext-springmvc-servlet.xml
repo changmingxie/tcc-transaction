@@ -14,14 +14,13 @@
         http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <context:component-scan base-package="org.mengyun.tcctransaction.server"/>
+
     <context:property-placeholder location="classpath:tcc-transaction-server.properties"/>
 
     <mvc:annotation-driven/>
     <mvc:resources mapping="/*.jsp" location="/"/>
     <mvc:resources mapping="/static/**" location="/static/"/>
 
-    <utils:properties id="jdbcDomainSuffix" location="classpath:jdbc-domain-suffix.properties"/>
-    <utils:properties id="redisDomainKeyPrefix" location="classpath:redis-domain-key-prefix.properties"/>
 
     <bean id="contentNegotiationManager"
           class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
