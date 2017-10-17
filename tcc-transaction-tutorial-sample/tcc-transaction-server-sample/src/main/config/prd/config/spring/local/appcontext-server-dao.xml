@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+    <context:property-placeholder location="classpath:tcc-transaction-server-sample.properties"/>
+
+    <!--<bean id="dataSource"-->
+    <!--class="org.apache.commons.dbcp.BasicDataSource"-->
+    <!--destroy-method="close">-->
+    <!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
+    <!--<property name="url" value="${jdbc.url}"/>-->
+    <!--<property name="username" value="${jdbc.username}"/>-->
+    <!--<property name="password" value="${jdbc.password}"/>-->
+    <!--<property name="maxActive" value="50"/>-->
+    <!--<property name="minIdle" value="5"/>-->
+    <!--<property name="maxIdle" value="20"/>-->
+    <!--<property name="initialSize" value="30"/>-->
+    <!--<property name="logAbandoned" value="true"/>-->
+    <!--<property name="removeAbandoned" value="true"/>-->
+    <!--<property name="removeAbandonedTimeout" value="10"/>-->
+    <!--<property name="maxWait" value="1000"/>-->
+    <!--<property name="timeBetweenEvictionRunsMillis" value="10000"/>-->
+    <!--<property name="numTestsPerEvictionRun" value="10"/>-->
+    <!--<property name="minEvictableIdleTimeMillis" value="10000"/>-->
+    <!--<property name="validationQuery" value="SELECT NOW() FROM DUAL"/>-->
+    <!--</bean>-->
+
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="${tcc.redis.pool.maxTotal}"/>
+        <property name="maxIdle" value="${tcc.redis.pool.maxIdle}"/>
+        <property name="minIdle" value="${tcc.redis.pool.minIdle}"/>
+        <property name="maxWaitMillis" value="${tcc.redis.pool.maxWaitMillis}"/>
+    </bean>
+
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+        <constructor-arg index="0" ref="jedisPoolConfig"/>
+        <constructor-arg index="1" value="${tcc.redis.host}"/>
+        <constructor-arg index="2" value="${tcc.redis.port}" type="int"/>
+        <constructor-arg index="3" value="${tcc.redis.timeout}" type="int"/>
+        <constructor-arg index="4" type="java.lang.String" value="${tcc.redis.password}"></constructor-arg>
+        <constructor-arg index="5" value="${tcc.redis.database}" type="int"/>
+    </bean>
+
+    <bean id="redisOrderDao" class="org.mengyun.tcctransaction.server.dao.RedisTransactionDao">
+        <property name="jedisPool" ref="jedisPool"/>
+        <property name="keySuffix" value="TRD"/>
+        <property name="domain" value="TRD"/>
+    </bean>
+</beans>

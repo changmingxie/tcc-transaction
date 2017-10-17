@@ -4,17 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>TCC-TRANSACTION管理后台</title>
-    <link rel="stylesheet" href="${tcc_domain}/static/css/bootstrap.css"/>
-    <link rel="stylesheet" href="${tcc_domain}/static/css/admin-base.css"/>
-    <link rel="stylesheet" href="${tcc_domain}/static/css/base.css"/>
-    <link rel="stylesheet" href="${tcc_domain}/static/css/style.css"/>
+    <link rel="stylesheet" href="/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/static/css/admin-base.css"/>
+    <link rel="stylesheet" href="/static/css/base.css"/>
+    <link rel="stylesheet" href="/static/css/style.css"/>
 </head>
 
-<script type="application/javascript">
-    var config={
-        tcc_domain:"${tcc_domain}"
-    }
-</script>
 <body>
 
 [#import "paging.ftl" as p]
@@ -84,7 +79,7 @@
         [/#if]
     </div>
 </div>
-<script src="${tcc_domain}/static/js/jquery.js"></script>
-<script src="${tcc_domain}/static/js/base.js"></script>
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/base.js"></script>
 </body>
 </html>

@@ -4,7 +4,6 @@ import org.mengyun.tcctransaction.server.dao.DaoRepository;
 import org.mengyun.tcctransaction.server.vo.CommonResponse;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +23,6 @@ public class TransactionController {
 
     @Autowired
     private DaoRepository daoRepository;
-
-    @Value("${tcc_domain}")
-    private String tccDomain;
 
     public static final Integer DEFAULT_PAGE_NUM = 1;
 
@@ -58,7 +54,7 @@ public class TransactionController {
         modelAndView.addObject("pageSize", DEFAULT_PAGE_SIZE);
         modelAndView.addObject("pages", pages);
         modelAndView.addObject("domain", domain);
-        modelAndView.addObject("urlWithoutPaging", tccDomain + "/management/domain/" + domain);
+        modelAndView.addObject("urlWithoutPaging", "/management/domain/" + domain);
         return modelAndView;
     }
 

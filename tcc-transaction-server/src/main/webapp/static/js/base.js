@@ -13,7 +13,7 @@ jQuery(document).ready(function($) {
 		}
 
 		form = document.createElement('form');
-		form.action = config.tcc_domain + '/management/domain/'+searchValue+'/pagenum/1';
+		form.action = location.origin + '/management/domain/'+searchValue+'/pagenum/1';
 		form.style.display = 'none';
 		document.body.appendChild(form);
 		form.submit();
@@ -39,7 +39,7 @@ jQuery(document).ready(function($) {
 			return;
 		}
 
-		url = config.tcc_domain + '/domain/' + domain + '/retry/reset';
+		url = location.origin + '/domain/' + domain + '/retry/reset';
 		$.ajax({
 			url: url,
 			type: 'PUT',

@@ -3,19 +3,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:utils="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/util
-        http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+        http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.mengyun.tcctransaction.server"/>
-
-    <context:property-placeholder location="classpath:tcc-transaction-server.properties"/>
 
     <mvc:annotation-driven/>
     <mvc:resources mapping="/*.jsp" location="/"/>
@@ -95,7 +90,6 @@
             <map>
                 <entry key="xml_escape" value-ref="fmXmlEscape"/>
                 <entry key="html_escape" value-ref="fmHtmlEscape"/>
-                <entry key="tcc_domain" value="${tcc_domain}"/>
             </map>
         </property>
 
