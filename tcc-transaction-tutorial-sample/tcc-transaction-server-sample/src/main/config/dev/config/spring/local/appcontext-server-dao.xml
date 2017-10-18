@@ -50,7 +50,7 @@
 
     <bean id="redisOrderDao" class="org.mengyun.tcctransaction.server.dao.RedisTransactionDao">
         <property name="jedisPool" ref="jedisPool"/>
-        <property name="keySuffix" value="TRD"/>
-        <property name="domain" value="TRD"/>
+        <property name="keySuffix" value="ORD"/>
+        <property name="domain" value="ORD"/>
     </bean>
 </beans>

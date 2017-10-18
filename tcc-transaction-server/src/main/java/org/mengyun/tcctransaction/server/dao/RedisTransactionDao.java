@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.server.dao;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.mengyun.tcctransaction.SystemException;
-import org.mengyun.tcctransaction.api.TransactionXid;
 import org.mengyun.tcctransaction.repository.TransactionIOException;
 import org.mengyun.tcctransaction.repository.helper.JedisCallback;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
@@ -14,7 +13,6 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Transaction;
 
-import javax.transaction.xa.Xid;
 import java.text.ParseException;
 import java.util.*;
 
@@ -23,7 +21,7 @@ import java.util.*;
  */
 public class RedisTransactionDao implements TransactionDao {
 
-    private String KEY_NAME_SPACE = "TCC:";
+    private String KEY_NAME_SPACE = "TCC";
 
     private JedisPool jedisPool;
 
@@ -129,16 +127,14 @@ public class RedisTransactionDao implements TransactionDao {
     }
 
     @Override
-    public boolean resetRetryCount(final byte[] globalTxId, final byte[] branchQualifier) {
-
-        final Xid xid = new TransactionXid(globalTxId, branchQualifier);
+    public boolean resetRetryCount(final String globalTxId, final String branchQualifier) {
 
         return RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
             @Override
             public Boolean doInJedis(Jedis jedis) {
 
-                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), xid);
-                byte[] versionKey = RedisHelper.getVersionKey(getKeyPrefix(), xid);
+                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
+                byte[] versionKey = RedisHelper.getVersionKey(getKeyPrefix(), globalTxId, branchQualifier);
 
                 byte[] versionBytes = jedis.get(versionKey);
 

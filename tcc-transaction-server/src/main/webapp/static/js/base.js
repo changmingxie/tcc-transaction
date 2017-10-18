@@ -12,17 +12,13 @@ jQuery(document).ready(function($) {
 			return;
 		}
 
-		form = document.createElement('form');
-		form.action = location.origin + '/management/domain/'+searchValue+'/pagenum/1';
-		form.style.display = 'none';
-		document.body.appendChild(form);
-		form.submit();
+		location.href = 'management?domain='+searchValue+'&pagenum=1';
 	});
 
-	iptSearch.keyup(function(event) {
-		if(event.keyCode === 13) {
-			btnSearch.click();
-		}
+		iptSearch.keyup(function(event) {
+			if(event.keyCode === 13) {
+				btnSearch.click();
+			}
 	});
 
 	$('.table > tbody').on('click', '.j-edit', function () {
@@ -34,17 +30,18 @@ jQuery(document).ready(function($) {
 
 		globalTxId = $this.parent().siblings().eq(1).text();
 		branchQualifier = $this.parent().siblings().eq(2).text();
-		domain = (location.href.match(/domain\/([^/]+)/) || [,''])[1];
+		domain = (location.href.match(/domain=([^&]+)/) || [,''])[1];
 		if(!domain) {
 			return;
 		}
 
-		url = location.origin + '/domain/' + domain + '/retry/reset';
+		url = 'management/retry/reset';
 		$.ajax({
 			url: url,
 			type: 'PUT',
 			dataType: 'json',
 			data: {
+				domain:domain,
 				globalTxId: globalTxId,
 				branchQualifier: branchQualifier
 			}

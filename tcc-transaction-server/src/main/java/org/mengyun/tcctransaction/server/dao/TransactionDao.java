@@ -13,7 +13,7 @@ public interface TransactionDao {
 
     public Integer countOfFindTransactions();
 
-    public boolean resetRetryCount(byte[] globalTxId, byte[] branchQualifier);
+    public boolean resetRetryCount(String  globalTxId, String branchQualifier);
 
     public String getDomain();
 }

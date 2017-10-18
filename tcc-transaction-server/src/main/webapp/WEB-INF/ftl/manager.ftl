@@ -4,11 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <title>TCC-TRANSACTION管理后台</title>
-    <link rel="stylesheet" href="/static/css/bootstrap.css"/>
-    <link rel="stylesheet" href="/static/css/admin-base.css"/>
-    <link rel="stylesheet" href="/static/css/base.css"/>
-    <link rel="stylesheet" href="/static/css/style.css"/>
+    <link rel="stylesheet" href="static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="static/css/admin-base.css"/>
+    <link rel="stylesheet" href="static/css/base.css"/>
+    <link rel="stylesheet" href="static/css/style.css"/>
 </head>
+
+<script type="application/javascript">
+    var config={
+        tcc_domain:"../.."
+    }
+</script>
 
 <body>
 
@@ -79,7 +85,7 @@
         [/#if]
     </div>
 </div>
-<script src="/static/js/jquery.js"></script>
-<script src="/static/js/base.js"></script>
+<script src="static/js/jquery.js"></script>
+<script src="static/js/base.js"></script>
 </body>
 </html>

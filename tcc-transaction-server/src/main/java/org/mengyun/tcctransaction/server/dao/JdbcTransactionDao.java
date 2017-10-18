@@ -109,7 +109,7 @@ public class JdbcTransactionDao implements TransactionDao {
     }
 
     @Override
-    public boolean resetRetryCount(byte[] globalTxId, byte[] branchQualifier) {
+    public boolean resetRetryCount(String globalTxId, String branchQualifier) {
 
         Connection connection = getConnection();
         PreparedStatement preparedStatement = null;
@@ -120,8 +120,8 @@ public class JdbcTransactionDao implements TransactionDao {
                     " SET RETRIED_COUNT=0" +
                     " WHERE GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ?";
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setBytes(1, globalTxId);
-            preparedStatement.setBytes(2, branchQualifier);
+            preparedStatement.setBytes(1, globalTxId.getBytes());
+            preparedStatement.setBytes(2, branchQualifier.getBytes());
             int result = preparedStatement.executeUpdate();
             return result > 0;
         } catch (Exception e) {

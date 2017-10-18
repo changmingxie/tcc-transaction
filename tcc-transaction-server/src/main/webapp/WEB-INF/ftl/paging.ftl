@@ -1,6 +1,6 @@
 [#macro paging pageNum pageSize pages ctxPath]
     [#if (pageNum>1)]
-    <li><a aria-label="Previous" href="${ctxPath}/pagenum/${pageNum-1}"><span aria-hidden="true">«</span></a></li>
+    <li><a aria-label="Previous" href="${ctxPath}&pagenum=${pageNum-1}"><span aria-hidden="true">«</span></a></li>
     [/#if]
 
 
@@ -24,7 +24,7 @@
         [#if pages gt 1]
             [#if (index >= 1)&&(index <= pages)]
             <li [#if index == pageNum]
-                    class="active"[/#if]><a href="${ctxPath}/pagenum/${index}">${index}</a></li>
+                    class="active"[/#if]><a href="${ctxPath}&pagenum=${index}">${index}</a></li>
             [/#if]
         [/#if]
     [/#list]
@@ -40,6 +40,6 @@
 [#--[/#if]--]
 
     [#if (pages>pageNum)]
-    <li><a aria-label="Next" href="${ctxPath}/pagenum/${pageNum+1}"><span aria-hidden="true">»</span></a></li>
+    <li><a aria-label="Next" href="${ctxPath}&pagenum=${pageNum+1}"><span aria-hidden="true">»</span></a></li>
     [/#if]
 [/#macro]
