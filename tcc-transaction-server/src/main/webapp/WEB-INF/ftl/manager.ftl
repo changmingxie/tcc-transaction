@@ -10,12 +10,6 @@
     <link rel="stylesheet" href="static/css/style.css"/>
 </head>
 
-<script type="application/javascript">
-    var config = {
-        tcc_domain: "../.."
-    }
-</script>
-
 <body>
 
 [#import "paging.ftl" as p]
