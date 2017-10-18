@@ -48,9 +48,22 @@
         <constructor-arg index="5" value="${tcc.redis.database}" type="int"/>
     </bean>
 
-    <bean id="redisOrderDao" class="org.mengyun.tcctransaction.server.dao.RedisTransactionDao">
+    <bean id="ordRedisOrderDao" class="org.mengyun.tcctransaction.server.dao.RedisTransactionDao">
         <property name="jedisPool" ref="jedisPool"/>
         <property name="keySuffix" value="ORD"/>
         <property name="domain" value="ORD"/>
+    </bean>
+
+    <bean id="redRedisOrderDao" class="org.mengyun.tcctransaction.server.dao.RedisTransactionDao">
+        <property name="jedisPool" ref="jedisPool"/>
+        <property name="keySuffix" value="RED"/>
+        <property name="domain" value="RED"/>
+    </bean>
+
+
+    <bean id="capRedisOrderDao" class="org.mengyun.tcctransaction.server.dao.RedisTransactionDao">
+        <property name="jedisPool" ref="jedisPool"/>
+        <property name="keySuffix" value="CAP"/>
+        <property name="domain" value="CAP"/>
     </bean>
 </beans>

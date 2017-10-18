@@ -53,7 +53,8 @@ public class TransactionController {
         modelAndView.addObject("pageNum", pageNum);
         modelAndView.addObject("pageSize", DEFAULT_PAGE_SIZE);
         modelAndView.addObject("pages", pages);
-        modelAndView.addObject("domain", domain);
+        modelAndView.addObject("currentDomain", domain);
+        modelAndView.addObject("domains", daoRepository.getDomains());
         modelAndView.addObject("urlWithoutPaging", "management?domain=" + domain);
         return modelAndView;
     }
@@ -71,6 +72,7 @@ public class TransactionController {
 
     public ModelAndView manager() {
         ModelAndView modelAndView = new ModelAndView("manager");
+        modelAndView.addObject("domains", daoRepository.getDomains());
         return modelAndView;
     }
 

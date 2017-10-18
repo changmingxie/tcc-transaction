@@ -27,7 +27,13 @@
         <div class="form-inline">
             <div class="form-group is-loading">
                 <label>DOMAIN</label>
-                <input type="text" class="form-control" name="domain" value="${domain}"/>
+                <select name="domain">
+                    [#list domains as domainValue]
+
+                    <option value="${domainValue}" [#if currentDomain==domainValue ] selected="true" [/#if]>${domainValue}</option>
+                    [/#list]
+                </select>
+                [#--<input type="text" class="form-control" name="domain" value="${domain}"/>--]
             </div>
             &emsp;&emsp;
             <div class="form-group">
