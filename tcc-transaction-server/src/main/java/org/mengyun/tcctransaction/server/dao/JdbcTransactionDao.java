@@ -120,8 +120,8 @@ public class JdbcTransactionDao implements TransactionDao {
                     " SET RETRIED_COUNT=0" +
                     " WHERE GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ?";
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setBytes(1, globalTxId.getBytes());
-            preparedStatement.setBytes(2, branchQualifier.getBytes());
+            preparedStatement.setBytes(1, DatatypeConverter.parseHexBinary(globalTxId));
+            preparedStatement.setBytes(2, DatatypeConverter.parseHexBinary(branchQualifier));
             int result = preparedStatement.executeUpdate();
             return result > 0;
         } catch (Exception e) {

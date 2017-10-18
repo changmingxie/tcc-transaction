@@ -60,7 +60,6 @@
         <property name="domain" value="RED"/>
     </bean>
 
-
     <bean id="capRedisOrderDao" class="org.mengyun.tcctransaction.server.dao.RedisTransactionDao">
         <property name="jedisPool" ref="jedisPool"/>
         <property name="keySuffix" value="CAP"/>
