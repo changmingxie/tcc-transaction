@@ -11,8 +11,8 @@
 </head>
 
 <script type="application/javascript">
-    var config={
-        tcc_domain:"../.."
+    var config = {
+        tcc_domain: "../.."
     }
 </script>
 
@@ -28,12 +28,12 @@
             <div class="form-group is-loading">
                 <label>DOMAIN</label>
                 <select name="domain">
-                    [#list domains as domainValue]
+                [#list domains as domainValue]
 
-                    <option value="${domainValue}" [#if currentDomain==domainValue ] selected="true" [/#if]>${domainValue}</option>
-                    [/#list]
+                    <option value="${domainValue}" [#if currentDomain==domainValue ]
+                            selected="true" [/#if]>${domainValue}</option>
+                [/#list]
                 </select>
-                [#--<input type="text" class="form-control" name="domain" value="${domain}"/>--]
             </div>
             &emsp;&emsp;
             <div class="form-group">
@@ -41,20 +41,22 @@
             </div>
         </div>
         <br/>
+
         <div class="table-responsive">
             <p>查询结果</p>
             <table class="table table-hover table-striped table-bordered">
                 <thead>
                 <tr>
-                    <th>DOMAIN</th>
-                    <th>GLOBAL_TX_ID</th>
-                    <th>BRANCH_QUALIFIER</th>
-                    <th>STATUS</th>
-                    <th>TRANSACTION_TYPE</th>
-                    <th>RETRIED_COUNT</th>
-                    <th>CREATE_TIME</th>
-                    <th>LAST_UPDATE_TIME</th>
-                    <th>操作</th>
+                    <th>Domain</th>
+                    <th>Global Tx Id</th>
+                    <th>Branch Qualifier</th>
+                    <th>Status</th>
+                    <th>Transaction Type</th>
+                    <th>Retried Count</th>
+                    <th>Content</th>
+                    <th>Create Time</th>
+                    <th>Last Update Time</th>
+                    <th>Operation</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -63,9 +65,13 @@
                     <td>${transactionVo.domain}</td>
                     <td>${transactionVo.globalTxId}</td>
                     <td>${transactionVo.branchQualifier}</td>
-                    <td>${transactionVo.status}</td>
-                    <td>${transactionVo.transactionType}</td>
+                    <td>[#if transactionVo.status==1]Trying[#elseif  transactionVo.status==2]
+                        Confirming[#elseif transactionVo.status==3]Cancelling[#else ]Unknown[/#if]</td>
+                    <td>[#if transactionVo.transactionType==1]Root[#else ]Branch[/#if]</td>
                     <td>${transactionVo.retriedCount}</td>
+                    <td>
+                        <div style="width: 600px; height: 120px; overflow: scroll;">${transactionVo.contentView}</div>
+                    </td>
                     <td>${transactionVo.createTime?datetime}</td>
                     <td>${transactionVo.lastUpdateTime?datetime}</td>
                     <td>
@@ -78,7 +84,7 @@
             </table>
         </div>
         <!--:分页-->
-        [#if pages??]
+    [#if pages??]
         <div class="pager-panel">
             <div class="pull-right">
                 <nav>
@@ -88,7 +94,7 @@
                 </nav>
             </div>
         </div>
-        [/#if]
+    [/#if]
     </div>
 </div>
 <script src="static/js/jquery.js"></script>
