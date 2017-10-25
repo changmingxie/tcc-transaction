@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.repository.helper.JedisCallback;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
 import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
-import org.mengyun.tcctransaction.utils.ByteUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -54,26 +53,25 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
 
         try {
-            Long startTime = System.currentTimeMillis();
             Long statusCode = RedisHelper.execute(jedisPool, new JedisCallback<Long>() {
 
                 @Override
                 public Long doInJedis(Jedis jedis) {
 
-                    jedis.watch(RedisHelper.getVersionKey(keyPrefix, transaction.getXid()));
-                    redis.clients.jedis.Transaction multi = jedis.multi();
-                    multi.setnx(RedisHelper.getVersionKey(keyPrefix, transaction.getXid()), ByteUtils.longToBytes(transaction.getVersion()));
-                    multi.hmset(RedisHelper.getRedisKey(keyPrefix, transaction.getXid()), ExpandTransactionSerializer.serialize(serializer, transaction));
-                    List<Object> result = multi.exec();
 
-                    if (result != null && result.size() == 2 && (Long) result.get(0) > 0) {
-                        return 1l;
-                    } else {
-                        return 0l;
+                    List<byte[]> params = new ArrayList<byte[]>();
+
+                    for (Map.Entry<byte[], byte[]> entry : ExpandTransactionSerializer.serialize(serializer, transaction).entrySet()) {
+                        params.add(entry.getKey());
+                        params.add(entry.getValue());
                     }
+
+                    Object result = jedis.eval("if redis.call('exists', KEYS[1]) == 0 then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;".getBytes(),
+                            Arrays.asList(RedisHelper.getRedisKey(keyPrefix, transaction.getXid())), params);
+
+                    return (Long) result;
                 }
             });
-            logger.info("redis create cost time :" + (System.currentTimeMillis() - startTime));
             return statusCode.intValue();
         } catch (Exception e) {
             throw new TransactionIOException(e);
@@ -84,7 +82,6 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
     protected int doUpdate(final Transaction transaction) {
 
         try {
-            Long startTime = System.currentTimeMillis();
 
             Long statusCode = RedisHelper.execute(jedisPool, new JedisCallback<Long>() {
                 @Override
@@ -93,21 +90,20 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                     transaction.updateTime();
                     transaction.updateVersion();
 
-                    jedis.watch(RedisHelper.getVersionKey(keyPrefix, transaction.getXid()));
-                    redis.clients.jedis.Transaction multi = jedis.multi();
-                    multi.set(RedisHelper.getVersionKey(keyPrefix, transaction.getXid()), ByteUtils.longToBytes(transaction.getVersion()));
-                    multi.hmset(RedisHelper.getRedisKey(keyPrefix, transaction.getXid()), ExpandTransactionSerializer.serialize(serializer, transaction));
-                    List<Object> result = multi.exec();
+                    List<byte[]> params = new ArrayList<byte[]>();
 
-                    if (result != null && result.size() == 2 && result.get(0).equals("OK")) {
-                        return 1l;
-                    } else {
-                        return 0l;
+                    for (Map.Entry<byte[], byte[]> entry : ExpandTransactionSerializer.serialize(serializer, transaction).entrySet()) {
+                        params.add(entry.getKey());
+                        params.add(entry.getValue());
                     }
+
+                    Object result = jedis.eval(String.format("if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
+                                    transaction.getVersion() - 1).getBytes(),
+                            Arrays.asList(RedisHelper.getRedisKey(keyPrefix, transaction.getXid())), params);
+
+                    return (Long) result;
                 }
             });
-
-            logger.info("redis update cost time :" + (System.currentTimeMillis() - startTime));
 
             return statusCode.intValue();
         } catch (Exception e) {
@@ -118,27 +114,14 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
     @Override
     protected int doDelete(final Transaction transaction) {
         try {
-            Long startTime = System.currentTimeMillis();
 
             Long result = RedisHelper.execute(jedisPool, new JedisCallback<Long>() {
                 @Override
                 public Long doInJedis(Jedis jedis) {
 
-                    jedis.watch(RedisHelper.getVersionKey(keyPrefix, transaction.getXid()));
-                    redis.clients.jedis.Transaction multi = jedis.multi();
-                    multi.del(RedisHelper.getVersionKey(keyPrefix, transaction.getXid()));
-                    multi.del(RedisHelper.getRedisKey(keyPrefix, transaction.getXid()));
-                    List<Object> result = multi.exec();
-
-                    if (result != null && result.size() == 2 && (Long) result.get(0) > 0) {
-                        return 1l;
-                    } else {
-                        return 0l;
-                    }
+                    return jedis.del(RedisHelper.getRedisKey(keyPrefix, transaction.getXid()));
                 }
             });
-
-            logger.info("redis delete cost time :" + (System.currentTimeMillis() - startTime));
 
             return result.intValue();
         } catch (Exception e) {
