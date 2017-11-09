@@ -7,11 +7,9 @@ import org.mengyun.tcctransaction.repository.helper.JedisCallback;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
 import org.mengyun.tcctransaction.utils.ByteUtils;
-import org.mengyun.tcctransaction.utils.CollectionUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.Transaction;
 
 import java.text.ParseException;
 import java.util.*;
@@ -113,17 +111,13 @@ public class RedisTransactionDao implements TransactionDao {
 
     @Override
     public Integer countOfFindTransactions() {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
-            return jedis.keys((getKeyPrefix() + "*").getBytes()).size();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (jedis != null) {
-                jedis.close();
+
+        return RedisHelper.execute(jedisPool, new JedisCallback<Integer>() {
+            @Override
+            public Integer doInJedis(Jedis jedis) {
+                return jedis.keys((getKeyPrefix() + "*").getBytes()).size();
             }
-        }
+        });
     }
 
     @Override
@@ -134,23 +128,8 @@ public class RedisTransactionDao implements TransactionDao {
             public Boolean doInJedis(Jedis jedis) {
 
                 byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
-                byte[] versionKey = RedisHelper.getVersionKey(getKeyPrefix(), globalTxId, branchQualifier);
-
-                byte[] versionBytes = jedis.get(versionKey);
-
-                jedis.watch(versionKey);
-
-                Transaction multi = jedis.multi();
-
-                multi.set(versionKey, ByteUtils.longToBytes(ByteUtils.bytesToLong(versionBytes) + 1));
-                multi.hset(key, "VERSION".getBytes(), ByteUtils.longToBytes(ByteUtils.bytesToLong(versionBytes) + 1));
-                multi.hset(key, "RETRIED_COUNT".getBytes(), ByteUtils.intToBytes(0));
-                List<Object> result = multi.exec();
-
-                if (!CollectionUtils.isEmpty(result)) {
-                    return true;
-                }
-                return false;
+                Long result = jedis.hset(key, "RETRIED_COUNT".getBytes(), ByteUtils.intToBytes(0));
+                return result > 0;
             }
         });
     }
