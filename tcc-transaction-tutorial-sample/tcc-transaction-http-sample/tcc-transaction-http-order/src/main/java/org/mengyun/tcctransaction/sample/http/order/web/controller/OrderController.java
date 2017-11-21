@@ -1,23 +1,24 @@
 package org.mengyun.tcctransaction.sample.http.order.web.controller;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.mengyun.tcctransaction.sample.http.order.domain.entity.Order;
-import org.mengyun.tcctransaction.sample.http.order.domain.entity.Product;
-import org.mengyun.tcctransaction.sample.http.order.domain.repository.ProductRepository;
-import org.mengyun.tcctransaction.sample.http.order.domain.service.AccountServiceImpl;
-import org.mengyun.tcctransaction.sample.http.order.domain.service.OrderServiceImpl;
+import org.mengyun.tcctransaction.sample.http.order.service.AccountServiceImpl;
 import org.mengyun.tcctransaction.sample.http.order.service.PlaceOrderServiceImpl;
 import org.mengyun.tcctransaction.sample.http.order.web.controller.vo.PlaceOrderRequest;
+import org.mengyun.tcctransaction.sample.order.domain.entity.Order;
+import org.mengyun.tcctransaction.sample.order.domain.entity.Product;
+import org.mengyun.tcctransaction.sample.order.domain.repository.ProductRepository;
+import org.mengyun.tcctransaction.sample.order.domain.service.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -39,40 +40,40 @@ public class OrderController {
     @Autowired
     OrderServiceImpl orderService;
 
-    @RequestMapping(value = "/",method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView index() {
         ModelAndView mv = new ModelAndView("/index");
         return mv;
     }
 
-    @RequestMapping(value = "/user/{userId}/shop/{shopId}",method = RequestMethod.GET)
+    @RequestMapping(value = "/user/{userId}/shop/{shopId}", method = RequestMethod.GET)
     public ModelAndView getProductsInShop(@PathVariable long userId,
-                                          @PathVariable long shopId){
+                                          @PathVariable long shopId) {
         List<Product> products = productRepository.findByShopId(shopId);
 
         ModelAndView mv = new ModelAndView("/shop");
 
-        mv.addObject("products",products);
-        mv.addObject("userId",userId);
-        mv.addObject("shopId",shopId);
+        mv.addObject("products", products);
+        mv.addObject("userId", userId);
+        mv.addObject("shopId", shopId);
 
         return mv;
     }
 
-    @RequestMapping(value = "/user/{userId}/shop/{shopId}/product/{productId}/confirm",method = RequestMethod.GET)
+    @RequestMapping(value = "/user/{userId}/shop/{shopId}/product/{productId}/confirm", method = RequestMethod.GET)
     public ModelAndView productDetail(@PathVariable long userId,
                                       @PathVariable long shopId,
-                                      @PathVariable long productId){
+                                      @PathVariable long productId) {
 
         ModelAndView mv = new ModelAndView("product_detail");
 
-        mv.addObject("capitalAmount",accountService.getCapitalAccountByUserId(userId));
-        mv.addObject("redPacketAmount",accountService.getRedPacketAccountByUserId(userId));
+        mv.addObject("capitalAmount", accountService.getCapitalAccountByUserId(userId));
+        mv.addObject("redPacketAmount", accountService.getRedPacketAccountByUserId(userId));
 
-        mv.addObject("product",productRepository.findById(productId));
+        mv.addObject("product", productRepository.findById(productId));
 
-        mv.addObject("userId",userId);
-        mv.addObject("shopId",shopId);
+        mv.addObject("userId", userId);
+        mv.addObject("shopId", shopId);
 
         return mv;
     }
@@ -116,9 +117,9 @@ public class OrderController {
     }
 
 
-    private PlaceOrderRequest buildRequest(String redPacketPayAmount,long shopId,long payerUserId,long productId) {
+    private PlaceOrderRequest buildRequest(String redPacketPayAmount, long shopId, long payerUserId, long productId) {
         BigDecimal redPacketPayAmountInBigDecimal = new BigDecimal(redPacketPayAmount);
-        if(redPacketPayAmountInBigDecimal.compareTo(BigDecimal.ZERO) < 0)
+        if (redPacketPayAmountInBigDecimal.compareTo(BigDecimal.ZERO) < 0)
             throw new InvalidParameterException("invalid red packet amount :" + redPacketPayAmount);
 
         PlaceOrderRequest request = new PlaceOrderRequest();

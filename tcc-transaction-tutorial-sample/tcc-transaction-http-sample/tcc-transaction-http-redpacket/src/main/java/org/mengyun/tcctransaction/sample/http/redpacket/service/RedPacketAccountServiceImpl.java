@@ -1,9 +1,8 @@
 package org.mengyun.tcctransaction.sample.http.redpacket.service;
 
 import org.mengyun.tcctransaction.sample.http.redpacket.api.RedPacketAccountService;
-import org.mengyun.tcctransaction.sample.http.redpacket.domain.repository.RedPacketAccountRepository;
+import org.mengyun.tcctransaction.sample.redpacket.domain.repository.RedPacketAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 

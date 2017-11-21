@@ -1,12 +1,11 @@
-package org.mengyun.tcctransaction.sample.http.order.domain.service;
+package org.mengyun.tcctransaction.sample.http.order.service;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.sample.http.capital.api.dto.CapitalTradeOrderDto;
-import org.mengyun.tcctransaction.sample.http.order.domain.entity.Order;
-import org.mengyun.tcctransaction.sample.http.order.domain.repository.OrderRepository;
-import org.mengyun.tcctransaction.sample.http.order.infrastructure.serviceproxy.TradeOrderServiceProxy;
 import org.mengyun.tcctransaction.sample.http.redpacket.api.dto.RedPacketTradeOrderDto;
+import org.mengyun.tcctransaction.sample.order.domain.entity.Order;
+import org.mengyun.tcctransaction.sample.order.domain.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;

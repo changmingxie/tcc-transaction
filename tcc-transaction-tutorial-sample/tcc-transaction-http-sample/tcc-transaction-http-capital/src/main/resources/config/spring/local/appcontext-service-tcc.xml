@@ -2,26 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:component-scan base-package="org.mengyun.tcctransaction.sample"/>
 
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="capitalDataSource"/>
-        <property name="mapperLocations" value="classpath*:config/sqlmap/main/sample-dubbo-*.xml"/>
-    </bean>
-
-    <bean id="capitalAccountDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-        <property name="mapperInterface"
-                  value="org.mengyun.tcctransaction.sample.http.capital.infrastructure.CapitalAccountDao"></property>
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-    </bean>
-
-    <bean id="tradeOrderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-        <property name="mapperInterface"
-                  value="org.mengyun.tcctransaction.sample.http.capital.infrastructure.TradeOrderDao"/>
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-    </bean>
+    <util:properties id="tccjdbc" location="classpath:tccjdbc.properties"/>
 
     <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
         <property name="maxRetryCount" value="5"/>
@@ -34,6 +20,20 @@
     <!--<property name="dataSource" ref="tccDataSource"/>-->
     <!--<property name="domain" value="CAPITAL"/>-->
     <!--<property name="tbSuffix" value="_CAP"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="tccDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"-->
+          <!--destroy-method="close" lazy-init="false">-->
+        <!--<property name="driverClass" value="#{tccjdbc['jdbc.driverClassName']}"/>-->
+        <!--<property name="jdbcUrl" value="#{tccjdbc['tcc.jdbc.url']}"/>-->
+        <!--<property name="user" value="#{tccjdbc['jdbc.username']}"/>-->
+        <!--<property name="password" value="#{tccjdbc['jdbc.password']}"/>-->
+        <!--<property name="initialPoolSize" value="#{tccjdbc['c3p0.initialPoolSize']}"/>-->
+        <!--<property name="minPoolSize" value="#{tccjdbc['c3p0.minPoolSize']}"/>-->
+        <!--<property name="maxPoolSize" value="#{tccjdbc['c3p0.maxPoolSize']}"/>-->
+        <!--<property name="acquireIncrement" value="#{tccjdbc['c3p0.acquireIncrement']}"/>-->
+        <!--<property name="maxIdleTime" value="#{tccjdbc['c3p0.maxIdleTime']}"/>-->
+        <!--<property name="checkoutTimeout" value="#{tccjdbc['c3p0.checkoutTimeout']}"/>-->
     <!--</bean>-->
 
     <bean id="kryoSerializer" class="org.mengyun.tcctransaction.serializer.KryoPoolSerializer"/>

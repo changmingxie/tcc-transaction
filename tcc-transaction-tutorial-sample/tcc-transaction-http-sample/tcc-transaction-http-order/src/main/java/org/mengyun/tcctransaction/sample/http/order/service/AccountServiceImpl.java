@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.sample.http.order.domain.service;
+package org.mengyun.tcctransaction.sample.http.order.service;
 
 import org.mengyun.tcctransaction.sample.http.capital.api.CapitalAccountService;
 import org.mengyun.tcctransaction.sample.http.redpacket.api.RedPacketAccountService;

@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.sample.http.order.infrastructure.serviceproxy;
+package org.mengyun.tcctransaction.sample.http.order.service;
 
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.Propagation;

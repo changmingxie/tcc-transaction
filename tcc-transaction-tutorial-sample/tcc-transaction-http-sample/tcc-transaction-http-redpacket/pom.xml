@@ -15,18 +15,18 @@
         <dependency>
             <groupId>org.mengyun</groupId>
             <artifactId>tcc-transaction-http-redpacket-api</artifactId>
-           <version>1.2.4.15</version>
+           <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mengyun</groupId>
-            <artifactId>tcc-transaction-spring</artifactId>
+            <artifactId>tcc-transaction-sample-redpacket</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mengyun</groupId>
-            <artifactId>tcc-transaction-sample-common</artifactId>
+            <artifactId>tcc-transaction-spring</artifactId>
             <version>${project.version}</version>
         </dependency>
 
