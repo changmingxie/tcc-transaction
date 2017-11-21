@@ -11,6 +11,7 @@ import org.mengyun.tcctransaction.sample.http.capital.domain.entity.TradeOrder;
 import org.mengyun.tcctransaction.sample.http.capital.domain.repository.CapitalAccountRepository;
 import org.mengyun.tcctransaction.sample.http.capital.domain.repository.TradeOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
@@ -39,20 +40,31 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
 
         System.out.println("capital try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
-        TradeOrder tradeOrder = new TradeOrder(
-                tradeOrderDto.getSelfUserId(),
-                tradeOrderDto.getOppositeUserId(),
-                tradeOrderDto.getMerchantOrderNo(),
-                tradeOrderDto.getAmount()
-        );
+        TradeOrder foundTradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
-        tradeOrderRepository.insert(tradeOrder);
+        //check if trade order has been recorded, if yes, return success directly.
+        if (foundTradeOrder == null) {
 
-        CapitalAccount transferFromAccount = capitalAccountRepository.findByUserId(tradeOrderDto.getSelfUserId());
+            TradeOrder tradeOrder = new TradeOrder(
+                    tradeOrderDto.getSelfUserId(),
+                    tradeOrderDto.getOppositeUserId(),
+                    tradeOrderDto.getMerchantOrderNo(),
+                    tradeOrderDto.getAmount()
+            );
 
-        transferFromAccount.transferFrom(tradeOrderDto.getAmount());
+            try {
+                tradeOrderRepository.insert(tradeOrder);
 
-        capitalAccountRepository.save(transferFromAccount);
+                CapitalAccount transferFromAccount = capitalAccountRepository.findByUserId(tradeOrderDto.getSelfUserId());
+
+                transferFromAccount.transferFrom(tradeOrderDto.getAmount());
+
+                capitalAccountRepository.save(transferFromAccount);
+            } catch (DataIntegrityViolationException e) {
+                //this exception may happen when insert trade order concurrently, if happened, ignore this insert operation.
+            }
+        }
+
         return "success";
     }
 
@@ -69,6 +81,7 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
+        //check if the trade order status is DRAFT, if yes, return directly, ensure idempotency.
         if (null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
             tradeOrder.confirm();
             tradeOrderRepository.update(tradeOrder);
@@ -94,6 +107,7 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
+        //check if the trade order status is DRAFT, if yes, return directly, ensure idempotency.
         if (null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
             tradeOrder.cancel();
             tradeOrderRepository.update(tradeOrder);

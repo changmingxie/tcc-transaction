@@ -1,9 +1,9 @@
 package org.mengyun.tcctransaction.sample.http.capital.domain.repository;
 
-import org.mengyun.tcctransaction.sample.http.capital.infrastructure.dao.CapitalAccountDao;
+import org.mengyun.tcctransaction.sample.exception.InsufficientBalanceException;
 import org.mengyun.tcctransaction.sample.http.capital.domain.entity.CapitalAccount;
+import org.mengyun.tcctransaction.sample.http.capital.infrastructure.dao.CapitalAccountDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 /**
  * Created by changming.xie on 4/2/16.
@@ -19,6 +19,9 @@ public class CapitalAccountRepository {
     }
 
     public void save(CapitalAccount capitalAccount) {
-        capitalAccountDao.update(capitalAccount);
+        int effectCount = capitalAccountDao.update(capitalAccount);
+        if (effectCount < 1) {
+            throw new InsufficientBalanceException();
+        }
     }
 }

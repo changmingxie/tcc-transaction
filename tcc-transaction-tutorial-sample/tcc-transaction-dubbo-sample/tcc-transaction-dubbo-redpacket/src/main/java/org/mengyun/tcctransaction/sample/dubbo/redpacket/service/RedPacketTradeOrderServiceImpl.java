@@ -5,11 +5,12 @@ import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.dto.RedPacketTradeOrderDto;
-import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.entity.RedPacketAccount;
-import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.entity.TradeOrder;
-import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.repository.RedPacketAccountRepository;
-import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.repository.TradeOrderRepository;
+import org.mengyun.tcctransaction.sample.redpacket.domain.entity.RedPacketAccount;
+import org.mengyun.tcctransaction.sample.redpacket.domain.entity.TradeOrder;
+import org.mengyun.tcctransaction.sample.redpacket.domain.repository.RedPacketAccountRepository;
+import org.mengyun.tcctransaction.sample.redpacket.domain.repository.TradeOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,20 +41,31 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
 
         System.out.println("red packet try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
-        TradeOrder tradeOrder = new TradeOrder(
-                tradeOrderDto.getSelfUserId(),
-                tradeOrderDto.getOppositeUserId(),
-                tradeOrderDto.getMerchantOrderNo(),
-                tradeOrderDto.getAmount()
-        );
+        TradeOrder foundTradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
-        tradeOrderRepository.insert(tradeOrder);
+        //check if trade order has been recorded, if yes, return success directly.
+        if (foundTradeOrder == null) {
 
-        RedPacketAccount transferFromAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getSelfUserId());
+            TradeOrder tradeOrder = new TradeOrder(
+                    tradeOrderDto.getSelfUserId(),
+                    tradeOrderDto.getOppositeUserId(),
+                    tradeOrderDto.getMerchantOrderNo(),
+                    tradeOrderDto.getAmount()
+            );
 
-        transferFromAccount.transferFrom(tradeOrderDto.getAmount());
+            try {
 
-        redPacketAccountRepository.save(transferFromAccount);
+                tradeOrderRepository.insert(tradeOrder);
+
+                RedPacketAccount transferFromAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getSelfUserId());
+
+                transferFromAccount.transferFrom(tradeOrderDto.getAmount());
+
+                redPacketAccountRepository.save(transferFromAccount);
+            } catch (DataIntegrityViolationException e) {
+                //this exception may happen when insert trade order concurrently, if happened, ignore this insert operation.
+            }
+        }
 
         return "success";
     }
@@ -71,14 +83,17 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
-        tradeOrder.confirm();
-        tradeOrderRepository.update(tradeOrder);
+        //check if the trade order status is DRAFT, if yes, return directly, ensure idempotency.
+        if (tradeOrder != null && tradeOrder.getStatus().equals("DRAFT")) {
+            tradeOrder.confirm();
+            tradeOrderRepository.update(tradeOrder);
 
-        RedPacketAccount transferToAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getOppositeUserId());
+            RedPacketAccount transferToAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getOppositeUserId());
 
-        transferToAccount.transferTo(tradeOrderDto.getAmount());
+            transferToAccount.transferTo(tradeOrderDto.getAmount());
 
-        redPacketAccountRepository.save(transferToAccount);
+            redPacketAccountRepository.save(transferToAccount);
+        }
     }
 
     @Transactional
@@ -90,10 +105,11 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
             throw new RuntimeException(e);
         }
 
-        System.out.println("red packet cancel record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(),"yyyy-MM-dd HH:mm:ss"));
+        System.out.println("red packet cancel record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
+        //check if the trade order status is DRAFT, if yes, return directly, ensure idempotency.
         if (null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
             tradeOrder.cancel();
             tradeOrderRepository.update(tradeOrder);

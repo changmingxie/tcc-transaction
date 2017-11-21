@@ -19,7 +19,7 @@
 
     <bean id="tradeOrderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface"
-                  value="org.mengyun.tcctransaction.sample.http.redpacket.infrastructure.dao.TradeOrderDao"/>
+                  value="org.mengyun.tcctransaction.sample.http.redpacket.infrastructure.TradeOrderDao"/>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 

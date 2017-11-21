@@ -9,5 +9,5 @@ public interface RedPacketAccountDao {
 
     RedPacketAccount findByUserId(long userId);
 
-    void update(RedPacketAccount redPacketAccount);
+    int update(RedPacketAccount redPacketAccount);
 }

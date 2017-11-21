@@ -15,13 +15,25 @@
         <dependency>
             <groupId>org.mengyun</groupId>
             <artifactId>tcc-transaction-dubbo-redpacket-api</artifactId>
-           <version>1.2.4.15</version>
+           <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mengyun</groupId>
             <artifactId>tcc-transaction-dubbo</artifactId>
-           <version>1.2.4.15</version>
+           <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mengyun</groupId>
+            <artifactId>tcc-transaction-sample-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mengyun</groupId>
+            <artifactId>tcc-transaction-sample-redpacket</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

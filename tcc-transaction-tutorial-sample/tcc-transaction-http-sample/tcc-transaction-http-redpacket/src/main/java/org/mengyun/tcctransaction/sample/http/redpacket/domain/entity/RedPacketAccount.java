@@ -1,5 +1,8 @@
 package org.mengyun.tcctransaction.sample.http.redpacket.domain.entity;
 
+
+import org.mengyun.tcctransaction.sample.exception.InsufficientBalanceException;
+
 import java.math.BigDecimal;
 
 /**
@@ -34,7 +37,7 @@ public class RedPacketAccount {
         this.balanceAmount = this.balanceAmount.subtract(amount);
 
         if (BigDecimal.ZERO.compareTo(this.balanceAmount) > 0) {
-            throw new RuntimeException("not enough balance!");
+            throw new InsufficientBalanceException();
         }
     }
 

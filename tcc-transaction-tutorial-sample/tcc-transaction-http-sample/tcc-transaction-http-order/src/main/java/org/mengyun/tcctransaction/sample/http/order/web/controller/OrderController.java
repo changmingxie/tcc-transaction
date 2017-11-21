@@ -1,6 +1,8 @@
 package org.mengyun.tcctransaction.sample.http.order.web.controller;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.mengyun.tcctransaction.sample.http.order.domain.entity.Order;
 import org.mengyun.tcctransaction.sample.http.order.domain.entity.Product;
 import org.mengyun.tcctransaction.sample.http.order.domain.repository.ProductRepository;
 import org.mengyun.tcctransaction.sample.http.order.domain.service.AccountServiceImpl;
@@ -11,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -74,32 +78,39 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/placeorder", method = RequestMethod.POST)
-    public ModelAndView placeOrder(@RequestParam String redPacketPayAmount,
+    public RedirectView placeOrder(@RequestParam String redPacketPayAmount,
                                    @RequestParam long shopId,
                                    @RequestParam long payerUserId,
                                    @RequestParam long productId) {
 
 
-        PlaceOrderRequest request = buildRequest(redPacketPayAmount,shopId,payerUserId,productId);
+        PlaceOrderRequest request = buildRequest(redPacketPayAmount, shopId, payerUserId, productId);
 
         String merchantOrderNo = placeOrderService.placeOrder(request.getPayerUserId(), request.getShopId(),
                 request.getProductQuantities(), request.getRedPacketPayAmount());
 
+        return new RedirectView("/payresult/" + merchantOrderNo);
+    }
+
+    @RequestMapping(value = "/payresult/{merchantOrderNo}", method = RequestMethod.GET)
+    public ModelAndView getPayResult(@PathVariable String merchantOrderNo) {
+
         ModelAndView mv = new ModelAndView("pay_success");
 
         String payResultTip = null;
-        String status = orderService.getOrderStatusByMerchantOrderNo(merchantOrderNo);
+        Order foundOrder = orderService.findOrderByMerchantOrderNo(merchantOrderNo);
 
-        if("CONFIRMED".equals(status))
+        if ("CONFIRMED".equals(foundOrder.getStatus()))
             payResultTip = "支付成功";
-        else if("PAY_FAILED".equals(status))
+        else if ("PAY_FAILED".equals(foundOrder.getStatus()))
             payResultTip = "支付失败";
+        else
+            payResultTip = "Unknown";
 
-        mv.addObject("payResult",payResultTip);
-        mv.addObject("product",productRepository.findById(productId));
+        mv.addObject("payResult", payResultTip);
 
-        mv.addObject("capitalAmount",accountService.getCapitalAccountByUserId(payerUserId));
-        mv.addObject("redPacketAmount",accountService.getRedPacketAccountByUserId(payerUserId));
+        mv.addObject("capitalAmount", accountService.getCapitalAccountByUserId(foundOrder.getPayerUserId()));
+        mv.addObject("redPacketAmount", accountService.getRedPacketAccountByUserId(foundOrder.getPayerUserId()));
 
         return mv;
     }

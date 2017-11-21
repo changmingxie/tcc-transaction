@@ -25,6 +25,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mengyun</groupId>
+            <artifactId>tcc-transaction-sample-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.101tec</groupId>
             <artifactId>zkclient</artifactId>
         </dependency>

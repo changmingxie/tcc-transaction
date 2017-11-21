@@ -1,7 +1,7 @@
 package org.mengyun.tcctransaction.sample.dubbo.capital.service;
 
+import org.mengyun.tcctransaction.sample.capital.domain.repository.CapitalAccountRepository;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalAccountService;
-import org.mengyun.tcctransaction.sample.dubbo.capital.domain.repository.CapitalAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

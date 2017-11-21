@@ -13,13 +13,13 @@
 
     <bean id="capitalAccountDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface"
-                  value="org.mengyun.tcctransaction.sample.http.capital.infrastructure.dao.CapitalAccountDao"></property>
+                  value="org.mengyun.tcctransaction.sample.http.capital.infrastructure.CapitalAccountDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
 
     <bean id="tradeOrderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface"
-                  value="org.mengyun.tcctransaction.sample.http.capital.infrastructure.dao.TradeOrderDao"/>
+                  value="org.mengyun.tcctransaction.sample.http.capital.infrastructure.TradeOrderDao"/>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 

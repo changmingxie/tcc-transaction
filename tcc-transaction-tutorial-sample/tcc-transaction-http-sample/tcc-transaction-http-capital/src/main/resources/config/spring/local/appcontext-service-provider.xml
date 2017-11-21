@@ -4,10 +4,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean name="capitalAccountRepository"
-          class="org.mengyun.tcctransaction.sample.http.capital.domain.repository.CapitalAccountRepository"/>
+          class="org.mengyun.tcctransaction.sample.http.capital.CapitalAccountRepository"/>
 
     <bean name="tradeOrderRepository"
-          class="org.mengyun.tcctransaction.sample.http.capital.domain.repository.TradeOrderRepository"/>
+          class="org.mengyun.tcctransaction.sample.http.capital.TradeOrderRepository"/>
 
     <bean name="capitalTradeOrderService"
           class="org.mengyun.tcctransaction.sample.http.capital.service.CapitalTradeOrderServiceImpl"/>

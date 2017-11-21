@@ -8,7 +8,7 @@
           class="org.mengyun.tcctransaction.sample.http.redpacket.domain.repository.RedPacketAccountRepository"/>
 
     <bean name="tradeOrderRepository"
-          class="org.mengyun.tcctransaction.sample.http.redpacket.domain.repository.TradeOrderRepository"/>
+          class="org.mengyun.tcctransaction.sample.http.redpacket.TradeOrderRepository"/>
 
     <bean name="redPacketAccountService"
           class="org.mengyun.tcctransaction.sample.http.redpacket.service.RedPacketAccountServiceImpl"/>

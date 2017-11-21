@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:component-scan base-package="org.mengyun.tcctransaction.sample.dubbo"/>
+
+    <util:properties id="tccJdbc" location="classpath:tccjdbc.properties"/>
+
+    <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
+        <property name="maxRetryCount" value="30"/>
+        <property name="recoverDuration" value="60"/>
+        <property name="cronExpression" value="0/30 * * * * ?"/>
+    </bean>
+
+    <bean id="transactionRepository"
+          class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">
+        <property name="dataSource" ref="tccDataSource"/>
+        <property name="domain" value="CAPITAL"/>
+        <property name="tbSuffix" value="_CAP"/>
+    </bean>
+
+    <bean id="tccDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close" lazy-init="false">
+        <property name="driverClass" value="#{tccJdbc['jdbc.driverClassName']}"/>
+        <property name="jdbcUrl" value="#{tccJdbc['tcc.jdbc.url']}"/>
+        <property name="user" value="#{tccJdbc['jdbc.username']}"/>
+        <property name="password" value="#{tccJdbc['jdbc.password']}"/>
+        <property name="initialPoolSize" value="#{tccJdbc['c3p0.initialPoolSize']}"/>
+        <property name="minPoolSize" value="#{tccJdbc['c3p0.minPoolSize']}"/>
+        <property name="maxPoolSize" value="#{tccJdbc['c3p0.maxPoolSize']}"/>
+        <property name="acquireIncrement" value="#{tccJdbc['c3p0.acquireIncrement']}"/>
+        <property name="maxIdleTime" value="#{tccJdbc['c3p0.maxIdleTime']}"/>
+        <property name="checkoutTimeout" value="#{tccJdbc['c3p0.checkoutTimeout']}"/>
+    </bean>
+
+    <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">-->
+    <!--<property name="keyPrefix" value="TCC:CAP:"/>-->
+    <!--<property name="jedisPool" ref="jedisPool"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">-->
+    <!--<property name="maxTotal" value="1000"/>-->
+    <!--<property name="maxWaitMillis" value="1000"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="jedisPool" class="redis.clients.jedis.JedisPool">-->
+    <!--<constructor-arg index="0" ref="jedisPoolConfig"/>-->
+    <!--<constructor-arg index="1" value="127.0.0.1"/>-->
+    <!--<constructor-arg index="2" value="6379" type="int"/>-->
+    <!--<constructor-arg index="3" value="1000" type="int"/>-->
+    <!--<constructor-arg index="4" type="java.lang.String">-->
+    <!--<null/>-->
+    <!--</constructor-arg>-->
+    <!--<constructor-arg index="5" value="0" type="int"/>-->
+    <!--</bean>-->
+
+</beans>

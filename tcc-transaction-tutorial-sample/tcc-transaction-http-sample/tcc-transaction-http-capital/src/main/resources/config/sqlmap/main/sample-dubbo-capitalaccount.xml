@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.mengyun.tcctransaction.sample.http.capital.infrastructure.dao.CapitalAccountDao">
+<mapper namespace="org.mengyun.tcctransaction.sample.http.capital.infrastructure.CapitalAccountDao">
 
     <resultMap id="result"
-               type="org.mengyun.tcctransaction.sample.http.capital.domain.entity.CapitalAccount">
+               type="org.mengyun.tcctransaction.sample.http.capital.CapitalAccount">
         <id property="id" javaType="java.lang.Long" column="CAPITAL_ACCOUNT_ID"/>
         <result property="balanceAmount" column="BALANCE_AMOUNT"/>
         <result property="userId" column="USER_ID"/>
@@ -41,7 +41,7 @@
             )
     </insert>
 
-    <update id="update" parameterType="org.mengyun.tcctransaction.sample.http.capital.domain.entity.CapitalAccount">
+    <update id="update" parameterType="org.mengyun.tcctransaction.sample.http.capital.CapitalAccount">
         UPDATE
         CAP_CAPITAL_ACCOUNT
         SET

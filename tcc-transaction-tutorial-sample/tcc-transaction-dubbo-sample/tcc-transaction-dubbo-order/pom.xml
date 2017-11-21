@@ -21,7 +21,7 @@
         <dependency>
             <groupId>org.mengyun</groupId>
             <artifactId>tcc-transaction-dubbo</artifactId>
-           <version>1.2.4.15</version>
+           <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -32,6 +32,12 @@
         <dependency>
             <groupId>org.mengyun</groupId>
             <artifactId>tcc-transaction-dubbo-redpacket-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mengyun</groupId>
+            <artifactId>tcc-transaction-sample-order</artifactId>
             <version>${project.version}</version>
         </dependency>
 

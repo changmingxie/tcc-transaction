@@ -7,9 +7,9 @@ import org.mengyun.tcctransaction.sample.http.order.domain.entity.Order;
  */
 public interface OrderDao {
 
-    public void insert(Order order);
+    public int insert(Order order);
 
-    public void update(Order order);
+    public int update(Order order);
 
     Order findByMerchantOrderNo(String merchantOrderNo);
 }

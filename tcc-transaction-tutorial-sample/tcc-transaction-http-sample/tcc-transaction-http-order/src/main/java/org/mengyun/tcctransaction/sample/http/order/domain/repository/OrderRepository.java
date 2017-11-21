@@ -5,6 +5,7 @@ import org.mengyun.tcctransaction.sample.http.order.infrastructure.dao.OrderDao;
 import org.mengyun.tcctransaction.sample.http.order.infrastructure.dao.OrderLineDao;
 import org.mengyun.tcctransaction.sample.http.order.domain.entity.OrderLine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -28,7 +29,10 @@ public class OrderRepository {
     }
 
     public void updateOrder(Order order) {
-        orderDao.update(order);
+        int effectCount = orderDao.update(order);
+        if(effectCount < 1) {
+            throw new OptimisticLockingFailureException("update order failed");
+        }
     }
 
     public Order findByMerchantOrderNo(String merchantOrderNo){

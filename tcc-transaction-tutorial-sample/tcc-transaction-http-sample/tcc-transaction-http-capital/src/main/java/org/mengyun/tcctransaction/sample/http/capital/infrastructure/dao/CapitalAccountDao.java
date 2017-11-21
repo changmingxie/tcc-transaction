@@ -9,5 +9,5 @@ public interface CapitalAccountDao {
 
     CapitalAccount findByUserId(long userId);
 
-    void update(CapitalAccount capitalAccount);
+    int update(CapitalAccount capitalAccount);
 }

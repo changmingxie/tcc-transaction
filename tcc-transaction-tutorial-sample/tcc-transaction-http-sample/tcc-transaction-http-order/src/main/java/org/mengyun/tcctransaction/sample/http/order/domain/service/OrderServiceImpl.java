@@ -31,7 +31,7 @@ public class OrderServiceImpl {
         return order;
     }
 
-    public String getOrderStatusByMerchantOrderNo(String orderNo){
-        return orderRepository.findByMerchantOrderNo(orderNo).getStatus();
+    public Order findOrderByMerchantOrderNo(String orderNo){
+        return orderRepository.findByMerchantOrderNo(orderNo);
     }
 }

@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.sample.http.redpacket.domain.repository;
 
+import org.mengyun.tcctransaction.sample.exception.InsufficientBalanceException;
 import org.mengyun.tcctransaction.sample.http.redpacket.domain.entity.RedPacketAccount;
 import org.mengyun.tcctransaction.sample.http.redpacket.infrastructure.dao.RedPacketAccountDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class RedPacketAccountRepository {
     }
 
     public void save(RedPacketAccount redPacketAccount) {
-        redPacketAccountDao.update(redPacketAccount);
+        int effectCount = redPacketAccountDao.update(redPacketAccount);
+        if (effectCount < 1) {
+            throw new InsufficientBalanceException();
+        }
     }
 }

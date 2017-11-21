@@ -11,6 +11,7 @@ import org.mengyun.tcctransaction.sample.http.redpacket.domain.entity.TradeOrder
 import org.mengyun.tcctransaction.sample.http.redpacket.domain.repository.RedPacketAccountRepository;
 import org.mengyun.tcctransaction.sample.http.redpacket.domain.repository.TradeOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
@@ -39,20 +40,31 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
 
         System.out.println("red packet try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
-        TradeOrder tradeOrder = new TradeOrder(
-                tradeOrderDto.getSelfUserId(),
-                tradeOrderDto.getOppositeUserId(),
-                tradeOrderDto.getMerchantOrderNo(),
-                tradeOrderDto.getAmount()
-        );
+        TradeOrder foundTradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
-        tradeOrderRepository.insert(tradeOrder);
+        //check if the trade order has need recorded.
+        //if record, then this method call return success directly.
+        if (foundTradeOrder == null) {
 
-        RedPacketAccount transferFromAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getSelfUserId());
+            TradeOrder tradeOrder = new TradeOrder(
+                    tradeOrderDto.getSelfUserId(),
+                    tradeOrderDto.getOppositeUserId(),
+                    tradeOrderDto.getMerchantOrderNo(),
+                    tradeOrderDto.getAmount()
+            );
 
-        transferFromAccount.transferFrom(tradeOrderDto.getAmount());
+            try {
+                tradeOrderRepository.insert(tradeOrder);
 
-        redPacketAccountRepository.save(transferFromAccount);
+                RedPacketAccount transferFromAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getSelfUserId());
+
+                transferFromAccount.transferFrom(tradeOrderDto.getAmount());
+
+                redPacketAccountRepository.save(transferFromAccount);
+            } catch (DataIntegrityViolationException e) {
+
+            }
+        }
 
         return "success";
     }
