@@ -2,9 +2,6 @@ package org.mengyun.tcctransaction.sample.redpacket.domain.entity;
 
 import java.math.BigDecimal;
 
-/**
- * Created by twinkle.zhou on 16/11/11.
- */
 public class TradeOrder {
 
     private long id;
@@ -18,6 +15,8 @@ public class TradeOrder {
     private BigDecimal amount;
 
     private String status = "DRAFT";
+
+    private long version = 1l;
 
     public TradeOrder() {
     }
@@ -53,11 +52,19 @@ public class TradeOrder {
         return status;
     }
 
-    public void confirm(){
+    public void confirm() {
         this.status = "CONFIRM";
     }
 
-    public void cancel(){
+    public void cancel() {
         this.status = "CANCEL";
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void updateVersion() {
+        version = version + 1;
     }
 }

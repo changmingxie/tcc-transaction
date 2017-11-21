@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.mengyun.tcctransaction.sample.dubbo.capital.infrastructure.TradeOrderDao">
+<mapper namespace="org.mengyun.tcctransaction.sample.capital.infrastructure.dao.TradeOrderDao">
 
     <resultMap id="result"
                type="org.mengyun.tcctransaction.sample.capital.domain.entity.TradeOrder">
@@ -32,7 +32,7 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
-            parameterType="org.mengyun.tcctransaction.sample.dubbo.capital.TradeOrder">
+            parameterType="org.mengyun.tcctransaction.sample.capital.domain.entity.TradeOrder">
         INSERT INTO CAP_TRADE_ORDER
         (
         SELF_USER_ID,
@@ -53,7 +53,7 @@
         )
     </insert>
 
-    <update id="update" parameterType="org.mengyun.tcctransaction.sample.dubbo.capital.TradeOrder">
+    <update id="update" parameterType="org.mengyun.tcctransaction.sample.capital.domain.entity.TradeOrder">
         UPDATE
         CAP_TRADE_ORDER
         SET

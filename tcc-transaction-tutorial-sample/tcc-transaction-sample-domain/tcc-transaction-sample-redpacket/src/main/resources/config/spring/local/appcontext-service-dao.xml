@@ -8,18 +8,18 @@
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="redPacketDataSource"/>
-        <property name="mapperLocations" value="classpath*:config/sqlmap/main/sample-dubbo-*.xml"/>
+        <property name="mapperLocations" value="classpath*:config/sqlmap/main/sample-*.xml"/>
     </bean>
 
     <bean id="redPacketAccountDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface"
-                  value="org.mengyun.tcctransaction.sample.dubbo.redpacket.infrastructure.dao.RedPacketAccountDao"></property>
+                  value="org.mengyun.tcctransaction.sample.redpacket.infrastructure.dao.RedPacketAccountDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
 
     <bean id="tradeOrderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface"
-                  value="org.mengyun.tcctransaction.sample.dubbo.redpacket.infrastructure.TradeOrderDao"/>
+                  value="org.mengyun.tcctransaction.sample.redpacket.infrastructure.dao.TradeOrderDao"/>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 

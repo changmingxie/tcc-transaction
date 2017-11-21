@@ -80,7 +80,7 @@ public class TransactionManager {
                         commitTransaction(transaction);
                     }
                 });
-                logger.info("async submit cost time:" + (System.currentTimeMillis() - statTime));
+                logger.debug("async submit cost time:" + (System.currentTimeMillis() - statTime));
             } catch (Throwable commitException) {
                 logger.warn("compensable transaction async submit confirm failed, recovery job will try to confirm later.", commitException);
                 throw new ConfirmingException(commitException);

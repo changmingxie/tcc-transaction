@@ -20,8 +20,9 @@ public class TradeOrderRepository {
     }
 
     public void update(TradeOrder tradeOrder) {
+        tradeOrder.updateVersion();
         int effectCount = tradeOrderDao.update(tradeOrder);
-        if (effectCount <= 1) {
+        if (effectCount < 1) {
             throw new OptimisticLockingFailureException("update trade order failed");
         }
     }

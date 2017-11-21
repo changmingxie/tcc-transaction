@@ -10,6 +10,7 @@
         <result property="merchantOrderNo" column="MERCHANT_ORDER_NO"/>
         <result property="amount" column="AMOUNT"/>
         <result property="status" column="STATUS"/>
+        <result property="version" column="VERSION"/>
     </resultMap>
 
     <sql id="sql_select">
@@ -19,7 +20,8 @@
         OPPOSITE_USER_ID,
         MERCHANT_ORDER_NO,
         AMOUNT,
-        STATUS
+        STATUS,
+        VERSION
         FROM
         RED_TRADE_ORDER
     </sql>
@@ -29,14 +31,16 @@
         WHERE MERCHANT_ORDER_NO = #{merchantOrderNo}
     </select>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="org.mengyun.tcctransaction.sample.redpacket.domain.entity.TradeOrder">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="org.mengyun.tcctransaction.sample.redpacket.domain.entity.TradeOrder">
         INSERT INTO RED_TRADE_ORDER
         (
         SELF_USER_ID,
         OPPOSITE_USER_ID,
         MERCHANT_ORDER_NO,
         AMOUNT,
-        STATUS
+        STATUS,
+        VERSION
         )
         VALUES
         (
@@ -44,7 +48,8 @@
         #{oppositeUserId},
         #{merchantOrderNo},
         #{amount},
-        #{status}
+        #{status},
+        #{version}
         )
     </insert>
 
@@ -52,7 +57,8 @@
         UPDATE
         RED_TRADE_ORDER
         SET
-        STATUS = #{status}
-        WHERE ID = #{id}
+        STATUS = #{status},
+        VERSION = #{version}
+        WHERE ID = #{id} AND VERSION = #{version}-1
     </update>
 </mapper>

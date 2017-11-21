@@ -30,7 +30,7 @@ public class PaymentServiceImpl {
     @Autowired
     OrderRepository orderRepository;
 
-    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment")
+    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", asyncConfirm = true)
     public void makePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
         System.out.println("order try make payment called.time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 

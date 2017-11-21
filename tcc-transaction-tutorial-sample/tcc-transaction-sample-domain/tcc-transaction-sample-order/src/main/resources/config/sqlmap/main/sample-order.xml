@@ -51,7 +51,8 @@
         RED_PACKET_PAY_AMOUNT,
         CAPITAL_PAY_AMOUNT,
         STATUS,
-        MERCHANT_ORDER_NO
+        MERCHANT_ORDER_NO,
+        VERSION
         )
         VALUES
             (
@@ -60,7 +61,8 @@
             #{redPacketPayAmount},
             #{capitalPayAmount},
             #{status},
-            #{merchantOrderNo}
+            #{merchantOrderNo},
+            #{version}
             )
     </insert>
 

@@ -27,7 +27,7 @@ public class Order implements Serializable {
 
     private String merchantOrderNo;
 
-    private long versionId = 1l;
+    private long version = 1l;
 
     private List<OrderLine> orderLines = new ArrayList<OrderLine>();
 
@@ -107,11 +107,11 @@ public class Order implements Serializable {
     }
 
 
-    public long getVersionId() {
-        return versionId;
+    public long getVersion() {
+        return version;
     }
 
     public void updateVersion() {
-        versionId++;
+        version++;
     }
 }

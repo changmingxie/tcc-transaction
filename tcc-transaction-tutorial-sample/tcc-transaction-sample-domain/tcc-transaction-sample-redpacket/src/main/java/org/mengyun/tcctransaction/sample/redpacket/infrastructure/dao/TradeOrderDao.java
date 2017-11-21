@@ -10,7 +10,7 @@ public interface TradeOrderDao {
 
     void insert(TradeOrder tradeOrder);
 
-    void update(TradeOrder tradeOrder);
+    int update(TradeOrder tradeOrder);
 
     TradeOrder findByMerchantOrderNo(String merchantOrderNo);
 }
