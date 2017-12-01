@@ -90,6 +90,15 @@ public class TransactionManager {
         }
     }
 
+    public void syncTransaction() {
+
+        final Transaction transaction = getCurrentTransaction();
+        /**
+         * update the transaction to persist the participant context info
+         */
+        transactionRepository.update(transaction);
+    }
+
     public void rollback(boolean asyncRollback) {
 
         final Transaction transaction = getCurrentTransaction();

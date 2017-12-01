@@ -87,7 +87,7 @@ public class CompensableTransactionInterceptor {
             } catch (Throwable tryingException) {
 
                 if (isDelayCancelException(tryingException)) {
-
+                    transactionManager.syncTransaction();
                 } else {
                     logger.warn(String.format("compensable transaction trying failed. transaction content:%s", JSON.toJSONString(transaction)), tryingException);
 
