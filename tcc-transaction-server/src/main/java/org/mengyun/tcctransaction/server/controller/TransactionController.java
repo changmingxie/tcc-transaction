@@ -70,6 +70,39 @@ public class TransactionController {
         return new CommonResponse<Void>();
     }
 
+    @RequestMapping(value = "/retry/delete", method = RequestMethod.PUT)
+    @ResponseBody
+    public CommonResponse<Void> delete(String domain, String globalTxId, String branchQualifier) {
+
+        daoRepository.getDao(domain).resetRetryCount(
+                globalTxId,
+                branchQualifier);
+
+        return new CommonResponse<Void>();
+    }
+
+    @RequestMapping(value = "/retry/confirm", method = RequestMethod.PUT)
+    @ResponseBody
+    public CommonResponse<Void> confirm(String domain, String globalTxId, String branchQualifier) {
+
+        daoRepository.getDao(domain).resetRetryCount(
+                globalTxId,
+                branchQualifier);
+
+        return new CommonResponse<Void>();
+    }
+
+    @RequestMapping(value = "/retry/cancel", method = RequestMethod.PUT)
+    @ResponseBody
+    public CommonResponse<Void> cancel(String domain, String globalTxId, String branchQualifier) {
+
+        daoRepository.getDao(domain).resetRetryCount(
+                globalTxId,
+                branchQualifier);
+
+        return new CommonResponse<Void>();
+    }
+
     public ModelAndView manager() {
         ModelAndView modelAndView = new ModelAndView("manager");
         modelAndView.addObject("domains", daoRepository.getDomains());
