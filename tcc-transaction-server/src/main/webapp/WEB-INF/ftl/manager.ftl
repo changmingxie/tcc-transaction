@@ -70,6 +70,9 @@
                     <td>${transactionVo.lastUpdateTime?datetime}</td>
                     <td>
                         <button class="btn btn-info btn-xs j-edit" data-url="" data-echo="">重置</button>
+                        <button class="btn btn-info btn-xs j-delete" data-url="" data-echo="">删除</button>
+                        <button class="btn btn-info btn-xs j-cancel" data-url="" data-echo="">取消</button>
+                        <button class="btn btn-info btn-xs j-confirm" data-url="" data-echo="">确认</button>
                     </td>
                 </tr>
                 [/#list]
