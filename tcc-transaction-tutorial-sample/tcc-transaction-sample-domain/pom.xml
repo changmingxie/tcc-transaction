@@ -5,7 +5,7 @@
     <parent>
         <artifactId>tcc-transaction-tutorial-sample</artifactId>
         <groupId>org.mengyun</groupId>
-        <version>1.2.4.16</version>
+        <version>1.2.4.17</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
