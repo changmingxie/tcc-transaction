@@ -121,14 +121,53 @@ public class RedisTransactionDao implements TransactionDao {
     }
 
     @Override
-    public boolean resetRetryCount(final String globalTxId, final String branchQualifier) {
+    public void resetRetryCount(final String globalTxId, final String branchQualifier) {
 
-        return RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
+        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
             @Override
             public Boolean doInJedis(Jedis jedis) {
 
                 byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
                 Long result = jedis.hset(key, "RETRIED_COUNT".getBytes(), ByteUtils.intToBytes(0));
+                return result > 0;
+            }
+        });
+    }
+
+    @Override
+    public void delete(final String globalTxId, final String branchQualifier) {
+        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
+            @Override
+            public Boolean doInJedis(Jedis jedis) {
+
+                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
+                Long result = jedis.del(key);
+                return result > 0;
+            }
+        });
+    }
+
+    @Override
+    public void confirm(final String globalTxId, final String branchQualifier) {
+        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
+            @Override
+            public Boolean doInJedis(Jedis jedis) {
+
+                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
+                Long result = jedis.hset(key, "STATUS".getBytes(), ByteUtils.intToBytes(2));
+                return result > 0;
+            }
+        });
+    }
+
+    @Override
+    public void cancel(final String globalTxId, final String branchQualifier) {
+        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
+            @Override
+            public Boolean doInJedis(Jedis jedis) {
+
+                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
+                Long result = jedis.hset(key, "STATUS".getBytes(), ByteUtils.intToBytes(3));
                 return result > 0;
             }
         });

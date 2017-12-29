@@ -109,7 +109,7 @@ public class JdbcTransactionDao implements TransactionDao {
     }
 
     @Override
-    public boolean resetRetryCount(String globalTxId, String branchQualifier) {
+    public void resetRetryCount(String globalTxId, String branchQualifier) {
 
         Connection connection = getConnection();
         PreparedStatement preparedStatement = null;
@@ -123,7 +123,71 @@ public class JdbcTransactionDao implements TransactionDao {
             preparedStatement.setBytes(1, DatatypeConverter.parseHexBinary(globalTxId));
             preparedStatement.setBytes(2, DatatypeConverter.parseHexBinary(branchQualifier));
             int result = preparedStatement.executeUpdate();
-            return result > 0;
+        } catch (Exception e) {
+            throw new RuntimeException("resetRetryCount error", e);
+        } finally {
+            closeStatement(preparedStatement);
+            releaseConnection(connection);
+        }
+    }
+
+    @Override
+    public void delete(String globalTxId, String branchQualifier) {
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            String tableName = getTableName();
+
+            String sql = "DELETE " + tableName +
+                    " WHERE GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setBytes(1, DatatypeConverter.parseHexBinary(globalTxId));
+            preparedStatement.setBytes(2, DatatypeConverter.parseHexBinary(branchQualifier));
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("delete error", e);
+        } finally {
+            closeStatement(preparedStatement);
+            releaseConnection(connection);
+        }
+    }
+
+    @Override
+    public void confirm(String globalTxId, String branchQualifier) {
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            String tableName = getTableName();
+
+            String sql = "UPDATE " + tableName +
+                    " SET STATUS=2" +
+                    " WHERE GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setBytes(1, DatatypeConverter.parseHexBinary(globalTxId));
+            preparedStatement.setBytes(2, DatatypeConverter.parseHexBinary(branchQualifier));
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("resetRetryCount error", e);
+        } finally {
+            closeStatement(preparedStatement);
+            releaseConnection(connection);
+        }
+    }
+
+    @Override
+    public void cancel(String globalTxId, String branchQualifier) {
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
+            String tableName = getTableName();
+
+            String sql = "UPDATE " + tableName +
+                    " SET STATUS=3" +
+                    " WHERE GLOBAL_TX_ID = ? AND BRANCH_QUALIFIER = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setBytes(1, DatatypeConverter.parseHexBinary(globalTxId));
+            preparedStatement.setBytes(2, DatatypeConverter.parseHexBinary(branchQualifier));
+            preparedStatement.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException("resetRetryCount error", e);
         } finally {
