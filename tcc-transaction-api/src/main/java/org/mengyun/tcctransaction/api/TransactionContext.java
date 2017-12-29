@@ -34,7 +34,9 @@ public class TransactionContext implements Serializable {
     }
 
     public void setAttachments(Map<String, String> attachments) {
-        this.attachments = attachments;
+        if (attachments != null && !attachments.isEmpty()) {
+            this.attachments.putAll(attachments);
+        }
     }
 
     public Map<String, String> getAttachments() {
