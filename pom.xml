@@ -25,9 +25,9 @@
         <java.target.version>1.6</java.target.version>
         <project.encoding>UTF-8</project.encoding>
 
-        <repo.internal.snapshots.url>http://artifactory.ximalaya.com/artifactory/thirdparty-snapshots-local/
+        <repo.internal.snapshots.url>http://repo1.maven.org/maven2
         </repo.internal.snapshots.url>
-        <repo.internal.releases.url>http://artifactory.ximalaya.com/artifactory/thirdparty-releases-local/
+        <repo.internal.releases.url>http://repo1.maven.org/maven2
         </repo.internal.releases.url>
         <repo.proxy.url>http://repo1.maven.org/maven2</repo.proxy.url>
 
