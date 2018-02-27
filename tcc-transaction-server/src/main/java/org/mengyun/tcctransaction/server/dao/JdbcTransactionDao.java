@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.server.dao;
 
 
+import org.mengyun.tcctransaction.server.dto.PageDto;
 import org.mengyun.tcctransaction.server.vo.PageVo;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
 
@@ -238,5 +239,16 @@ public class JdbcTransactionDao implements TransactionDao {
 
     public void setTableSuffix(String tableSuffix) {
         this.tableSuffix = tableSuffix;
+    }
+
+    @Override
+    public PageDto<TransactionVo> findTransactionPageDto(Integer pageNum, int pageSize) {
+
+        List<TransactionVo> transactionVos = findTransactions(pageNum, pageSize);
+
+        Integer countOfFindTransactions = countOfFindTransactions();
+
+        return new PageDto<TransactionVo>(transactionVos, pageNum, pageSize, countOfFindTransactions);
+
     }
 }
