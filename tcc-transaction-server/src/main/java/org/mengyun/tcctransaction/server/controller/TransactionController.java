@@ -93,7 +93,7 @@ public class TransactionController {
         logger.info("request /retry /delete with domain: {} globalTxId: {} branchQualifier: {} ",
                 new Object[]{domain, globalTxId, branchQualifier});
 
-        daoRepository.getDao(domain).resetRetryCount(
+        daoRepository.getDao(domain).delete(
                 globalTxId,
                 branchQualifier);
 
@@ -107,7 +107,7 @@ public class TransactionController {
         logger.info("request /retry/confirm with domain: {} globalTxId: {} branchQualifier: {} ",
                 new Object[]{domain, globalTxId, branchQualifier});
 
-        daoRepository.getDao(domain).resetRetryCount(
+        daoRepository.getDao(domain).confirm(
                 globalTxId,
                 branchQualifier);
 
@@ -121,7 +121,7 @@ public class TransactionController {
         logger.info("request /retry/cancel with domain: {} globalTxId: {} branchQualifier: {} ",
                 new Object[]{domain, globalTxId, branchQualifier});
 
-        daoRepository.getDao(domain).resetRetryCount(
+        daoRepository.getDao(domain).cancel(
                 globalTxId,
                 branchQualifier);
 
