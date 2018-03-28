@@ -23,8 +23,6 @@ public class RedisTransactionDao implements TransactionDao {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisTransactionDao.class);
 
-    private String KEY_NAME_SPACE = "TCC";
-
     private JedisPool jedisPool;
 
     private String keySuffix;
@@ -32,7 +30,7 @@ public class RedisTransactionDao implements TransactionDao {
     private String domain;
 
     private String getKeyPrefix() {
-        return KEY_NAME_SPACE + ":" + keySuffix + ":";
+        return keySuffix + ":";
     }
 
 
