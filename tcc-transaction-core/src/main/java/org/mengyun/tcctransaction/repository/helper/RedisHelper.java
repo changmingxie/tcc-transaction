@@ -16,9 +16,17 @@ public class RedisHelper {
     }
 
     public static byte[] getRedisKey(String keyPrefix, String globalTransactionId, String branchQualifier) {
-        return new StringBuilder().append(keyPrefix)
-                .append("globalTransactionId").append(":").append(globalTransactionId).append(",")
-                .append("branchQualifier").append(":").append(branchQualifier).toString().getBytes();
+
+        if (keyPrefix.startsWith("AGG")) {
+            return new StringBuilder().append(keyPrefix)
+                    .append("globalTransactionId").append(":").append(globalTransactionId).append(",")
+                    .append("branchQualifier").append(":").append(branchQualifier).toString().getBytes();
+        } else {
+            return new StringBuilder().append(keyPrefix)
+                    .append(globalTransactionId).append(":")
+                    .append(branchQualifier).toString().getBytes();
+        }
+
     }
 
     public static byte[] getVersionKey(String keyPrefix, Xid xid) {
