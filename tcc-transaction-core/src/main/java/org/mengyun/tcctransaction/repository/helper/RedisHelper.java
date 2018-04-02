@@ -16,7 +16,9 @@ public class RedisHelper {
     }
 
     public static byte[] getRedisKey(String keyPrefix, String globalTransactionId, String branchQualifier) {
-        return new StringBuilder().append(keyPrefix).append(globalTransactionId).append(":").append(branchQualifier).toString().getBytes();
+        return new StringBuilder().append(keyPrefix)
+                .append("globalTransactionId").append(":").append(globalTransactionId).append(",")
+                .append("branchQualifier").append(":").append(branchQualifier).toString().getBytes();
     }
 
     public static byte[] getVersionKey(String keyPrefix, Xid xid) {
