@@ -6,6 +6,11 @@
     <display-name>Sample Dubbo Capital</display-name>
 
     <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>cap</param-value>
+    </context-param>
+    
+    <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath*:config/spring/local/appcontext-*.xml,classpath:tcc-transaction.xml,classpath:tcc-transaction-dubbo.xml
         </param-value>

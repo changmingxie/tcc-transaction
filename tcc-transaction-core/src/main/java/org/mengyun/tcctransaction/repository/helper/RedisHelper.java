@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.repository.helper;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 
 import javax.transaction.xa.Xid;
@@ -35,6 +36,29 @@ public class RedisHelper {
         } finally {
             if (jedis != null) {
                 jedis.close();
+            }
+        }
+    }
+
+    /**
+     *  扩展redis cluster
+     *  @Method_Name             ：executeCluster
+     *  @param jedisCluster
+     *  @param callback
+     *  @return T
+     *  @Creation Date           ：2018/6/12
+     *  @Author                  ：zc.ding@foxmail.com
+     */
+    public static <T> T execute(JedisCluster jedisCluster, JedisClusterCallback<T> callback) {
+        try {
+            return callback.doInJedisCluster(jedisCluster);
+        } finally {
+            if (jedisCluster != null) {
+//                try {
+//                    jedisCluster.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             }
         }
     }

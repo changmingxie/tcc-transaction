@@ -7,21 +7,21 @@
 
     <context:component-scan base-package="org.mengyun.tcctransaction.sample.dubbo"/>
 
+    <util:properties id="tccDb" location="classpath:tccjdbc.properties"/>
+
+    <!--
     <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
         <property name="maxRetryCount" value="30"/>
         <property name="recoverDuration" value="60"/>
         <property name="cronExpression" value="0/30 * * * * ?"/>
     </bean>
-
-
+    
     <bean id="transactionRepository"
           class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">
         <property name="dataSource" ref="tccDataSource"/>
         <property name="domain" value="REDPACKET"/>
         <property name="tbSuffix" value="_RED"/>
     </bean>
-
-    <util:properties id="tccjdbc" location="classpath:tccjdbc.properties"/>
 
     <bean id="tccDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
           destroy-method="close" lazy-init="false">
@@ -35,7 +35,7 @@
         <property name="acquireIncrement" value="#{tccjdbc['c3p0.acquireIncrement']}"/>
         <property name="maxIdleTime" value="#{tccjdbc['c3p0.maxIdleTime']}"/>
         <property name="checkoutTimeout" value="#{tccjdbc['c3p0.checkoutTimeout']}"/>
-    </bean>
+    </bean>-->
 
 
     <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">-->
@@ -59,4 +59,37 @@
     <!--<constructor-arg index="5" value="0" type="int"/>-->
     <!--</bean>-->
 
+    <!-- redis cluster -->
+    <!-- redisl cluster -->
+    <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisClusterTransactionRepository">
+        <property name="keyPrefix" value="TCC:RED:"/>
+        <!--<property name="jedisCluster" ref="jedisCluster"/>-->
+        <property name="jedisClusterExtend" ref="jedisClusterExtend"/>
+    </bean>
+
+
+    <bean id="jedisClusterExtend" class="org.mengyun.tcctransaction.repository.helper.JedisClusterExtend">
+        <constructor-arg index="0" value="#{tccDb['redis.cluster.ip']}" type="java.lang.String"/>
+        <constructor-arg index="1" ref="jedisPoolConfig"/>
+    </bean>
+    <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisClusterTransactionRepository">
+        <property name="keyPrefix" value="TCC:RED:"/>
+        <property name="jedisCluster" ref="jedisCluster"/>
+    </bean>
+
+    <bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+        <constructor-arg index="0">
+            <list>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg index="0" value="#{tccDb['redis.ip']}" type="java.lang.String"/>
+                    <constructor-arg index="1" value="#{tccDb['redis.port']}" type="int"/>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>-->
+
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="#{tccDb['redis.total']}"/>
+        <property name="maxWaitMillis" value="#{tccDb['redis.max.wait.millis']}"/>
+    </bean>
 </beans>
