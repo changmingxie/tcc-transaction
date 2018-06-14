@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!--输出控制台的日志-->
+	<appender name="log.console" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[${project.artifactId}] %d [%L] [%c] %-5p - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" 		value="debug" />
+			<param name="levelMax" 		value="info" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+	</appender>
+
+	<!--输出info级别的日志-->
+	<appender name="info.file" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" 			value="./logs/${project.artifactId}.log" />
+		<param name="Append" 		value="true" />
+		<param name="DatePattern" 	value="'_'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[${project.artifactId}] %d [%L] [%c] %-5p - %m%n" />
+		</layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter"> 
+				<param name="levelMin" 		value="debug" />
+				<param name="levelMax" 		value="info" />
+				<param name="AcceptOnMatch" value="true" /> 
+		</filter>
+	</appender>
+
+
+	<!--输出error级别的日志-->
+	<appender name="error.file" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" 			value="./logs/${project.artifactId}_error.log" />
+		<param name="Append" 		value="true" />
+		<param name="DatePattern" 	value="'_'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[${project.artifactId}] %d [%L] [%c] %-5p - %m%n" />
+		</layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter"> 
+				<param name="levelMin" 		value="error" /> 
+				<param name="levelMax" 		value="error" /> 
+				<param name="AcceptOnMatch" value="true" /> 
+		</filter>
+	</appender>
+
+	<!-- 放开本项目的配置 -->
+	<!--<logger name="com.yirun.finance" additivity="false">-->
+		<!--<level value="DEBUG" />-->
+		<!--<appender-ref ref="info.file" />-->
+		<!--<appender-ref ref="error.file" />-->
+		<!--<appender-ref ref="log.console"/>-->
+	<!--</logger>-->
+
+
+	<!--开启输出日志-->
+	<root>
+		<level value="DEBUG" />
+		<!--<appender-ref ref="info.file" />-->
+		<!--<appender-ref ref="error.file" />-->
+		<appender-ref ref="log.console" />
+	</root>
+
+ 
+
+</log4j:configuration>

@@ -90,14 +90,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.1.1</version>
-                <!--<configuration>
+                <configuration>
                     <webResources>
                         <resource>
                             <directory>src/main/config/${running.env}</directory>
                             <targetPath>WEB-INF/classes</targetPath>
                         </resource>
                     </webResources>
-                </configuration>-->
+                </configuration>
             </plugin>
         </plugins>
     </build>
