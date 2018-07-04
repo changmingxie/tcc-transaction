@@ -60,7 +60,7 @@ public class RedisTransactionDao implements TransactionDao {
                     } while (!cursor.equals("0") || allKeys.size() >= end);
 
                 } else {
-                    logger.info("redis server do not support scan command.");
+                    logger.info("redis server do not support scan command. use keys instead");
                     allKeys.addAll(jedis.keys(pattern));
                 }
 
@@ -287,7 +287,7 @@ public class RedisTransactionDao implements TransactionDao {
             }
 
         } else {
-            logger.info("redis server do not support scan command.");
+            logger.info("redis server do not support scan command.use keys instead");
             allKeys.addAll(jedis.keys(pattern.getBytes()));
             totalCount = allKeys.size();
         }
