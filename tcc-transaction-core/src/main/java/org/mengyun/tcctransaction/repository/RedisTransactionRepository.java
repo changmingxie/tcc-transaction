@@ -29,6 +29,8 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
     private String keyPrefix = "TCC:";
 
+    private boolean supportScan;
+
     public void setKeyPrefix(String keyPrefix) {
         this.keyPrefix = keyPrefix;
     }
@@ -45,6 +47,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
     public void setJedisPool(JedisPool jedisPool) {
         this.jedisPool = jedisPool;
+        supportScan = RedisUtils.isSupportScanCommand(jedisPool.getResource());
     }
 
     @Override
@@ -175,7 +178,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                 @Override
                 public Set<byte[]> doInJedis(Jedis jedis) {
 
-                    if (RedisUtils.isSupportScanCommand(jedis)) {
+                    if (supportScan) {
                         List<String> allKeys = new ArrayList<String>();
                         String cursor = "0";
                         do {
