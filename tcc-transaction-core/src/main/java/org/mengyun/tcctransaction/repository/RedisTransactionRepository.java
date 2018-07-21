@@ -7,9 +7,8 @@ import org.mengyun.tcctransaction.repository.helper.JedisCallback;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
 import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Pipeline;
+import org.mengyun.tcctransaction.utils.RedisUtils;
+import redis.clients.jedis.*;
 
 import javax.transaction.xa.Xid;
 import java.util.*;
@@ -30,6 +29,8 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
     private String keyPrefix = "TCC:";
 
+    private boolean supportScan;
+
     public void setKeyPrefix(String keyPrefix) {
         this.keyPrefix = keyPrefix;
     }
@@ -46,6 +47,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
     public void setJedisPool(JedisPool jedisPool) {
         this.jedisPool = jedisPool;
+        supportScan = RedisUtils.isSupportScanCommand(jedisPool.getResource());
     }
 
     @Override
@@ -98,7 +100,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                     }
 
                     Object result = jedis.eval(String.format("if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
-                                    transaction.getVersion() - 1).getBytes(),
+                            transaction.getVersion() - 1).getBytes(),
                             Arrays.asList(RedisHelper.getRedisKey(keyPrefix, transaction.getXid())), params);
 
                     return (Long) result;
@@ -175,7 +177,27 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
             final Set<byte[]> keys = RedisHelper.execute(jedisPool, new JedisCallback<Set<byte[]>>() {
                 @Override
                 public Set<byte[]> doInJedis(Jedis jedis) {
-                    return jedis.keys((keyPrefix + "*").getBytes());
+
+                    if (supportScan) {
+                        List<String> allKeys = new ArrayList<String>();
+                        String cursor = "0";
+                        do {
+                            ScanResult<String> scanResult = jedis.scan(cursor, new ScanParams().match(keyPrefix + "*").count(500));
+                            allKeys.addAll(scanResult.getResult());
+                            cursor = scanResult.getStringCursor();
+                        } while (!cursor.equals("0"));
+
+                        Set<byte[]> allKeySet = new HashSet<byte[]>();
+
+                        for (String key : allKeys) {
+                            allKeySet.add(key.getBytes());
+                        }
+                        logger.info(String.format("find all key by scan command with pattern:%s allKeySet.size()=%d", keyPrefix + "*", allKeySet.size()));
+                        return allKeySet;
+                    } else {
+                        return jedis.keys((keyPrefix + "*").getBytes());
+                    }
+
                 }
             });
 

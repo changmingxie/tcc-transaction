@@ -57,18 +57,36 @@
                 <tbody>
                 [#list transactionVos as transactionVo]
                 <tr>
-                    <td>${transactionVo.domain}</td>
-                    <td>${transactionVo.globalTxId}</td>
-                    <td>${transactionVo.branchQualifier}</td>
-                    <td>[#if transactionVo.status==1]Trying[#elseif  transactionVo.status==2]
-                        Confirming[#elseif transactionVo.status==3]Cancelling[#else ]Unknown[/#if]</td>
-                    <td>[#if transactionVo.transactionType==1]Root[#else ]Branch[/#if]</td>
-                    <td>${transactionVo.retriedCount}</td>
+                    <td>${transactionVo.domain!"default-domain"}</td>
+                    <td>${transactionVo.globalTxId!"default-globalTxId"}</td>
+                    <td>${transactionVo.branchQualifier!"default-branchQualifier"}</td>
+                    <td>
+                    [#if transactionVo.status??]
+                        [#if transactionVo.status==1]Trying
+                        [#elseif  transactionVo.status==2]Confirming
+                        [#elseif transactionVo.status==3]Cancelling
+                        [#else ]Unknown[/#if]
+                    [/#if]
+                    </td>
+                    <td>[#if transactionVo.transactionType??]
+                            [#if transactionVo.transactionType==1]Root
+                            [#else ]Branch[/#if]
+                        [/#if]
+                    </td>
+                    <td>${transactionVo.retriedCount!"default-retriedCount"}</td>
                     <td>
                         <div style="width: 600px; height: 120px; overflow: scroll;">${transactionVo.contentView}</div>
                     </td>
-                    <td>${transactionVo.createTime?datetime}</td>
-                    <td>${transactionVo.lastUpdateTime?datetime}</td>
+                    <td>
+                        [#if transactionVo.createTime??]
+                            ${transactionVo.createTime?datetime}
+                        [/#if]
+                    </td>
+                    <td>
+                        [#if transactionVo.lastUpdateTime??]
+                            ${transactionVo.lastUpdateTime?datetime}
+                        [/#if]
+                    </td>
                     <td>
                         <button class="btn btn-info btn-xs j-edit" data-url="" data-echo="">重置</button>
                         <button class="btn btn-info btn-xs j-delete" data-url="" data-echo="">删除</button>
