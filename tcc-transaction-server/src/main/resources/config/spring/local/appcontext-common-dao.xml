@@ -21,9 +21,18 @@
         <property name="domain" value="pre-release"/>
     </bean>
     
-    <bean id="jedisClusterExtend" class="org.mengyun.tcctransaction.repository.helper.JedisClusterExtend">
+    <!--<bean id="jedisClusterExtend" class="org.mengyun.tcctransaction.repository.helper.JedisClusterExtend">
         <constructor-arg index="0" value="${redis.cluster.ip}" type="java.lang.String"/>
         <constructor-arg index="1" ref="jedisPoolConfig"/>
+    </bean>-->
+
+    <bean id="jedisClusterExtend" class="org.mengyun.tcctransaction.repository.helper.JedisClusterExtend">
+        <constructor-arg index="0" value="${redis.cluster.ip}" type="java.lang.String"/>
+        <constructor-arg index="1" value="${redis.timeout}"/>
+        <constructor-arg index="2" value="${redis.so.timeout}"/>
+        <constructor-arg index="3" value="${redis.max.attempts}"/>
+        <constructor-arg index="4" value="${redis.password}" type="java.lang.String"/>
+        <constructor-arg index="5" ref="jedisPoolConfig"/>
     </bean>
 
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">

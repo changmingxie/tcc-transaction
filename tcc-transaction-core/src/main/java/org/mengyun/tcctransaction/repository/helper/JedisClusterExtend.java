@@ -22,21 +22,25 @@ public class JedisClusterExtend {
     
     private String redisClusterIp;
     private GenericObjectPoolConfig jedisPoolConfig;
+    private int connectionTimeout = 0;
+    private int soTimeout = 0;
+    private int maxAttempts = 0;
+    private String password;
+
+    private JedisCluster jedisCluster;
 
     public JedisClusterExtend(String redisClusterIp){
         this(redisClusterIp, new GenericObjectPoolConfig());
     }
 
     public JedisClusterExtend(String redisClusterIp, final GenericObjectPoolConfig genericObjectPoolConfig){
-        logger.info("redis cluster address is " + redisClusterIp);
-        if(!StringUtils.isNotEmpty(redisClusterIp)){
-            throw new RuntimeException("can't find redis cluster ip.");
-        }
-        if(genericObjectPoolConfig == null){
-            throw new RuntimeException("JectPoolConfig not defined.");
-        }
-        this.redisClusterIp = redisClusterIp;
-        this.jedisPoolConfig = genericObjectPoolConfig;
+        validIp(redisClusterIp, genericObjectPoolConfig);
+        jedisCluster = new JedisCluster(getHostAndPort(), jedisPoolConfig);
+    }
+
+    public JedisClusterExtend(String redisClusterIp, int connectionTimeout, int soTimeout, int maxAttempts, String password, final GenericObjectPoolConfig genericObjectPoolConfig){
+        validIp(redisClusterIp, genericObjectPoolConfig);
+        jedisCluster = new JedisCluster(getHostAndPort(), connectionTimeout, soTimeout, maxAttempts, password, jedisPoolConfig);
     }
     
     /**
@@ -48,6 +52,18 @@ public class JedisClusterExtend {
     *  @Author                  ：zc.ding@foxmail.com
     */
     public JedisCluster getJedisCluster(){
+        return jedisCluster;
+    }
+    
+    /**
+    *  获得redis集群地址
+    *  @Method_Name             ：getHostAndPort
+    * 
+    *  @return java.util.Set<redis.clients.jedis.HostAndPort>
+    *  @Creation Date           ：2018/7/11
+    *  @Author                  ：zc.ding@foxmail.com
+    */
+    public Set<HostAndPort> getHostAndPort(){
         Set<HostAndPort> set = new HashSet<HostAndPort>();
         String[] arr = redisClusterIp.split(",");
         for(String host : arr){
@@ -57,7 +73,28 @@ public class JedisClusterExtend {
             }
             set.add(new HostAndPort(ipPort[0], Integer.parseInt(ipPort[1])));
         }
-        return new JedisCluster(set, jedisPoolConfig);
+        return set;
+    }
+    
+    /**
+    *  验证地址及poolConfig准确性
+    *  @Method_Name             ：validIp
+    *  @param redisClusterIp
+    *  @param genericObjectPoolConfig
+    *  @return void
+    *  @Creation Date           ：2018/7/11
+    *  @Author                  ：zc.ding@foxmail.com
+    */
+    public void validIp(String redisClusterIp, final GenericObjectPoolConfig genericObjectPoolConfig){
+        logger.info("redis cluster address is " + redisClusterIp);
+        if(!StringUtils.isNotEmpty(redisClusterIp)){
+            throw new RuntimeException("can't find redis cluster ip.");
+        }
+        if(genericObjectPoolConfig == null){
+            throw new RuntimeException("JectPoolConfig not defined.");
+        }
+        this.redisClusterIp = redisClusterIp;
+        this.jedisPoolConfig = genericObjectPoolConfig;
     }
     
 }

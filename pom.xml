@@ -7,15 +7,17 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.4.21</version>
+    <version>1.2.4.22</version>
     <modules>
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-api</module>
         <module>tcc-transaction-spring</module>
+        <module>tcc-transaction-dubbo</module>
+        <!-- 下面三个包不需要deploy到私服 -->
         <module>tcc-transaction-unit-test</module>
         <module>tcc-transaction-tutorial-sample</module>
         <module>tcc-transaction-server</module>
-        <module>tcc-transaction-dubbo</module>
+        
     </modules>
 
     <properties>
@@ -25,10 +27,8 @@
         <java.target.version>1.6</java.target.version>
         <project.encoding>UTF-8</project.encoding>
 
-        <repo.internal.snapshots.url>http://repo1.maven.org/maven2
-        </repo.internal.snapshots.url>
-        <repo.internal.releases.url>http://repo1.maven.org/maven2
-        </repo.internal.releases.url>
+        <repo.internal.snapshots.url>http://114.241.205.57:8800/nexus/content/repositories/snapshots</repo.internal.snapshots.url>
+        <repo.internal.releases.url>http://114.241.205.57:8800/nexus/content/repositories/releases</repo.internal.releases.url>
         <repo.proxy.url>http://repo1.maven.org/maven2</repo.proxy.url>
 
         <repo.external.url>http://repo1.maven.org/maven2</repo.external.url>
@@ -37,8 +37,6 @@
 
 
     <dependencyManagement>
-
-
         <dependencies>
             <dependency>
                 <groupId>org.mengyun</groupId>
@@ -450,12 +448,12 @@
 
     <distributionManagement>
         <repository>
-            <id>repo.releases</id>
+            <id>snapshots</id>
             <name>internal corporate repository</name>
             <url>${repo.internal.releases.url}</url>
         </repository>
         <snapshotRepository>
-            <id>repo.snapshots</id>
+            <id>releases</id>
             <name>internal corporate snapshots repository</name>
             <url>${repo.internal.snapshots.url}</url>
         </snapshotRepository>
