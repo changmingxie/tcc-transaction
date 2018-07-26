@@ -3,12 +3,12 @@ package org.mengyun.tcctransaction.serializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+@Deprecated
 public class KryoTransactionSerializer<T> implements ObjectSerializer<T> {
 
     private static final ThreadLocal<Kryo> AGG_KRYO_LOCAL = new ThreadLocal<Kryo>() {

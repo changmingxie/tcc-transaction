@@ -86,9 +86,8 @@ public class CompensableTransactionInterceptor {
                 returnValue = pjp.proceed();
             } catch (Throwable tryingException) {
 
-                if (isDelayCancelException(tryingException)) {
-                    transactionManager.syncTransaction();
-                } else {
+                if (!isDelayCancelException(tryingException)) {
+                   
                     logger.warn(String.format("compensable transaction trying failed. transaction content:%s", JSON.toJSONString(transaction)), tryingException);
 
                     transactionManager.rollback(asyncCancel);

@@ -4,6 +4,7 @@ import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.repository.helper.TransactionSerializer;
 import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
+import org.mengyun.tcctransaction.serializer.KryoPoolSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 
 import javax.transaction.xa.Xid;
@@ -27,7 +28,7 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
 
     private volatile boolean initialized;
 
-    private ObjectSerializer serializer = new JdkSerializationSerializer();
+    private ObjectSerializer serializer = new KryoPoolSerializer();
 
     public void setSerializer(ObjectSerializer serializer) {
         this.serializer = serializer;

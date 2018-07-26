@@ -6,6 +6,7 @@ import org.mengyun.tcctransaction.repository.helper.ExpandTransactionSerializer;
 import org.mengyun.tcctransaction.repository.helper.JedisCallback;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
 import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
+import org.mengyun.tcctransaction.serializer.KryoPoolSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import org.mengyun.tcctransaction.utils.RedisUtils;
 import redis.clients.jedis.*;
@@ -35,7 +36,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
         this.keyPrefix = keyPrefix;
     }
 
-    private ObjectSerializer serializer = new JdkSerializationSerializer();
+    private ObjectSerializer serializer = new KryoPoolSerializer();
 
     public void setSerializer(ObjectSerializer serializer) {
         this.serializer = serializer;
