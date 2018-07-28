@@ -30,6 +30,8 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
     private String keyPrefix = "TCC:";
 
+    private int fetchKeySize = 1000;
+
     private boolean supportScan;
 
     public void setKeyPrefix(String keyPrefix) {
@@ -40,6 +42,14 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
     public void setSerializer(ObjectSerializer serializer) {
         this.serializer = serializer;
+    }
+
+    public int getFetchKeySize() {
+        return fetchKeySize;
+    }
+
+    public void setFetchKeySize(int fetchKeySize) {
+        this.fetchKeySize = fetchKeySize;
     }
 
     public JedisPool getJedisPool() {
@@ -183,7 +193,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                         List<String> allKeys = new ArrayList<String>();
                         String cursor = "0";
                         do {
-                            ScanResult<String> scanResult = jedis.scan(cursor, new ScanParams().match(keyPrefix + "*").count(500));
+                            ScanResult<String> scanResult = jedis.scan(cursor, new ScanParams().match(keyPrefix + "*").count(fetchKeySize));
                             allKeys.addAll(scanResult.getResult());
                             cursor = scanResult.getStringCursor();
                         } while (!cursor.equals("0"));
@@ -232,4 +242,6 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
             throw new TransactionIOException(e);
         }
     }
+
+
 }
