@@ -14,7 +14,7 @@
     <p>可用账户余额: ${capitalAmount?string("0.00")}元</p>
     <p>可用红包余额: ${redPacketAmount?string("0.00")}元</p>
 
-    <form action="/placeorder" method="post">
+    <form action="${request.contextPath}/placeorder" method="post">
         红包金额:&nbsp;&nbsp;&nbsp;<input type="text" style="width: 220px" name="redPacketPayAmount" value="" placeholder="请输入期望使用的红包金额"/>
         <input type="hidden" name="shopId" value="${shopId}" />
         <input type="hidden" name="productId" value="${product.productId}"/>

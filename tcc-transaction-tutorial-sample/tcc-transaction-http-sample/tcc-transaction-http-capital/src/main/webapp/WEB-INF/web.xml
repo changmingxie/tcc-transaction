@@ -4,7 +4,10 @@
 
 <web-app>
     <display-name>Sample Http Capital</display-name>
-
+	<context-param>
+	    <param-name>webAppRootKey</param-name>
+	    <param-value>tcc-transaction-http-capital</param-value>
+	</context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath*:config/spring/local/appcontext-*.xml,classpath:tcc-transaction.xml
