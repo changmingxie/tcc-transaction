@@ -35,10 +35,6 @@
     <br/>
     &nbsp;&nbsp;&nbsp;&nbsp; red packet confirm record called
     <p/>
-    <a href="${request.contextPath}">
-        根目录
-    </a>
-    <br>
     <a href="${request.contextPath}/user/2000/shop/1">
         商品列表链接
     </a>
