@@ -448,12 +448,12 @@
 
     <distributionManagement>
         <repository>
-            <id>snapshots</id>
+            <id>releases</id>
             <name>internal corporate repository</name>
             <url>${repo.internal.releases.url}</url>
         </repository>
         <snapshotRepository>
-            <id>releases</id>
+            <id>snapshots</id>
             <name>internal corporate snapshots repository</name>
             <url>${repo.internal.snapshots.url}</url>
         </snapshotRepository>

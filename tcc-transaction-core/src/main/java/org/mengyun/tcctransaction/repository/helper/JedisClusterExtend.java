@@ -40,7 +40,11 @@ public class JedisClusterExtend {
 
     public JedisClusterExtend(String redisClusterIp, int connectionTimeout, int soTimeout, int maxAttempts, String password, final GenericObjectPoolConfig genericObjectPoolConfig){
         validIp(redisClusterIp, genericObjectPoolConfig);
-        jedisCluster = new JedisCluster(getHostAndPort(), connectionTimeout, soTimeout, maxAttempts, password, jedisPoolConfig);
+        if(StringUtils.isNotEmpty(password)){
+            jedisCluster = new JedisCluster(getHostAndPort(), connectionTimeout, soTimeout, maxAttempts, password, jedisPoolConfig);
+        }else{
+            jedisCluster = new JedisCluster(getHostAndPort(), jedisPoolConfig);
+        }
     }
     
     /**
