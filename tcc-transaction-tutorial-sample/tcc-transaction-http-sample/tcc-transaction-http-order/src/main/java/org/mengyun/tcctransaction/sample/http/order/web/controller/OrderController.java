@@ -90,7 +90,7 @@ public class OrderController {
         String merchantOrderNo = placeOrderService.placeOrder(request.getPayerUserId(), request.getShopId(),
                 request.getProductQuantities(), request.getRedPacketPayAmount());
 
-        return new RedirectView("/payresult/" + merchantOrderNo);
+        return new RedirectView("payresult/" + merchantOrderNo);
     }
 
     @RequestMapping(value = "/payresult/{merchantOrderNo}", method = RequestMethod.GET)

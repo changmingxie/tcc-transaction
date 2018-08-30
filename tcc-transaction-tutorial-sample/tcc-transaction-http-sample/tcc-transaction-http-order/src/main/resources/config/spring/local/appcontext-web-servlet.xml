@@ -45,6 +45,7 @@
                                            <entry key="truncate"><bean class="com.rj8g.linkage.renba.web.TruncateTemplateMethodModel" /></entry>
                                        </map>
                                    </property>-->
+                                   <property name="requestContextAttribute" value="request"/>
                             </bean>
                      </list>
               </property>
