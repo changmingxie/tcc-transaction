@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//log4j/log4j Configuration//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+                     threshold="null" debug="null">
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[redpacket]%d %-5p [%c] %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="asyncAppender" class="org.apache.log4j.AsyncAppender">
+        <param name="BufferSize" value="4096" />
+        <param name="Blocking" value="false"/>
+        <appender-ref ref="CONSOLE" />
+    </appender>
+	
+     <appender name="FILE" class="org.apache.log4j.FileAppender">
+        <param name="file" value="d:/tmp/tcc.log"/>
+        <param name="append" value="true"/>
+        <param name="encoding" value="UTF-8"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[redpacket]%d %-5p [%C{2}.%M(%L)] %m%n"/>
+        </layout>
+    </appender>
+    
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="asyncAppender"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</log4j:configuration>

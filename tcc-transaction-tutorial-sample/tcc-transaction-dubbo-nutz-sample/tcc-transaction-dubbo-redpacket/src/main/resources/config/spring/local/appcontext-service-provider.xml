@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans.xsd        http://code.alibabatech.com/schema/dubbo        http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:component-scan base-package="org.mengyun.tcctransaction.sample.dubbo"/>
+
+    <dubbo:application name="sample-dubbo-redpacket"/>
+
+    <context:property-placeholder location="classpath:sample-dubbo-redpacket.properties"
+                                  ignore-unresolvable="true"/>
+
+    <!--<dubbo:registry id="capitalRpcZk" address="multicast://224.5.6.7:1234?unicast=false"/>-->
+    <dubbo:registry id="redPacketRpcZk" protocol="zookeeper" register="true" subscribe="false"
+                    address="${zookeeper.address}" session="${zookeeper.session.timeout}"
+                    timeout="${zookeeper.connect.timeout}" file="./.dubbo/rpc-cache"/>
+
+    <!--<dubbo:monitor protocol="registry" />-->
+
+    <!--<dubbo:registry protocol="mulitcast" address="224.5.6.7:1234" />-->
+
+    <!--<dubbo:registry address="N/A" />-->
+
+    <dubbo:protocol name="dubbo" port="${dubbo.port}" payload="52428800"/>
+
+    <dubbo:service interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService"
+                   registry="redPacketRpcZk"
+                   ref="redPacketTradeOrderService" timeout="60000" retries="0"/>
+
+    <dubbo:service interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketAccountService"
+                   registry="redPacketRpcZk"
+                   ref="redPacketAccountService" timeout="60000" retries="0"/>
+    <!--<bean id="redPacketTradeOrderService"-->
+          <!--class="org.mengyun.tcctransaction.sample.dubbo.redpacket.service.RedPacketTradeOrderServiceImpl"/>-->
+
+</beans>

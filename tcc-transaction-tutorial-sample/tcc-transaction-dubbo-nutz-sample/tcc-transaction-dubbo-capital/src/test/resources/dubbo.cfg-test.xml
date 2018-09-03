@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="  
+        http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+   
+    <bean class="com.ifs.spinfra.servlet.SpringContextUtil"/>	
+	<bean id="registry" class="com.alibaba.dubbo.config.RegistryConfig">
+         <property name="protocol" value="zookeeper"/>         
+         <property name="address" value="${dubbo.registry.address}"/> 
+		 <!-- Begin liangcz 2017-03-06 本地注册中心缓存 -->
+         <property name="file" value="../dubbo/dubbo-registry-fund.propertie"/>
+         <!-- End liangcz 2017-03-06 -->
+     </bean>
+     <bean id="provider.application" class="com.alibaba.dubbo.config.ApplicationConfig">
+         <property name="name" value="${serviceCode}"/>
+     </bean>
+     <bean id="protocol" class="com.alibaba.dubbo.config.ProtocolConfig">
+         <property name="name" value="rest"/>
+         <property name="server" value="servlet"/>
+         <property name="port" value="${tomcat.http.port}"/>
+         <property name="contextpath" value="fund"/>
+     </bean>
+     <bean id="baseService" class="com.alibaba.dubbo.config.ServiceConfig">
+         <property name="application" ref="provider.application"/>
+         <property name="registry" ref="registry"/>
+         <property name="protocol" ref="protocol"/>
+     </bean>
+     <bean id="reference" class="com.alibaba.dubbo.config.ReferenceConfig" scope="prototype">
+	  <property name="registry" ref="registry"/>
+	  <!-- 快速失败，只发起一次调用，失败立即报错 -->
+	  <property name="cluster" value="failfast"/>
+	  <!-- 最少活跃调用数 -->
+	  <property name="loadbalance" value="leastactive"/> 
+	  <property name="application" ref="provider.application"/> 
+	  <property name="timeout" value="60000">
+	  </property>
+	</bean>
+		      
+	 <!-- 客户信息管理  -->
+     <bean id="CustManagerInterface" parent="baseService">
+		<property name="interface" value="com.ifs.fund.cust.interfaces.CustManagerInterface"/>
+		<property name="version" value="1.0.0"/>
+		<property name="ref" ref="custService"/>
+     </bean>	
+     
+	 <!-- 客户账户信息维护  -->
+     <bean id="CustAcctMaintInterface" parent="baseService">
+		<property name="interface" value="com.ifs.fund.cust.interfaces.CustAcctMaintInterface"/>
+		<property name="version" value="1.0.0"/>
+		<property name="ref" ref="acctService"/>
+     </bean>	
+     
+	 <!-- 短信消息管理  -->
+     <bean id="MessageInterface" parent="baseService">
+		<property name="interface" value="com.ifs.fund.common.interfaces.MessageInterface"/>
+		<property name="version" value="1.0.0"/>
+		<property name="ref" ref="messageService"/>
+     </bean>	
+</beans>

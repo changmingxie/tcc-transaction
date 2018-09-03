@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="  
+        http://www.springframework.org/schema/beans  
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd  
+        http://www.springframework.org/schema/context  
+        http://www.springframework.org/schema/context/spring-context-3.2.xsd  
+        http://www.springframework.org/schema/aop  
+        http://www.springframework.org/schema/aop/spring-aop-3.2.xsd  
+        http://www.springframework.org/schema/tx  
+        http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util-3.2.xsd
+        http://www.springframework.org/schema/mvc 
+        http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+
+	<!-- 使用annotation 自动注册bean, 并保证@Required、@Autowired的属性被注入 -->
+	<context:component-scan base-package="com.ifs.fund">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+	<!-- 配置文件装载,多个文件用逗号隔开 -->
+	<context:property-placeholder location="classpath:dao.properties" ignore-unresolvable="true"/>
+	
+	<bean name="systemGlobal" class="com.ifs.spinfra.tools.SystemGlobals">
+		<property name="locations">
+		    <list>
+		        <value>classpath:penging.properties</value>
+		        <value>classpath:sys.properties</value>
+		    </list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />   
+	</bean>
+	
+	<!-- 配置文件装载,多个文件用逗号隔开 
+	<context:property-placeholder location="classpath:dao.properties"/>
+	-->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+	    <property name="locations">  
+	        <array>  
+	            <value>classpath:dao.properties</value>
+	            <value>classpath:dubbo.properties</value>  
+	            <value>classpath:jedisPoolConfig.properties</value>  
+	        </array>  
+	    </property>  
+	</bean>  
+
+	<bean id ="loggerInterceptor" class="com.ifs.spinfra.interceptor.LoggerInterceptor"></bean>
+	 <aop:config> 
+         <aop:pointcut id="loggerPoint" 
+                expression="execution(public * com.ifs.fund.**.service..*.*(..)) "/>  
+         <aop:advisor pointcut-ref="loggerPoint" advice-ref="loggerInterceptor"/>                  
+    </aop:config>  
+    
+<!--  	 <bean id ="jedisPoolConfig" class="com.ifs.spinfra.disconf.entity.JedisPoolConfig">
+	     <property name="address" value="${address}"/> 
+	     <property name="timeout" value="${timeout}"/> 
+	     <property name="maxRedirections" value="${maxRedirections}"/> 
+	     <property name="maxTotal" value="${maxTotal}"/> 
+	     <property name="maxIdle" value="${maxIdle}"/> 
+	     <property name="minIdle" value="${minIdle}"/> 
+	     <property name="maxWaitMillis" value="${maxWaitMillis}"/> 
+	 </bean> -->
+	
+	<!-- 货基前置监听 --> 
+	<bean class="com.ifs.fund.sys.listener.FundListener"/>
+	     
+	<!-- 导入spring基础配置文件 -->
+	<import resource="classpath:spring-base.xml" /> 
+	
+	<!-- dubbo配置 
+	<import resource="classpath:dubbo.cfg-test.xml" />
+	-->
+	
+	<import resource="classpath:activitymq-cfg.xml" />
+	
+	<import resource="mybatis.xml"/>
+	
+</beans>
