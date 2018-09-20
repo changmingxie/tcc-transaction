@@ -9,11 +9,11 @@ import org.mengyun.tcctransaction.server.constants.LuaScriptConstant;
 import org.mengyun.tcctransaction.server.dto.PageDto;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
 import org.mengyun.tcctransaction.utils.ByteUtils;
-import org.mengyun.tcctransaction.utils.RedisUtils;
-import org.mengyun.tcctransaction.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.*;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Pipeline;
 
 import java.text.ParseException;
 import java.util.*;
@@ -31,78 +31,184 @@ public class RedisTransactionDao implements TransactionDao {
 
     private String domain;
 
-    private static final int DELETE_KEY_KEEP_TIME = 3*24*3600;
-    private static final String DELETE_KEY_PREIFX = "DELETE-";
-
-    private String getKeyPrefix() {
-        return keySuffix + ":";
-    }
+    private static final int DELETE_KEY_KEEP_TIME = 3 * 24 * 3600;
+    private static final String DELETE_KEY_PREIFX = "DELETE:";
 
     @Override
-    public List<TransactionVo> findTransactions(final Integer pageNum, final int pageSize) {
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public void setJedisPool(JedisPool jedisPool) {
+        this.jedisPool = jedisPool;
+    }
+
+    public String getKeySuffix() {
+        return keySuffix;
+    }
+
+    public void setKeySuffix(String keySuffix) {
+        this.keySuffix = keySuffix;
+    }
 
 
-        return RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
+    @Override
+    public void confirm(final String globalTxId, final String branchQualifier) {
+        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
             @Override
-            public List<TransactionVo> doInJedis(Jedis jedis) {
+            public Boolean doInJedis(Jedis jedis) {
 
-                int start = (pageNum - 1) * pageSize;
-                int end = pageNum * pageSize;
+                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
 
-                List<String> allKeys = new ArrayList<String>();
+                Long result = (Long) jedis.eval(LuaScriptConstant.HSET_KEY2_IF_KKEY1_EXISTS.getBytes(),
+                        3, key, key, "STATUS".getBytes(), ByteUtils.intToBytes(2));
 
-                String pattern = getKeyPrefix() + "*";
-
-                if (isSupportScanCommand(jedis)) {
-                    logger.info("redis server support scan command.");
-                    String cursor = "0";
-                    do {
-                        ScanResult<String> scanResult = jedis.scan(cursor, new ScanParams().match(pattern).count(30));
-                        allKeys.addAll(scanResult.getResult());
-                        cursor = scanResult.getStringCursor();
-                    } while (!cursor.equals("0") || allKeys.size() >= end);
-
-                } else {
-                    logger.info("redis server do not support scan command. use keys instead");
-                    allKeys.addAll(jedis.keys(pattern));
-                }
-
-
-                if (allKeys.size() < start) {
-                    return Collections.emptyList();
-                }
-
-                if (end > allKeys.size()) {
-                    end = allKeys.size();
-                }
-
-                final List<String> keys = allKeys.subList(start, end);
-
-                try {
-
-                    return RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
-                        @Override
-                        public List<TransactionVo> doInJedis(Jedis jedis) {
-
-                            Pipeline pipeline = jedis.pipelined();
-
-                            for (final String key : keys) {
-                                pipeline.hgetAll(key);
-                            }
-
-                            return BuildTransitionVoList(pipeline.syncAndReturnAll());
-                        }
-                    });
-
-                } catch (Exception e) {
-                    throw new TransactionIOException(e);
-                }
-
+                return result == 0;
             }
         });
     }
 
-    private List<TransactionVo> BuildTransitionVoList(List<Object> result) {
+    @Override
+    public void cancel(final String globalTxId, final String branchQualifier) {
+        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
+            @Override
+            public Boolean doInJedis(Jedis jedis) {
+
+                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
+
+                Long result = (Long) jedis.eval(LuaScriptConstant.HSET_KEY2_IF_KKEY1_EXISTS.getBytes(),
+                        3, key, key, "STATUS".getBytes(), ByteUtils.intToBytes(3));
+
+                return result == 0;
+            }
+        });
+    }
+
+    @Override
+    public void delete(final String globalTxId, final String branchQualifier) {
+        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
+            @Override
+            public Boolean doInJedis(Jedis jedis) {
+                String key = new String(RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier));
+                String delKeyName = DELETE_KEY_PREIFX + key;
+                if (jedis.del(delKeyName) > 0) {
+                    return true;
+                }
+                Long result = jedis.renamenx(key, delKeyName);
+                jedis.expire(delKeyName, DELETE_KEY_KEEP_TIME);
+                return result > 0;
+            }
+        });
+    }
+
+    @Override
+    public void restore(final String globalTxId, final String branchQualifier) {
+        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
+            @Override
+            public Boolean doInJedis(Jedis jedis) {
+                String restoreKeyName = new String(RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier));
+                String deleteKeyName = DELETE_KEY_PREIFX + restoreKeyName;
+                Long result = jedis.renamenx(deleteKeyName, restoreKeyName);
+                jedis.persist(restoreKeyName);
+                return result > 0;
+            }
+        });
+    }
+
+    @Override
+    public void resetRetryCount(final String globalTxId, final String branchQualifier) {
+
+        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
+            @Override
+            public Boolean doInJedis(Jedis jedis) {
+
+                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
+
+
+                Long result = (Long) jedis.eval(LuaScriptConstant.HSET_KEY2_IF_KKEY1_EXISTS.getBytes(),
+                        3, key, key, "RETRIED_COUNT".getBytes(), ByteUtils.intToBytes(0));
+
+                return result == 0;
+            }
+        });
+    }
+
+
+    public PageDto<TransactionVo> findTransactions(Integer pageNum, int pageSize) {
+        return findTransactionByKey(pageNum, pageSize, getKeyPrefix() + "*");
+    }
+
+    public PageDto<TransactionVo> findDeletedTransactions(Integer pageNum, int pageSize) {
+        return findTransactionByKey(pageNum, pageSize, DELETE_KEY_PREIFX + getKeyPrefix() + "*");
+    }
+
+    private PageDto<TransactionVo> findTransactionByKey(Integer pageNum, int pageSize, String keyPattern) {
+
+        PageDto<TransactionVo> pageDto = new PageDto<TransactionVo>();
+
+        pageDto.setPageNum(pageNum);
+        pageDto.setPageSize(pageSize);
+
+        List<byte[]> allKeys = RedisHelper.getAllKeys(jedisPool, keyPattern);
+
+
+        int start = (pageNum - 1) * pageSize;
+        int end = pageNum * pageSize;
+
+
+        if (end > allKeys.size()) {
+            end = allKeys.size();
+        }
+
+        List<TransactionVo> transactionVos = null;
+
+        if (allKeys.size() < start) {
+
+            transactionVos = new ArrayList<TransactionVo>();
+
+        } else {
+
+            final List<byte[]> keys = allKeys.subList(start, end);
+
+            transactionVos = RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
+                @Override
+                public List<TransactionVo> doInJedis(Jedis jedis) {
+
+                    try {
+
+                        return RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
+                            @Override
+                            public List<TransactionVo> doInJedis(Jedis jedis) {
+
+                                Pipeline pipeline = jedis.pipelined();
+
+                                for (final byte[] key : keys) {
+                                    pipeline.hgetAll(key);
+                                }
+
+                                return buildTransitionVos(pipeline.syncAndReturnAll());
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        throw new TransactionIOException(e);
+                    }
+
+                }
+            });
+        }
+
+        pageDto.setData(transactionVos);
+        pageDto.setTotalCount(allKeys.size());
+
+        return pageDto;
+    }
+
+    private List<TransactionVo> buildTransitionVos(List<Object> result) {
         List<TransactionVo> list = new ArrayList<TransactionVo>();
 
         for (Object data : result) {
@@ -160,232 +266,7 @@ public class RedisTransactionDao implements TransactionDao {
         return list;
     }
 
-    @Override
-    public Integer countOfFindTransactions() {
-
-        return RedisHelper.execute(jedisPool, new JedisCallback<Integer>() {
-            @Override
-            public Integer doInJedis(Jedis jedis) {
-
-                return jedis.keys(getKeyPrefix() + "*".getBytes()).size();
-            }
-        });
-
+    private String getKeyPrefix() {
+        return keySuffix + ":";
     }
-
-    @Override
-    public Integer countOfFindTransactionsDeleted() {
-        return RedisHelper.execute(jedisPool, new JedisCallback<Integer>() {
-            @Override
-            public Integer doInJedis(Jedis jedis) {
-
-                return jedis.keys(DELETE_KEY_PREIFX + getKeyPrefix() + "*".getBytes()).size();
-            }
-        });
-    }
-
-    @Override
-    public void resetRetryCount(final String globalTxId, final String branchQualifier) {
-
-        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
-            @Override
-            public Boolean doInJedis(Jedis jedis) {
-
-                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
-
-
-                Long result = (Long) jedis.eval(LuaScriptConstant.HSET_KEY2_IF_KKEY1_EXISTS.getBytes(),
-                        3, key, key, "RETRIED_COUNT".getBytes(), ByteUtils.intToBytes(0));
-
-                return result == 0;
-            }
-        });
-    }
-
-
-    @Override
-    public void delete(final String globalTxId, final String branchQualifier) {
-        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
-            @Override
-            public Boolean doInJedis(Jedis jedis) {
-                String key = new String(RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier));
-                String delKeyName = DELETE_KEY_PREIFX + key;
-                if (jedis.del(delKeyName) > 0) {
-                    return true;
-                }
-                Long result = jedis.renamenx(key, delKeyName);
-                jedis.expire(delKeyName, DELETE_KEY_KEEP_TIME);
-                return result > 0;
-            }
-        });
-    }
-
-    @Override
-    public void restore(final String globalTxId, final String branchQualifier) {
-        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
-            @Override
-            public Boolean doInJedis(Jedis jedis) {
-                String restoreKeyName = new String(RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier));
-                String deleteKeyName = DELETE_KEY_PREIFX + restoreKeyName;
-                Long result = jedis.renamenx(deleteKeyName, restoreKeyName);
-                jedis.persist(restoreKeyName);
-                return result > 0;
-            }
-        });
-    }
-
-    @Override
-    public void confirm(final String globalTxId, final String branchQualifier) {
-        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
-            @Override
-            public Boolean doInJedis(Jedis jedis) {
-
-                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
-
-                Long result = (Long) jedis.eval(LuaScriptConstant.HSET_KEY2_IF_KKEY1_EXISTS.getBytes(),
-                        3, key, key, "STATUS".getBytes(), ByteUtils.intToBytes(2));
-
-                return result == 0;
-            }
-        });
-    }
-
-    @Override
-    public void cancel(final String globalTxId, final String branchQualifier) {
-        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
-            @Override
-            public Boolean doInJedis(Jedis jedis) {
-
-                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
-
-                Long result = (Long) jedis.eval(LuaScriptConstant.HSET_KEY2_IF_KKEY1_EXISTS.getBytes(),
-                        3, key, key, "STATUS".getBytes(), ByteUtils.intToBytes(3));
-
-                return result == 0;
-            }
-        });
-    }
-
-    @Override
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-
-    public void setJedisPool(JedisPool jedisPool) {
-        this.jedisPool = jedisPool;
-    }
-
-    public String getKeySuffix() {
-        return keySuffix;
-    }
-
-    public void setKeySuffix(String keySuffix) {
-        this.keySuffix = keySuffix;
-    }
-
-    @Override
-    public PageDto<TransactionVo> findDeleteTransactionPageDto(Integer pageNum, int pageSize) {
-        return findTransactionByKey(pageNum, pageSize, DELETE_KEY_PREIFX + getKeyPrefix() + "*");
-    }
-
-
-    private PageDto<TransactionVo> findTransactionByKey (Integer pageNum, int pageSize, String key) {
-
-        PageDto<TransactionVo> pageDto = new PageDto<TransactionVo>();
-
-        pageDto.setPageNum(pageNum);
-        pageDto.setPageSize(pageSize);
-
-        Integer totalCount = 0;
-        Jedis jedis = jedisPool.getResource();
-
-        int start = (pageNum - 1) * pageSize;
-        int end = pageNum * pageSize;
-
-        List<byte[]> allKeys = new ArrayList<byte[]>();
-
-        String pattern = key;
-
-        if (isSupportScanCommand(jedis)) {
-            logger.info("redis server support scan command.");
-            String cursor = "0";
-            do {
-                ScanResult<String> scanResult = jedis.scan(cursor, new ScanParams().match(pattern).count(30));
-
-                List<String> result = scanResult.getResult();
-                for (String s : result) {
-                    allKeys.add(s.getBytes());
-                }
-
-                cursor = scanResult.getStringCursor();
-            } while (!(cursor.equals("0") || allKeys.size() >= end));
-
-            totalCount = allKeys.size();
-            if (!cursor.equals("0")) {
-                totalCount++;
-            }
-
-        } else {
-            logger.info("redis server do not support scan command.use keys instead");
-            allKeys.addAll(jedis.keys(pattern.getBytes()));
-            totalCount = allKeys.size();
-        }
-
-
-        pageDto.setTotalCount(totalCount);
-
-        if (allKeys.size() < start) {
-            pageDto.setData(new ArrayList<TransactionVo>());
-        }
-
-        if (end > allKeys.size()) {
-            end = allKeys.size();
-        }
-
-        final List<byte[]> keys = allKeys.subList(start, end);
-
-        List<TransactionVo> transactionVos = RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
-            @Override
-            public List<TransactionVo> doInJedis(Jedis jedis) {
-
-                try {
-
-                    return RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
-                        @Override
-                        public List<TransactionVo> doInJedis(Jedis jedis) {
-
-                            Pipeline pipeline = jedis.pipelined();
-
-                            for (final byte[] key : keys) {
-                                pipeline.hgetAll(key);
-                            }
-
-                            return BuildTransitionVoList(pipeline.syncAndReturnAll());
-                        }
-                    });
-
-                } catch (Exception e) {
-                    throw new TransactionIOException(e);
-                }
-
-            }
-        });
-        pageDto.setData(transactionVos);
-
-        return pageDto;
-    }
-
-    @Override
-    public PageDto<TransactionVo> findTransactionPageDto(Integer pageNum, int pageSize) {
-        return findTransactionByKey(pageNum, pageSize, getKeyPrefix() + "*");
-    }
-
-    private boolean isSupportScanCommand(Jedis jedis) {
-        return RedisUtils.isSupportScanCommand(jedis);
-    }
-
 }

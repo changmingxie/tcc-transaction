@@ -57,9 +57,9 @@ public class TransactionController {
 
         PageDto<TransactionVo> pageDto;
         if (isDelete.intValue() == 0) {
-            pageDto = daoRepository.getDao(domain).findTransactionPageDto(pageNum, DEFAULT_PAGE_SIZE);
+            pageDto = daoRepository.getDao(domain).findTransactions(pageNum, DEFAULT_PAGE_SIZE);
         } else {
-            pageDto = daoRepository.getDao(domain).findDeleteTransactionPageDto(pageNum, DEFAULT_PAGE_SIZE);
+            pageDto = daoRepository.getDao(domain).findDeletedTransactions(pageNum, DEFAULT_PAGE_SIZE);
         }
 
         List<TransactionVo> transactionVos = pageDto.getData();
