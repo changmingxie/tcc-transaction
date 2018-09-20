@@ -76,9 +76,55 @@ public class JdbcTransactionDao implements TransactionDao {
         return transactionVos;
     }
 
-    @Override
-    public Integer count() {
+    private void buildTransactionVoList(List<TransactionVo> transactionVos, ResultSet resultSet) throws SQLException {
+        while (resultSet.next()) {
+            TransactionVo transactionVo = new TransactionVo();
+            transactionVo.setDomain(resultSet.getString(1));
+            transactionVo.setGlobalTxId(DatatypeConverter.printHexBinary(resultSet.getBytes(2)));
+            transactionVo.setBranchQualifier(DatatypeConverter.printHexBinary(resultSet.getBytes(3)));
+            transactionVo.setStatus(resultSet.getInt(4));
+            transactionVo.setTransactionType(resultSet.getInt(5));
+            transactionVo.setRetriedCount(resultSet.getInt(6));
+            transactionVo.setCreateTime(resultSet.getTimestamp(7));
+            transactionVo.setLastUpdateTime(resultSet.getTimestamp(8));
+            transactionVos.add(transactionVo);
+        }
+    }
 
+    @Override
+    public List<TransactionVo> findTransactions(Integer pageNum, int pageSize) {
+
+        Connection connection = getConnection();
+        List<TransactionVo> transactionVos = new ArrayList<TransactionVo>();
+        PreparedStatement preparedStatement = null;
+        try {
+            String tableName = getTableName();
+            String sql = "select DOMAIN," +
+                    "GLOBAL_TX_ID," +
+                    "BRANCH_QUALIFIER," +
+                    "STATUS," +
+                    "TRANSACTION_TYPE," +
+                    "RETRIED_COUNT," +
+                    "CREATE_TIME," +
+                    "LAST_UPDATE_TIME from " + tableName + " where IS_DELETE = 0  limit ?,?";
+
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, (pageNum - 1) * pageSize);
+            preparedStatement.setInt(2, pageSize);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            buildTransactionVoList(transactionVos, resultSet);
+        } catch (Exception e) {
+            throw new RuntimeException("findTransactions error", e);
+        } finally {
+            closeStatement(preparedStatement);
+            releaseConnection(connection);
+        }
+        return transactionVos;
+    }
+
+    public Integer countTransactionsByDeleteFlag(int isDelete) {
         Connection connection = getConnection();
         PageVo<TransactionVo> pageVo = new PageVo<TransactionVo>();
         List<TransactionVo> transactionVos = new ArrayList<TransactionVo>();
@@ -94,7 +140,7 @@ public class JdbcTransactionDao implements TransactionDao {
                 return resultSet.getInt("count");
             }
         } catch (Exception e) {
-            throw new RuntimeException("count error", e);
+            throw new RuntimeException("countOfFindTransactions error", e);
         } finally {
             closeStatement(preparedStatement);
             releaseConnection(connection);
@@ -285,7 +331,7 @@ public class JdbcTransactionDao implements TransactionDao {
 
         List<TransactionVo> transactionVos = findTransactions(pageNum, pageSize);
 
-        Integer countOfFindTransactions = count();
+        Integer countOfFindTransactions = countOfFindTransactions();
 
         return new PageDto<TransactionVo>(transactionVos, pageNum, pageSize, countOfFindTransactions);
 
