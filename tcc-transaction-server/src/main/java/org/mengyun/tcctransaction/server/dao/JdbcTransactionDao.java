@@ -84,7 +84,7 @@ public class JdbcTransactionDao implements TransactionDao {
     }
 
     @Override
-    public Integer countOfFindTransactions() {
+    public Integer count() {
 
         Connection connection = getConnection();
         PageVo<TransactionVo> pageVo = new PageVo<TransactionVo>();
@@ -101,7 +101,7 @@ public class JdbcTransactionDao implements TransactionDao {
                 return resultSet.getInt("count");
             }
         } catch (Exception e) {
-            throw new RuntimeException("countOfFindTransactions error", e);
+            throw new RuntimeException("count error", e);
         } finally {
             closeStatement(preparedStatement);
             releaseConnection(connection);
@@ -246,7 +246,7 @@ public class JdbcTransactionDao implements TransactionDao {
 
         List<TransactionVo> transactionVos = findTransactions(pageNum, pageSize);
 
-        Integer countOfFindTransactions = countOfFindTransactions();
+        Integer countOfFindTransactions = count();
 
         return new PageDto<TransactionVo>(transactionVos, pageNum, pageSize, countOfFindTransactions);
 

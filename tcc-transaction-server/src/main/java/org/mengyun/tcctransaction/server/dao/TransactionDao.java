@@ -10,9 +10,7 @@ import java.util.List;
  */
 public interface TransactionDao {
 
-    public List<TransactionVo> findTransactions(Integer pageNum, int pageSize);
-
-    public Integer countOfFindTransactions();
+    public PageDto<TransactionVo> findTransactions(Integer pageNum, int pageSize);
 
     public void resetRetryCount(String globalTxId, String branchQualifier);
 
@@ -23,7 +21,5 @@ public interface TransactionDao {
     public void cancel(String globalTxId, String branchQualifier);
 
     public String getDomain();
-
-    public PageDto<TransactionVo> findTransactionPageDto(Integer pageNum, int pageSize);
 }
 
