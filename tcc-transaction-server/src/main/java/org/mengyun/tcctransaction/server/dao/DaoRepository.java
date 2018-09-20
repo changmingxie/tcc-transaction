@@ -3,10 +3,9 @@ package org.mengyun.tcctransaction.server.dao;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by changming.xie on 10/11/17.
@@ -25,10 +24,17 @@ public class DaoRepository implements ApplicationContextAware {
     }
 
     public Collection<String> getDomains() {
-        return domainDaoMap.keySet();
+        List<String> domains = new ArrayList<String>();
+        domains.addAll(domainDaoMap.keySet());
+        Collections.sort(domains);
+        return domains;
     }
 
     public TransactionDao getDao(String domain) {
         return domainDaoMap.get(domain);
+    }
+
+    public void addDao(TransactionDao dao) {
+        domainDaoMap.put(dao.getDomain(), dao);
     }
 }

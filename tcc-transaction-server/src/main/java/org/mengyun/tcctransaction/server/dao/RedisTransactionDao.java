@@ -90,61 +90,8 @@ public class RedisTransactionDao implements TransactionDao {
                             for (final String key : keys) {
                                 pipeline.hgetAll(key);
                             }
-                            List<Object> result = pipeline.syncAndReturnAll();
 
-                            List<TransactionVo> list = new ArrayList<TransactionVo>();
-                            for (Object data : result) {
-                                try {
-
-                                    Map<byte[], byte[]> map1 = (Map<byte[], byte[]>) data;
-
-                                    Map<String, byte[]> propertyMap = new HashMap<String, byte[]>();
-
-                                    for (Map.Entry<byte[], byte[]> entry : map1.entrySet()) {
-                                        propertyMap.put(new String(entry.getKey()), entry.getValue());
-                                    }
-
-
-                                    TransactionVo transactionVo = new TransactionVo();
-                                    transactionVo.setDomain(domain);
-                                    if (propertyMap.get("GLOBAL_TX_ID") != null) {
-                                        transactionVo.setGlobalTxId(UUID.nameUUIDFromBytes(propertyMap.get("GLOBAL_TX_ID")).toString());
-                                    } else {
-                                        continue;
-                                    }
-                                    if (propertyMap.get("BRANCH_QUALIFIER") != null) {
-                                        transactionVo.setBranchQualifier(UUID.nameUUIDFromBytes(propertyMap.get("BRANCH_QUALIFIER")).toString());
-                                    } else {
-                                        continue;
-                                    }
-                                    if (propertyMap.get("STATUS") != null) {
-                                        transactionVo.setStatus(ByteUtils.bytesToInt(propertyMap.get("STATUS")));
-                                    }
-                                    if (propertyMap.get("TRANSACTION_TYPE") != null) {
-                                        transactionVo.setTransactionType(ByteUtils.bytesToInt(propertyMap.get("TRANSACTION_TYPE")));
-                                    }
-                                    if (propertyMap.get("RETRIED_COUNT") != null) {
-                                        transactionVo.setRetriedCount(ByteUtils.bytesToInt(propertyMap.get("RETRIED_COUNT")));
-                                    }
-                                    if (propertyMap.get("CREATE_TIME") != null) {
-                                        transactionVo.setCreateTime(DateUtils
-                                                .parseDate(new String(propertyMap.get("CREATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
-                                    }
-                                    if (propertyMap.get("LAST_UPDATE_TIME") != null) {
-                                        transactionVo.setLastUpdateTime(DateUtils
-                                                .parseDate(new String(propertyMap.get("LAST_UPDATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
-                                    }
-                                    if (propertyMap.get("CONTENT_VIEW") != null) {
-                                        transactionVo.setContentView(new String(propertyMap.get("CONTENT_VIEW")));
-                                    }
-                                    list.add(transactionVo);
-
-                                } catch (ParseException e) {
-                                    throw new SystemException(e);
-                                }
-                            }
-
-                            return list;
+                            return BuildTransitionVoList(pipeline.syncAndReturnAll());
                         }
                     });
 
@@ -170,6 +117,17 @@ public class RedisTransactionDao implements TransactionDao {
     }
 
     @Override
+    public Integer countOfFindTransactionsDeleted() {
+        return RedisHelper.execute(jedisPool, new JedisCallback<Integer>() {
+            @Override
+            public Integer doInJedis(Jedis jedis) {
+
+                return jedis.keys(DELETE_KEY_PREIFX + getKeyPrefix() + "*".getBytes()).size();
+            }
+        });
+    }
+
+    @Override
     public void resetRetryCount(final String globalTxId, final String branchQualifier) {
 
         RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
@@ -187,14 +145,33 @@ public class RedisTransactionDao implements TransactionDao {
         });
     }
 
+
     @Override
     public void delete(final String globalTxId, final String branchQualifier) {
         RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
             @Override
             public Boolean doInJedis(Jedis jedis) {
+                String key = new String(RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier));
+                String delKeyName = DELETE_KEY_PREIFX + key;
+                if (jedis.del(delKeyName) > 0) {
+                    return true;
+                }
+                Long result = jedis.renamenx(key, delKeyName);
+                jedis.expire(delKeyName, DELETE_KEY_KEEP_TIME);
+                return result > 0;
+            }
+        });
+    }
 
-                byte[] key = RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier);
-                Long result = jedis.del(key);
+    @Override
+    public void restore(final String globalTxId, final String branchQualifier) {
+        RedisHelper.execute(jedisPool, new JedisCallback<Boolean>() {
+            @Override
+            public Boolean doInJedis(Jedis jedis) {
+                String restoreKeyName = new String(RedisHelper.getRedisKey(getKeyPrefix(), globalTxId, branchQualifier));
+                String deleteKeyName = DELETE_KEY_PREIFX + restoreKeyName;
+                Long result = jedis.renamenx(deleteKeyName, restoreKeyName);
+                jedis.persist(restoreKeyName);
                 return result > 0;
             }
         });

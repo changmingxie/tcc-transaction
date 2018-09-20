@@ -1,0 +1,224 @@
+diff a/tcc-transaction-server/src/main/java/org/mengyun/tcctransaction/server/dao/RedisTransactionDao.java b/tcc-transaction-server/src/main/java/org/mengyun/tcctransaction/server/dao/RedisTransactionDao.java	(rejected hunks)
+@@ -9,6 +9,7 @@ import org.mengyun.tcctransaction.server.constants.LuaScriptConstant;
+ import org.mengyun.tcctransaction.server.dto.PageDto;
+ import org.mengyun.tcctransaction.server.vo.TransactionVo;
+ import org.mengyun.tcctransaction.utils.ByteUtils;
++import org.mengyun.tcctransaction.utils.RedisUtils;
+ import org.mengyun.tcctransaction.utils.StringUtils;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+@@ -30,11 +31,15 @@ public class RedisTransactionDao implements TransactionDao {
+ 
+     private String domain;
+ 
++
++    /* 手动删除的Key会修改Key名，加上"DELETE-"前缀，保留3天时间供调试 */
++    private static final int DELETE_KEY_KEEP_TIME = 3*24*3600;
++    private static final String DELETE_KEY_PREIFX = "DELETE-";
++
+     private String getKeyPrefix() {
+         return keySuffix + ":";
+     }
+ 
+-
+     @Override
+     public List<TransactionVo> findTransactions(final Integer pageNum, final int pageSize) {
+ 
+@@ -152,6 +104,64 @@ public class RedisTransactionDao implements TransactionDao {
+         });
+     }
+ 
++    private List<TransactionVo> BuildTransitionVoList(List<Object> result) {
++        List<TransactionVo> list = new ArrayList<TransactionVo>();
++
++        for (Object data : result) {
++            try {
++
++                Map<byte[], byte[]> map1 = (Map<byte[], byte[]>) data;
++
++                Map<String, byte[]> propertyMap = new HashMap<String, byte[]>();
++
++                for (Map.Entry<byte[], byte[]> entry : map1.entrySet()) {
++                    propertyMap.put(new String(entry.getKey()), entry.getValue());
++                }
++
++
++                TransactionVo transactionVo = new TransactionVo();
++                transactionVo.setDomain(domain);
++                if (propertyMap.get("GLOBAL_TX_ID") != null) {
++                    transactionVo.setGlobalTxId(UUID.nameUUIDFromBytes(propertyMap.get("GLOBAL_TX_ID")).toString());
++                } else {
++                    continue;
++                }
++                if (propertyMap.get("BRANCH_QUALIFIER") != null) {
++                    transactionVo.setBranchQualifier(UUID.nameUUIDFromBytes(propertyMap.get("BRANCH_QUALIFIER")).toString());
++                } else {
++                    continue;
++                }
++                if (propertyMap.get("STATUS") != null) {
++                    transactionVo.setStatus(ByteUtils.bytesToInt(propertyMap.get("STATUS")));
++                }
++                if (propertyMap.get("TRANSACTION_TYPE") != null) {
++                    transactionVo.setTransactionType(ByteUtils.bytesToInt(propertyMap.get("TRANSACTION_TYPE")));
++                }
++                if (propertyMap.get("RETRIED_COUNT") != null) {
++                    transactionVo.setRetriedCount(ByteUtils.bytesToInt(propertyMap.get("RETRIED_COUNT")));
++                }
++                if (propertyMap.get("CREATE_TIME") != null) {
++                    transactionVo.setCreateTime(DateUtils
++                            .parseDate(new String(propertyMap.get("CREATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
++                }
++                if (propertyMap.get("LAST_UPDATE_TIME") != null) {
++                    transactionVo.setLastUpdateTime(DateUtils
++                            .parseDate(new String(propertyMap.get("LAST_UPDATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
++                }
++                if (propertyMap.get("CONTENT_VIEW") != null) {
++                    transactionVo.setContentView(new String(propertyMap.get("CONTENT_VIEW")));
++                    transactionVo.parser();
++                }
++                list.add(transactionVo);
++
++            } catch (ParseException e) {
++                throw new SystemException(e);
++            }
++        }
++
++        return list;
++    }
++
+     @Override
+     public Integer countOfFindTransactions() {
+ 
+@@ -250,7 +290,12 @@ public class RedisTransactionDao implements TransactionDao {
+     }
+ 
+     @Override
+-    public PageDto<TransactionVo> findTransactionPageDto(Integer pageNum, int pageSize) {
++    public PageDto<TransactionVo> findDeleteTransactionPageDto(Integer pageNum, int pageSize) {
++        return findTransactionByKey(pageNum, pageSize, DELETE_KEY_PREIFX + getKeyPrefix() + "*");
++    }
++
++
++    private PageDto<TransactionVo> findTransactionByKey (Integer pageNum, int pageSize, String key) {
+ 
+         PageDto<TransactionVo> pageDto = new PageDto<TransactionVo>();
+ 
+@@ -265,7 +310,7 @@ public class RedisTransactionDao implements TransactionDao {
+ 
+         List<byte[]> allKeys = new ArrayList<byte[]>();
+ 
+-        String pattern = getKeyPrefix() + "*";
++        String pattern = key;
+ 
+         if (isSupportScanCommand(jedis)) {
+             logger.info("redis server support scan command.");
+@@ -320,66 +365,8 @@ public class RedisTransactionDao implements TransactionDao {
+                             for (final byte[] key : keys) {
+                                 pipeline.hgetAll(key);
+                             }
+-                            List<Object> result = pipeline.syncAndReturnAll();
+-
+-                            List<TransactionVo> list = new ArrayList<TransactionVo>();
+-                            for (Object data : result) {
+-                                try {
+-
+-                                    Map<byte[], byte[]> map1 = (Map<byte[], byte[]>) data;
+-
+-                                    Map<String, byte[]> propertyMap = new HashMap<String, byte[]>();
+-
+-                                    for (Map.Entry<byte[], byte[]> entry : map1.entrySet()) {
+-
+-                                        propertyMap.put(new String(entry.getKey()), entry.getValue());
+-
+-                                    }
+-
+-                                    TransactionVo transactionVo = new TransactionVo();
+-                                    transactionVo.setDomain(domain);
+-
+-                                    if (propertyMap.get("GLOBAL_TX_ID") != null) {
+-                                        transactionVo.setGlobalTxId(UUID.nameUUIDFromBytes(propertyMap.get("GLOBAL_TX_ID")).toString());
+-                                    } else {
+-                                        continue;
+-                                    }
+-                                    if (propertyMap.get("BRANCH_QUALIFIER") != null) {
+-                                        transactionVo.setBranchQualifier(UUID.nameUUIDFromBytes(propertyMap.get("BRANCH_QUALIFIER")).toString());
+-                                    } else {
+-                                        continue;
+-                                    }
+-
+-                                    if (propertyMap.get("STATUS") != null) {
+-                                        transactionVo.setStatus(ByteUtils.bytesToInt(propertyMap.get("STATUS")));
+-                                    }
+-                                    if (propertyMap.get("TRANSACTION_TYPE") != null) {
+-                                        transactionVo.setTransactionType(ByteUtils.bytesToInt(propertyMap.get("TRANSACTION_TYPE")));
+-                                    }
+-                                    if (propertyMap.get("RETRIED_COUNT") != null) {
+-                                        transactionVo.setRetriedCount(ByteUtils.bytesToInt(propertyMap.get("RETRIED_COUNT")));
+-                                    }
+-                                    if (propertyMap.get("CREATE_TIME") != null) {
+-                                        transactionVo.setCreateTime(DateUtils
+-                                                .parseDate(new String(propertyMap.get("CREATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
+-                                    }
+-                                    if (propertyMap.get("LAST_UPDATE_TIME") != null) {
+-                                        transactionVo.setLastUpdateTime(DateUtils
+-                                                .parseDate(new String(propertyMap.get("LAST_UPDATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
+-                                    }
+-                                    if (propertyMap.get("CONTENT_VIEW") != null) {
+-                                        transactionVo.setContentView(new String(propertyMap.get("CONTENT_VIEW")));
+-                                    }
+-
+-                                    list.add(transactionVo);
+-
+-                                } catch (ParseException e) {
+-                                    throw new SystemException(e);
+-                                }
+-                            }
+ 
+-
+-                            return list;
++                            return BuildTransitionVoList(pipeline.syncAndReturnAll());
+                         }
+                     });
+ 
+@@ -394,35 +381,13 @@ public class RedisTransactionDao implements TransactionDao {
+         return pageDto;
+     }
+ 
+-    private boolean isSupportScanCommand(Jedis jedis) {
+-
+-        if (jedis == null) {
+-            logger.info("jedis is null,");
+-            return false;
+-        }
+-
+-        String serverInfo = jedis.info("Server");
+-
+-        int versionIndex = serverInfo.indexOf("redis_version");
+-
+-        String infoWithVersionAhead = serverInfo.substring(versionIndex);
+-
+-        int versionOverIndex = infoWithVersionAhead.indexOf("\r");
+-
+-        String serverVersion = infoWithVersionAhead.substring(0, versionOverIndex);
+-
+-        String leastVersionForScan = "redis_version:2.8";
+-
+-        if (StringUtils.isNotEmpty(serverVersion)) {
+-
+-            logger.info("redis server:{}", serverVersion);
+-
+-            return serverVersion.compareTo(leastVersionForScan) >= 0;
+-        } else {
+-            return false;
+-        }
+-
++    @Override
++    public PageDto<TransactionVo> findTransactionPageDto(Integer pageNum, int pageSize) {
++        return findTransactionByKey(pageNum, pageSize, getKeyPrefix() + "*");
++    }
+ 
++    private boolean isSupportScanCommand(Jedis jedis) {
++        return RedisUtils.isSupportScanCommand(jedis);
+     }
+ 
+ }
