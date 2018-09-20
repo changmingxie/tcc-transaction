@@ -31,8 +31,6 @@ public class RedisTransactionDao implements TransactionDao {
 
     private String domain;
 
-
-    /* 手动删除的Key会修改Key名，加上"DELETE-"前缀，保留3天时间供调试 */
     private static final int DELETE_KEY_KEEP_TIME = 3*24*3600;
     private static final String DELETE_KEY_PREIFX = "DELETE-";
 
