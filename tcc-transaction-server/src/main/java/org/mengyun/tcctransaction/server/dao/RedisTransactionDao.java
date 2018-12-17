@@ -11,9 +11,7 @@ import org.mengyun.tcctransaction.server.vo.TransactionVo;
 import org.mengyun.tcctransaction.utils.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.*;
 
 import java.text.ParseException;
 import java.util.*;
@@ -23,6 +21,8 @@ import java.util.*;
  */
 public class RedisTransactionDao implements TransactionDao {
 
+    private static final int DELETE_KEY_KEEP_TIME = 3 * 24 * 3600;
+    private static final String DELETE_KEY_PREIFX = "DELETE:";
     private static final Logger logger = LoggerFactory.getLogger(RedisTransactionDao.class);
 
     private JedisPool jedisPool;
@@ -30,9 +30,6 @@ public class RedisTransactionDao implements TransactionDao {
     private String keySuffix;
 
     private String domain;
-
-    private static final int DELETE_KEY_KEEP_TIME = 3 * 24 * 3600;
-    private static final String DELETE_KEY_PREIFX = "DELETE:";
 
     @Override
     public String getDomain() {
@@ -146,19 +143,39 @@ public class RedisTransactionDao implements TransactionDao {
         return findTransactionByKey(pageNum, pageSize, DELETE_KEY_PREIFX + getKeyPrefix() + "*");
     }
 
-    private PageDto<TransactionVo> findTransactionByKey(Integer pageNum, int pageSize, String keyPattern) {
+    private PageDto<TransactionVo> findTransactionByKey(Integer pageNum, int pageSize, final String keyPattern) {
 
         PageDto<TransactionVo> pageDto = new PageDto<TransactionVo>();
 
         pageDto.setPageNum(pageNum);
         pageDto.setPageSize(pageSize);
 
-        List<byte[]> allKeys = RedisHelper.getAllKeys(jedisPool, keyPattern);
-
-
         int start = (pageNum - 1) * pageSize;
         int end = pageNum * pageSize;
+        final int endIndex = end;
 
+        final List<String> allKeys = new ArrayList<String>();
+
+        RedisHelper.execute(jedisPool, new JedisCallback<Object>() {
+            public Object doInJedis(Jedis jedis) {
+                if (RedisHelper.isSupportScanCommand(jedis)) {
+                    logger.debug("redis server support scan command.");
+                    String cursor = RedisHelper.SCAN_INIT_CURSOR;
+                    ScanParams scanParams = RedisHelper.buildDefaultScanParams(keyPattern, RedisHelper.SCAN_COUNT);
+                    do {
+                        ScanResult<String> scanResult = jedis.scan(cursor, scanParams);
+                        allKeys.addAll(scanResult.getResult());
+                        cursor = scanResult.getStringCursor();
+                    } while (!cursor.equals(RedisHelper.SCAN_INIT_CURSOR) && allKeys.size() < endIndex);
+
+                } else {
+                    logger.debug("redis server do not support scan command. use keys instead");
+                    allKeys.addAll(jedis.keys(keyPattern));
+                }
+
+                return null;
+            }
+        });
 
         if (end > allKeys.size()) {
             end = allKeys.size();
@@ -172,7 +189,7 @@ public class RedisTransactionDao implements TransactionDao {
 
         } else {
 
-            final List<byte[]> keys = allKeys.subList(start, end);
+            final List<String> keys = allKeys.subList(start, end);
 
             transactionVos = RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
                 @Override
@@ -186,8 +203,8 @@ public class RedisTransactionDao implements TransactionDao {
 
                                 Pipeline pipeline = jedis.pipelined();
 
-                                for (final byte[] key : keys) {
-                                    pipeline.hgetAll(key);
+                                for (final String key : keys) {
+                                    pipeline.hgetAll(key.getBytes());
                                 }
 
                                 return buildTransitionVos(pipeline.syncAndReturnAll());
@@ -269,4 +286,5 @@ public class RedisTransactionDao implements TransactionDao {
     private String getKeyPrefix() {
         return keySuffix + ":";
     }
+
 }
