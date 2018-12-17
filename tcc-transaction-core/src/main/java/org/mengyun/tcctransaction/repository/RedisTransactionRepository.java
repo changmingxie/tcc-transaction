@@ -5,10 +5,8 @@ import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.repository.helper.ExpandTransactionSerializer;
 import org.mengyun.tcctransaction.repository.helper.JedisCallback;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
-import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.KryoPoolSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
-import org.mengyun.tcctransaction.utils.RedisUtils;
 import redis.clients.jedis.*;
 
 import javax.transaction.xa.Xid;
@@ -24,7 +22,7 @@ import java.util.*;
  */
 public class RedisTransactionRepository extends CachableTransactionRepository {
 
-    static final Logger logger = Logger.getLogger(RedisTransactionRepository.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(RedisTransactionRepository.class.getSimpleName());
 
     private JedisPool jedisPool;
 
@@ -32,7 +30,9 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
     private int fetchKeySize = 1000;
 
-    private boolean supportScan;
+    private boolean isSupportScan = true;
+
+    private boolean isForbiddenKeys = false;
 
     public void setKeyPrefix(String keyPrefix) {
         this.keyPrefix = keyPrefix;
@@ -58,7 +58,21 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
 
     public void setJedisPool(JedisPool jedisPool) {
         this.jedisPool = jedisPool;
-        supportScan = RedisUtils.isSupportScanCommand(jedisPool.getResource());
+        isSupportScan = RedisHelper.isSupportScanCommand(jedisPool.getResource());
+        if (!isSupportScan && isForbiddenKeys) {
+            throw new RuntimeException("Redis not support 'scan' command, " +
+                    "and 'keys' command is forbidden, " +
+                    "try update redis version higher than 2.8.0 " +
+                    "or set 'isForbiddenKeys' to false");
+        }
+    }
+
+    public void setSupportScan(boolean isSupportScan) {
+        this.isSupportScan = isSupportScan;
+    }
+
+    public void setForbiddenKeys(boolean forbiddenKeys) {
+        isForbiddenKeys = forbiddenKeys;
     }
 
     @Override
@@ -189,14 +203,15 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                 @Override
                 public Set<byte[]> doInJedis(Jedis jedis) {
 
-                    if (supportScan) {
+                    if (isSupportScan) {
                         List<String> allKeys = new ArrayList<String>();
-                        String cursor = "0";
+                        String cursor = RedisHelper.SCAN_INIT_CURSOR;
+                        ScanParams scanParams = RedisHelper.buildDefaultScanParams(keyPrefix + "*", fetchKeySize);
                         do {
-                            ScanResult<String> scanResult = jedis.scan(cursor, new ScanParams().match(keyPrefix + "*").count(fetchKeySize));
+                            ScanResult<String> scanResult = jedis.scan(cursor, scanParams);
                             allKeys.addAll(scanResult.getResult());
                             cursor = scanResult.getStringCursor();
-                        } while (!cursor.equals("0"));
+                        } while (!cursor.equals(RedisHelper.SCAN_INIT_CURSOR));
 
                         Set<byte[]> allKeySet = new HashSet<byte[]>();
 

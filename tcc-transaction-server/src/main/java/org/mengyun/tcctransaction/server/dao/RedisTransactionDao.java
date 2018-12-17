@@ -2,6 +2,7 @@ package org.mengyun.tcctransaction.server.dao;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.mengyun.tcctransaction.SystemException;
+import org.mengyun.tcctransaction.repository.RedisTransactionRepository;
 import org.mengyun.tcctransaction.repository.TransactionIOException;
 import org.mengyun.tcctransaction.repository.helper.JedisCallback;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
@@ -14,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -38,7 +41,6 @@ public class RedisTransactionDao implements TransactionDao {
     @Override
     public List<TransactionVo> findTransactions(final Integer pageNum, final int pageSize) {
 
-
         return RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
             @Override
             public List<TransactionVo> doInJedis(Jedis jedis) {
@@ -50,17 +52,18 @@ public class RedisTransactionDao implements TransactionDao {
 
                 String pattern = getKeyPrefix() + "*";
 
-                if (isSupportScanCommand(jedis)) {
-                    logger.info("redis server support scan command.");
-                    String cursor = "0";
+                if (RedisHelper.isSupportScanCommand(jedis)) {
+                    logger.debug("redis server support scan command.");
+                    String cursor = RedisHelper.SCAN_INIT_CURSOR;
+                    ScanParams scanParams = RedisHelper.buildDefaultScanParams(pattern, RedisHelper.SCAN_COUNT);
                     do {
-                        ScanResult<String> scanResult = jedis.scan(cursor, new ScanParams().match(pattern).count(30));
+                        ScanResult<String> scanResult = jedis.scan(cursor, scanParams);
                         allKeys.addAll(scanResult.getResult());
                         cursor = scanResult.getStringCursor();
-                    } while (!cursor.equals("0") || allKeys.size() >= end);
+                    } while (!cursor.equals(RedisHelper.SCAN_INIT_CURSOR) && allKeys.size() < end);
 
                 } else {
-                    logger.info("redis server do not support scan command. use keys instead");
+                    logger.debug("redis server do not support scan command. use keys instead");
                     allKeys.addAll(jedis.keys(pattern));
                 }
 
@@ -75,78 +78,7 @@ public class RedisTransactionDao implements TransactionDao {
 
                 final List<String> keys = allKeys.subList(start, end);
 
-                try {
-
-                    return RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
-                        @Override
-                        public List<TransactionVo> doInJedis(Jedis jedis) {
-
-                            Pipeline pipeline = jedis.pipelined();
-
-                            for (final String key : keys) {
-                                pipeline.hgetAll(key);
-                            }
-                            List<Object> result = pipeline.syncAndReturnAll();
-
-                            List<TransactionVo> list = new ArrayList<TransactionVo>();
-                            for (Object data : result) {
-                                try {
-
-                                    Map<byte[], byte[]> map1 = (Map<byte[], byte[]>) data;
-
-                                    Map<String, byte[]> propertyMap = new HashMap<String, byte[]>();
-
-                                    for (Map.Entry<byte[], byte[]> entry : map1.entrySet()) {
-                                        propertyMap.put(new String(entry.getKey()), entry.getValue());
-                                    }
-
-
-                                    TransactionVo transactionVo = new TransactionVo();
-                                    transactionVo.setDomain(domain);
-                                    if (propertyMap.get("GLOBAL_TX_ID") != null) {
-                                        transactionVo.setGlobalTxId(UUID.nameUUIDFromBytes(propertyMap.get("GLOBAL_TX_ID")).toString());
-                                    } else {
-                                        continue;
-                                    }
-                                    if (propertyMap.get("BRANCH_QUALIFIER") != null) {
-                                        transactionVo.setBranchQualifier(UUID.nameUUIDFromBytes(propertyMap.get("BRANCH_QUALIFIER")).toString());
-                                    } else {
-                                        continue;
-                                    }
-                                    if (propertyMap.get("STATUS") != null) {
-                                        transactionVo.setStatus(ByteUtils.bytesToInt(propertyMap.get("STATUS")));
-                                    }
-                                    if (propertyMap.get("TRANSACTION_TYPE") != null) {
-                                        transactionVo.setTransactionType(ByteUtils.bytesToInt(propertyMap.get("TRANSACTION_TYPE")));
-                                    }
-                                    if (propertyMap.get("RETRIED_COUNT") != null) {
-                                        transactionVo.setRetriedCount(ByteUtils.bytesToInt(propertyMap.get("RETRIED_COUNT")));
-                                    }
-                                    if (propertyMap.get("CREATE_TIME") != null) {
-                                        transactionVo.setCreateTime(DateUtils
-                                                .parseDate(new String(propertyMap.get("CREATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
-                                    }
-                                    if (propertyMap.get("LAST_UPDATE_TIME") != null) {
-                                        transactionVo.setLastUpdateTime(DateUtils
-                                                .parseDate(new String(propertyMap.get("LAST_UPDATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
-                                    }
-                                    if (propertyMap.get("CONTENT_VIEW") != null) {
-                                        transactionVo.setContentView(new String(propertyMap.get("CONTENT_VIEW")));
-                                    }
-                                    list.add(transactionVo);
-
-                                } catch (ParseException e) {
-                                    throw new SystemException(e);
-                                }
-                            }
-
-                            return list;
-                        }
-                    });
-
-                } catch (Exception e) {
-                    throw new TransactionIOException(e);
-                }
+                return getTransactionVoFromRedis(keys);
 
             }
         });
@@ -159,10 +91,22 @@ public class RedisTransactionDao implements TransactionDao {
             @Override
             public Integer doInJedis(Jedis jedis) {
 
-                return jedis.keys(getKeyPrefix() + "*".getBytes()).size();
+                String pattern = getKeyPrefix() + "*";
+                if (RedisHelper.isSupportScanCommand(jedis)) {
+                    int count = 0;
+                    String cursor = RedisHelper.SCAN_INIT_CURSOR;
+                    ScanParams scanParams = RedisHelper.buildDefaultScanParams(pattern, RedisHelper.SCAN_COUNT);
+                    do {
+                        ScanResult<String> scanResult = jedis.scan(cursor, scanParams);
+                        count += scanResult.getResult().size();
+                        cursor = scanResult.getStringCursor();
+                    } while (!cursor.equals(RedisHelper.SCAN_INIT_CURSOR));
+                    return count;
+                } else {
+                    return jedis.keys(pattern.getBytes()).size();
+                }
             }
         });
-
     }
 
     @Override
@@ -257,41 +201,39 @@ public class RedisTransactionDao implements TransactionDao {
         pageDto.setPageNum(pageNum);
         pageDto.setPageSize(pageSize);
 
-        Integer totalCount = 0;
-        Jedis jedis = jedisPool.getResource();
-
         int start = (pageNum - 1) * pageSize;
         int end = pageNum * pageSize;
+        final int endIndex = end;
+        final List<String> allKeys = new ArrayList<String>();
+        final String pattern = getKeyPrefix() + "*";
 
-        List<byte[]> allKeys = new ArrayList<byte[]>();
+        Integer totalCount = RedisHelper.execute(jedisPool, new JedisCallback<Integer>() {
+            @Override
+            public Integer doInJedis(Jedis jedis) {
+                if (RedisHelper.isSupportScanCommand(jedis)) {
+                    logger.info("redis server support scan command.");
+                    String cursor = RedisHelper.SCAN_INIT_CURSOR;
+                    ScanParams scanParams = RedisHelper.buildDefaultScanParams(pattern, RedisHelper.SCAN_COUNT);
 
-        String pattern = getKeyPrefix() + "*";
+                    do {
+                        ScanResult<String> scanResult = jedis.scan(cursor, scanParams);
+                        allKeys.addAll(scanResult.getResult());
+                        cursor = scanResult.getStringCursor();
+                    } while (!cursor.equals(RedisHelper.SCAN_INIT_CURSOR) && allKeys.size() < endIndex);
 
-        if (isSupportScanCommand(jedis)) {
-            logger.info("redis server support scan command.");
-            String cursor = "0";
-            do {
-                ScanResult<String> scanResult = jedis.scan(cursor, new ScanParams().match(pattern).count(30));
+                    if (!cursor.equals(RedisHelper.SCAN_INIT_CURSOR)) {
+                        return allKeys.size() + 1; // 后面还有数据, 加一
+                    } else {
+                        return allKeys.size();
+                    }
 
-                List<String> result = scanResult.getResult();
-                for (String s : result) {
-                    allKeys.add(s.getBytes());
+                } else {
+                    logger.info("redis server do not support scan command.use keys instead");
+                    allKeys.addAll(jedis.keys(pattern));
+                    return allKeys.size();
                 }
-
-                cursor = scanResult.getStringCursor();
-            } while (!(cursor.equals("0") || allKeys.size() >= end));
-
-            totalCount = allKeys.size();
-            if (!cursor.equals("0")) {
-                totalCount++;
             }
-
-        } else {
-            logger.info("redis server do not support scan command.use keys instead");
-            allKeys.addAll(jedis.keys(pattern.getBytes()));
-            totalCount = allKeys.size();
-        }
-
+        });
 
         pageDto.setTotalCount(totalCount);
 
@@ -303,89 +245,13 @@ public class RedisTransactionDao implements TransactionDao {
             end = allKeys.size();
         }
 
-        final List<byte[]> keys = allKeys.subList(start, end);
+        final List<String> keys = allKeys.subList(start, end);
 
         List<TransactionVo> transactionVos = RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
             @Override
             public List<TransactionVo> doInJedis(Jedis jedis) {
 
-                try {
-
-                    return RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
-                        @Override
-                        public List<TransactionVo> doInJedis(Jedis jedis) {
-
-                            Pipeline pipeline = jedis.pipelined();
-
-                            for (final byte[] key : keys) {
-                                pipeline.hgetAll(key);
-                            }
-                            List<Object> result = pipeline.syncAndReturnAll();
-
-                            List<TransactionVo> list = new ArrayList<TransactionVo>();
-                            for (Object data : result) {
-                                try {
-
-                                    Map<byte[], byte[]> map1 = (Map<byte[], byte[]>) data;
-
-                                    Map<String, byte[]> propertyMap = new HashMap<String, byte[]>();
-
-                                    for (Map.Entry<byte[], byte[]> entry : map1.entrySet()) {
-
-                                        propertyMap.put(new String(entry.getKey()), entry.getValue());
-
-                                    }
-
-                                    TransactionVo transactionVo = new TransactionVo();
-                                    transactionVo.setDomain(domain);
-
-                                    if (propertyMap.get("GLOBAL_TX_ID") != null) {
-                                        transactionVo.setGlobalTxId(UUID.nameUUIDFromBytes(propertyMap.get("GLOBAL_TX_ID")).toString());
-                                    } else {
-                                        continue;
-                                    }
-                                    if (propertyMap.get("BRANCH_QUALIFIER") != null) {
-                                        transactionVo.setBranchQualifier(UUID.nameUUIDFromBytes(propertyMap.get("BRANCH_QUALIFIER")).toString());
-                                    } else {
-                                        continue;
-                                    }
-
-                                    if (propertyMap.get("STATUS") != null) {
-                                        transactionVo.setStatus(ByteUtils.bytesToInt(propertyMap.get("STATUS")));
-                                    }
-                                    if (propertyMap.get("TRANSACTION_TYPE") != null) {
-                                        transactionVo.setTransactionType(ByteUtils.bytesToInt(propertyMap.get("TRANSACTION_TYPE")));
-                                    }
-                                    if (propertyMap.get("RETRIED_COUNT") != null) {
-                                        transactionVo.setRetriedCount(ByteUtils.bytesToInt(propertyMap.get("RETRIED_COUNT")));
-                                    }
-                                    if (propertyMap.get("CREATE_TIME") != null) {
-                                        transactionVo.setCreateTime(DateUtils
-                                                .parseDate(new String(propertyMap.get("CREATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
-                                    }
-                                    if (propertyMap.get("LAST_UPDATE_TIME") != null) {
-                                        transactionVo.setLastUpdateTime(DateUtils
-                                                .parseDate(new String(propertyMap.get("LAST_UPDATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
-                                    }
-                                    if (propertyMap.get("CONTENT_VIEW") != null) {
-                                        transactionVo.setContentView(new String(propertyMap.get("CONTENT_VIEW")));
-                                    }
-
-                                    list.add(transactionVo);
-
-                                } catch (ParseException e) {
-                                    throw new SystemException(e);
-                                }
-                            }
-
-
-                            return list;
-                        }
-                    });
-
-                } catch (Exception e) {
-                    throw new TransactionIOException(e);
-                }
+                return getTransactionVoFromRedis(keys);
 
             }
         });
@@ -394,35 +260,87 @@ public class RedisTransactionDao implements TransactionDao {
         return pageDto;
     }
 
-    private boolean isSupportScanCommand(Jedis jedis) {
+    private List<TransactionVo> getTransactionVoFromRedis(final List<String> keys) {
+        try {
 
-        if (jedis == null) {
-            logger.info("jedis is null,");
-            return false;
+            return RedisHelper.execute(jedisPool, new JedisCallback<List<TransactionVo>>() {
+                @Override
+                public List<TransactionVo> doInJedis(Jedis jedis) {
+
+                    Pipeline pipeline = jedis.pipelined();
+
+                    for (final String key : keys) {
+                        pipeline.hgetAll(key.getBytes());
+                    }
+
+                    List<TransactionVo> list = new ArrayList<TransactionVo>();
+                    buildTransactionVoList(pipeline.syncAndReturnAll(), list);
+                    return list;
+                }
+            });
+
+        } catch (Exception e) {
+            throw new TransactionIOException(e);
         }
-
-        String serverInfo = jedis.info("Server");
-
-        int versionIndex = serverInfo.indexOf("redis_version");
-
-        String infoWithVersionAhead = serverInfo.substring(versionIndex);
-
-        int versionOverIndex = infoWithVersionAhead.indexOf("\r");
-
-        String serverVersion = infoWithVersionAhead.substring(0, versionOverIndex);
-
-        String leastVersionForScan = "redis_version:2.8";
-
-        if (StringUtils.isNotEmpty(serverVersion)) {
-
-            logger.info("redis server:{}", serverVersion);
-
-            return serverVersion.compareTo(leastVersionForScan) >= 0;
-        } else {
-            return false;
-        }
-
-
     }
 
+    private void buildTransactionVoList(List<Object> result, List<TransactionVo> list) {
+        for (Object data : result) {
+            try {
+
+                Map<byte[], byte[]> map1 = (Map<byte[], byte[]>) data;
+
+                Map<String, byte[]> propertyMap = new HashMap<String, byte[]>();
+
+                for (Map.Entry<byte[], byte[]> entry : map1.entrySet()) {
+
+                    propertyMap.put(new String(entry.getKey()), entry.getValue());
+
+                }
+
+                TransactionVo transactionVo = new TransactionVo();
+                transactionVo.setDomain(domain);
+
+                if (propertyMap.get("GLOBAL_TX_ID") != null) {
+                    transactionVo.setGlobalTxId(UUID.nameUUIDFromBytes(propertyMap.get("GLOBAL_TX_ID")).toString());
+                } else {
+                    continue;
+                }
+                if (propertyMap.get("BRANCH_QUALIFIER") != null) {
+                    transactionVo.setBranchQualifier(UUID.nameUUIDFromBytes(propertyMap.get("BRANCH_QUALIFIER")).toString());
+                } else {
+                    continue;
+                }
+
+                if (propertyMap.get("STATUS") != null) {
+                    transactionVo.setStatus(ByteUtils.bytesToInt(propertyMap.get("STATUS")));
+                }
+                if (propertyMap.get("TRANSACTION_TYPE") != null) {
+                    transactionVo.setTransactionType(ByteUtils.bytesToInt(propertyMap.get("TRANSACTION_TYPE")));
+                }
+                if (propertyMap.get("RETRIED_COUNT") != null) {
+                    transactionVo.setRetriedCount(ByteUtils.bytesToInt(propertyMap.get("RETRIED_COUNT")));
+                }
+                if (propertyMap.get("CREATE_TIME") != null) {
+                    transactionVo.setCreateTime(DateUtils
+                            .parseDate(new String(propertyMap.get("CREATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
+                }
+                if (propertyMap.get("LAST_UPDATE_TIME") != null) {
+                    transactionVo.setLastUpdateTime(DateUtils
+                            .parseDate(new String(propertyMap.get("LAST_UPDATE_TIME")), "yyyy-MM-dd HH:mm:ss"));
+                }
+                if (propertyMap.get("CONTENT_VIEW") != null) {
+                    transactionVo.setContentView(new String(propertyMap.get("CONTENT_VIEW")));
+                }
+
+                list.add(transactionVo);
+
+            } catch (ParseException e) {
+                throw new SystemException(e);
+            }
+        }
+    }
+
+
+    
 }
