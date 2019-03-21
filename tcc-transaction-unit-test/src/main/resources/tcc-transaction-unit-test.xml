@@ -13,23 +13,23 @@
         <property name="cronExpression" value="0/15 * * * * ?"/>
     </bean>
 
-    <bean id="transactionRepository"
-          class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">
-        <property name="dataSource" ref="tccDataSource"/>
-        <property name="domain" value="UT"/>
-        <property name="tbSuffix" value="_UT"/>
-    </bean>
+    <!--<bean id="transactionRepository"-->
+          <!--class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">-->
+        <!--<property name="dataSource" ref="tccDataSource"/>-->
+        <!--<property name="domain" value="UT"/>-->
+        <!--<property name="tbSuffix" value="_UT"/>-->
+    <!--</bean>-->
 
     <bean id="transactionSerializer" class="org.mengyun.tcctransaction.serializer.JdkSerializationSerializer"/>
 
 
-    <bean id="tccDataSource" class="org.apache.commons.dbcp.BasicDataSource"
-          destroy-method="close">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://127.0.0.1:3306/TCC"/>
-        <property name="username" value="root"/>
-        <property name="password" value=""/>
-    </bean>
+    <!--<bean id="tccDataSource" class="org.apache.commons.dbcp.BasicDataSource"-->
+          <!--destroy-method="close">-->
+        <!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
+        <!--<property name="url" value="jdbc:mysql://127.0.0.1:3306/TCC"/>-->
+        <!--<property name="username" value="root"/>-->
+        <!--<property name="password" value=""/>-->
+    <!--</bean>-->
 
     <!--<bean id="transactionRepository"-->
     <!--class="org.mengyun.tcctransaction.repository.ZooKeeperTransactionRepository">-->
@@ -44,23 +44,23 @@
       appendonly yes
       appendfsync always
       -->
-    <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">-->
-    <!--<property name="keyPrefix" value="tcc_ut_"/>-->
-    <!--<property name="jedisPool" ref="jedisPool"/>-->
-    <!--</bean>-->
+    <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">
+    <property name="keyPrefix" value="tcc_ut_"/>
+    <property name="jedisPool" ref="jedisPool"/>
+    </bean>
 
-    <!--<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">-->
-    <!--<property name="maxTotal" value="1000"/>-->
-    <!--<property name="maxWaitMillis" value="1000"/>-->
-    <!--</bean>-->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+    <property name="maxTotal" value="1000"/>
+    <property name="maxWaitMillis" value="1000"/>
+    </bean>
 
-    <!--<bean id="jedisPool" class="redis.clients.jedis.JedisPool">-->
-    <!--<constructor-arg index="0" ref="jedisPoolConfig"/>-->
-    <!--<constructor-arg index="1" value="127.0.0.1"/>-->
-    <!--<constructor-arg index="2" value="6379" type="int"/>-->
-    <!--<constructor-arg index="3" value="1000" type="int"/>-->
-    <!--&lt;!&ndash;<constructor-arg index="4" value="${redis.password}"/>&ndash;&gt;-->
-    <!--</bean>-->
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+    <constructor-arg index="0" ref="jedisPoolConfig"/>
+    <constructor-arg index="1" value="127.0.0.1"/>
+    <constructor-arg index="2" value="6379" type="int"/>
+    <constructor-arg index="3" value="1000" type="int"/>
+    <!--<constructor-arg index="4" value="${redis.password}"/>-->
+    </bean>
 
     <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.FileSystemTransactionRepository">-->
     <!--<property name="rootPath" value="/data/tcc"/>-->
