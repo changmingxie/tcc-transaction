@@ -1,7 +1,11 @@
 package org.mengyun.tcctransaction.repository.helper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.exceptions.JedisDataException;
 
 import javax.transaction.xa.Xid;
 
@@ -10,6 +14,11 @@ import javax.transaction.xa.Xid;
  */
 public class RedisHelper {
 
+    public static int    SCAN_COUNT = 30;
+    public static String SCAN_TEST_PATTERN = "*";
+    public static String SCAN_INIT_CURSOR  = "0";
+
+    private static final Logger logger = LoggerFactory.getLogger(RedisHelper.class);
 
     public static byte[] getRedisKey(String keyPrefix, Xid xid) {
         return new StringBuilder().append(keyPrefix).append(xid.toString()).toString().getBytes();
@@ -47,5 +56,33 @@ public class RedisHelper {
                 jedis.close();
             }
         }
+    }
+
+    public static ScanParams buildDefaultScanParams(String pattern, int count) {
+        return new ScanParams().match(pattern).count(count);
+    }
+
+    public static Boolean isSupportScanCommand(Jedis jedis) {
+        try {
+            ScanParams scanParams = buildDefaultScanParams(SCAN_TEST_PATTERN, SCAN_COUNT);
+            jedis.scan(SCAN_INIT_CURSOR, scanParams);
+        } catch (JedisDataException e) {
+            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            logger.info("Redis **NOT** support scan command");
+            return false;
+        }
+
+        logger.info("Redis support scan command");
+        return true;
+    }
+
+    static public Boolean isSupportScanCommand(JedisPool pool) {
+        return execute(pool, new JedisCallback<Boolean>() {
+            @Override
+            public Boolean doInJedis(Jedis jedis) {
+                return isSupportScanCommand(jedis);
+            }
+        });
     }
 }

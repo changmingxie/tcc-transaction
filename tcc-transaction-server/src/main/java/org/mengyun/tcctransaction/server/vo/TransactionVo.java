@@ -1,5 +1,11 @@
 package org.mengyun.tcctransaction.server.vo;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.Date;
 
 /**
@@ -24,6 +30,35 @@ public class TransactionVo {
     private Date lastUpdateTime;
 
     private String contentView;
+
+    private InvocationInfo aggInvocation;
+    private InvocationInfo tccConfimInvocation;
+    private InvocationInfo tccCancelInvocation;
+
+    final static private Log logger = LogFactory.getLog(TransactionVo.class);
+    public void parser() {
+        logger.info("start parse contentView");
+        JSONObject obj = JSON.parseObject(contentView);
+
+        // participants 复数
+        JSONArray participants = obj.getJSONArray("participants");
+        if (participants != null) {
+            if (participants.size() == 0) {
+                return;
+            }
+            logger.info("participants is array");
+            JSONObject tccParticipants = participants.getJSONObject(0);
+            tccConfimInvocation = new InvocationInfo(tccParticipants.getJSONObject("confirmInvocationContext"));
+            tccCancelInvocation = new InvocationInfo(tccParticipants.getJSONObject("cancelInvocationContext"));
+        }
+
+        // 单数
+        JSONObject participant = obj.getJSONObject("participant");
+        if (participant != null) {
+            logger.info("participants is agg");
+            aggInvocation = new InvocationInfo(participant.getJSONObject("invocation"));
+        }
+    }
 
     public String getDomain() {
         return domain;
@@ -96,4 +131,29 @@ public class TransactionVo {
     public void setContentView(String contentView) {
         this.contentView = contentView;
     }
+
+    public InvocationInfo getAggInvocation() {
+        return aggInvocation;
+    }
+
+    public void setAggInvocation(InvocationInfo aggInvocation) {
+        this.aggInvocation = aggInvocation;
+    }
+
+    public InvocationInfo getTccConfimInvocation() {
+        return tccConfimInvocation;
+    }
+
+    public void setTccConfimInvocation(InvocationInfo tccConfimInvocation) {
+        this.tccConfimInvocation = tccConfimInvocation;
+    }
+
+    public InvocationInfo getTccCancelInvocation() {
+        return tccCancelInvocation;
+    }
+
+    public void setTccCancelInvocation(InvocationInfo tccCancelInvocation) {
+        this.tccCancelInvocation = tccCancelInvocation;
+    }
+
 }

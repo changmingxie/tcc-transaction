@@ -2,6 +2,7 @@ package org.mengyun.tcctransaction.server.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.server.dao.DaoRepository;
+import org.mengyun.tcctransaction.server.dao.RedisTransactionDao;
 import org.mengyun.tcctransaction.server.dto.PageDto;
 import org.mengyun.tcctransaction.server.vo.CommonResponse;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.List;
 
@@ -34,10 +37,10 @@ public class TransactionController {
 
     public static final int DEFAULT_PAGE_SIZE = 10;
 
-
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView manager(@RequestParam(value = "domain", required = false) String domain,
-                                @RequestParam(value = "pagenum", required = false) Integer pageNum) {
+                                @RequestParam(value = "pagenum", required = false) Integer pageNum,
+                                @RequestParam(value = "isdelete", required = false, defaultValue = "0") Integer isDelete) {
 
         logger.info("query with domain:{},pageNum:{}", domain, pageNum);
 
@@ -46,13 +49,18 @@ public class TransactionController {
         }
 
         if (pageNum == null) {
-            return manager(domain);
+            return manager(domain, DEFAULT_PAGE_NUM, isDelete);
         }
 
         ModelAndView modelAndView = new ModelAndView("manager");
 
 
-        PageDto<TransactionVo> pageDto = daoRepository.getDao(domain).findTransactionPageDto(pageNum, DEFAULT_PAGE_SIZE);
+        PageDto<TransactionVo> pageDto;
+        if (isDelete.intValue() == 0) {
+            pageDto = daoRepository.getDao(domain).findTransactions(pageNum, DEFAULT_PAGE_SIZE);
+        } else {
+            pageDto = daoRepository.getDao(domain).findDeletedTransactions(pageNum, DEFAULT_PAGE_SIZE);
+        }
 
         List<TransactionVo> transactionVos = pageDto.getData();
         Integer totalCount = pageDto.getTotalCount();
@@ -68,7 +76,37 @@ public class TransactionController {
         modelAndView.addObject("pageSize", DEFAULT_PAGE_SIZE);
         modelAndView.addObject("domains", daoRepository.getDomains());
         modelAndView.addObject("currentDomain", domain);
+        modelAndView.addObject("isdelete", isDelete);
         modelAndView.addObject("urlWithoutPaging", "management?domain=" + domain);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/redis/add", method = RequestMethod.POST)
+    public ModelAndView addRedisTransactionDao(
+            @RequestParam(value = "host") String host,
+            @RequestParam(value = "port") int port,
+            @RequestParam(value = "password") String password,
+            @RequestParam(value = "database") int database,
+            @RequestParam(value = "key") String key,
+            @RequestParam(value = "domain") String domain) {
+
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxIdle(20);
+        config.setMaxTotal(50);
+        config.setMinIdle(2);
+        config.setMaxWaitMillis(3000);
+
+        JedisPool pool = new JedisPool(config, host, port, 1000, password, database);
+
+        RedisTransactionDao dao = new RedisTransactionDao();
+        dao.setDomain(domain);
+        dao.setJedisPool(pool);
+        dao.setKeySuffix(key);
+
+        daoRepository.addDao(dao);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect:../../management");
         return modelAndView;
     }
 
@@ -94,6 +132,20 @@ public class TransactionController {
                 new Object[]{domain, globalTxId, branchQualifier});
 
         daoRepository.getDao(domain).delete(
+                globalTxId,
+                branchQualifier);
+
+        return new CommonResponse<Void>();
+    }
+
+    @RequestMapping(value = "/retry/restore", method = RequestMethod.PUT)
+    @ResponseBody
+    public CommonResponse<Void> restore(String domain, String globalTxId, String branchQualifier) {
+
+        logger.info("request /retry /restore with domain: {} globalTxId: {} branchQualifier: {} ",
+                new Object[]{domain, globalTxId, branchQualifier});
+
+        daoRepository.getDao(domain).restore(
                 globalTxId,
                 branchQualifier);
 
@@ -140,7 +192,7 @@ public class TransactionController {
     public ModelAndView manager(String domain) {
 
         logger.info("query with domain:{}", domain);
-        return manager(domain, DEFAULT_PAGE_NUM);
+        return manager(domain, DEFAULT_PAGE_NUM, 0);
     }
 
 

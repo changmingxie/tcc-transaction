@@ -10,20 +10,20 @@ import java.util.List;
  */
 public interface TransactionDao {
 
-    public List<TransactionVo> findTransactions(Integer pageNum, int pageSize);
+    void confirm(String globalTxId, String branchQualifier);
 
-    public Integer countOfFindTransactions();
+    void cancel(String globalTxId, String branchQualifier);
 
-    public void resetRetryCount(String globalTxId, String branchQualifier);
+    void delete(String globalTxId, String branchQualifier);
 
-    public void delete(String globalTxId, String branchQualifier);
+    void restore(String globalTxId, String branchQualifier);
 
-    public void confirm(String globalTxId, String branchQualifier);
+    void resetRetryCount(String globalTxId, String branchQualifier);
 
-    public void cancel(String globalTxId, String branchQualifier);
+    String getDomain();
 
-    public String getDomain();
+    PageDto<TransactionVo> findTransactions(Integer pageNum, int pageSize);
 
-    public PageDto<TransactionVo> findTransactionPageDto(Integer pageNum, int pageSize);
+    PageDto<TransactionVo> findDeletedTransactions(Integer pageNum, int pageSize);
 }
 

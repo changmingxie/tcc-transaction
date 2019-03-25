@@ -3,11 +3,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TCC-TRANSACTION管理后台</title>
+    <title>TCC-TRANSACTION管理后台 1.0</title>
     <link rel="stylesheet" href="static/css/bootstrap.css"/>
     <link rel="stylesheet" href="static/css/admin-base.css"/>
     <link rel="stylesheet" href="static/css/base.css"/>
     <link rel="stylesheet" href="static/css/style.css"/>
+    <link rel="stylesheet" href="static/css/font-awesome/css/font-awesome.css"/>
+    <script src="static/js/jquery.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/jquery.json.js"></script>
 </head>
 
 <body>
@@ -15,7 +19,7 @@
 [#import "paging.ftl" as p]
 <div class="container-fluid">
     <div class="page-header">
-        <h3>TCC-TRANSACTION管理后台</h3>
+        <h3>TCC-TRANSACTION管理后台 1.0</h3>
     </div>
     <div class="s-wrapper liveDetail">
         <div class="form-inline">
@@ -23,7 +27,6 @@
                 <label>DOMAIN</label>
                 <select name="domain">
                 [#list domains as domainValue]
-
                     <option value="${domainValue}" [#if currentDomain==domainValue ]
                             selected="true" [/#if]>${domainValue}</option>
                 [/#list]
@@ -32,10 +35,22 @@
             &emsp;&emsp;
             <div class="form-group">
                 <button class="btn btn-info j-add">查询</button>
+                <button class="btn btn-info" data-toggle="modal" data-target="#addRedisDao">添加</button>
+                [#include "addredisdao.ftl"]
             </div>
-
         </div>
         <br/>
+
+        <p>标签式的导航菜单</p>
+        <ul class="nav nav-tabs">
+            [#if isdelete==0]
+                <li class="active"><a href="#">Normal</a></li>
+                <li><a href="management?domain=${currentDomain}&isdelete=1">Deleted Key</a></li>
+            [#else]
+                <li><a href="management?domain=${currentDomain}&isdelete=0">Normal</a></li>
+                <li class="active"><a href="#">Deleted Key</a></li>
+            [/#if]
+        </ul>
 
         <div class="table-responsive">
             <p>查询结果</p>
@@ -75,7 +90,31 @@
                     </td>
                     <td>${transactionVo.retriedCount!"default-retriedCount"}</td>
                     <td>
-                        <div style="width: 600px; height: 120px; overflow: scroll;">${transactionVo.contentView}</div>
+                        <div style="width: 600px;">
+                            [#if transactionVo.aggInvocation??]
+                            package: <span>${transactionVo.aggInvocation.packageName}</span><br>
+                            EventHandler:  <span class="label label-primary">${transactionVo.aggInvocation.className}</span>.<span class="label label-warning">${transactionVo.aggInvocation.methodName}</span><br>
+                            [/#if]
+                            [#if transactionVo.tccConfimInvocation??]
+                            package: <span>${transactionVo.tccConfimInvocation.packageName}</span><br>
+                            Confim:  <span class="label label-primary">${transactionVo.tccConfimInvocation.className}</span>.<span class="label label-warning">${transactionVo.tccConfimInvocation.methodName}</span><br>
+                            [/#if]
+                            [#if transactionVo.tccCancelInvocation??]
+                            Cancel:   <span class="label label-primary">${transactionVo.tccCancelInvocation.className}</span>.<span class="label label-warning">${transactionVo.tccCancelInvocation.methodName}</span><br>
+                            [/#if]
+                        </div>
+
+                        <button type="button" class="btn btn-success" data-toggle="collapse"
+                                data-target="#detail-${transactionVo.globalTxId}-${transactionVo.branchQualifier}">
+                            ~~显示详情~~
+                        </button>
+
+                        <div id="detail-${transactionVo.globalTxId}-${transactionVo.branchQualifier}" class="collapse json-box">
+                            <script>
+                                document.getElementById('detail-${transactionVo.globalTxId}-${transactionVo.branchQualifier}').innerHTML =
+                                        new JSONFormat(JSON.stringify(${transactionVo.contentView})).toString();
+                            </script>
+                        </div>
                     </td>
                     <td>
                         [#if transactionVo.createTime??]
@@ -113,7 +152,9 @@
     [/#if]
     </div>
 </div>
-<script src="static/js/jquery.js"></script>
+
+
 <script src="static/js/base.js"></script>
+
 </body>
 </html>

@@ -47,3 +47,14 @@
 	cursor: pointer; 
 	height: 40px;
 }
+
+.json-box {
+	position: absolute;
+	overflow: scroll;
+	background: antiquewhite;
+	border: 2px solid black;
+	border-radius: 5px;
+	padding: 15px;
+	box-shadow: rgb(136, 136, 136) 10px 10px 5px;
+	width: 700px;
+}

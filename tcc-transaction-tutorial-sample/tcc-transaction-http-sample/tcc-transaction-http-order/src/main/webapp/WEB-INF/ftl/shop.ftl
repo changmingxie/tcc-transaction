@@ -13,7 +13,7 @@
         [#if products?size > 0]
             [#list products as product]
                 <li class="list-item">
-                    <p>${product.productName}(${product.price?string("0.00")})&nbsp;&nbsp;&nbsp;&nbsp;<span><a href="/user/${userId}/shop/${shopId}/product/${product.productId}/confirm">购买</a></span></p>
+                    <p>${product.productName}(${product.price?string("0.00")})&nbsp;&nbsp;&nbsp;&nbsp;<span><a href="${request.contextPath}/user/${userId}/shop/${shopId}/product/${product.productId}/confirm">购买</a></span></p>
                 </li>
             [/#list]
         [/#if]

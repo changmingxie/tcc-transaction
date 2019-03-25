@@ -89,7 +89,7 @@ public class TransactionManager {
             commitTransaction(transaction);
         }
     }
-    
+
 
     public void rollback(boolean asyncRollback) {
 
@@ -165,12 +165,14 @@ public class TransactionManager {
             Transaction currentTransaction = getCurrentTransaction();
             if (currentTransaction == transaction) {
                 CURRENT.get().pop();
+                if (CURRENT.get().size() == 0) {
+                    CURRENT.remove();
+                }
             } else {
                 throw new SystemException("Illegal transaction when clean after completion");
             }
         }
     }
-
 
     public void enlistParticipant(Participant participant) {
         Transaction transaction = this.getCurrentTransaction();
