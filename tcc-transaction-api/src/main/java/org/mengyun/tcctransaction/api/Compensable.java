@@ -21,6 +21,8 @@ public @interface Compensable {
 
     public Class<? extends TransactionContextEditor> transactionContextEditor() default DefaultTransactionContextEditor.class;
 
+    public Class<? extends Exception>[] delayCancelExceptions() default {};
+
     public boolean asyncConfirm() default false;
 
     public boolean asyncCancel() default false;

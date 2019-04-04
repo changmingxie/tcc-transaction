@@ -55,6 +55,13 @@ public class Transaction implements Serializable {
         this.transactionType = transactionType;
     }
 
+    public Transaction(Object uniqueIdentity,TransactionType transactionType) {
+
+        this.xid = new TransactionXid(uniqueIdentity);
+        this.status = TransactionStatus.TRYING;
+        this.transactionType = transactionType;
+    }
+
     public void enlistParticipant(Participant participant) {
         participants.add(participant);
     }

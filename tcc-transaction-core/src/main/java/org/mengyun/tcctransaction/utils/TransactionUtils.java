@@ -2,15 +2,17 @@ package org.mengyun.tcctransaction.utils;
 
 import org.mengyun.tcctransaction.api.Propagation;
 import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.interceptor.CompensableMethodContext;
 
 /**
  * Created by changming.xie on 2/23/17.
  */
 public class TransactionUtils {
 
-    public static boolean isLegalTransactionContext(boolean isTransactionActive, Propagation propagation, TransactionContext transactionContext) {
+    public static boolean isLegalTransactionContext(boolean isTransactionActive, CompensableMethodContext compensableMethodContext) {
 
-        if (propagation.equals(Propagation.MANDATORY) && !isTransactionActive && transactionContext == null) {
+
+        if (compensableMethodContext.getPropagation().equals(Propagation.MANDATORY) && !isTransactionActive && compensableMethodContext.getTransactionContext() == null) {
             return false;
         }
 
