@@ -28,17 +28,15 @@ public class PlaceOrderServiceImpl {
     @Autowired
     PaymentServiceImpl paymentService;
 
-    public String placeOrder(long payerUserId, long shopId, List<Pair<Long, Integer>> productQuantities, BigDecimal redPacketPayAmount) {
+    public String placeOrder(long payerUserId, long shopId, List<Pair<Long, Integer>> productQuantities, final BigDecimal redPacketPayAmount) {
         Shop shop = shopRepository.findById(shopId);
 
-        Order order = orderService.createOrder(payerUserId, shop.getOwnerUserId(), productQuantities);
+        final Order order = orderService.createOrder(payerUserId, shop.getOwnerUserId(), productQuantities);
 
         Boolean result = false;
 
         try {
-
             paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
-
         } catch (ConfirmingException confirmingException) {
             //exception throws with the tcc transaction status is CONFIRMING,
             //when tcc transaction is confirming status,

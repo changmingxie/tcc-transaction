@@ -32,7 +32,7 @@ public class PaymentServiceImpl {
     @Autowired
     OrderRepository orderRepository;
 
-    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", asyncConfirm = true, delayCancelExceptions = {SocketTimeoutException.class})
+    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", asyncConfirm = false, delayCancelExceptions = {SocketTimeoutException.class, com.alibaba.dubbo.remoting.TimeoutException.class})
     public void makePayment(@UniqueIdentity String orderNo, Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
         System.out.println("order try make payment called.time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
@@ -50,7 +50,7 @@ public class PaymentServiceImpl {
         String result2 = redPacketTradeOrderService.record(buildRedPacketTradeOrderDto(order));
     }
 
-    public void confirmMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void confirmMakePayment(String orderNo, Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
 
         try {
@@ -70,7 +70,7 @@ public class PaymentServiceImpl {
         }
     }
 
-    public void cancelMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void cancelMakePayment(String orderNo, Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
         try {
             Thread.sleep(1000l);

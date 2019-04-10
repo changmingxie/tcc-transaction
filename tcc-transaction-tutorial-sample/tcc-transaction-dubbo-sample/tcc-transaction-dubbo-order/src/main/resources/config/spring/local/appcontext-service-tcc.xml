@@ -5,7 +5,7 @@
 
     <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
         <property name="maxRetryCount" value="30"/>
-        <property name="recoverDuration" value="60"/>
+        <property name="recoverDuration" value="30"/>
         <property name="cronExpression" value="0/30 * * * * ?"/>
         <property name="delayCancelExceptions">
             <util:set>
@@ -36,7 +36,6 @@
         <property name="maxIdleTime" value="#{tccjdbc['c3p0.maxIdleTime']}"/>
         <property name="checkoutTimeout" value="#{tccjdbc['c3p0.checkoutTimeout']}"/>
     </bean>
-
 
     <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.FileSystemTransactionRepository">-->
     <!--<property name="rootPath" value="/data/tcc"/>-->

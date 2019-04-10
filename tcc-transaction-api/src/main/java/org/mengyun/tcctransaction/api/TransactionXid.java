@@ -34,8 +34,28 @@ public class TransactionXid implements Xid, Serializable {
     }
 
     public TransactionXid(Object uniqueIdentity) {
-        this.globalTransactionId = "UniqueIdentity".getBytes();
-        this.branchQualifier = uniqueIdentity.toString().getBytes();
+        this.globalTransactionId = uuidToByteArray(UUID.nameUUIDFromBytes("UniqueIdentity".getBytes()));
+
+        UUID branchUuid = null;
+
+        if (uniqueIdentity instanceof UUID) {
+            branchUuid = (UUID) uniqueIdentity;
+        } else {
+            try {
+                branchUuid = UUID.fromString(uniqueIdentity.toString());
+            } catch (IllegalArgumentException e) {
+
+                byte[] bytes = uniqueIdentity.toString().getBytes();
+
+                if (bytes.length > 16) {
+                    throw new IllegalArgumentException("UniqueIdentify is illegal, the value is :" + uniqueIdentity.toString());
+                }
+
+                branchUuid = UUID.nameUUIDFromBytes(bytes);
+            }
+        }
+
+        this.branchQualifier = uuidToByteArray(branchUuid);
     }
 
     public TransactionXid(byte[] globalTransactionId) {
