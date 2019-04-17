@@ -40,24 +40,24 @@ public class PlaceOrderServiceImpl {
 
         try {
 
-            ExecutorService executorService = Executors.newFixedThreadPool(2);
+//            ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-            Future future1 = executorService.submit(new Runnable() {
-                @Override
-                public void run() {
+//            Future future1 = executorService.submit(new Runnable() {
+//                @Override
+//                public void run() {
                     paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
-                }
-            });
+//                }
+//            });
 
-            Future future2 = executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
-                }
-            });
-
-            future1.get();
-            future2.get();
+//            Future future2 = executorService.submit(new Runnable() {
+//                @Override
+//                public void run() {
+//                    paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
+//                }
+//            });
+//
+//            future1.get();
+//            future2.get();
 
         } catch (ConfirmingException confirmingException) {
             //exception throws with the tcc transaction status is CONFIRMING,
