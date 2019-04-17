@@ -1,17 +1,13 @@
 package org.mengyun.tcctransaction.repository;
 
+import org.mengyun.tcctransaction.ConcurrentTransactionException;
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.repository.helper.TransactionSerializer;
-import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.KryoPoolSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 
 import javax.transaction.xa.Xid;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -40,8 +36,7 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
 
     @Override
     protected int doCreate(Transaction transaction) {
-        writeFile(transaction);
-        return 1;
+        return createFile(transaction);
     }
 
     @Override
@@ -135,16 +130,28 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
         }
     }
 
-    private void writeFile(Transaction transaction) {
+
+    private int createFile(Transaction transaction) {
         makeDirIfNecessary();
 
-        String file = getFullFileName(transaction.getXid());
+        String filePath = getFullFileName(transaction.getXid());
 
         FileChannel channel = null;
         RandomAccessFile raf = null;
+        File file = null;
 
         byte[] content = TransactionSerializer.serialize(serializer, transaction);
+
         try {
+
+            file = new File(filePath);
+
+            boolean result = file.createNewFile();
+
+            if (!result) {
+                return 0;
+            }
+
             raf = new RandomAccessFile(file, "rw");
             channel = raf.getChannel();
             ByteBuffer buffer = ByteBuffer.allocate(content.length);
@@ -156,6 +163,49 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
             }
 
             channel.force(true);
+
+            return 1;
+
+        } catch (FileNotFoundException e) {
+            throw new TransactionIOException(e);
+        } catch (IOException e) {
+            throw new TransactionIOException(e);
+        } finally {
+            if (channel != null && channel.isOpen()) {
+                try {
+                    channel.close();
+                } catch (IOException e) {
+                    throw new TransactionIOException(e);
+                }
+            }
+        }
+    }
+
+    private void writeFile(Transaction transaction) {
+
+        makeDirIfNecessary();
+
+        String filePath = getFullFileName(transaction.getXid());
+
+        FileChannel channel = null;
+        RandomAccessFile raf = null;
+
+        byte[] content = TransactionSerializer.serialize(serializer, transaction);
+
+        try {
+
+            raf = new RandomAccessFile(filePath, "rw");
+            channel = raf.getChannel();
+            ByteBuffer buffer = ByteBuffer.allocate(content.length);
+            buffer.put(content);
+            buffer.flip();
+
+            while (buffer.hasRemaining()) {
+                channel.write(buffer);
+            }
+
+            channel.force(true);
+
         } catch (Exception e) {
             throw new TransactionIOException(e);
         } finally {

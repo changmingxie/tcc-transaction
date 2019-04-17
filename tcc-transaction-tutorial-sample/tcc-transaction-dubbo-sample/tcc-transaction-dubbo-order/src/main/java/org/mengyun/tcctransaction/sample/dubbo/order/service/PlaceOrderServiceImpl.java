@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by changming.xie on 4/1/16.
@@ -36,7 +39,26 @@ public class PlaceOrderServiceImpl {
         Boolean result = false;
 
         try {
-            paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
+
+            ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+            Future future1 = executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
+                }
+            });
+
+            Future future2 = executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
+                }
+            });
+
+            future1.get();
+            future2.get();
+
         } catch (ConfirmingException confirmingException) {
             //exception throws with the tcc transaction status is CONFIRMING,
             //when tcc transaction is confirming status,

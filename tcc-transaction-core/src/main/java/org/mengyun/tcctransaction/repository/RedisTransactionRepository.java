@@ -100,6 +100,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                 }
             });
             return statusCode.intValue();
+
         } catch (Exception e) {
             throw new TransactionIOException(e);
         }

@@ -14,40 +14,40 @@
         </property>
     </bean>
 
-    <bean id="transactionRepository"
-          class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">
-        <property name="dataSource" ref="tccDataSource"/>
-        <property name="domain" value="ORDER"/>
-        <property name="tbSuffix" value="_ORD"/>
-    </bean>
+    <!--<bean id="transactionRepository"-->
+          <!--class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">-->
+        <!--<property name="dataSource" ref="tccDataSource"/>-->
+        <!--<property name="domain" value="ORDER"/>-->
+        <!--<property name="tbSuffix" value="_ORD"/>-->
+    <!--</bean>-->
 
-    <util:properties id="tccjdbc" location="classpath:tccjdbc.properties"/>
+    <!--<util:properties id="tccjdbc" location="classpath:tccjdbc.properties"/>-->
 
-    <bean id="tccDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
-          destroy-method="close" lazy-init="false">
-        <property name="driverClass" value="#{tccjdbc['jdbc.driverClassName']}"/>
-        <property name="jdbcUrl" value="#{tccjdbc['tcc.jdbc.url']}"/>
-        <property name="user" value="#{tccjdbc['jdbc.username']}"/>
-        <property name="password" value="#{tccjdbc['jdbc.password']}"/>
-        <property name="initialPoolSize" value="#{tccjdbc['c3p0.initialPoolSize']}"/>
-        <property name="minPoolSize" value="#{tccjdbc['c3p0.minPoolSize']}"/>
-        <property name="maxPoolSize" value="#{tccjdbc['c3p0.maxPoolSize']}"/>
-        <property name="acquireIncrement" value="#{tccjdbc['c3p0.acquireIncrement']}"/>
-        <property name="maxIdleTime" value="#{tccjdbc['c3p0.maxIdleTime']}"/>
-        <property name="checkoutTimeout" value="#{tccjdbc['c3p0.checkoutTimeout']}"/>
-    </bean>
+    <!--<bean id="tccDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"-->
+          <!--destroy-method="close" lazy-init="false">-->
+        <!--<property name="driverClass" value="#{tccjdbc['jdbc.driverClassName']}"/>-->
+        <!--<property name="jdbcUrl" value="#{tccjdbc['tcc.jdbc.url']}"/>-->
+        <!--<property name="user" value="#{tccjdbc['jdbc.username']}"/>-->
+        <!--<property name="password" value="#{tccjdbc['jdbc.password']}"/>-->
+        <!--<property name="initialPoolSize" value="#{tccjdbc['c3p0.initialPoolSize']}"/>-->
+        <!--<property name="minPoolSize" value="#{tccjdbc['c3p0.minPoolSize']}"/>-->
+        <!--<property name="maxPoolSize" value="#{tccjdbc['c3p0.maxPoolSize']}"/>-->
+        <!--<property name="acquireIncrement" value="#{tccjdbc['c3p0.acquireIncrement']}"/>-->
+        <!--<property name="maxIdleTime" value="#{tccjdbc['c3p0.maxIdleTime']}"/>-->
+        <!--<property name="checkoutTimeout" value="#{tccjdbc['c3p0.checkoutTimeout']}"/>-->
+    <!--</bean>-->
 
     <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.FileSystemTransactionRepository">-->
     <!--<property name="rootPath" value="/data/tcc"/>-->
     <!--</bean>-->
 
-    <!--<bean id="transactionRepository"-->
-    <!--class="org.mengyun.tcctransaction.repository.ZooKeeperTransactionRepository">-->
-    <!--&lt;!&ndash;<property name="zkServers" value="localhost:2181,localhost:2183,localhost:2185"/>&ndash;&gt;-->
-    <!--<property name="zkServers" value="localhost:2181"/>-->
-    <!--<property name="zkTimeout" value="10000"/>-->
-    <!--<property name="zkRootPath" value="/tcc_ut"/>-->
-    <!--</bean>-->
+    <bean id="transactionRepository"
+    class="org.mengyun.tcctransaction.repository.ZooKeeperTransactionRepository">
+    <!--<property name="zkServers" value="localhost:2181,localhost:2183,localhost:2185"/>-->
+    <property name="zkServers" value="localhost:2181"/>
+    <property name="zkTimeout" value="10000"/>
+    <property name="zkRootPath" value="/tcc_ut"/>
+    </bean>
 
     <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">-->
     <!--<property name="keyPrefix" value="TCC:ORD:"/>-->

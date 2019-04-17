@@ -3,9 +3,7 @@ package org.mengyun.tcctransaction.repository;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.repository.helper.TransactionSerializer;
-import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.KryoPoolSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 
@@ -56,7 +54,15 @@ public class ZooKeeperTransactionRepository extends CachableTransactionRepositor
             getZk().create(getTxidPath(transaction.getXid()),
                     TransactionSerializer.serialize(serializer, transaction), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             return 1;
-        } catch (Exception e) {
+        } catch (KeeperException e) {
+
+            if (e.code().equals(KeeperException.Code.NODEEXISTS)) {
+                return 0;
+            } else {
+                throw new TransactionIOException(e);
+            }
+
+        } catch (InterruptedException e) {
             throw new TransactionIOException(e);
         }
     }
@@ -135,7 +141,7 @@ public class ZooKeeperTransactionRepository extends CachableTransactionRepositor
             try {
                 Stat stat = new Stat();
                 content = getZk().getData(getTxidPath(znodePath), false, stat);
-                Transaction transaction =  TransactionSerializer.deserialize(serializer, content);
+                Transaction transaction = TransactionSerializer.deserialize(serializer, content);
                 transactions.add(transaction);
             } catch (Exception e) {
                 throw new TransactionIOException(e);

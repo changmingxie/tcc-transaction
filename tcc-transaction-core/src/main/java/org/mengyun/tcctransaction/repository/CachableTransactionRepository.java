@@ -29,7 +29,7 @@ public abstract class CachableTransactionRepository implements TransactionReposi
         if (result > 0) {
             putToCache(transaction);
         } else {
-            throw new ConcurrentTransactionException();
+            throw new ConcurrentTransactionException("transaction xid duplicated. xid:" + transaction.getXid().toString());
         }
 
         return result;
