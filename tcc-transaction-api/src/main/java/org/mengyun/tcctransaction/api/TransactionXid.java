@@ -20,6 +20,8 @@ public class TransactionXid implements Xid, Serializable {
 
     private byte[] branchQualifier;
 
+    private static byte[] CUSTOMIZED_TRANSACTION_ID = "UniqueIdentity".getBytes();
+
     public TransactionXid() {
         globalTransactionId = uuidToByteArray(UUID.randomUUID());
         branchQualifier = uuidToByteArray(UUID.randomUUID());
@@ -34,28 +36,18 @@ public class TransactionXid implements Xid, Serializable {
     }
 
     public TransactionXid(Object uniqueIdentity) {
-        this.globalTransactionId = uuidToByteArray(UUID.nameUUIDFromBytes("UniqueIdentity".getBytes()));
 
-        UUID branchUuid = null;
+        if (uniqueIdentity == null) {
 
-        if (uniqueIdentity instanceof UUID) {
-            branchUuid = (UUID) uniqueIdentity;
+            globalTransactionId = uuidToByteArray(UUID.randomUUID());
+            branchQualifier = uuidToByteArray(UUID.randomUUID());
+
         } else {
-            try {
-                branchUuid = UUID.fromString(uniqueIdentity.toString());
-            } catch (IllegalArgumentException e) {
 
-                byte[] bytes = uniqueIdentity.toString().getBytes();
+            this.globalTransactionId = CUSTOMIZED_TRANSACTION_ID;
 
-                if (bytes.length > 16) {
-                    throw new IllegalArgumentException("UniqueIdentify is illegal, the value is :" + uniqueIdentity.toString());
-                }
-
-                branchUuid = UUID.nameUUIDFromBytes(bytes);
-            }
+            this.branchQualifier = uniqueIdentity.toString().getBytes();
         }
-
-        this.branchQualifier = uuidToByteArray(branchUuid);
     }
 
     public TransactionXid(byte[] globalTransactionId) {
@@ -87,8 +79,16 @@ public class TransactionXid implements Xid, Serializable {
     public String toString() {
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(UUID.nameUUIDFromBytes(globalTransactionId).toString());
-        stringBuilder.append(":").append(UUID.nameUUIDFromBytes(branchQualifier).toString());
+        if (Arrays.equals(CUSTOMIZED_TRANSACTION_ID, globalTransactionId)) {
+
+            stringBuilder.append(new String(globalTransactionId));
+            stringBuilder.append(":").append(new String(branchQualifier));
+
+        } else {
+
+            stringBuilder.append(UUID.nameUUIDFromBytes(globalTransactionId).toString());
+            stringBuilder.append(":").append(UUID.nameUUIDFromBytes(branchQualifier).toString());
+        }
 
         return stringBuilder.toString();
     }
