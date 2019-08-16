@@ -3,10 +3,10 @@ package org.mengyun.tcctransaction.sample.dubbo.order.service;
 import org.apache.commons.lang3.tuple.Pair;
 import org.mengyun.tcctransaction.CancellingException;
 import org.mengyun.tcctransaction.ConfirmingException;
-import org.mengyun.tcctransaction.sample.order.domain.service.OrderServiceImpl;
 import org.mengyun.tcctransaction.sample.order.domain.entity.Order;
 import org.mengyun.tcctransaction.sample.order.domain.entity.Shop;
 import org.mengyun.tcctransaction.sample.order.domain.repository.ShopRepository;
+import org.mengyun.tcctransaction.sample.order.domain.service.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,17 +28,15 @@ public class PlaceOrderServiceImpl {
     @Autowired
     PaymentServiceImpl paymentService;
 
-    public String placeOrder(long payerUserId, long shopId, List<Pair<Long, Integer>> productQuantities, BigDecimal redPacketPayAmount) {
+    public String placeOrder(long payerUserId, long shopId, List<Pair<Long, Integer>> productQuantities, final BigDecimal redPacketPayAmount) {
         Shop shop = shopRepository.findById(shopId);
 
-        Order order = orderService.createOrder(payerUserId, shop.getOwnerUserId(), productQuantities);
+        final Order order = orderService.createOrder(payerUserId, shop.getOwnerUserId(), productQuantities);
 
         Boolean result = false;
 
         try {
-
-            paymentService.makePayment(order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
-
+            paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
         } catch (ConfirmingException confirmingException) {
             //exception throws with the tcc transaction status is CONFIRMING,
             //when tcc transaction is confirming status,

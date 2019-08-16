@@ -1,9 +1,9 @@
 package org.mengyun.tcctransaction.repository;
 
 
+import org.mengyun.tcctransaction.ConcurrentTransactionException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.api.TransactionStatus;
-import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
 import org.mengyun.tcctransaction.serializer.KryoPoolSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
@@ -89,7 +89,12 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
             return stmt.executeUpdate();
 
         } catch (SQLException e) {
+            if (e instanceof SQLIntegrityConstraintViolationException) {
+                throw new ConcurrentTransactionException("transaction xid duplicated. xid:" + transaction.getXid().toString(), e);
+            }
             throw new TransactionIOException(e);
+        } catch (Throwable throwable) {
+            throw new TransactionIOException(throwable);
         } finally {
             closeStatement(stmt);
             this.releaseConnection(connection);

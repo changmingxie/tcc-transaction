@@ -3,6 +3,7 @@ package org.mengyun.tcctransaction.repository;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.mengyun.tcctransaction.ConcurrentTransactionException;
 import org.mengyun.tcctransaction.OptimisticLockException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionRepository;
@@ -27,7 +28,10 @@ public abstract class CachableTransactionRepository implements TransactionReposi
         int result = doCreate(transaction);
         if (result > 0) {
             putToCache(transaction);
+        } else {
+            throw new ConcurrentTransactionException();
         }
+
         return result;
     }
 

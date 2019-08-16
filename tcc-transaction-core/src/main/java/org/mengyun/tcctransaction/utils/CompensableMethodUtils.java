@@ -5,7 +5,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.Propagation;
 import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.common.MethodType;
+import org.mengyun.tcctransaction.common.MethodRole;
 
 import java.lang.reflect.Method;
 
@@ -27,31 +27,15 @@ public class CompensableMethodUtils {
         return method;
     }
 
-    public static MethodType calculateMethodType(Propagation propagation, boolean isTransactionActive, TransactionContext transactionContext) {
+    public static MethodRole calculateMethodType(Propagation propagation, boolean isTransactionActive, TransactionContext transactionContext) {
 
         if ((propagation.equals(Propagation.REQUIRED) && !isTransactionActive && transactionContext == null) ||
                 propagation.equals(Propagation.REQUIRES_NEW)) {
-            return MethodType.ROOT;
+            return MethodRole.ROOT;
         } else if ((propagation.equals(Propagation.REQUIRED) || propagation.equals(Propagation.MANDATORY)) && !isTransactionActive && transactionContext != null) {
-            return MethodType.PROVIDER;
+            return MethodRole.PROVIDER;
         } else {
-            return MethodType.NORMAL;
-        }
-    }
-
-    public static MethodType calculateMethodType(TransactionContext transactionContext, boolean isCompensable) {
-
-        if (transactionContext == null && isCompensable) {
-            //isRootTransactionMethod
-            return MethodType.ROOT;
-        } else if (transactionContext == null && !isCompensable) {
-            //isSoaConsumer
-            return MethodType.CONSUMER;
-        } else if (transactionContext != null && isCompensable) {
-            //isSoaProvider
-            return MethodType.PROVIDER;
-        } else {
-            return MethodType.NORMAL;
+            return MethodRole.NORMAL;
         }
     }
 
@@ -66,19 +50,5 @@ public class CompensableMethodUtils {
             }
         }
         return position;
-    }
-
-    public static TransactionContext getTransactionContextFromArgs(Object[] args) {
-
-        TransactionContext transactionContext = null;
-
-        for (Object arg : args) {
-            if (arg != null && org.mengyun.tcctransaction.api.TransactionContext.class.isAssignableFrom(arg.getClass())) {
-
-                transactionContext = (org.mengyun.tcctransaction.api.TransactionContext) arg;
-            }
-        }
-
-        return transactionContext;
     }
 }

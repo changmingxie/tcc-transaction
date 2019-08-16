@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.LockSupport;
 
 /**
  * Created by changming.xie on 2/24/16.
@@ -76,7 +75,7 @@ public class PerformanceTest extends AbstractTestCase {
                 public void run() {
                     System.out.println(Thread.currentThread().getName());
 
-                    System.out.println(Thread.currentThread().getName()+" done");
+                    System.out.println(Thread.currentThread().getName() + " done");
                 }
             }));
         }

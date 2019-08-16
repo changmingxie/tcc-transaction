@@ -3,6 +3,7 @@ package org.mengyun.tcctransaction;
 import org.apache.log4j.Logger;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
+import org.mengyun.tcctransaction.api.TransactionXid;
 import org.mengyun.tcctransaction.common.TransactionType;
 
 import java.util.Deque;
@@ -31,10 +32,18 @@ public class TransactionManager {
     }
 
     public TransactionManager() {
+
+
+    }
+
+    public Transaction begin(Object uniqueIdentify) {
+        Transaction transaction = new Transaction(uniqueIdentify,TransactionType.ROOT);
+        transactionRepository.create(transaction);
+        registerTransaction(transaction);
+        return transaction;
     }
 
     public Transaction begin() {
-
         Transaction transaction = new Transaction(TransactionType.ROOT);
         transactionRepository.create(transaction);
         registerTransaction(transaction);

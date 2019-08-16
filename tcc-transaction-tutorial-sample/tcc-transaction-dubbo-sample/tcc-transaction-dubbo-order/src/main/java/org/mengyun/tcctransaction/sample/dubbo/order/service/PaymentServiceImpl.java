@@ -2,6 +2,7 @@ package org.mengyun.tcctransaction.sample.dubbo.order.service;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.UniqueIdentity;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.dto.CapitalTradeOrderDto;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService;
@@ -13,6 +14,7 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.net.SocketTimeoutException;
 import java.util.Calendar;
 
 /**
@@ -30,10 +32,9 @@ public class PaymentServiceImpl {
     @Autowired
     OrderRepository orderRepository;
 
-    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", asyncConfirm = true)
-    public void makePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", asyncConfirm = false, delayCancelExceptions = {SocketTimeoutException.class, com.alibaba.dubbo.remoting.TimeoutException.class})
+    public void makePayment(@UniqueIdentity String orderNo, Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
         System.out.println("order try make payment called.time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
-
 
         //check if the order status is DRAFT, if no, means that another call makePayment for the same order happened, ignore this call makePayment.
         if (order.getStatus().equals("DRAFT")) {
@@ -49,7 +50,7 @@ public class PaymentServiceImpl {
         String result2 = redPacketTradeOrderService.record(buildRedPacketTradeOrderDto(order));
     }
 
-    public void confirmMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void confirmMakePayment(String orderNo, Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
 
         try {
@@ -69,7 +70,7 @@ public class PaymentServiceImpl {
         }
     }
 
-    public void cancelMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void cancelMakePayment(String orderNo, Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
         try {
             Thread.sleep(1000l);
