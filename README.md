@@ -36,7 +36,7 @@ Cancel: 取消执行业务
 
 示例说明:
 
-tcc-transaction不和底层使用的rpc框架耦合，也就是使用doubbo,thrift,web service,http等都可。tcc-transaction-http-sample示例演示了不依赖底层rpc框架情况下如何使用tcc-transaction。
+tcc-transaction不和底层使用的rpc框架耦合，也就是使用dubbo,thrift,web service,http等都可。tcc-transaction-http-sample示例演示了不依赖底层rpc框架情况下如何使用tcc-transaction。
 
 在底层rpc框架为dubbo情况下，可利用tcc-trnansaction-dubbo jar提供的便利，方便应用使用tcc-transaction。tcc-transaction-dubbo-sample示例演示了在使用dubbo作为rpc调用情况下如何使用tcc-transaction。
 
