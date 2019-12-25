@@ -5,6 +5,7 @@ import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.repository.helper.ExpandTransactionSerializer;
 import org.mengyun.tcctransaction.repository.helper.JedisCallback;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
+import org.mengyun.tcctransaction.serializer.JacksonJsonSerializer;
 import org.mengyun.tcctransaction.serializer.KryoPoolSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import redis.clients.jedis.*;
@@ -57,8 +58,11 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
     }
 
     public void setJedisPool(JedisPool jedisPool) {
+
         this.jedisPool = jedisPool;
+
         isSupportScan = RedisHelper.isSupportScanCommand(jedisPool.getResource());
+
         if (!isSupportScan && isForbiddenKeys) {
             throw new RuntimeException("Redis not support 'scan' command, " +
                     "and 'keys' command is forbidden, " +
@@ -126,7 +130,7 @@ public class RedisTransactionRepository extends CachableTransactionRepository {
                     }
 
                     Object result = jedis.eval(String.format("if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
-                            transaction.getVersion() - 1).getBytes(),
+                                    transaction.getVersion() - 1).getBytes(),
                             Arrays.asList(RedisHelper.getRedisKey(keyPrefix, transaction.getXid())), params);
 
                     return (Long) result;

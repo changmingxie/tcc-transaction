@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.server.dao;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.mengyun.tcctransaction.SystemException;
 import org.mengyun.tcctransaction.repository.TransactionIOException;
 import org.mengyun.tcctransaction.repository.helper.JedisCallback;
@@ -9,8 +10,6 @@ import org.mengyun.tcctransaction.server.constants.LuaScriptConstant;
 import org.mengyun.tcctransaction.server.dto.PageDto;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
 import org.mengyun.tcctransaction.utils.ByteUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
 
 import java.text.ParseException;
@@ -23,7 +22,7 @@ public class RedisTransactionDao implements TransactionDao {
 
     private static final int DELETE_KEY_KEEP_TIME = 3 * 24 * 3600;
     private static final String DELETE_KEY_PREIFX = "DELETE:";
-    private static final Logger logger = LoggerFactory.getLogger(RedisTransactionDao.class);
+    private static final Logger logger = Logger.getLogger(RedisTransactionDao.class);
 
     private JedisPool jedisPool;
 

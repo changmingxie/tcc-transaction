@@ -4,51 +4,34 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="httpInvokerRequestExecutor"
-          class="org.springframework.remoting.httpinvoker.CommonsHttpInvokerRequestExecutor">
-        <property name="httpClient">
-            <bean class="org.apache.commons.httpclient.HttpClient">
-                <property name="httpConnectionManager">
-                    <ref bean="multiThreadHttpConnectionManager"/>
-                </property>
-            </bean>
-        </property>
-    </bean>
-
-    <bean id="multiThreadHttpConnectionManager"
-          class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager">
-        <property name="params">
-            <bean class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">
-                <property name="connectionTimeout" value="2000"/>
-                <property name="maxTotalConnections" value="600"/>
-                <property name="defaultMaxConnectionsPerHost" value="512"/>
-                <property name="soTimeout" value="5000"/>
-            </bean>
-        </property>
+          class="org.springframework.remoting.httpinvoker.HttpComponentsHttpInvokerRequestExecutor">
+        <property name="connectTimeout" value="2000"/>
+        <property name="readTimeout" value="2000"/>
     </bean>
 
     <bean id="captialTradeOrderService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-        <property name="serviceUrl" value="http://localhost:8081/remoting/CapitalTradeOrderService"/>
+        <property name="serviceUrl" value="http://localhost:8090/remoting/CapitalTradeOrderService"/>
         <property name="serviceInterface"
                   value="org.mengyun.tcctransaction.sample.http.capital.api.CapitalTradeOrderService"/>
         <property name="httpInvokerRequestExecutor" ref="httpInvokerRequestExecutor"/>
     </bean>
 
     <bean id="capitalAccountService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-        <property name="serviceUrl" value="http://localhost:8081/remoting/CapitalAccountService"/>
+        <property name="serviceUrl" value="http://localhost:8090/remoting/CapitalAccountService"/>
         <property name="serviceInterface"
                   value="org.mengyun.tcctransaction.sample.http.capital.api.CapitalAccountService"/>
         <property name="httpInvokerRequestExecutor" ref="httpInvokerRequestExecutor"/>
     </bean>
 
     <bean id="redPacketAccountService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-        <property name="serviceUrl" value="http://localhost:8082/remoting/RedPacketAccountService"/>
+        <property name="serviceUrl" value="http://localhost:8091/remoting/RedPacketAccountService"/>
         <property name="serviceInterface"
                   value="org.mengyun.tcctransaction.sample.http.redpacket.api.RedPacketAccountService"/>
         <property name="httpInvokerRequestExecutor" ref="httpInvokerRequestExecutor"/>
     </bean>
 
     <bean id="redPacketTradeOrderService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-        <property name="serviceUrl" value="http://localhost:8082/remoting/RedPacketTradeOrderService"/>
+        <property name="serviceUrl" value="http://localhost:8091/remoting/RedPacketTradeOrderService"/>
         <property name="serviceInterface"
                   value="org.mengyun.tcctransaction.sample.http.redpacket.api.RedPacketTradeOrderService"/>
         <property name="httpInvokerRequestExecutor" ref="httpInvokerRequestExecutor"/>

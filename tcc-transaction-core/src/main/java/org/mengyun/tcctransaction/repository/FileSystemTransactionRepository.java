@@ -3,6 +3,7 @@ package org.mengyun.tcctransaction.repository;
 import org.mengyun.tcctransaction.ConcurrentTransactionException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.repository.helper.TransactionSerializer;
+import org.mengyun.tcctransaction.serializer.JacksonJsonSerializer;
 import org.mengyun.tcctransaction.serializer.KryoPoolSerializer;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 

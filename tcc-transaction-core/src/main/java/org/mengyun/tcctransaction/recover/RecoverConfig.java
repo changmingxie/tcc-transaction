@@ -17,5 +17,9 @@ public interface RecoverConfig {
 
     public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayRecoverExceptions);
 
-    public int getAsyncTerminateThreadPoolSize();
+    public int getAsyncTerminateThreadCorePoolSize();
+
+    public int getAsyncTerminateThreadMaxPoolSize();
+
+    public int getAsyncTerminateThreadWorkQueueSize();
 }

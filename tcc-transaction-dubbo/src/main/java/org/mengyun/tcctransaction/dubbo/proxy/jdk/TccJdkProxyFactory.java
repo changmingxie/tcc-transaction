@@ -1,8 +1,8 @@
 package org.mengyun.tcctransaction.dubbo.proxy.jdk;
 
-import com.alibaba.dubbo.rpc.Invoker;
-import com.alibaba.dubbo.rpc.proxy.InvokerInvocationHandler;
-import com.alibaba.dubbo.rpc.proxy.jdk.JdkProxyFactory;
+import org.apache.dubbo.rpc.Invoker;
+import org.apache.dubbo.rpc.proxy.InvokerInvocationHandler;
+import org.apache.dubbo.rpc.proxy.jdk.JdkProxyFactory;
 
 import java.lang.reflect.Proxy;
 

@@ -5,8 +5,9 @@
     <parent>
         <artifactId>tcc-transaction</artifactId>
         <groupId>org.mengyun</groupId>
-       <version>1.2.7</version>
+        <version>1.2.11</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tcc-transaction-core</artifactId>
@@ -19,6 +20,16 @@
         </dependency>
 
         <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
@@ -26,16 +37,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.esotericsoftware</groupId>
-            <artifactId>kryo-shaded</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.zookeeper</groupId>
-            <artifactId>zookeeper</artifactId>
         </dependency>
 
         <dependency>

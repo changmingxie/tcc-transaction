@@ -1,13 +1,12 @@
 package org.mengyun.tcctransaction.server.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.mengyun.tcctransaction.server.dao.DaoRepository;
 import org.mengyun.tcctransaction.server.dao.RedisTransactionDao;
 import org.mengyun.tcctransaction.server.dto.PageDto;
 import org.mengyun.tcctransaction.server.vo.CommonResponse;
 import org.mengyun.tcctransaction.server.vo.TransactionVo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +27,7 @@ import java.util.List;
 @RequestMapping("/management")
 public class TransactionController {
 
-    private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);
+    private static final Logger logger = Logger.getLogger(TransactionController.class);
 
     @Autowired
     private DaoRepository daoRepository;
@@ -42,7 +41,7 @@ public class TransactionController {
                                 @RequestParam(value = "pagenum", required = false) Integer pageNum,
                                 @RequestParam(value = "isdelete", required = false, defaultValue = "0") Integer isDelete) {
 
-        logger.info("query with domain:{},pageNum:{}", domain, pageNum);
+        logger.debug(String.format("query with domain:{},pageNum:{}", domain, pageNum));
 
         if (StringUtils.isEmpty(domain)) {
             return manager();
@@ -114,8 +113,8 @@ public class TransactionController {
     @ResponseBody
     public CommonResponse<Void> reset(String domain, String globalTxId, String branchQualifier) {
 
-        logger.info("request /retry/reset with domain: {} globalTxId: {} branchQualifier: {} ",
-                new Object[]{domain, globalTxId, branchQualifier});
+        logger.debug(String.format("request /retry/reset with domain: {} globalTxId: {} branchQualifier: {} ",
+                new Object[]{domain, globalTxId, branchQualifier}));
 
         daoRepository.getDao(domain).resetRetryCount(
                 globalTxId,
@@ -128,8 +127,6 @@ public class TransactionController {
     @ResponseBody
     public CommonResponse<Void> delete(String domain, String globalTxId, String branchQualifier) {
 
-        logger.info("request /retry /delete with domain: {} globalTxId: {} branchQualifier: {} ",
-                new Object[]{domain, globalTxId, branchQualifier});
 
         daoRepository.getDao(domain).delete(
                 globalTxId,
@@ -142,8 +139,8 @@ public class TransactionController {
     @ResponseBody
     public CommonResponse<Void> restore(String domain, String globalTxId, String branchQualifier) {
 
-        logger.info("request /retry /restore with domain: {} globalTxId: {} branchQualifier: {} ",
-                new Object[]{domain, globalTxId, branchQualifier});
+        logger.debug(String.format("request /retry /restore with domain: {} globalTxId: {} branchQualifier: {} ",
+                new Object[]{domain, globalTxId, branchQualifier}));
 
         daoRepository.getDao(domain).restore(
                 globalTxId,
@@ -156,8 +153,6 @@ public class TransactionController {
     @ResponseBody
     public CommonResponse<Void> confirm(String domain, String globalTxId, String branchQualifier) {
 
-        logger.info("request /retry/confirm with domain: {} globalTxId: {} branchQualifier: {} ",
-                new Object[]{domain, globalTxId, branchQualifier});
 
         daoRepository.getDao(domain).confirm(
                 globalTxId,
@@ -170,8 +165,6 @@ public class TransactionController {
     @ResponseBody
     public CommonResponse<Void> cancel(String domain, String globalTxId, String branchQualifier) {
 
-        logger.info("request /retry/cancel with domain: {} globalTxId: {} branchQualifier: {} ",
-                new Object[]{domain, globalTxId, branchQualifier});
 
         daoRepository.getDao(domain).cancel(
                 globalTxId,
@@ -191,7 +184,6 @@ public class TransactionController {
 
     public ModelAndView manager(String domain) {
 
-        logger.info("query with domain:{}", domain);
         return manager(domain, DEFAULT_PAGE_NUM, 0);
     }
 

@@ -27,6 +27,10 @@ public class SubAccount {
         this.balanceAmount = balanceAmount;
     }
 
+    public SubAccount() {
+
+    }
+
     public SubAccount(long id, int balanceAmount) {
         this.id = id;
         this.balanceAmount = balanceAmount;

@@ -31,7 +31,7 @@
                 <entry key="/remoting/RedPacketAccountService" value-ref="redPacketAccountServiceExporter"/>
             </util:map>
         </property>
-        <property name="port" value="8082"/>
+        <property name="port" value="8091"/>
     </bean>
 
 

@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.dubbo.proxy.javassist;
 
-import com.alibaba.dubbo.common.utils.ReflectUtils;
+import org.apache.dubbo.common.utils.ReflectUtils;
 import javassist.*;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ConstPool;

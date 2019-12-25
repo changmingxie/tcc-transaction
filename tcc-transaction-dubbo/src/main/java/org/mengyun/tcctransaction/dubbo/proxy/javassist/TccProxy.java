@@ -15,8 +15,8 @@
  */
 package org.mengyun.tcctransaction.dubbo.proxy.javassist;
 
-import com.alibaba.dubbo.common.utils.ClassHelper;
-import com.alibaba.dubbo.common.utils.ReflectUtils;
+import org.apache.dubbo.common.utils.ClassHelper;
+import org.apache.dubbo.common.utils.ReflectUtils;
 import org.mengyun.tcctransaction.api.Compensable;
 
 import java.lang.ref.Reference;

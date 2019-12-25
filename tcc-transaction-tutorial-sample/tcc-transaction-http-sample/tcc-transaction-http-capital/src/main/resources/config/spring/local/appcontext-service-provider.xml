@@ -32,7 +32,7 @@
                 <entry key="/remoting/CapitalAccountService" value-ref="capitalAccountServiceExporter"/>
             </util:map>
         </property>
-        <property name="port" value="8081"/>
+        <property name="port" value="8090"/>
     </bean>
 
 </beans>

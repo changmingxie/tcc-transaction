@@ -9,7 +9,7 @@
         <property name="cronExpression" value="0/30 * * * * ?"/>
         <property name="delayCancelExceptions">
             <util:set>
-                <value>com.alibaba.dubbo.remoting.TimeoutException</value>
+                <value>org.apache.dubbo.remoting.TimeoutException</value>
             </util:set>
         </property>
     </bean>

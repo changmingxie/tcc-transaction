@@ -1,8 +1,8 @@
 package org.mengyun.tcctransaction.dubbo.proxy.javassist;
 
-import com.alibaba.dubbo.rpc.Invoker;
-import com.alibaba.dubbo.rpc.proxy.InvokerInvocationHandler;
-import com.alibaba.dubbo.rpc.proxy.javassist.JavassistProxyFactory;
+import org.apache.dubbo.rpc.Invoker;
+import org.apache.dubbo.rpc.proxy.InvokerInvocationHandler;
+import org.apache.dubbo.rpc.proxy.javassist.JavassistProxyFactory;
 
 /**
  * Created by changming.xie on 1/14/17.

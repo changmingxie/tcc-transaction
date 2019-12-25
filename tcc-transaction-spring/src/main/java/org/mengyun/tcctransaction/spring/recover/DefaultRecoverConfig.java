@@ -20,7 +20,11 @@ public class DefaultRecoverConfig implements RecoverConfig {
 
     private String cronExpression = "0 */1 * * * ?";
 
-    private int asyncTerminateThreadPoolSize = 1024;
+    private int asyncTerminateThreadCorePoolSize = 512;
+
+    private int asyncTerminateThreadMaxPoolSize = 1024;
+
+    private int asyncTerminateThreadWorkQueueSize = 512;
 
     private Set<Class<? extends Exception>> delayCancelExceptions = new HashSet<Class<? extends Exception>>();
 
@@ -57,6 +61,18 @@ public class DefaultRecoverConfig implements RecoverConfig {
         this.cronExpression = cronExpression;
     }
 
+    public void setAsyncTerminateThreadCorePoolSize(int asyncTerminateThreadCorePoolSize) {
+        this.asyncTerminateThreadCorePoolSize = asyncTerminateThreadCorePoolSize;
+    }
+
+    public void setAsyncTerminateThreadMaxPoolSize(int asyncTerminateThreadMaxPoolSize) {
+        this.asyncTerminateThreadMaxPoolSize = asyncTerminateThreadMaxPoolSize;
+    }
+
+    public void setAsyncTerminateThreadWorkQueueSize(int asyncTerminateThreadWorkQueueSize) {
+        this.asyncTerminateThreadWorkQueueSize = asyncTerminateThreadWorkQueueSize;
+    }
+
     @Override
     public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayCancelExceptions) {
         this.delayCancelExceptions.addAll(delayCancelExceptions);
@@ -67,11 +83,19 @@ public class DefaultRecoverConfig implements RecoverConfig {
         return this.delayCancelExceptions;
     }
 
-    public int getAsyncTerminateThreadPoolSize() {
-        return asyncTerminateThreadPoolSize;
+    @Override
+    public int getAsyncTerminateThreadCorePoolSize() {
+        return this.asyncTerminateThreadCorePoolSize;
     }
 
-    public void setAsyncTerminateThreadPoolSize(int asyncTerminateThreadPoolSize) {
-        this.asyncTerminateThreadPoolSize = asyncTerminateThreadPoolSize;
+    @Override
+    public int getAsyncTerminateThreadMaxPoolSize() {
+        return this.asyncTerminateThreadMaxPoolSize;
     }
+
+    @Override
+    public int getAsyncTerminateThreadWorkQueueSize() {
+        return this.asyncTerminateThreadWorkQueueSize;
+    }
+
 }

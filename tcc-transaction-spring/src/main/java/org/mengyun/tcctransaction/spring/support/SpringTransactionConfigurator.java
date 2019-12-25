@@ -8,8 +8,8 @@ import org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by changmingxie on 11/11/15.
@@ -33,14 +33,44 @@ public class SpringTransactionConfigurator implements TransactionConfigurator {
 
         if (executorService == null) {
 
+
+            Executors.defaultThreadFactory();
             synchronized (SpringTransactionConfigurator.class) {
 
                 if (executorService == null) {
-//                    executorService = new ThreadPoolExecutor(recoverConfig.getAsyncTerminateThreadPoolSize(),
-//                            recoverConfig.getAsyncTerminateThreadPoolSize(),
-//                            0L, TimeUnit.SECONDS,
-//                            new SynchronousQueue<Runnable>());
-                    executorService = Executors.newCachedThreadPool();
+                    executorService = new ThreadPoolExecutor(
+                            recoverConfig.getAsyncTerminateThreadCorePoolSize(),
+                            recoverConfig.getAsyncTerminateThreadMaxPoolSize(),
+                            5L,
+                            TimeUnit.SECONDS,
+                            new ArrayBlockingQueue<Runnable>(recoverConfig.getAsyncTerminateThreadWorkQueueSize()),
+                            new ThreadFactory() {
+
+                                final AtomicInteger poolNumber = new AtomicInteger(1);
+                                final ThreadGroup group;
+                                final AtomicInteger threadNumber = new AtomicInteger(1);
+                                final String namePrefix;
+
+                                {
+                                    SecurityManager securityManager = System.getSecurityManager();
+                                    this.group = securityManager != null ? securityManager.getThreadGroup() : Thread.currentThread().getThreadGroup();
+                                    this.namePrefix = "tcc-async-terminate-pool-" + poolNumber.getAndIncrement() + "-thread-";
+                                }
+
+                                public Thread newThread(Runnable runnable) {
+                                    Thread thread = new Thread(this.group, runnable, this.namePrefix + this.threadNumber.getAndIncrement(), 0L);
+                                    if (thread.isDaemon()) {
+                                        thread.setDaemon(false);
+                                    }
+
+                                    if (thread.getPriority() != 5) {
+                                        thread.setPriority(5);
+                                    }
+
+                                    return thread;
+                                }
+                            },
+                            new ThreadPoolExecutor.CallerRunsPolicy());
                 }
             }
         }

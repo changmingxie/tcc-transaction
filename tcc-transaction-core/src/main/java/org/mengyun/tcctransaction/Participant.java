@@ -20,8 +20,6 @@ public class Participant implements Serializable {
 
     private InvocationContext cancelInvocationContext;
 
-    private Terminator terminator = new Terminator();
-
     Class<? extends TransactionContextEditor> transactionContextEditorClass;
 
     public Participant() {
@@ -46,15 +44,11 @@ public class Participant implements Serializable {
     }
 
     public void rollback() {
-        terminator.invoke(new TransactionContext(xid, TransactionStatus.CANCELLING.getId()), cancelInvocationContext, transactionContextEditorClass);
+        Terminator.invoke(new TransactionContext(xid, TransactionStatus.CANCELLING.getId()), cancelInvocationContext, transactionContextEditorClass);
     }
 
     public void commit() {
-        terminator.invoke(new TransactionContext(xid, TransactionStatus.CONFIRMING.getId()), confirmInvocationContext, transactionContextEditorClass);
-    }
-
-    public Terminator getTerminator() {
-        return terminator;
+        Terminator.invoke(new TransactionContext(xid, TransactionStatus.CONFIRMING.getId()), confirmInvocationContext, transactionContextEditorClass);
     }
 
     public TransactionXid getXid() {

@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.pool.KryoCallback;
 import com.esotericsoftware.kryo.pool.KryoFactory;
 import com.esotericsoftware.kryo.pool.KryoPool;
+import org.mengyun.tcctransaction.Transaction;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
 import java.io.ByteArrayInputStream;
@@ -14,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Created by changming.xie on 9/18/17.
  */
-public class KryoPoolSerializer<T> implements ObjectSerializer<T> {
+public class KryoPoolSerializer implements ObjectSerializer<Transaction> {
 
 
     static KryoFactory factory = new KryoFactory() {
@@ -53,7 +54,7 @@ public class KryoPoolSerializer<T> implements ObjectSerializer<T> {
     }
 
     @Override
-    public byte[] serialize(final T object) {
+    public byte[] serialize(final Transaction object) {
 
         return pool.run(new KryoCallback<byte[]>() {
             public byte[] execute(Kryo kryo) {
@@ -69,22 +70,22 @@ public class KryoPoolSerializer<T> implements ObjectSerializer<T> {
     }
 
     @Override
-    public T deserialize(final byte[] bytes) {
+    public Transaction deserialize(final byte[] bytes) {
 
-        return pool.run(new KryoCallback<T>() {
-            public T execute(Kryo kryo) {
+        return pool.run(new KryoCallback<Transaction>() {
+            public Transaction execute(Kryo kryo) {
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
                 Input input = new Input(byteArrayInputStream);
 
-                return (T) kryo.readClassAndObject(input);
+                return (Transaction) kryo.readClassAndObject(input);
             }
         });
     }
 
     @Override
-    public T clone(final T object) {
-        return pool.run(new KryoCallback<T>() {
-            public T execute(Kryo kryo) {
+    public Transaction clone(final Transaction object) {
+        return pool.run(new KryoCallback<Transaction>() {
+            public Transaction execute(Kryo kryo) {
                 return kryo.copy(object);
             }
         });

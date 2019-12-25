@@ -20,7 +20,7 @@
         <!--<property name="tbSuffix" value="_UT"/>-->
     <!--</bean>-->
 
-    <bean id="transactionSerializer" class="org.mengyun.tcctransaction.serializer.JdkSerializationSerializer"/>
+    <!--<bean id="transactionSerializer" class="org.mengyun.tcctransaction.serializer.JdkSerializationSerializer"/>-->
 
 
     <!--<bean id="tccDataSource" class="org.apache.commons.dbcp.BasicDataSource"-->
@@ -45,7 +45,7 @@
       appendfsync always
       -->
     <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">
-    <property name="keyPrefix" value="tcc_ut_"/>
+    <property name="keyPrefix" value="tcc:ut:"/>
     <property name="jedisPool" ref="jedisPool"/>
     </bean>
 

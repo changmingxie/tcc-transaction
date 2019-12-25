@@ -5,22 +5,18 @@ import org.mengyun.tcctransaction.api.TransactionContextEditor;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.utils.StringUtils;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 
 /**
  * Created by changmingxie on 10/30/15.
  */
-public class Terminator implements Serializable {
-
-    private static final long serialVersionUID = -164958655471605778L;
-
+public final class Terminator {
 
     public Terminator() {
 
     }
 
-    public Object invoke(TransactionContext transactionContext, InvocationContext invocationContext, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
+    public static Object invoke(TransactionContext transactionContext, InvocationContext invocationContext, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
 
 
         if (StringUtils.isNotEmpty(invocationContext.getMethodName())) {
