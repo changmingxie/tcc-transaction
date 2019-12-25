@@ -29,9 +29,9 @@
         <aspectj.version>1.9.2</aspectj.version>
         <slf4j.version>1.7.9</slf4j.version>
 
-        <repo.internal.snapshots.url>http://artifactory.ximalaya.com/artifactory/thirdparty-snapshots-local/
+        <repo.internal.snapshots.url>http://repo1.maven.org/maven2
         </repo.internal.snapshots.url>
-        <repo.internal.releases.url>http://artifactory.ximalaya.com/artifactory/thirdparty-releases-local/
+        <repo.internal.releases.url>http://repo1.maven.org/maven2
         </repo.internal.releases.url>
         <repo.proxy.url>http://repo1.maven.org/maven2</repo.proxy.url>
 
