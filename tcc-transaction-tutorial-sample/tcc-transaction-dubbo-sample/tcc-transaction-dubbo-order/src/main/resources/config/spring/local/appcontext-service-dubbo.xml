@@ -12,26 +12,23 @@
 
     <context:property-placeholder location="classpath:sample-dubbo-order.properties"/>
 
-    <!--<dubbo:registry id="capitalRpcZk" address="multicast://224.5.6.7:1234?unicast=false"/>-->
 
     <dubbo:application name="sample-dubbo-order"/>
 
     <dubbo:registry protocol="zookeeper" address="${zookeeper.address}"
                     session="${zookeeper.session.timeout}"
-                    timeout="${zookeeper.connect.timeout}" file="./.dubbo/web-cache"/>
-
-    <!--<dubbo:consumer proxy="javassist" />-->
+                    timeout="${zookeeper.connect.timeout}"/>
 
     <dubbo:reference id="captialTradeOrderService"
-                     interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService" timeout="5000"/>
+                     interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService" timeout="60000"/>
 
     <dubbo:reference id="redPacketTradeOrderService"
-                     interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService" timeout="5000"/>
+                     interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService" timeout="60000"/>
 
     <dubbo:reference id="redPacketAccountService"
-                     interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketAccountService" timeout="5000"/>
+                     interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketAccountService" timeout="60000"/>
 
     <dubbo:reference id="capitalAccountService"
-                     interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalAccountService" timeout="5000"/>
+                     interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalAccountService" timeout="60000"/>
 
 </beans>

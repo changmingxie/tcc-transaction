@@ -101,12 +101,7 @@ public class OrderController {
         String payResultTip = null;
         Order foundOrder = orderService.findOrderByMerchantOrderNo(merchantOrderNo);
 
-        if ("CONFIRMED".equals(foundOrder.getStatus()))
-            payResultTip = "Success";
-        else if ("PAY_FAILED".equals(foundOrder.getStatus()))
-            payResultTip = "Failed, please see log";
-        else
-            payResultTip = "Unknown";
+        payResultTip = foundOrder.getStatus();
 
         mv.addObject("payResult", payResultTip);
 

@@ -19,6 +19,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-dependencies-zookeeper</artifactId>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
             <groupId>org.mengyun</groupId>
             <artifactId>tcc-transaction-api</artifactId>
         </dependency>

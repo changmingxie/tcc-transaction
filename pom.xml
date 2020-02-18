@@ -28,6 +28,7 @@
         <springframework.version>4.3.18.RELEASE</springframework.version>
         <aspectj.version>1.9.2</aspectj.version>
         <slf4j.version>1.7.9</slf4j.version>
+        <dubbo.version>2.7.4.1</dubbo.version>
 
         <repo.internal.snapshots.url>http://repo1.maven.org/maven2
         </repo.internal.snapshots.url>
@@ -62,9 +63,15 @@
             <dependency>
                 <groupId>org.apache.dubbo</groupId>
                 <artifactId>dubbo</artifactId>
-                <version>2.7.4.1</version>
+                <version>${dubbo.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-dependencies-zookeeper</artifactId>
+                <version>${dubbo.version}</version>
+                <type>pom</type>
+            </dependency>
 
             <dependency>
                 <groupId>com.mchange</groupId>
