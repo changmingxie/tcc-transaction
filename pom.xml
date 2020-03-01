@@ -7,7 +7,7 @@
     <groupId>org.mengyun</groupId>
     <artifactId>tcc-transaction</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.11</version>
+    <version>1.2.12</version>
 
     <modules>
         <module>tcc-transaction-api</module>

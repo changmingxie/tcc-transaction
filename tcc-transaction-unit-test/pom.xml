@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.mengyun</groupId>
         <artifactId>tcc-transaction</artifactId>
-       <version>1.2.11</version>
+        <version>1.2.12</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,46 +13,11 @@
     <packaging>jar</packaging>
     <dependencies>
 
-        <!--<dependency>-->
-            <!--<groupId>org.apache.commons</groupId>-->
-            <!--<artifactId>commons-lang3</artifactId>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>org.mengyun</groupId>
             <artifactId>tcc-transaction-spring</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>io.protostuff</groupId>-->
-            <!--<artifactId>protostuff-api</artifactId>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>io.protostuff</groupId>-->
-            <!--<artifactId>protostuff-core</artifactId>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>io.protostuff</groupId>-->
-            <!--<artifactId>protostuff-runtime</artifactId>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>com.alibaba</groupId>-->
-            <!--<artifactId>fastjson</artifactId>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>mysql</groupId>-->
-            <!--<artifactId>mysql-connector-java</artifactId>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>commons-dbcp</groupId>-->
-            <!--<artifactId>commons-dbcp</artifactId>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>junit</groupId>
@@ -70,33 +35,33 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-tx</artifactId>-->
+        <!--<groupId>org.springframework</groupId>-->
+        <!--<artifactId>spring-tx</artifactId>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-jdbc</artifactId>-->
+        <!--<groupId>org.springframework</groupId>-->
+        <!--<artifactId>spring-jdbc</artifactId>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-aop</artifactId>-->
+        <!--<groupId>org.springframework</groupId>-->
+        <!--<artifactId>spring-aop</artifactId>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-test</artifactId>-->
+        <!--<groupId>org.springframework</groupId>-->
+        <!--<artifactId>spring-test</artifactId>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>aopalliance</groupId>-->
-            <!--<artifactId>aopalliance</artifactId>-->
+        <!--<groupId>aopalliance</groupId>-->
+        <!--<artifactId>aopalliance</artifactId>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>cglib</groupId>-->
-            <!--<artifactId>cglib</artifactId>-->
+        <!--<groupId>cglib</groupId>-->
+        <!--<artifactId>cglib</artifactId>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.aspectj</groupId>-->
-            <!--<artifactId>aspectjweaver</artifactId>-->
+        <!--<groupId>org.aspectj</groupId>-->
+        <!--<artifactId>aspectjweaver</artifactId>-->
         <!--</dependency>-->
     </dependencies>
 </project>

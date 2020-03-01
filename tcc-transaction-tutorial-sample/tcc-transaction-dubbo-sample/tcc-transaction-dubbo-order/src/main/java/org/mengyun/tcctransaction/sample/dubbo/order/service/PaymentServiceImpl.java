@@ -33,9 +33,10 @@ public class PaymentServiceImpl {
     OrderRepository orderRepository;
 
     @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", asyncConfirm = false, delayCancelExceptions = {SocketTimeoutException.class, org.apache.dubbo.remoting.TimeoutException.class})
-    public void makePayment(@UniqueIdentity String orderNo, Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void makePayment(@UniqueIdentity String orderNo, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
         System.out.println("order try make payment called.time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
+        Order order = orderRepository.findByMerchantOrderNo(orderNo);
         //check if the order status is DRAFT, if no, means that another call makePayment for the same order happened, ignore this call makePayment.
         if (order.getStatus().equals("DRAFT")) {
             order.pay(redPacketPayAmount, capitalPayAmount);
@@ -50,7 +51,7 @@ public class PaymentServiceImpl {
         String result2 = redPacketTradeOrderService.record(buildRedPacketTradeOrderDto(order));
     }
 
-    public void confirmMakePayment(String orderNo, Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void confirmMakePayment(String orderNo, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
 
         try {
@@ -61,16 +62,16 @@ public class PaymentServiceImpl {
 
         System.out.println("order confirm make payment called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
-        Order foundOrder = orderRepository.findByMerchantOrderNo(order.getMerchantOrderNo());
+        Order foundOrder = orderRepository.findByMerchantOrderNo(orderNo);
 
         //check if the trade order status is PAYING, if no, means another call confirmMakePayment happened, return directly, ensure idempotency.
         if (foundOrder != null && foundOrder.getStatus().equals("PAYING")) {
-            order.confirm();
-            orderRepository.updateOrder(order);
+            foundOrder.confirm();
+            orderRepository.updateOrder(foundOrder);
         }
     }
 
-    public void cancelMakePayment(String orderNo, Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void cancelMakePayment(String orderNo,  BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
         try {
             Thread.sleep(1000l);
@@ -80,12 +81,12 @@ public class PaymentServiceImpl {
 
         System.out.println("order cancel make payment called.time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
-        Order foundOrder = orderRepository.findByMerchantOrderNo(order.getMerchantOrderNo());
+        Order foundOrder = orderRepository.findByMerchantOrderNo(orderNo);
 
         //check if the trade order status is PAYING, if no, means another call cancelMakePayment happened, return directly, ensure idempotency.
         if (foundOrder != null && foundOrder.getStatus().equals("PAYING")) {
-            order.cancelPayment();
-            orderRepository.updateOrder(order);
+            foundOrder.cancelPayment();
+            orderRepository.updateOrder(foundOrder);
         }
     }
 

@@ -45,7 +45,7 @@ public class PlaceOrderServiceImpl {
 //            Future future1 = executorService.submit(new Runnable() {
 //                @Override
 //                public void run() {
-                    paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
+                    paymentService.makePayment(order.getMerchantOrderNo(), redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
 //                }
 //            });
 
