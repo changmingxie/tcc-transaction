@@ -50,7 +50,6 @@ public class PaymentServiceImpl {
 
     public void confirmMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
-
         try {
             Thread.sleep(1000l);
         } catch (InterruptedException e) {

@@ -1,25 +1,24 @@
 package org.mengyun.tcctransaction.repository;
 
-
+import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.api.TransactionStatus;
-import org.mengyun.tcctransaction.serializer.JacksonJsonSerializer;
-import org.mengyun.tcctransaction.serializer.KryoPoolSerializer;
-import org.mengyun.tcctransaction.serializer.ObjectSerializer;
+import org.mengyun.tcctransaction.serializer.KryoTransactionSerializer;
+import org.mengyun.tcctransaction.serializer.TransactionSerializer;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
-import org.mengyun.tcctransaction.utils.StringUtils;
 
 import javax.sql.DataSource;
 import javax.transaction.xa.Xid;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by changmingxie on 10/30/15.
  */
-public class JdbcTransactionRepository extends CachableTransactionRepository {
+public class JdbcTransactionRepository extends CacheableTransactionRepository {
 
     private String domain;
 
@@ -27,15 +26,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
 
     private DataSource dataSource;
 
-    private ObjectSerializer serializer = new KryoPoolSerializer();
-
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
+    private TransactionSerializer serializer = new KryoTransactionSerializer();
 
     public String getTbSuffix() {
         return tbSuffix;
@@ -45,18 +36,28 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         this.tbSuffix = tbSuffix;
     }
 
-    public void setSerializer(ObjectSerializer serializer) {
+    public void setSerializer(TransactionSerializer serializer) {
         this.serializer = serializer;
-    }
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
     }
 
     public DataSource getDataSource() {
         return dataSource;
     }
 
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    @Override
     protected int doCreate(Transaction transaction) {
 
         Connection connection = null;
@@ -68,7 +69,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
             StringBuilder builder = new StringBuilder();
             builder.append("INSERT INTO " + getTableName() +
                     "(GLOBAL_TX_ID,BRANCH_QUALIFIER,TRANSACTION_TYPE,CONTENT,STATUS,RETRIED_COUNT,CREATE_TIME,LAST_UPDATE_TIME,VERSION");
-            builder.append(StringUtils.isNotEmpty(domain) ? ",DOMAIN ) VALUES (?,?,?,?,?,?,?,?,?,?)" : ") VALUES (?,?,?,?,?,?,?,?,?)");
+            builder.append(StringUtils.isNotEmpty(domain) ? ",DOMAIN) VALUES (?,?,?,?,?,?,?,?,?,?)" : ") VALUES (?,?,?,?,?,?,?,?,?)");
 
             stmt = connection.prepareStatement(builder.toString());
 
@@ -78,39 +79,34 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
             stmt.setBytes(4, serializer.serialize(transaction));
             stmt.setInt(5, transaction.getStatus().getId());
             stmt.setInt(6, transaction.getRetriedCount());
-            stmt.setTimestamp(7, new java.sql.Timestamp(transaction.getCreateTime().getTime()));
-            stmt.setTimestamp(8, new java.sql.Timestamp(transaction.getLastUpdateTime().getTime()));
+            stmt.setTimestamp(7, new Timestamp(transaction.getCreateTime().getTime()));
+            stmt.setTimestamp(8, new Timestamp(transaction.getLastUpdateTime().getTime()));
             stmt.setLong(9, transaction.getVersion());
 
             if (StringUtils.isNotEmpty(domain)) {
                 stmt.setString(10, domain);
             }
 
-            stmt.executeUpdate();
-            return 1;
+            return stmt.executeUpdate();
+
         } catch (SQLException e) {
-            if (e instanceof SQLIntegrityConstraintViolationException) {
-                return 0;
-            } else {
-                throw new TransactionIOException(e);
-            }
-        } catch (Throwable throwable) {
-            throw new TransactionIOException(throwable);
+            throw new TransactionIOException(e);
         } finally {
             closeStatement(stmt);
             this.releaseConnection(connection);
         }
     }
 
+    @Override
     protected int doUpdate(Transaction transaction) {
         Connection connection = null;
         PreparedStatement stmt = null;
 
-        java.util.Date lastUpdateTime = transaction.getLastUpdateTime();
+        Date lastUpdateTime = transaction.getLastUpdateTime();
         long currentVersion = transaction.getVersion();
 
-        transaction.updateTime();
-        transaction.updateVersion();
+        transaction.setLastUpdateTime(new Date());
+        transaction.setVersion(transaction.getVersion() + 1);
 
         try {
             connection = this.getConnection();
@@ -150,6 +146,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         }
     }
 
+    @Override
     protected int doDelete(Transaction transaction) {
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -193,12 +190,14 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
     }
 
     @Override
-    protected List<Transaction> doFindAllUnmodifiedSince(java.util.Date date) {
+    protected Page<Transaction> doFindAllUnmodifiedSince(Date date, String offset, int pageSize) {
 
         List<Transaction> transactions = new ArrayList<Transaction>();
 
         Connection connection = null;
         PreparedStatement stmt = null;
+
+        int currentOffset = StringUtils.isEmpty(offset) ? 0 : Integer.valueOf(offset);
 
         try {
             connection = this.getConnection();
@@ -208,8 +207,9 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
             builder.append("SELECT GLOBAL_TX_ID, BRANCH_QUALIFIER, CONTENT,STATUS,TRANSACTION_TYPE,CREATE_TIME,LAST_UPDATE_TIME,RETRIED_COUNT,VERSION");
             builder.append(StringUtils.isNotEmpty(domain) ? ",DOMAIN" : "");
             builder.append("  FROM " + getTableName() + " WHERE LAST_UPDATE_TIME < ?");
-            builder.append(" AND IS_DELETE = 0 ");
             builder.append(StringUtils.isNotEmpty(domain) ? " AND DOMAIN = ?" : "");
+            builder.append(" ORDER BY TRANSACTION_ID ASC");
+            builder.append(String.format(" LIMIT %s, %d", currentOffset, pageSize));
 
             stmt = connection.prepareStatement(builder.toString());
 
@@ -229,7 +229,7 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
             this.releaseConnection(connection);
         }
 
-        return transactions;
+        return new Page<Transaction>(String.valueOf(currentOffset + transactions.size()), transactions);
     }
 
     protected List<Transaction> doFind(List<Xid> xids) {
@@ -291,10 +291,10 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
         while (resultSet.next()) {
             byte[] transactionBytes = resultSet.getBytes(3);
             Transaction transaction = (Transaction) serializer.deserialize(transactionBytes);
-            transaction.changeStatus(TransactionStatus.valueOf(resultSet.getInt(4)));
+            transaction.setStatus(TransactionStatus.valueOf(resultSet.getInt(4)));
             transaction.setLastUpdateTime(resultSet.getDate(7));
             transaction.setVersion(resultSet.getLong(9));
-            transaction.resetRetriedCount(resultSet.getInt(8));
+            transaction.setRetriedCount(resultSet.getInt(8));
             transactions.add(transaction);
         }
     }
@@ -329,6 +329,6 @@ public class JdbcTransactionRepository extends CachableTransactionRepository {
     }
 
     private String getTableName() {
-        return StringUtils.isNotEmpty(tbSuffix) ? "TCC_TRANSACTION" + tbSuffix : "TCC_TRANSACTION";
+        return StringUtils.isNotEmpty(tbSuffix) ? "AGG_TRANSACTION_" + tbSuffix : "AGG_TRANSACTION";
     }
 }

@@ -20,11 +20,11 @@ public class AccountServiceImpl {
     CapitalAccountService capitalAccountService;
 
 
-    public BigDecimal getRedPacketAccountByUserId(long userId){
+    public BigDecimal getRedPacketAccountByUserId(long userId) {
         return redPacketAccountService.getRedPacketAccountByUserId(userId);
     }
 
-    public BigDecimal getCapitalAccountByUserId(long userId){
+    public BigDecimal getCapitalAccountByUserId(long userId) {
         return capitalAccountService.getCapitalAccountByUserId(userId);
     }
 }

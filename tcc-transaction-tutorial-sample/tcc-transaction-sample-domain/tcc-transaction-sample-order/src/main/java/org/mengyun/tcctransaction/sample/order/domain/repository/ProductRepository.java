@@ -16,11 +16,11 @@ public class ProductRepository {
     @Autowired
     ProductDao productDao;
 
-    public Product findById(long productId){
+    public Product findById(long productId) {
         return productDao.findById(productId);
     }
 
-    public List<Product> findByShopId(long shopId){
+    public List<Product> findByShopId(long shopId) {
         return productDao.findByShopId(shopId);
     }
 }

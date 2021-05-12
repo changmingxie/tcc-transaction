@@ -25,12 +25,16 @@ public class TransactionContext implements Serializable {
         this.status = status;
     }
 
+    public TransactionXid getXid() {
+        return xid.clone();
+    }
+
     public void setXid(TransactionXid xid) {
         this.xid = xid;
     }
 
-    public TransactionXid getXid() {
-        return xid.clone();
+    public Map<String, String> getAttachments() {
+        return attachments;
     }
 
     public void setAttachments(Map<String, String> attachments) {
@@ -39,16 +43,12 @@ public class TransactionContext implements Serializable {
         }
     }
 
-    public Map<String, String> getAttachments() {
-        return attachments;
+    public int getStatus() {
+        return status;
     }
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public int getStatus() {
-        return status;
     }
 
 

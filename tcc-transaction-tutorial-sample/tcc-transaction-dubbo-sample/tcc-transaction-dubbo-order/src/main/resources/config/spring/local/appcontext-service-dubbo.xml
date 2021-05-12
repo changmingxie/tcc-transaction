@@ -1,32 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+    <context:component-scan base-package="org.mengyun.tcctransaction.sample.dubbo"/>
 
     <context:property-placeholder location="classpath:sample-dubbo-order.properties"/>
 
+    <!--<dubbo:registry id="capitalRpcZk" address="multicast://224.5.6.7:1234?unicast=false"/>-->
 
     <dubbo:application name="sample-dubbo-order"/>
 
     <dubbo:registry protocol="zookeeper" address="${zookeeper.address}"
                     session="${zookeeper.session.timeout}"
-                    timeout="${zookeeper.connect.timeout}"/>
+                    timeout="${zookeeper.connect.timeout}" file="./.dubbo/web-cache"/>
+
+    <!--<dubbo:consumer proxy="javassist" />-->
 
     <dubbo:reference id="captialTradeOrderService"
                      interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalTradeOrderService"
-                     timeout="60000"/>
+                     timeout="5000"/>
 
     <dubbo:reference id="redPacketTradeOrderService"
                      interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService"
-                     timeout="60000"/>
+                     timeout="5000"/>
 
     <dubbo:reference id="redPacketAccountService"
                      interface="org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketAccountService"
-                     timeout="60000"/>
+                     timeout="5000"/>
 
     <dubbo:reference id="capitalAccountService"
                      interface="org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalAccountService"
-                     timeout="60000"/>
+                     timeout="5000"/>
 
 </beans>

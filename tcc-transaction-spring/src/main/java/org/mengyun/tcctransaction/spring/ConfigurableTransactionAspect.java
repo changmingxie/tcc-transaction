@@ -5,6 +5,7 @@ import org.mengyun.tcctransaction.TransactionManager;
 import org.mengyun.tcctransaction.interceptor.CompensableTransactionAspect;
 import org.mengyun.tcctransaction.interceptor.CompensableTransactionInterceptor;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.core.Ordered;
 @Aspect
 public class ConfigurableTransactionAspect extends CompensableTransactionAspect implements Ordered {
 
+    @Autowired
     private TransactionConfigurator transactionConfigurator;
 
     public void init() {
@@ -21,7 +23,7 @@ public class ConfigurableTransactionAspect extends CompensableTransactionAspect 
 
         CompensableTransactionInterceptor compensableTransactionInterceptor = new CompensableTransactionInterceptor();
         compensableTransactionInterceptor.setTransactionManager(transactionManager);
-        compensableTransactionInterceptor.setDelayCancelExceptions(transactionConfigurator.getRecoverConfig().getDelayCancelExceptions());
+        compensableTransactionInterceptor.setDelayCancelExceptions(transactionConfigurator.getDelayCancelExceptions());
 
         this.setCompensableTransactionInterceptor(compensableTransactionInterceptor);
     }

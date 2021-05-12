@@ -1,69 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:redisson="http://redisson.org/schema/redisson"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://redisson.org/schema/redisson http://redisson.org/schema/redisson/redisson.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:component-scan base-package="org.mengyun.tcctransaction.unittest"/>
 
+    <util:properties id="redis" location="classpath:redis.properties"/>
 
-    <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
-        <property name="maxRetryCount" value="30"/>
-        <property name="recoverDuration" value="5"/>
-        <property name="cronExpression" value="0/5 * * * * ?"/>
+    <bean class="org.mengyun.tcctransaction.spring.recovery.RecoverConfiguration">
+        <property name="transactionRepository">
+            <!--            <bean class="org.aggregateframework.transaction.repository.ShardJedisTransactionRepository">-->
+            <!--                <property name="domain" value="AGG:SAMPLE:SHARDJEDIS:"/>-->
+            <!--                <property name="shardedJedisPool" ref="shardedJedisPool"/>-->
+            <!--            </bean>-->
+            <bean class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">
+                <property name="domain" value="TCC:UT:JEDIS:"/>
+                <property name="jedisPool" ref="jedisPool"/>
+            </bean>
+            <!--            <bean class="org.aggregateframework.transaction.repository.JedisClusterTransactionRepository">-->
+            <!--                <property name="domain" value="AGG:SAMPLE:JEDISCLUSTER:"/>-->
+            <!--                <property name="jedisCluster" ref="jedisCluster"/>-->
+            <!--            </bean>-->
+        </property>
+        <property name="recoverFrequency">
+            <bean class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">
+                <property name="maxRetryCount" value="30"/>
+                <property name="recoverDuration" value="5"/>
+                <property name="cronExpression" value="0/5 * * * * ? "/>
+                <property name="fetchPageSize" value="200"/>
+            </bean>
+        </property>
+        <property name="recoveryLock">
+            <bean id="recoveryLock" class="org.mengyun.tcctransaction.recovery.RedissonRecoveryLock">
+                <property name="lockSuffixName" value="AGG_SAMPLE_ORDER"/>
+                <property name="redissonClient" ref="redissonClient"/>
+            </bean>
+        </property>
     </bean>
 
-    <!--<bean id="transactionRepository"-->
-          <!--class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">-->
-        <!--<property name="dataSource" ref="tccDataSource"/>-->
-        <!--<property name="domain" value="UT"/>-->
-        <!--<property name="tbSuffix" value="_UT"/>-->
-    <!--</bean>-->
 
-    <!--<bean id="transactionSerializer" class="org.mengyun.tcctransaction.serializer.JdkSerializationSerializer"/>-->
+    <redisson:client id="redissonClient">
+        <redisson:single-server
+                address="redis://127.0.0.1:6379"
+                idle-connection-timeout="10000"
+                connect-timeout="1000"
+                timeout="300"
+                retry-attempts="3"
+                retry-interval="0"
+                connection-minimum-idle-size="15"
+                connection-pool-size="30"
+                database="0"
+        />
+    </redisson:client>
 
-
-    <!--<bean id="tccDataSource" class="org.apache.commons.dbcp.BasicDataSource"-->
-          <!--destroy-method="close">-->
-        <!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
-        <!--<property name="url" value="jdbc:mysql://localhost:3306/TCC"/>-->
-        <!--<property name="username" value="root"/>-->
-        <!--<property name="password" value="root"/>-->
-    <!--</bean>-->
-
-    <!--<bean id="transactionRepository"-->
-    <!--class="org.mengyun.tcctransaction.repository.ZooKeeperTransactionRepository">-->
-    <!--&lt;!&ndash;<property name="zkServers" value="localhost:2181,localhost:2183,localhost:2185"/>&ndash;&gt;-->
-    <!--<property name="zkServers" value="localhost:2181"/>-->
-    <!--<property name="zkTimeout" value="10000"/>-->
-    <!--<property name="zkRootPath" value="/tcc_ut"/>-->
-    <!--</bean>-->
-
-
-    <!--recommanded way; to use this, make sure redis is safely durable,which means need set redis as AOF mode and always fsync.
-      appendonly yes
-      appendfsync always
-      -->
-    <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">
-    <property name="keyPrefix" value="tcc:ut:"/>
-    <property name="jedisPool" ref="jedisPool"/>
-    </bean>
-
-    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-    <property name="maxTotal" value="1000"/>
-    <property name="maxWaitMillis" value="1000"/>
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="#{redis['redis.pool.maxTotal']}"/>
+        <property name="maxIdle" value="#{redis['redis.pool.maxIdle']}"/>
+        <property name="minIdle" value="#{redis['redis.pool.minIdle']}"/>
+        <property name="maxWaitMillis" value="#{redis['redis.pool.maxWaitMillis']}"/>
     </bean>
 
     <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-    <constructor-arg index="0" ref="jedisPoolConfig"/>
-    <constructor-arg index="1" value="127.0.0.1"/>
-    <constructor-arg index="2" value="6379" type="int"/>
-    <constructor-arg index="3" value="1000" type="int"/>
-    <!--<constructor-arg index="4" value="${redis.password}"/>-->
+        <constructor-arg name="poolConfig" ref="poolConfig"/>
+        <constructor-arg name="host" value="#{redis['singleredis.host']}"/>
+        <constructor-arg name="port" value="#{redis['singleredis.port']}"/>
+        <constructor-arg name="timeout" value="#{redis['redis.connectionTimeout']}"/>
     </bean>
-
-    <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.FileSystemTransactionRepository">-->
-    <!--<property name="rootPath" value="/data/tcc"/>-->
-    <!--</bean>-->
 
 </beans>

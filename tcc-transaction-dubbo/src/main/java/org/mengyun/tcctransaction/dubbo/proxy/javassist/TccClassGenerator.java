@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.dubbo.proxy.javassist;
 
-import org.apache.dubbo.common.utils.ReflectUtils;
 import javassist.*;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ConstPool;
@@ -8,6 +7,7 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.ClassMemberValue;
 import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
+import org.apache.dubbo.common.utils.ReflectUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -20,14 +20,25 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 
 public final class TccClassGenerator {
-    public static interface DC {
-    } // dynamic class tag interface.
-
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
-
     private static final String SIMPLE_NAME_TAG = "<init>";
-
     private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool
+    private ClassPool mPool;
+    private CtClass mCtc;
+    private String mClassName, mSuperClass;
+    private Set<String> mInterfaces;
+    private List<String> mFields, mConstructors, mMethods;
+    private Set<String> compensableMethods = new HashSet<String>();
+    private Map<String, Method> mCopyMethods; // <method desc,method instance>
+    private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance>
+    private boolean mDefaultConstructor = false;
+
+    private TccClassGenerator() {
+    }
+
+    private TccClassGenerator(ClassPool pool) {
+        mPool = pool;
+    }
 
     public static TccClassGenerator newInstance() {
         return new TccClassGenerator(getClassPool(Thread.currentThread().getContextClassLoader()));
@@ -54,29 +65,11 @@ public final class TccClassGenerator {
         return pool;
     }
 
-    private ClassPool mPool;
-
-    private CtClass mCtc;
-
-    private String mClassName, mSuperClass;
-
-    private Set<String> mInterfaces;
-
-    private List<String> mFields, mConstructors, mMethods;
-
-    private Set<String> compensableMethods = new HashSet<String>();
-
-    private Map<String, Method> mCopyMethods; // <method desc,method instance>
-
-    private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance>
-
-    private boolean mDefaultConstructor = false;
-
-    private TccClassGenerator() {
-    }
-
-    private TccClassGenerator(ClassPool pool) {
-        mPool = pool;
+    private static String modifier(int mod) {
+        if (java.lang.reflect.Modifier.isPublic(mod)) return "public";
+        if (java.lang.reflect.Modifier.isProtected(mod)) return "protected";
+        if (java.lang.reflect.Modifier.isPrivate(mod)) return "private";
+        return "";
     }
 
     public String getClassName() {
@@ -330,10 +323,6 @@ public final class TccClassGenerator {
         return getCtClass(c.getDeclaringClass()).getConstructor(ReflectUtils.getDesc(c));
     }
 
-    private static String modifier(int mod) {
-        if (java.lang.reflect.Modifier.isPublic(mod)) return "public";
-        if (java.lang.reflect.Modifier.isProtected(mod)) return "protected";
-        if (java.lang.reflect.Modifier.isPrivate(mod)) return "private";
-        return "";
-    }
+    public static interface DC {
+    } // dynamic class tag interface.
 }

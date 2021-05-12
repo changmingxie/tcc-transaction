@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>tcc-transaction</artifactId>
         <groupId>org.mengyun</groupId>
-        <version>1.2.12</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tcc-transaction-bom</artifactId>
     <packaging>pom</packaging>
@@ -19,31 +22,36 @@
                 <artifactId>tcc-transaction-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.mengyun</groupId>
                 <artifactId>tcc-transaction-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.mengyun</groupId>
                 <artifactId>tcc-transaction-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.mengyun</groupId>
                 <artifactId>tcc-transaction-dubbo</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
-                <groupId>org.mengyun</groupId>
-                <artifactId>tcc-transaction-server</artifactId>
+                <groupId>org.mengyun.ha</groupId>
+                <artifactId>tcc-transaction-ha-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.mengyun.ha</groupId>
+                <artifactId>tcc-transaction-ha-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mengyun.ha</groupId>
+                <artifactId>tcc-transaction-ha-zookeeper</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

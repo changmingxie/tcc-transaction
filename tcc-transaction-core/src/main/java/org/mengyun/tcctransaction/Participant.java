@@ -13,14 +13,10 @@ import java.io.Serializable;
 public class Participant implements Serializable {
 
     private static final long serialVersionUID = 4127729421281425247L;
-
-    private TransactionXid xid;
-
-    private InvocationContext confirmInvocationContext;
-
-    private InvocationContext cancelInvocationContext;
-
     Class<? extends TransactionContextEditor> transactionContextEditorClass;
+    private TransactionXid xid;
+    private InvocationContext confirmInvocationContext;
+    private InvocationContext cancelInvocationContext;
 
     public Participant() {
 
@@ -39,10 +35,6 @@ public class Participant implements Serializable {
         this.transactionContextEditorClass = transactionContextEditorClass;
     }
 
-    public void setXid(TransactionXid xid) {
-        this.xid = xid;
-    }
-
     public void rollback() {
         Terminator.invoke(new TransactionContext(xid, TransactionStatus.CANCELLING.getId()), cancelInvocationContext, transactionContextEditorClass);
     }
@@ -53,6 +45,10 @@ public class Participant implements Serializable {
 
     public TransactionXid getXid() {
         return xid;
+    }
+
+    public void setXid(TransactionXid xid) {
+        this.xid = xid;
     }
 
     public InvocationContext getConfirmInvocationContext() {

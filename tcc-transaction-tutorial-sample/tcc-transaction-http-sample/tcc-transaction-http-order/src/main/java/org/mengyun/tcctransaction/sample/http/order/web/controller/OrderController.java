@@ -99,10 +99,14 @@ public class OrderController {
         ModelAndView mv = new ModelAndView("pay_success");
 
         String payResultTip = null;
-
         Order foundOrder = orderService.findOrderByMerchantOrderNo(merchantOrderNo);
 
-        payResultTip = foundOrder.getStatus();
+        if ("CONFIRMED".equals(foundOrder.getStatus()))
+            payResultTip = "支付成功";
+        else if ("PAY_FAILED".equals(foundOrder.getStatus()))
+            payResultTip = "支付失败";
+        else
+            payResultTip = "Unknown";
 
         mv.addObject("payResult", payResultTip);
 

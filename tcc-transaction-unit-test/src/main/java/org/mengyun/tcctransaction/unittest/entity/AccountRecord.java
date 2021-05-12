@@ -7,7 +7,7 @@ public class AccountRecord {
 
     private long accountId;
 
-    private  volatile int balanceAmount;
+    private volatile int balanceAmount;
 
     private volatile int statusId = AccountStatus.NORMAL.getId();
 
@@ -24,15 +24,15 @@ public class AccountRecord {
         return balanceAmount;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
-    }
-
     public void setBalanceAmount(int balanceAmount) {
         this.balanceAmount = balanceAmount;
     }
 
     public int getStatusId() {
         return statusId;
+    }
+
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
     }
 }

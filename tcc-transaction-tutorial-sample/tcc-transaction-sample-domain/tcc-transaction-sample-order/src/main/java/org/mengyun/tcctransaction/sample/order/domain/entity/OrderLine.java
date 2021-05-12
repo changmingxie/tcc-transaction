@@ -21,7 +21,7 @@ public class OrderLine implements Serializable {
 
     }
 
-    public OrderLine(Long productId, Integer quantity,BigDecimal unitPrice) {
+    public OrderLine(Long productId, Integer quantity, BigDecimal unitPrice) {
         this.productId = productId;
         this.quantity = quantity;
         this.unitPrice = unitPrice;

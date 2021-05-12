@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public class CapitalTradeOrderDto implements Serializable {
 
     private static final long serialVersionUID = 6627401903410124642L;
-    
+
     private long selfUserId;
 
     private long oppositeUserId;

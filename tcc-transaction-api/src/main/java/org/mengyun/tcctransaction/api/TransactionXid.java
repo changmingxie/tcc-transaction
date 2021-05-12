@@ -13,26 +13,14 @@ import java.util.UUID;
 public class TransactionXid implements Xid, Serializable {
 
     private static final long serialVersionUID = -6817267250789142043L;
-
-    private int formatId = 1;
-
-    private byte[] globalTransactionId;
-
-    private byte[] branchQualifier;
-
     private static byte[] CUSTOMIZED_TRANSACTION_ID = "UniqueIdentity".getBytes();
+    private int formatId = 1;
+    private byte[] globalTransactionId;
+    private byte[] branchQualifier;
 
     public TransactionXid() {
         globalTransactionId = uuidToByteArray(UUID.randomUUID());
         branchQualifier = uuidToByteArray(UUID.randomUUID());
-    }
-
-    public void setGlobalTransactionId(byte[] globalTransactionId) {
-        this.globalTransactionId = globalTransactionId;
-    }
-
-    public void setBranchQualifier(byte[] branchQualifier) {
-        this.branchQualifier = branchQualifier;
     }
 
     public TransactionXid(Object uniqueIdentity) {
@@ -60,6 +48,20 @@ public class TransactionXid implements Xid, Serializable {
         this.branchQualifier = branchQualifier;
     }
 
+    private static byte[] uuidToByteArray(UUID uuid) {
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        return bb.array();
+    }
+
+    private static UUID byteArrayToUUID(byte[] bytes) {
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        long firstLong = bb.getLong();
+        long secondLong = bb.getLong();
+        return new UUID(firstLong, secondLong);
+    }
+
     @Override
     public int getFormatId() {
         return formatId;
@@ -70,9 +72,17 @@ public class TransactionXid implements Xid, Serializable {
         return globalTransactionId;
     }
 
+    public void setGlobalTransactionId(byte[] globalTransactionId) {
+        this.globalTransactionId = globalTransactionId;
+    }
+
     @Override
     public byte[] getBranchQualifier() {
         return branchQualifier;
+    }
+
+    public void setBranchQualifier(byte[] branchQualifier) {
+        this.branchQualifier = branchQualifier;
     }
 
     @Override
@@ -137,20 +147,6 @@ public class TransactionXid implements Xid, Serializable {
             return false;
         }
         return true;
-    }
-
-    private static byte[] uuidToByteArray(UUID uuid) {
-        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-        return bb.array();
-    }
-
-    private static UUID byteArrayToUUID(byte[] bytes) {
-        ByteBuffer bb = ByteBuffer.wrap(bytes);
-        long firstLong = bb.getLong();
-        long secondLong = bb.getLong();
-        return new UUID(firstLong, secondLong);
     }
 }
 

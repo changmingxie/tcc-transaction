@@ -1,10 +1,10 @@
 package org.mengyun.tcctransaction;
 
-import org.apache.log4j.Logger;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
-import org.mengyun.tcctransaction.api.TransactionXid;
 import org.mengyun.tcctransaction.common.TransactionType;
+import org.mengyun.tcctransaction.repository.TransactionRepository;
+import org.slf4j.LoggerFactory;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -15,13 +15,15 @@ import java.util.concurrent.ExecutorService;
  */
 public class TransactionManager {
 
-    static final Logger logger = Logger.getLogger(TransactionManager.class.getSimpleName());
-
-    private TransactionRepository transactionRepository;
-
+    static final org.slf4j.Logger logger = LoggerFactory.getLogger(TransactionManager.class.getSimpleName());
     private static final ThreadLocal<Deque<Transaction>> CURRENT = new ThreadLocal<Deque<Transaction>>();
+    private TransactionRepository transactionRepository;
+    private ExecutorService executorService = null;
 
-    private ExecutorService executorService;
+    public TransactionManager() {
+
+
+    }
 
     public void setTransactionRepository(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
@@ -31,13 +33,8 @@ public class TransactionManager {
         this.executorService = executorService;
     }
 
-    public TransactionManager() {
-
-
-    }
-
     public Transaction begin(Object uniqueIdentify) {
-        Transaction transaction = new Transaction(uniqueIdentify,TransactionType.ROOT);
+        Transaction transaction = new Transaction(uniqueIdentify, TransactionType.ROOT);
         transactionRepository.create(transaction);
         registerTransaction(transaction);
         return transaction;
@@ -91,8 +88,8 @@ public class TransactionManager {
                 });
                 logger.debug("async submit cost time:" + (System.currentTimeMillis() - statTime));
             } catch (Throwable commitException) {
-                logger.warn("compensable transaction async submit confirm failed, recovery job will try to confirm later.", commitException);
-                throw new ConfirmingException(commitException);
+                logger.warn("compensable transaction async submit confirm failed, recovery job will try to confirm later.", commitException.getCause());
+                //throw new ConfirmingException(commitException);
             }
         } else {
             commitTransaction(transaction);

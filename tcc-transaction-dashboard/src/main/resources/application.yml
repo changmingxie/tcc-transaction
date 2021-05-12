@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: @project.build.finalName@
+  resources:
+    chain:
+      cache: false
+server:
+  servlet:
+    context-path: /@project.build.finalName@
+  port: @web.port@
+zookeeper:
+  digest: @zookeeper.digest@
+  connect-string: @zookeeper.address@

@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.utils;
 
 import org.mengyun.tcctransaction.api.Propagation;
-import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.interceptor.CompensableMethodContext;
 
 /**

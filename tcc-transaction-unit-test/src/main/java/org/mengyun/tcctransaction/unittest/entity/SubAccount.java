@@ -11,6 +11,15 @@ public class SubAccount {
 
     private volatile int status = AccountStatus.NORMAL.getId();
 
+    public SubAccount() {
+
+    }
+
+    public SubAccount(long id, int balanceAmount) {
+        this.id = id;
+        this.balanceAmount = balanceAmount;
+    }
+
     public long getId() {
         return id;
     }
@@ -27,20 +36,11 @@ public class SubAccount {
         this.balanceAmount = balanceAmount;
     }
 
-    public SubAccount() {
-
-    }
-
-    public SubAccount(long id, int balanceAmount) {
-        this.id = id;
-        this.balanceAmount = balanceAmount;
+    public int getStatus() {
+        return status;
     }
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public int getStatus() {
-        return status;
     }
 }

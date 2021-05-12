@@ -66,19 +66,7 @@ public class MethodProceedingJoinPoint implements ProceedingJoinPoint, JoinPoint
 
     @Override
     public Object proceed(Object[] objects) throws Throwable {
-
-        // Use reflection to invoke the method.
-        try {
-            ReflectionUtils.makeAccessible(method);
-            return method.invoke(target, objects);
-        } catch (InvocationTargetException ex) {
-            throw ex.getTargetException();
-        } catch (IllegalArgumentException ex) {
-            throw new SystemException("Tried calling method [" +
-                    method + "] on target [" + target + "] failed", ex);
-        } catch (IllegalAccessException ex) {
-            throw new SystemException("Could not access method [" + method + "]", ex);
-        }
+        throw new UnsupportedOperationException();
     }
 
     public String toShortString() {

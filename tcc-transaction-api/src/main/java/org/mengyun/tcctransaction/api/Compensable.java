@@ -42,26 +42,6 @@ public @interface Compensable {
 
     class DefaultTransactionContextEditor implements TransactionContextEditor {
 
-        @Override
-        public TransactionContext get(Object target, Method method, Object[] args) {
-            int position = getTransactionContextParamPosition(method.getParameterTypes());
-
-            if (position >= 0) {
-                return (TransactionContext) args[position];
-            }
-
-            return null;
-        }
-
-        @Override
-        public void set(TransactionContext transactionContext, Object target, Method method, Object[] args) {
-
-            int position = getTransactionContextParamPosition(method.getParameterTypes());
-            if (position >= 0) {
-                args[position] = transactionContext;
-            }
-        }
-
         public static int getTransactionContextParamPosition(Class<?>[] parameterTypes) {
 
             int position = -1;
@@ -87,6 +67,26 @@ public @interface Compensable {
             }
 
             return transactionContext;
+        }
+
+        @Override
+        public TransactionContext get(Object target, Method method, Object[] args) {
+            int position = getTransactionContextParamPosition(method.getParameterTypes());
+
+            if (position >= 0) {
+                return (TransactionContext) args[position];
+            }
+
+            return null;
+        }
+
+        @Override
+        public void set(TransactionContext transactionContext, Object target, Method method, Object[] args) {
+
+            int position = getTransactionContextParamPosition(method.getParameterTypes());
+            if (position >= 0) {
+                args[position] = transactionContext;
+            }
         }
     }
 }

@@ -38,7 +38,7 @@ public class Order implements Serializable {
     public Order(long payerUserId, long payeeUserId) {
         this.payerUserId = payerUserId;
         this.payeeUserId = payeeUserId;
-        this.merchantOrderNo = UUID.randomUUID().toString().replace("-","");
+        this.merchantOrderNo = UUID.randomUUID().toString().replace("-", "");
     }
 
     public long getPayerUserId() {

@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.sample.capital.domain.entity;
 
 
-
 import org.mengyun.tcctransaction.sample.exception.InsufficientBalanceException;
 
 import java.math.BigDecimal;

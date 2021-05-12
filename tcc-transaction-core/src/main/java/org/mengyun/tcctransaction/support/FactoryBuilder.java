@@ -10,13 +10,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class FactoryBuilder {
 
 
+    private static List<BeanFactory> beanFactories = new ArrayList<BeanFactory>();
+    private static ConcurrentHashMap<Class, SingeltonFactory> classFactoryMap = new ConcurrentHashMap<Class, SingeltonFactory>();
+
     private FactoryBuilder() {
 
     }
-
-    private static List<BeanFactory> beanFactories = new ArrayList<BeanFactory>();
-
-    private static ConcurrentHashMap<Class, SingeltonFactory> classFactoryMap = new ConcurrentHashMap<Class, SingeltonFactory>();
 
     public static <T> SingeltonFactory<T> factoryOf(Class<T> clazz) {
 

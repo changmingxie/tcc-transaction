@@ -9,12 +9,8 @@ public enum TransactionStatus {
 
     private int id;
 
-     TransactionStatus(int id) {
+    TransactionStatus(int id) {
         this.id = id;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public static TransactionStatus valueOf(int id) {
@@ -27,6 +23,10 @@ public enum TransactionStatus {
             default:
                 return CANCELLING;
         }
+    }
+
+    public int getId() {
+        return id;
     }
 
 }

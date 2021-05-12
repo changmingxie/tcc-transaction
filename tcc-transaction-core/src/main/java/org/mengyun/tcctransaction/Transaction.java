@@ -20,24 +20,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Transaction implements Serializable {
 
     private static final long serialVersionUID = 7291423944314337931L;
-
+    private final Date createTime = new Date();
+    private final List<Participant> participants = new ArrayList<Participant>();
+    private final Map<String, Object> attachments = new ConcurrentHashMap<String, Object>();
     private TransactionXid xid;
-
     private TransactionStatus status;
-
     private TransactionType transactionType;
-
     private volatile int retriedCount = 0;
-
-    private Date createTime = new Date();
-
     private Date lastUpdateTime = new Date();
-
     private long version = 1;
-
-    private List<Participant> participants = new ArrayList<Participant>();
-
-    private Map<String, Object> attachments = new ConcurrentHashMap<String, Object>();
 
     public Transaction() {
 
@@ -55,7 +46,7 @@ public class Transaction implements Serializable {
         this.transactionType = transactionType;
     }
 
-    public Transaction(Object uniqueIdentity,TransactionType transactionType) {
+    public Transaction(Object uniqueIdentity, TransactionType transactionType) {
 
         this.xid = new TransactionXid(uniqueIdentity);
         this.status = TransactionStatus.TRYING;
@@ -75,6 +66,9 @@ public class Transaction implements Serializable {
         return status;
     }
 
+    public void setStatus(TransactionStatus status) {
+        this.status = status;
+    }
 
     public List<Participant> getParticipants() {
         return participants;
@@ -87,7 +81,6 @@ public class Transaction implements Serializable {
     public void changeStatus(TransactionStatus status) {
         this.status = status;
     }
-
 
     public void commit() {
 
@@ -106,12 +99,12 @@ public class Transaction implements Serializable {
         return retriedCount;
     }
 
-    public void addRetriedCount() {
-        this.retriedCount++;
+    public void setRetriedCount(int retriedCount) {
+        this.retriedCount = retriedCount;
     }
 
-    public void resetRetriedCount(int retriedCount) {
-        this.retriedCount = retriedCount;
+    public synchronized void addRetriedCount() {
+        this.retriedCount++;
     }
 
     public Map<String, Object> getAttachments() {
@@ -122,12 +115,12 @@ public class Transaction implements Serializable {
         return version;
     }
 
-    public void updateVersion() {
-        this.version++;
-    }
-
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public void updateVersion() {
+        this.version++;
     }
 
     public Date getLastUpdateTime() {
@@ -145,6 +138,4 @@ public class Transaction implements Serializable {
     public void updateTime() {
         this.lastUpdateTime = new Date();
     }
-
-
 }

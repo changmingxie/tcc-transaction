@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 /**
  * Created by twinkle.zhou on 16/11/10.
  */
-public class Product implements Serializable{
+public class Product implements Serializable {
     private long productId;
 
     private long shopId;

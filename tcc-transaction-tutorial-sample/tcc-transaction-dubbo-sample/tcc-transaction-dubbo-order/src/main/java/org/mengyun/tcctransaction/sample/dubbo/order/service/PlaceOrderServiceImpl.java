@@ -12,9 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Created by changming.xie on 4/1/16.
@@ -45,7 +42,7 @@ public class PlaceOrderServiceImpl {
 //            Future future1 = executorService.submit(new Runnable() {
 //                @Override
 //                public void run() {
-                    paymentService.makePayment(order.getMerchantOrderNo(), redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
+            paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
 //                }
 //            });
 
