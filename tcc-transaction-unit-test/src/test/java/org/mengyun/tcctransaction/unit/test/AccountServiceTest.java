@@ -8,6 +8,7 @@ import org.mengyun.tcctransaction.api.TransactionXid;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.mengyun.tcctransaction.unittest.repository.SubAccountRepository;
 import org.mengyun.tcctransaction.unittest.service.AccountService;
+import org.mengyun.tcctransaction.unittest.service.AccountServiceImpl;
 import org.mengyun.tcctransaction.unittest.utils.MessageConstants;
 import org.mengyun.tcctransaction.unittest.utils.TraceLog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class AccountServiceTest extends AbstractTestCase {
     SubAccountRepository subAccountRepository;
 
     @Autowired
-    private AccountService accountService;
+    private AccountServiceImpl accountService;
 
     @Test
     public void testTransferFromWithoutTransactionContext() {
