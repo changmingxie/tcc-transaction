@@ -18,8 +18,8 @@
         <property name="recoverFrequency">
             <bean class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">
                 <property name="maxRetryCount" value="30"/>
-                <property name="recoverDuration" value="50000"/>
-                <property name="cronExpression" value="0/5 * * * * ? "/>
+                <property name="recoverDuration" value="30"/>
+                <property name="cronExpression" value="0 */1 * * * ? "/>
                 <property name="fetchPageSize" value="200"/>
             </bean>
         </property>

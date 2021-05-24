@@ -1,9 +1,5 @@
 package org.mengyun.tcctransaction.sample.http.order.service;
 
-import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.api.Propagation;
-import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.context.MethodTransactionContextEditor;
 import org.mengyun.tcctransaction.sample.http.capital.api.CapitalTradeOrderService;
 import org.mengyun.tcctransaction.sample.http.capital.api.dto.CapitalTradeOrderDto;
 import org.mengyun.tcctransaction.sample.http.redpacket.api.RedPacketTradeOrderService;
@@ -26,13 +22,34 @@ public class TradeOrderServiceProxy {
     /*the propagation need set Propagation.SUPPORTS,otherwise the recover doesn't work,
       The default value is Propagation.REQUIRED, which means will begin new transaction when recover.
     */
-    @Compensable(propagation = Propagation.SUPPORTS, confirmMethod = "record", cancelMethod = "record", transactionContextEditor = MethodTransactionContextEditor.class)
-    public String record(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
-        return capitalTradeOrderService.record(transactionContext, tradeOrderDto);
+//    @Deprecated
+//    @Compensable(propagation = Propagation.SUPPORTS, confirmMethod = "record", cancelMethod = "record", transactionContextEditor = MethodTransactionContextEditor.class)
+//    public String record(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
+//        return capitalTradeOrderService.record(transactionContext, tradeOrderDto);
+//    }
+//
+//    @Deprecated
+//    @Compensable(propagation = Propagation.SUPPORTS, confirmMethod = "record", cancelMethod = "record", transactionContextEditor = MethodTransactionContextEditor.class)
+//    public String record(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
+//        return redPacketTradeOrderService.record(transactionContext, tradeOrderDto);
+//    }
+
+    public String record(CapitalTradeOrderDto tradeOrderDto) {
+        return capitalTradeOrderService.record(null, tradeOrderDto);
     }
 
-    @Compensable(propagation = Propagation.SUPPORTS, confirmMethod = "record", cancelMethod = "record", transactionContextEditor = MethodTransactionContextEditor.class)
-    public String record(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
-        return redPacketTradeOrderService.record(transactionContext, tradeOrderDto);
+    public String record(RedPacketTradeOrderDto tradeOrderDto) {
+        return redPacketTradeOrderService.record(null, tradeOrderDto);
     }
+
+
+//    public String record(TransactionContext transactionContext, CapitalTradeOrderDto tradeOrderDto) {
+//        //return capitalTradeOrderService.record(null, tradeOrderDto);
+//        return "success";
+//    }
+//
+//    public String record(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
+//        //return redPacketTradeOrderService.record(null, tradeOrderDto);
+//        return "success";
+//    }
 }

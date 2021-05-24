@@ -4,12 +4,10 @@ import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.mengyun.tcctransaction.NoExistedTransactionException;
-import org.mengyun.tcctransaction.SystemException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionManager;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
-import org.mengyun.tcctransaction.utils.TransactionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,15 +37,16 @@ public class CompensableTransactionInterceptor {
 
     public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
 
-        CompensableMethodContext compensableMethodContext = new CompensableMethodContext(pjp);
+        Transaction transaction = transactionManager.getCurrentTransaction();
+        CompensableMethodContext compensableMethodContext = new CompensableMethodContext(pjp, transaction);
 
-        boolean isTransactionActive = transactionManager.isTransactionActive();
+//        if (!TransactionUtils.isLegalTransactionContext(isTransactionActive, compensableMethodContext)) {
+//            throw new SystemException("no active compensable transaction while propagation is mandatory for method " + compensableMethodContext.getMethod().getName());
+//        }
 
-        if (!TransactionUtils.isLegalTransactionContext(isTransactionActive, compensableMethodContext)) {
-            throw new SystemException("no active compensable transaction while propagation is mandatory for method " + compensableMethodContext.getMethod().getName());
-        }
-
-        switch (compensableMethodContext.getMethodRole(isTransactionActive)) {
+        // if method is @Compensable and no transaction context and no transaction, then root
+        // else if method is @Compensable and has transaction context and no transaction ,then provider
+        switch (compensableMethodContext.getParticipantRole()) {
             case ROOT:
                 return rootMethodProceed(compensableMethodContext);
             case PROVIDER:

@@ -9,7 +9,7 @@
     <bean id="httpInvokerRequestExecutor"
           class="org.springframework.remoting.httpinvoker.HttpComponentsHttpInvokerRequestExecutor">
         <property name="connectTimeout" value="2000"/>
-        <property name="readTimeout" value="5000"/>
+        <property name="readTimeout" value="10000"/>
     </bean>
 
     <bean id="captialTradeOrderService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">

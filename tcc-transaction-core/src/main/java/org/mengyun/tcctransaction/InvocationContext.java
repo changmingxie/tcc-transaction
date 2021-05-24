@@ -1,6 +1,8 @@
 package org.mengyun.tcctransaction;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by changmingxie on 11/9/15.
@@ -15,6 +17,8 @@ public class InvocationContext implements Serializable {
     private Class[] parameterTypes;
 
     private Object[] args;
+
+    private final Map<String, String> attachments = new ConcurrentHashMap<String, String>();
 
     public InvocationContext() {
 
@@ -41,5 +45,9 @@ public class InvocationContext implements Serializable {
 
     public Class[] getParameterTypes() {
         return parameterTypes;
+    }
+
+    public void addAttachment(String key, String value) {
+        attachments.put(key, value);
     }
 }

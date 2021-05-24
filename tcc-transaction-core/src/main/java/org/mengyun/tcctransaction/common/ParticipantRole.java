@@ -3,7 +3,7 @@ package org.mengyun.tcctransaction.common;
 /**
  * Created by changmingxie on 11/11/15.
  */
-public enum MethodRole {
+public enum ParticipantRole {
     ROOT,
     CONSUMER,
     PROVIDER,

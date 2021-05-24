@@ -5,7 +5,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.Propagation;
 import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.common.MethodRole;
+import org.mengyun.tcctransaction.common.ParticipantRole;
 
 import java.lang.reflect.Method;
 
@@ -27,15 +27,15 @@ public class CompensableMethodUtils {
         return method;
     }
 
-    public static MethodRole calculateMethodType(Propagation propagation, boolean isTransactionActive, TransactionContext transactionContext) {
+    public static ParticipantRole calculateMethodType(Propagation propagation, boolean isTransactionActive, TransactionContext transactionContext) {
 
         if ((propagation.equals(Propagation.REQUIRED) && !isTransactionActive && transactionContext == null) ||
                 propagation.equals(Propagation.REQUIRES_NEW)) {
-            return MethodRole.ROOT;
+            return ParticipantRole.ROOT;
         } else if ((propagation.equals(Propagation.REQUIRED) || propagation.equals(Propagation.MANDATORY)) && !isTransactionActive && transactionContext != null) {
-            return MethodRole.PROVIDER;
+            return ParticipantRole.PROVIDER;
         } else {
-            return MethodRole.NORMAL;
+            return ParticipantRole.NORMAL;
         }
     }
 

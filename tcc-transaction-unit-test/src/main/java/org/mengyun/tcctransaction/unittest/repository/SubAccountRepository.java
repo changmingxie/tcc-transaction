@@ -23,4 +23,8 @@ public class SubAccountRepository {
     public SubAccount findById(Long id) {
         return subAccountMap.get(id);
     }
+
+    public void save(SubAccount subAccount) {
+        subAccountMap.put(subAccount.getId(),subAccount);
+    }
 }

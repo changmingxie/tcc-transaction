@@ -13,7 +13,7 @@ public abstract class ResourceCoordinatorAspect {
 
     private ResourceCoordinatorInterceptor resourceCoordinatorInterceptor;
 
-    @Pointcut("@annotation(org.mengyun.tcctransaction.api.Compensable)")
+    @Pointcut("@annotation(org.mengyun.tcctransaction.api.Compensable) || execution(* *(org.mengyun.tcctransaction.api.TransactionContext,..))")
     public void transactionContextCall() {
 
     }

@@ -6,15 +6,15 @@ import org.mengyun.tcctransaction.InvocationContext;
 import org.mengyun.tcctransaction.Participant;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionManager;
-import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.api.TransactionContextEditor;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.TransactionXid;
+import org.mengyun.tcctransaction.common.ParticipantRole;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
-import org.mengyun.tcctransaction.utils.CompensableMethodUtils;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
 
-import java.lang.reflect.Method;
+import java.lang.annotation.Annotation;
 
 /**
  * Created by changmingxie on 11/8/15.
@@ -48,44 +48,44 @@ public class ResourceCoordinatorInterceptor {
         return pjp.proceed(pjp.getArgs());
     }
 
-    private void enlistParticipant(ProceedingJoinPoint pjp) throws IllegalAccessException, InstantiationException {
-
-        Method method = CompensableMethodUtils.getCompensableMethod(pjp);
-        if (method == null) {
-            throw new RuntimeException(String.format("join point not found method, point is : %s", pjp.getSignature().getName()));
-        }
-        Compensable compensable = method.getAnnotation(Compensable.class);
-
-        String confirmMethodName = compensable.confirmMethod();
-        String cancelMethodName = compensable.cancelMethod();
+    private void enlistParticipant(ProceedingJoinPoint pjp) {
 
         Transaction transaction = transactionManager.getCurrentTransaction();
-        TransactionXid xid = new TransactionXid(transaction.getXid().getGlobalTransactionId());
+        CompensableMethodContext compensableMethodContext = new CompensableMethodContext(pjp, transaction);
 
-        if (FactoryBuilder.factoryOf(compensable.transactionContextEditor()).getInstance().get(pjp.getTarget(), method, pjp.getArgs()) == null) {
-            FactoryBuilder.factoryOf(compensable.transactionContextEditor()).getInstance().set(new TransactionContext(xid, TransactionStatus.TRYING.getId()), pjp.getTarget(), ((MethodSignature) pjp.getSignature()).getMethod(), pjp.getArgs());
+        if (compensableMethodContext.getParticipantRole().equals(ParticipantRole.NORMAL)) {
+            return;
         }
 
-        Class targetClass = ReflectionUtils.getDeclaringType(pjp.getTarget().getClass(), method.getName(), method.getParameterTypes());
+        String confirmMethodName = compensableMethodContext.getConfirmMethodName();
+        String cancelMethodName = compensableMethodContext.getCancelMethodName();
+        Class<? extends TransactionContextEditor> transactionContextEditorClass = compensableMethodContext.getTransactionContextEditorClass();
+
+        TransactionXid xid = new TransactionXid(transaction.getXid().getGlobalTransactionId());
+
+        if (compensableMethodContext.getTransactionContext() == null) {
+            FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(new TransactionContext(xid, TransactionStatus.TRYING.getId()), pjp.getTarget(), ((MethodSignature) pjp.getSignature()).getMethod(), pjp.getArgs());
+        }
+
+        Class targetClass = ReflectionUtils.getDeclaringType(pjp.getTarget().getClass(), compensableMethodContext.getMethod().getName(), compensableMethodContext.getMethod().getParameterTypes());
+
+
 
         InvocationContext confirmInvocation = new InvocationContext(targetClass,
                 confirmMethodName,
-                method.getParameterTypes(), pjp.getArgs());
+                compensableMethodContext.getMethod().getParameterTypes(), pjp.getArgs());
 
         InvocationContext cancelInvocation = new InvocationContext(targetClass,
                 cancelMethodName,
-                method.getParameterTypes(), pjp.getArgs());
+                compensableMethodContext.getMethod().getParameterTypes(), pjp.getArgs());
 
         Participant participant =
                 new Participant(
                         xid,
                         confirmInvocation,
                         cancelInvocation,
-                        compensable.transactionContextEditor());
+                        transactionContextEditorClass);
 
         transactionManager.enlistParticipant(participant);
-
     }
-
-
 }
