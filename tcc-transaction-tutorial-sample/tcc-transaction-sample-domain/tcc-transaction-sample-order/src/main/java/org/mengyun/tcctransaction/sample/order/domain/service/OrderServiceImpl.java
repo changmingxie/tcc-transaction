@@ -26,10 +26,15 @@ public class OrderServiceImpl {
     public Order createOrder(long payerUserId, long payeeUserId, List<Pair<Long, Integer>> productQuantities) {
         Order order = orderFactory.buildOrder(payerUserId, payeeUserId, productQuantities);
 
-        orderRepository.createOrder(order);
+        orderRepository.create(order);
 
         return order;
     }
+
+    public void update(Order order) {
+        orderRepository.update(order);
+    }
+
 
     public Order findOrderByMerchantOrderNo(String orderNo) {
         return orderRepository.findByMerchantOrderNo(orderNo);

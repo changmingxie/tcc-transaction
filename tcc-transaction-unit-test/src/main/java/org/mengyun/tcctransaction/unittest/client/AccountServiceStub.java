@@ -4,7 +4,6 @@ import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.unittest.service.AccountService;
 import org.mengyun.tcctransaction.unittest.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;

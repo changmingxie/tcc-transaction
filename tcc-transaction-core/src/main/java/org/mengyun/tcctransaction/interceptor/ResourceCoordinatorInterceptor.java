@@ -14,8 +14,6 @@ import org.mengyun.tcctransaction.common.ParticipantRole;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
 
-import java.lang.annotation.Annotation;
-
 /**
  * Created by changmingxie on 11/8/15.
  */

@@ -38,9 +38,9 @@ public class PaymentServiceImpl {
 
         //check if the order status is DRAFT, if no, means that another call makePayment for the same order happened, ignore this call makePayment.
         if (order.getStatus().equals("DRAFT")) {
-            order.pay(redPacketPayAmount, capitalPayAmount);
+            order.needToPay(redPacketPayAmount, capitalPayAmount);
             try {
-                orderRepository.updateOrder(order);
+                orderRepository.update(order);
             } catch (OptimisticLockingFailureException e) {
                 //ignore the concurrently update order exception, ensure idempotency.
             }
@@ -66,7 +66,7 @@ public class PaymentServiceImpl {
         //check if the trade order status is PAYING, if no, means another call confirmMakePayment happened, return directly, ensure idempotency.
         if (foundOrder != null && foundOrder.getStatus().equals("PAYING")) {
             order.confirm();
-            orderRepository.updateOrder(order);
+            orderRepository.update(order);
         }
     }
 
@@ -85,7 +85,7 @@ public class PaymentServiceImpl {
         //check if the trade order status is PAYING, if no, means another call cancelMakePayment happened, return directly, ensure idempotency.
         if (foundOrder != null && foundOrder.getStatus().equals("PAYING")) {
             order.cancelPayment();
-            orderRepository.updateOrder(order);
+            orderRepository.update(order);
         }
     }
 

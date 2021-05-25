@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.sample.http.redpacket.api.dto.RedPacketTradeOr
 import org.mengyun.tcctransaction.sample.order.domain.entity.Order;
 import org.mengyun.tcctransaction.sample.order.domain.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,20 +28,11 @@ public class PaymentServiceImpl {
 
     @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", asyncConfirm = true)
     @Transactional
-    public void makePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void makePayment(String orderNo, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
         System.out.println("order try make payment called.time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
-        //check if the order status is DRAFT, if no, means that another call makePayment for the same order happened, ignore this call makePayment.
-        if (order.getStatus().equals("DRAFT")) {
-
-            order.pay(redPacketPayAmount, capitalPayAmount);
-            try {
-                orderRepository.updateOrder(order);
-            } catch (OptimisticLockingFailureException e) {
-                //ignore the concurrently update order exception, ensure idempotency.
-            }
-        }
+        Order order = orderRepository.findByMerchantOrderNo(orderNo);
 
         String result = tradeOrderServiceProxy.record(buildCapitalTradeOrderDto(order));
         String result2 = tradeOrderServiceProxy.record(buildRedPacketTradeOrderDto(order));
@@ -51,7 +41,7 @@ public class PaymentServiceImpl {
 //        String result2 = tradeOrderServiceProxy.record(null,buildRedPacketTradeOrderDto(order));
     }
 
-    public void confirmMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void confirmMakePayment(String orderNo, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
         try {
             Thread.sleep(1000l);
@@ -61,16 +51,16 @@ public class PaymentServiceImpl {
 
         System.out.println("order confirm make payment called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
-        Order foundOrder = orderRepository.findByMerchantOrderNo(order.getMerchantOrderNo());
+        Order foundOrder = orderRepository.findByMerchantOrderNo(orderNo);
 
         //check order status, only if the status equals DRAFT, then confirm order
-        if (foundOrder != null && foundOrder.getStatus().equals("PAYING")) {
-            order.confirm();
-            orderRepository.updateOrder(order);
+        if (foundOrder != null) {
+            foundOrder.confirm();
+            orderRepository.update(foundOrder);
         }
     }
 
-    public void cancelMakePayment(Order order, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void cancelMakePayment(String orderNo, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
 
 
         try {
@@ -81,11 +71,11 @@ public class PaymentServiceImpl {
 
         System.out.println("order cancel make payment called.time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
-        Order foundOrder = orderRepository.findByMerchantOrderNo(order.getMerchantOrderNo());
+        Order foundOrder = orderRepository.findByMerchantOrderNo(orderNo);
 
-        if (foundOrder != null && foundOrder.getStatus().equals("PAYING")) {
-            order.cancelPayment();
-            orderRepository.updateOrder(order);
+        if (foundOrder != null) {
+            foundOrder.cancelPayment();
+            orderRepository.update(foundOrder);
         }
     }
 

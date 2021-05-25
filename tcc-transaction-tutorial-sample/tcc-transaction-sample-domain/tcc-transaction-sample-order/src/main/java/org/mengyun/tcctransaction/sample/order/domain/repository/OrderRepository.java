@@ -21,7 +21,7 @@ public class OrderRepository {
     @Autowired
     OrderLineDao orderLineDao;
 
-    public void createOrder(Order order) {
+    public void create(Order order) {
         orderDao.insert(order);
 
         for (OrderLine orderLine : order.getOrderLines()) {
@@ -29,7 +29,7 @@ public class OrderRepository {
         }
     }
 
-    public void updateOrder(Order order) {
+    public void update(Order order) {
         order.updateVersion();
         int effectCount = orderDao.update(order);
 

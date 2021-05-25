@@ -33,11 +33,13 @@ public class PlaceOrderServiceImpl {
         Shop shop = shopRepository.findById(shopId);
 
         Order order = orderService.createOrder(payerUserId, shop.getOwnerUserId(), productQuantities);
+        order.needToPay(redPacketPayAmount,order.getTotalAmount().subtract(redPacketPayAmount));
+        orderService.update(order);
 
         Boolean result = false;
 
         try {
-            paymentService.makePayment(order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
+            paymentService.makePayment(order.getMerchantOrderNo(), redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
 
         } catch (ConfirmingException confirmingException) {
             //exception throws with the tcc transaction status is CONFIRMING,

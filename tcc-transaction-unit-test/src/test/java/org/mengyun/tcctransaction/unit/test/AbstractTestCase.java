@@ -36,9 +36,13 @@ public abstract class AbstractTestCase {
     private void buildAccount() {
         SubAccount subAccountFrom = subAccountRepository.findById(1L);
         subAccountFrom.setBalanceAmount(100);
+        subAccountFrom.setFrozenAmount(0);
+        subAccountRepository.save(subAccountFrom);
 
         SubAccount subAccountTo = subAccountRepository.findById(2L);
         subAccountTo.setBalanceAmount(100);
+        subAccountTo.setFrozenAmount(0);
+        subAccountRepository.save(subAccountTo);
     }
 
 }

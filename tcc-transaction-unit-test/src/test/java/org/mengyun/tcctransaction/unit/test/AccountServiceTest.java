@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.TransactionXid;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.mengyun.tcctransaction.unittest.repository.SubAccountRepository;
-import org.mengyun.tcctransaction.unittest.service.AccountService;
 import org.mengyun.tcctransaction.unittest.service.AccountServiceImpl;
 import org.mengyun.tcctransaction.unittest.utils.MessageConstants;
 import org.mengyun.tcctransaction.unittest.utils.TraceLog;
@@ -50,10 +49,10 @@ public class AccountServiceTest extends AbstractTestCase {
         accountService.transferTo(null, 2, 50);
 
         //then
-        SubAccount subAccountFrom = subAccountRepository.findById(2L);
+        SubAccount subAccountTo = subAccountRepository.findById(2L);
 
-        Assert.assertTrue(subAccountFrom.getBalanceAmount() == 150);
-        Assert.assertTrue(subAccountFrom.getFrozenAmount() == 0);
+        Assert.assertTrue(subAccountTo.getBalanceAmount() == 150);
+        Assert.assertTrue(subAccountTo.getFrozenAmount() == 0);
 
         List<String> messages = TraceLog.getMessages();
 

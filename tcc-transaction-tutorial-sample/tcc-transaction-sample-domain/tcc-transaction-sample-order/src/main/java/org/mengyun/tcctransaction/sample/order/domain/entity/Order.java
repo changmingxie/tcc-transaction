@@ -68,10 +68,9 @@ public class Order implements Serializable {
         return Collections.unmodifiableList(this.orderLines);
     }
 
-    public void pay(BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void needToPay(BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
         this.redPacketPayAmount = redPacketPayAmount;
         this.capitalPayAmount = capitalPayAmount;
-        this.status = "PAYING";
     }
 
     public BigDecimal getRedPacketPayAmount() {

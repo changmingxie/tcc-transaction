@@ -16,8 +16,8 @@ public class SubAccountRepository {
 
     {
         subAccountMap.put(1L, new SubAccount(1, 100));
-        subAccountMap.put(2L, new SubAccount(2, 200));
-        subAccountMap.put(3L, new SubAccount(3, 300));
+        subAccountMap.put(2L, new SubAccount(2, 100));
+        subAccountMap.put(3L, new SubAccount(3, 100));
     }
 
     public SubAccount findById(Long id) {
