@@ -21,6 +21,8 @@ public class RecoverScheduledJob {
 
     private String cronExpression;
 
+    private int delayStartSeconds;
+
 
     public void init() {
 
@@ -44,7 +46,7 @@ public class RecoverScheduledJob {
 
             scheduler.scheduleJob(jobDetail.getObject(), cronTrigger.getObject());
 
-            scheduler.start();
+            scheduler.startDelayed(delayStartSeconds);
 
         } catch (Exception e) {
             throw new SystemException(e);
@@ -85,5 +87,13 @@ public class RecoverScheduledJob {
 
     public void setCronExpression(String cronExpression) {
         this.cronExpression = cronExpression;
+    }
+
+    public int getDelayStartSeconds() {
+        return delayStartSeconds;
+    }
+
+    public void setDelayStartSeconds(int delayStartSeconds) {
+        this.delayStartSeconds = delayStartSeconds;
     }
 }

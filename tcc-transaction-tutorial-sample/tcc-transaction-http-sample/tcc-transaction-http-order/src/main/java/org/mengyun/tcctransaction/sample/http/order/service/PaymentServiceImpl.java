@@ -28,7 +28,7 @@ public class PaymentServiceImpl {
 
     @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", asyncConfirm = true)
     @Transactional
-    public void makePayment(String orderNo, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void makePayment(String orderNo) {
 
         System.out.println("order try make payment called.time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
@@ -41,7 +41,7 @@ public class PaymentServiceImpl {
 //        String result2 = tradeOrderServiceProxy.record(null,buildRedPacketTradeOrderDto(order));
     }
 
-    public void confirmMakePayment(String orderNo, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void confirmMakePayment(String orderNo) {
 
         try {
             Thread.sleep(1000l);
@@ -60,7 +60,7 @@ public class PaymentServiceImpl {
         }
     }
 
-    public void cancelMakePayment(String orderNo, BigDecimal redPacketPayAmount, BigDecimal capitalPayAmount) {
+    public void cancelMakePayment(String orderNo) {
 
 
         try {

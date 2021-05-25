@@ -31,37 +31,18 @@ public class PlaceOrderServiceImpl {
     public String placeOrder(long payerUserId, long shopId, List<Pair<Long, Integer>> productQuantities, final BigDecimal redPacketPayAmount) {
         Shop shop = shopRepository.findById(shopId);
 
-        final Order order = orderService.createOrder(payerUserId, shop.getOwnerUserId(), productQuantities);
-
-        Boolean result = false;
+        Order order = orderService.createOrder(payerUserId, shop.getOwnerUserId(), productQuantities);
+        order.needToPay(redPacketPayAmount,order.getTotalAmount().subtract(redPacketPayAmount));
+        orderService.update(order);
 
         try {
 
-//            ExecutorService executorService = Executors.newFixedThreadPool(2);
-
-//            Future future1 = executorService.submit(new Runnable() {
-//                @Override
-//                public void run() {
-            paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
-//                }
-//            });
-
-//            Future future2 = executorService.submit(new Runnable() {
-//                @Override
-//                public void run() {
-//                    paymentService.makePayment(order.getMerchantOrderNo(), order, redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
-//                }
-//            });
-//
-//            future1.get();
-//            future2.get();
+            paymentService.makePayment(order.getMerchantOrderNo());
 
         } catch (ConfirmingException confirmingException) {
             //exception throws with the tcc transaction status is CONFIRMING,
             //when tcc transaction is confirming status,
             // the tcc transaction recovery will try to confirm the whole transaction to ensure eventually consistent.
-
-            result = true;
         } catch (CancellingException cancellingException) {
             //exception throws with the tcc transaction status is CANCELLING,
             //when tcc transaction is under CANCELLING status,

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:redisson="http://redisson.org/schema/redisson" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://redisson.org/schema/redisson http://redisson.org/schema/redisson/redisson.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd   http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
     <bean class="org.mengyun.tcctransaction.spring.recovery.RecoverConfiguration">
         <property name="transactionRepository">
@@ -28,29 +28,7 @@
                 <property name="fetchPageSize" value="200"/>
             </bean>
         </property>
-        <property name="recoveryLock">
-            <bean id="recoveryLock" class="org.mengyun.tcctransaction.recovery.RedissonRecoveryLock">
-                <property name="lockSuffixName" value="TCC:DUBBO:CAPITAL:JEDIS"/>
-                <property name="redissonClient" ref="redissonClient"/>
-            </bean>
-        </property>
     </bean>
-
-
-    <redisson:client id="redissonClient">
-        <redisson:single-server
-                address="redis://127.0.0.1:6379"
-                idle-connection-timeout="10000"
-                connect-timeout="1000"
-                timeout="300"
-                retry-attempts="3"
-                retry-interval="0"
-                connection-minimum-idle-size="15"
-                connection-pool-size="30"
-                database="0"
-        />
-    </redisson:client>
-
 
     <util:properties id="redis" location="classpath:redis.properties"/>
 

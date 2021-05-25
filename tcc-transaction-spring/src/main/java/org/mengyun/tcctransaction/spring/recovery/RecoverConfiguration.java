@@ -74,6 +74,7 @@ public class RecoverConfiguration implements TransactionConfigurator {
 
         recoveryScheduledJob.setTransactionRecovery(transactionRecovery);
         recoveryScheduledJob.setCronExpression(getRecoverFrequency().getCronExpression());
+        recoveryScheduledJob.setDelayStartSeconds(recoverFrequency.getRecoverDuration());
 
         Properties conf = new Properties();
         conf.put("org.quartz.threadPool.threadCount", String.valueOf(threadCount));

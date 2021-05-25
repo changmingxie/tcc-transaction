@@ -99,7 +99,7 @@ public class TransactionRecovery {
                     }
                 } while (true);
 
-                logger.info(String.format("total recovery count %d from repository:%s", totalCount, transactionRepository.getClass().getName()));
+                logger.debug(String.format("total recovery count %d from repository:%s", totalCount, transactionRepository.getClass().getName()));
             } catch (Throwable e) {
                 logger.error(String.format("recovery failed from repository:%s.", transactionRepository.getClass().getName()), e);
             } finally {
@@ -202,7 +202,7 @@ public class TransactionRecovery {
             if (throwable instanceof TransactionOptimisticLockException
                     || ExceptionUtils.getRootCause(throwable) instanceof TransactionOptimisticLockException) {
 
-                logger.info(String.format(
+                logger.warn(String.format(
                         "optimisticLockException happened while recover. txid:%s, status:%d,retried count:%d",
                         transaction.getXid(),
                         transaction.getStatus().getId(),
