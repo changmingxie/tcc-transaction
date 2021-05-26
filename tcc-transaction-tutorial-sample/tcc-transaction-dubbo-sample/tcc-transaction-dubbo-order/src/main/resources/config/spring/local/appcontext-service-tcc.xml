@@ -1,55 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd   http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean class="org.mengyun.tcctransaction.spring.recovery.RecoverConfiguration" depends-on="springBeanFactory" >
+    <bean class="org.mengyun.tcctransaction.spring.recovery.RecoverConfiguration" depends-on="springBeanFactory">
         <property name="transactionRepository">
+            <bean class="org.mengyun.tcctransaction.repository.MemoryStoreTransactionRepository">
+                <property name="domain" value="TCC:DUBBO:ORDER:"/>
+            </bean>
             <!--            <bean class="org.aggregateframework.transaction.repository.ShardJedisTransactionRepository">-->
             <!--                <property name="domain" value="AGG:SAMPLE:SHARDJEDIS:"/>-->
             <!--                <property name="shardedJedisPool" ref="shardedJedisPool"/>-->
             <!--            </bean>-->
-            <bean class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">
-                <property name="domain" value="TCC:DUBBO:ORDER:JEDIS:"/>
-                <property name="jedisPool" ref="jedisPool"/>
-            </bean>
+            <!--            <bean class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">-->
+            <!--                <property name="domain" value="TCC:DUBBO:ORDER:JEDIS:"/>-->
+            <!--                <property name="jedisPool" ref="jedisPool"/>-->
+            <!--            </bean>-->
             <!--            <bean class="org.aggregateframework.transaction.repository.JedisClusterTransactionRepository">-->
             <!--                <property name="domain" value="AGG:SAMPLE:JEDISCLUSTER:"/>-->
             <!--                <property name="jedisCluster" ref="jedisCluster"/>-->
             <!--            </bean>-->
         </property>
-        <property name="recoverFrequency">
-            <bean class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">
-                <property name="maxRetryCount" value="30"/>
-                <property name="recoverDuration" value="5"/>
-                <property name="cronExpression" value="0/5 * * * * ? "/>
-                <property name="fetchPageSize" value="200"/>
-            </bean>
-        </property>
+        <!--        <property name="recoverFrequency">-->
+        <!--            <bean class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">-->
+        <!--                <property name="maxRetryCount" value="30"/>-->
+        <!--                <property name="recoverDuration" value="5"/>-->
+        <!--                <property name="cronExpression" value="0/5 * * * * ? "/>-->
+        <!--                <property name="fetchPageSize" value="200"/>-->
+        <!--            </bean>-->
+        <!--        </property>-->
     </bean>
 
 
-    <util:properties id="redis" location="classpath:redis.properties"/>
+    <!--    <util:properties id="redis" location="classpath:redis.properties"/>-->
 
-    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
-        <property name="maxTotal" value="#{redis['redis.pool.maxTotal']}"/>
-        <property name="maxIdle" value="#{redis['redis.pool.maxIdle']}"/>
-        <property name="minIdle" value="#{redis['redis.pool.minIdle']}"/>
-        <property name="maxWaitMillis" value="#{redis['redis.pool.maxWaitMillis']}"/>
-    </bean>
+    <!--    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">-->
+    <!--        <property name="maxTotal" value="#{redis['redis.pool.maxTotal']}"/>-->
+    <!--        <property name="maxIdle" value="#{redis['redis.pool.maxIdle']}"/>-->
+    <!--        <property name="minIdle" value="#{redis['redis.pool.minIdle']}"/>-->
+    <!--        <property name="maxWaitMillis" value="#{redis['redis.pool.maxWaitMillis']}"/>-->
+    <!--    </bean>-->
 
-    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-        <constructor-arg name="poolConfig" ref="poolConfig"/>
-        <constructor-arg name="host" value="#{redis['singleredis.host']}"/>
-        <constructor-arg name="port" value="#{redis['singleredis.port']}"/>
-        <constructor-arg name="timeout" value="#{redis['redis.connectionTimeout']}"/>
-    </bean>
-
-    <jdbc:embedded-database id="dataSource" type="H2">
-        <jdbc:script location="classpath:h2.sql" execution="INIT"/>
-    </jdbc:embedded-database>
+    <!--    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">-->
+    <!--        <constructor-arg name="poolConfig" ref="poolConfig"/>-->
+    <!--        <constructor-arg name="host" value="#{redis['singleredis.host']}"/>-->
+    <!--        <constructor-arg name="port" value="#{redis['singleredis.port']}"/>-->
+    <!--        <constructor-arg name="timeout" value="#{redis['redis.connectionTimeout']}"/>-->
+    <!--    </bean>-->
 
 
 </beans>

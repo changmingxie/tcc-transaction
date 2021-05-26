@@ -28,10 +28,6 @@
                   value="org.mengyun.tcctransaction.sample.http.capital.api.CapitalAccountService"/>
     </bean>
 
-    <jdbc:embedded-database id="dataSource" type="H2">
-        <jdbc:script location="classpath:h2.sql" execution="INIT"/>
-    </jdbc:embedded-database>
-
     <bean id="httpServer"
           class="org.springframework.remoting.support.SimpleHttpServerFactoryBean">
         <property name="contexts">

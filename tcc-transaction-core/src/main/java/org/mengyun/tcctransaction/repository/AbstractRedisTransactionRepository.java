@@ -120,14 +120,14 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
     }
 
     @Override
-    List<Transaction> findTransactionsFromOneShard(Jedis shard, Set<byte[]> keys) {
+     List<Transaction> findTransactionsFromOneShard(Jedis shard, Set keys) {
 
         List<Transaction> list = null;
 
         Pipeline pipeline = shard.pipelined();
 
-        for (final byte[] key : keys) {
-            pipeline.hgetAll(key);
+        for (final Object key : keys) {
+            pipeline.hgetAll((byte[])key);
         }
 
         List<Object> result = pipeline.syncAndReturnAll();

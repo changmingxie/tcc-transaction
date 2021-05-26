@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import javax.transaction.xa.Xid;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -73,6 +74,14 @@ public class RocksDbTransactionRepository extends AbstractKVStoreTransactionRepo
     protected int doUpdate(Transaction transaction) {
 
         try {
+
+            Transaction foundTransaction = doFindOne(transaction.getXid());
+            if(foundTransaction.getVersion() != transaction.getVersion()) {
+                return 0;
+            }
+
+            transaction.setVersion(transaction.getVersion() + 1);
+            transaction.setLastUpdateTime(new Date());
             db.put(transaction.getXid().toString().getBytes(), serializer.serialize(transaction));
             return 1;
         } catch (RocksDBException e) {
@@ -140,7 +149,7 @@ public class RocksDbTransactionRepository extends AbstractKVStoreTransactionRepo
 
 
     @Override
-    List<Transaction> findTransactionsFromOneShard(RocksDB shard, Set<byte[]> keys) {
+    List<Transaction> findTransactionsFromOneShard(RocksDB shard, Set keys) {
         List<Transaction> list = null;
 
         List<byte[]> allValues = null;

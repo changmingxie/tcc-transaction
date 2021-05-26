@@ -8,7 +8,7 @@
 
     <bean class="org.mengyun.tcctransaction.spring.recovery.RecoverConfiguration">
         <property name="transactionRepository">
-            <bean class="org.mengyun.tcctransaction.unittest.repository.MemoryStoreTransactionRepository">
+            <bean class="org.mengyun.tcctransaction.repository.MemoryStoreTransactionRepository">
             </bean>
         </property>
         <property name="recoverFrequency">

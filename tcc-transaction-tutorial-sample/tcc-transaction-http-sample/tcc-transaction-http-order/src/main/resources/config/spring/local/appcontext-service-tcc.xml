@@ -1,55 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:redisson="http://redisson.org/schema/redisson" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://redisson.org/schema/redisson http://redisson.org/schema/redisson/redisson.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
-
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <util:properties id="redis" location="classpath:redis.properties"/>
-    <util:properties id="config" location="classpath:config.properties"/>
-
-    <jdbc:embedded-database id="dataSource" type="H2">
-        <jdbc:script location="classpath:h2.sql" execution="INIT"/>
-    </jdbc:embedded-database>
+    <util:properties id="zk" location="classpath:zk.properties"/>
 
     <bean class="org.mengyun.tcctransaction.spring.recovery.RecoverConfiguration">
-        <property name="transactionRepository" ref="jedisShardTransactionRepository"/>
+        <property name="transactionRepository" ref="transactionRepository"/>
         <property name="recoverFrequency">
             <bean class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">
                 <property name="maxRetryCount" value="30"/>
                 <property name="recoverDuration" value="30"/>
-                <property name="cronExpression" value="0 */1 * * * ? "/>
+                <property name="cronExpression" value="0/15 * * * * ?"/>
                 <property name="fetchPageSize" value="200"/>
             </bean>
         </property>
-        <property name="recoveryLock" ref="recoveryLock"/>
     </bean>
 
-    <bean id="recoveryLock" class="org.mengyun.tcctransaction.recovery.RedissonRecoveryLock">
-        <property name="lockSuffixName" value="TCC:HTTP:ORDER:JEDIS:"/>
-        <property name="redissonClient" ref="redissonClient"/>
+    <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.SentinelTransactionRepository"
+          init-method="init" destroy-method="close">
+        <property name="workTransactionRepository" ref="jedisClusterTransactionRepository"/>
+        <property name="degradedTransactionRepository" ref="rocksDbTransactionRepository"/>
+        <property name="sentinelController" ref="sentinelController"/>
     </bean>
 
-    <bean id="jedisShardTransactionRepository"
-          class="org.mengyun.tcctransaction.repository.ShardJedisTransactionRepository">
-        <property name="domain" value="TCC:HTTP:ORDER:JEDIS:"/>
-        <property name="shardedJedisPool" ref="shardedJedisPool"/>
+    <!--    <bean id="redisTransactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">-->
+    <!--        <property name="domain" value="TCC:HTTP:ORDER:"/>-->
+    <!--        <property name="jedisPool" ref="jedisPool"/>-->
+    <!--    </bean>-->
+
+    <!--    <bean class="org.mengyun.tcctransaction.repository.ShardJedisTransactionRepository">-->
+    <!--        <property name="domain" value="TCC:HTTP:ORDER:"/>-->
+    <!--        <property name="shardedJedisPool" ref="shardedJedisPool"/>-->
+    <!--    </bean>-->
+
+    <bean id="sentinelController" class="org.mengyun.tcctransaction.ha.zookeeper.ZookeeperSentinelController">
+        <constructor-arg ref="curator"/>
+        <constructor-arg value="TCC:HTTP:ORDER:"/>
     </bean>
 
-    <redisson:client id="redissonClient">
-        <redisson:single-server
-                address="redis://127.0.0.1:6379"
-                idle-connection-timeout="10000"
-                connect-timeout="1000"
-                timeout="300"
-                retry-attempts="3"
-                retry-interval="0"
-                connection-minimum-idle-size="15"
-                connection-pool-size="30"
-                database="0"
-        />
-    </redisson:client>
+    <bean id="jedisClusterTransactionRepository"
+          class="org.mengyun.tcctransaction.repository.JedisClusterTransactionRepository">
+        <property name="domain" value="TCC:HTTP:ORDER:"/>
+        <property name="jedisCluster" ref="jedisCluster"/>
+    </bean>
+
+    <bean id="rocksDbTransactionRepository"
+          class="org.mengyun.tcctransaction.repository.RocksDbTransactionRepository" init-method="init"
+          destroy-method="close">
+        <property name="location" value="/tmp"/>
+        <property name="domain" value="TCC:HTTP:ORDER:"/>
+    </bean>
+
+
+    <bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+        <constructor-arg>
+            <util:set>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg value="#{redis['clusterredis1.host']}"/>
+                    <constructor-arg value="#{redis['clusterredis1.port']}"/>
+                </bean>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg value="#{redis['clusterredis2.host']}"/>
+                    <constructor-arg value="#{redis['clusterredis2.port']}"/>
+                </bean>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg value="#{redis['clusterredis3.host']}"/>
+                    <constructor-arg value="#{redis['clusterredis3.port']}"/>
+                </bean>
+            </util:set>
+        </constructor-arg>
+        <constructor-arg type="int" value="#{redis['redis.connectionTimeout']}"/>
+        <constructor-arg type="int" value="#{redis['redis.soTimeout']}"/>
+        <constructor-arg type="int" value="3"/>
+        <constructor-arg value="#{redis['redis.password']}"/>
+        <constructor-arg ref="poolConfig"/>
+    </bean>
+
+
+    <!--    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">-->
+    <!--        <constructor-arg name="poolConfig" ref="poolConfig"/>-->
+    <!--        <constructor-arg name="host" value="#{redis['singleredis.host']}"/>-->
+    <!--        <constructor-arg name="port" value="#{redis['singleredis.port']}"/>-->
+    <!--        <constructor-arg name="timeout" value="#{redis['redis.connectionTimeout']}"/>-->
+    <!--    </bean>-->
 
 
     <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -59,33 +95,11 @@
         <property name="maxWaitMillis" value="#{redis['redis.pool.maxWaitMillis']}"/>
     </bean>
 
-    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-        <constructor-arg name="poolConfig" ref="poolConfig"/>
-        <constructor-arg name="host" value="#{redis['singleredis.host']}"/>
-        <constructor-arg name="port" value="#{redis['singleredis.port']}"/>
-        <constructor-arg name="timeout" value="#{redis['redis.connectionTimeout']}"/>
-    </bean>
 
-    <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool" destroy-method="close">
-        <constructor-arg index="0" ref="poolConfig"/>
-        <constructor-arg index="1">
-            <list>
-                <bean class="redis.clients.jedis.JedisShardInfo">
-                    <constructor-arg name="host" value="127.0.0.1"/>
-                    <constructor-arg name="port" value="6379"/>
-                    <constructor-arg name="connectionTimeout" value="300"/>
-                    <constructor-arg name="soTimeout" value="2000"/>
-                    <constructor-arg name="weight" value="1"/>
-                </bean>
-            </list>
-        </constructor-arg>
-    </bean>
-
-
-    <bean id="curator" class="org.mengyun.tcctransaction.ha.zookeeper.CuratorFactory" factory-method="make"
-          destroy-method="close">
-        <constructor-arg value="#{config['zk.address']}"/>
-        <constructor-arg value="#{config['zk.digest:']}"/>
+    <!--  below is for transaction recovery dashboard config-->
+    <bean class="org.mengyun.tcctransaction.ha.spring.SpringSmartAutoRegistryService">
+        <property name="registry" ref="registry"/>
+        <property name="registration" ref="registration"/>
     </bean>
 
     <bean id="registry" class="org.mengyun.tcctransaction.ha.zookeeper.ZookeeperRegistry">
@@ -93,7 +107,7 @@
     </bean>
 
     <bean id="registration" class="org.mengyun.tcctransaction.ha.spring.RegistrationSpringFactory">
-        <property name="transactionRepository" ref="jedisShardTransactionRepository"/>
+        <property name="transactionRepository" ref="jedisClusterTransactionRepository"/>
         <property name="owners">
             <list>
                 <bean class="org.mengyun.tcctransaction.ha.registry.Owner">
@@ -102,13 +116,12 @@
                 </bean>
             </list>
         </property>
-        <property name="application" value="tcc-transaction-http-order"/>
+        <property name="application" value="tcc-transaction-http-capital"/>
     </bean>
 
-    <bean class="org.mengyun.tcctransaction.ha.spring.SpringSmartAutoRegistryService">
-        <property name="registration" ref="registration"/>
-        <property name="registry" ref="registry"/>
+    <bean id="curator" class="org.mengyun.tcctransaction.ha.zookeeper.CuratorFactory" factory-method="make"
+          destroy-method="close">
+        <constructor-arg value="#{zk['zk.address']}"/>
+        <constructor-arg value="#{zk['zk.digest']}"/>
     </bean>
-
-
 </beans>

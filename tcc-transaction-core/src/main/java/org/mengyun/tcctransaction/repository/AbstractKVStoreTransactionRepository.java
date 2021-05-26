@@ -146,9 +146,9 @@ public abstract class AbstractKVStoreTransactionRepository<T> extends CacheableT
         return transactions;
     }
 
-    abstract List<Transaction> findTransactionsFromOneShard(T shard, Set<byte[]> keys);
+    abstract  List<Transaction> findTransactionsFromOneShard(T shard, Set keys);
 
-    abstract Page<byte[]> findKeysFromOneShard(T shard, String currentCursor, int maxFindCount);
+    abstract  Page findKeysFromOneShard(T shard, String currentCursor, int maxFindCount);
 
     protected abstract ShardHolder<T> getShardHolder();
 

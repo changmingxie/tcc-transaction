@@ -44,6 +44,12 @@ public class FileSystemTransactionRepository extends CacheableTransactionReposit
 
     @Override
     protected int doUpdate(Transaction transaction) {
+
+        Transaction foundTransaction = doFindOne(transaction.getXid());
+        if (foundTransaction.getVersion() != transaction.getVersion()) {
+            return 0;
+        }
+
         transaction.setVersion(transaction.getVersion() + 1);
         transaction.setLastUpdateTime(new Date());
 
