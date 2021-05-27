@@ -21,5 +21,5 @@ public interface TransactionConfigurator {
 
     Lock getRecoveryLock();
 
-    Set<Class<? extends Exception>> getDelayCancelExceptions();
+//    Set<Class<? extends Exception>> getDelayCancelExceptions();
 }

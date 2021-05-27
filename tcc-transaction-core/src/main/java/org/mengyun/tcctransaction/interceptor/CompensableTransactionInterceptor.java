@@ -3,17 +3,17 @@ package org.mengyun.tcctransaction.interceptor;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.mengyun.tcctransaction.IllegalTransactionStatusException;
 import org.mengyun.tcctransaction.NoExistedTransactionException;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionManager;
+import org.mengyun.tcctransaction.api.ParticipantStatus;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -25,15 +25,15 @@ public class CompensableTransactionInterceptor {
 
     private TransactionManager transactionManager;
 
-    private Set<Class<? extends Exception>> delayCancelExceptions = new HashSet<Class<? extends Exception>>();
+//    private Set<Class<? extends Exception>> delayCancelExceptions = new HashSet<Class<? extends Exception>>();
 
     public void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
-
-    public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayCancelExceptions) {
-        this.delayCancelExceptions.addAll(delayCancelExceptions);
-    }
+//
+//    public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayCancelExceptions) {
+//        this.delayCancelExceptions.addAll(delayCancelExceptions);
+//    }
 
     public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
 
@@ -67,9 +67,9 @@ public class CompensableTransactionInterceptor {
 
         boolean asyncCancel = compensableMethodContext.getAnnotation().asyncCancel();
 
-        Set<Class<? extends Exception>> allDelayCancelExceptions = new HashSet<Class<? extends Exception>>();
-        allDelayCancelExceptions.addAll(this.delayCancelExceptions);
-        allDelayCancelExceptions.addAll(Arrays.asList(compensableMethodContext.getAnnotation().delayCancelExceptions()));
+//        Set<Class<? extends Exception>> allDelayCancelExceptions = new HashSet<Class<? extends Exception>>();
+//        allDelayCancelExceptions.addAll(this.delayCancelExceptions);
+//        allDelayCancelExceptions.addAll(Arrays.asList(compensableMethodContext.getAnnotation().delayCancelExceptions()));
 
         try {
 
@@ -79,12 +79,14 @@ public class CompensableTransactionInterceptor {
                 returnValue = compensableMethodContext.proceed();
             } catch (Throwable tryingException) {
 
-                if (!isDelayCancelException(tryingException, allDelayCancelExceptions)) {
+//                if (!isDelayCancelException(tryingException, allDelayCancelExceptions)) {
+//
+//                    logger.warn(String.format("compensable transaction trying failed. transaction content:%s", JSON.toJSONString(transaction)), tryingException);
+//
+//                    transactionManager.rollback(asyncCancel);
+//                }
 
-                    logger.warn(String.format("compensable transaction trying failed. transaction content:%s", JSON.toJSONString(transaction)), tryingException);
-
-                    transactionManager.rollback(asyncCancel);
-                }
+                transactionManager.rollback(asyncCancel);
 
                 throw tryingException;
             }
@@ -126,7 +128,29 @@ public class CompensableTransactionInterceptor {
 
                     try {
                         transaction = transactionManager.propagationExistBegin(compensableMethodContext.getTransactionContext());
-                        transactionManager.rollback(asyncCancel);
+
+
+                        //The participant' status of this branch transaction, passed from consumer side.
+                        int participantStatus = compensableMethodContext.getTransactionContext().getParticipantStatus();
+
+                        if (participantStatus == ParticipantStatus.TRY_FAILED.getId()) {
+
+                            if (transaction.isTryFailed()) {
+                                // In this case, the  TRY_FAILED status of the participant passed from consumer side is caused by any of the transaction's participants,
+                                // can safely rollback the transaction.
+                                transactionManager.rollback(asyncCancel);
+                            } else {
+                                // In this case, the participant' status of this branch transaction passed from consumer side is TRY_FAILED,
+                                // while the transaction has no any try failed participant, which means the participant's status seem from consumer side
+                                // is not caused by any of the transaction participant, maybe caused by timeout exception or another.
+                                // The transaction's participants maybe still running(try stage), cannot directly rollback, need waiting for the recovery job to rollback it.
+                                throw new IllegalTransactionStatusException("Branch transaction maybe is trying, cannot rollback directly, waiting for recovery job to rollback.");
+                            }
+                        } else {
+                            //The status of participant of this branch transaction is TRYING_SUCCESS, can safely rollback the transaction, too
+                            transactionManager.rollback(asyncCancel);
+                        }
+
                     } catch (NoExistedTransactionException exception) {
                         //the transaction has been rollback,ignore it.
                         logger.info("no existed transaction found at CANCELLING stage, will ignore and cancel automatically. transaction:" + JSON.toJSONString(transaction));

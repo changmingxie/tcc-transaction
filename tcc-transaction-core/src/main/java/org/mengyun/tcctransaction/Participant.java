@@ -1,9 +1,6 @@
 package org.mengyun.tcctransaction;
 
-import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.api.TransactionContextEditor;
-import org.mengyun.tcctransaction.api.TransactionStatus;
-import org.mengyun.tcctransaction.api.TransactionXid;
+import org.mengyun.tcctransaction.api.*;
 
 import java.io.Serializable;
 
@@ -17,6 +14,7 @@ public class Participant implements Serializable {
     private TransactionXid xid;
     private InvocationContext confirmInvocationContext;
     private InvocationContext cancelInvocationContext;
+    private int status = ParticipantStatus.TRYING.getId();
 
     public Participant() {
 
@@ -36,11 +34,11 @@ public class Participant implements Serializable {
     }
 
     public void rollback() {
-        Terminator.invoke(new TransactionContext(xid, TransactionStatus.CANCELLING.getId()), cancelInvocationContext, transactionContextEditorClass);
+        Terminator.invoke(new TransactionContext(xid, TransactionStatus.CANCELLING.getId(), status), cancelInvocationContext, transactionContextEditorClass);
     }
 
     public void commit() {
-        Terminator.invoke(new TransactionContext(xid, TransactionStatus.CONFIRMING.getId()), confirmInvocationContext, transactionContextEditorClass);
+        Terminator.invoke(new TransactionContext(xid, TransactionStatus.CONFIRMING.getId(), status), confirmInvocationContext, transactionContextEditorClass);
     }
 
     public TransactionXid getXid() {
@@ -59,4 +57,11 @@ public class Participant implements Serializable {
         return cancelInvocationContext;
     }
 
+    public void setStatus(ParticipantStatus status) {
+        this.status = status.getId();
+    }
+
+    public ParticipantStatus getStatus() {
+        return ParticipantStatus.valueOf(this.status);
+    }
 }

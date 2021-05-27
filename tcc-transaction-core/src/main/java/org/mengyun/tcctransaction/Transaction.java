@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction;
 
 
+import org.mengyun.tcctransaction.api.ParticipantStatus;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.TransactionXid;
@@ -137,5 +138,14 @@ public class Transaction implements Serializable {
 
     public void updateTime() {
         this.lastUpdateTime = new Date();
+    }
+
+    public boolean isTryFailed() {
+        for (Participant participant : participants) {
+            if (participant.getStatus().equals(ParticipantStatus.TRY_FAILED.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

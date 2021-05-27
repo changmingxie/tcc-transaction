@@ -6,10 +6,7 @@ import org.mengyun.tcctransaction.InvocationContext;
 import org.mengyun.tcctransaction.Participant;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionManager;
-import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.api.TransactionContextEditor;
-import org.mengyun.tcctransaction.api.TransactionStatus;
-import org.mengyun.tcctransaction.api.TransactionXid;
+import org.mengyun.tcctransaction.api.*;
 import org.mengyun.tcctransaction.common.ParticipantRole;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
@@ -30,29 +27,36 @@ public class ResourceCoordinatorInterceptor {
 
         Transaction transaction = transactionManager.getCurrentTransaction();
 
-        if (transaction != null) {
+        if (transaction != null && transaction.getStatus().equals(TransactionStatus.TRYING)) {
 
-            switch (transaction.getStatus()) {
-                case TRYING:
-                    enlistParticipant(pjp);
-                    break;
-                case CONFIRMING:
-                    break;
-                case CANCELLING:
-                    break;
+            Participant participant = enlistParticipant(pjp);
+
+            if (participant != null) {
+
+                Object result = null;
+                try {
+                    result = pjp.proceed(pjp.getArgs());
+                    participant.setStatus(ParticipantStatus.TRY_SUCCESS);
+                } catch (Throwable e) {
+                    participant.setStatus(ParticipantStatus.TRY_FAILED);
+                    transactionManager.update(participant);
+                    throw e;
+                }
+
+                return result;
             }
         }
 
         return pjp.proceed(pjp.getArgs());
     }
 
-    private void enlistParticipant(ProceedingJoinPoint pjp) {
+    private Participant enlistParticipant(ProceedingJoinPoint pjp) {
 
         Transaction transaction = transactionManager.getCurrentTransaction();
         CompensableMethodContext compensableMethodContext = new CompensableMethodContext(pjp, transaction);
 
         if (compensableMethodContext.getParticipantRole().equals(ParticipantRole.NORMAL)) {
-            return;
+            return null;
         }
 
         String confirmMethodName = compensableMethodContext.getConfirmMethodName();
@@ -62,11 +66,10 @@ public class ResourceCoordinatorInterceptor {
         TransactionXid xid = new TransactionXid(transaction.getXid().getGlobalTransactionId());
 
         if (compensableMethodContext.getTransactionContext() == null) {
-            FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(new TransactionContext(xid, TransactionStatus.TRYING.getId()), pjp.getTarget(), ((MethodSignature) pjp.getSignature()).getMethod(), pjp.getArgs());
+            FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(new TransactionContext(xid, TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId()), pjp.getTarget(), ((MethodSignature) pjp.getSignature()).getMethod(), pjp.getArgs());
         }
 
         Class targetClass = ReflectionUtils.getDeclaringType(pjp.getTarget().getClass(), compensableMethodContext.getMethod().getName(), compensableMethodContext.getMethod().getParameterTypes());
-
 
 
         InvocationContext confirmInvocation = new InvocationContext(targetClass,
@@ -85,5 +88,6 @@ public class ResourceCoordinatorInterceptor {
                         transactionContextEditorClass);
 
         transactionManager.enlistParticipant(participant);
+        return participant;
     }
 }

@@ -10,9 +10,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TransactionContext implements Serializable {
 
     private static final long serialVersionUID = -8199390103169700387L;
-    private TransactionXid xid;
 
-    private int status;
+    private TransactionXid xid;
+    private int status = TransactionStatus.TRYING.getId();
+    private int participantStatus = ParticipantStatus.TRYING.getId();
+
 
     private Map<String, String> attachments = new ConcurrentHashMap<String, String>();
 
@@ -21,8 +23,13 @@ public class TransactionContext implements Serializable {
     }
 
     public TransactionContext(TransactionXid xid, int status) {
+        this(xid,status,ParticipantStatus.TRYING.getId());
+    }
+
+    public TransactionContext(TransactionXid xid, int status,int participantStatus) {
         this.xid = xid;
         this.status = status;
+        this.participantStatus = participantStatus;
     }
 
     public TransactionXid getXid() {
@@ -52,4 +59,11 @@ public class TransactionContext implements Serializable {
     }
 
 
+    public int getParticipantStatus() {
+        return participantStatus;
+    }
+
+    public void setParticipantStatus(int participantStatus) {
+        this.participantStatus = participantStatus;
+    }
 }
