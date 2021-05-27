@@ -19,4 +19,8 @@ public class AccountServiceProxy {
     public void transferTo(final long accountId, final int amount) {
         accountService.transferTo(null, accountId, amount);
     }
+
+    public void transferToWithTimeout(final long accountId, final int amount) {
+        accountService.transferToWithTimeout(null, accountId, amount);
+    }
 }

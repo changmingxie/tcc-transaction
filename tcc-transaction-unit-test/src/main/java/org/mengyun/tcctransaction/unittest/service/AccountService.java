@@ -9,5 +9,7 @@ public interface AccountService {
 
     void transferTo(TransactionContext transactionContext, long accountId, int amount);
 
+    void transferToWithTimeout(TransactionContext transactionContext, long accountId, int amount);
+
     void transferFrom(TransactionContext transactionContext, long accountId, int amount);
 }

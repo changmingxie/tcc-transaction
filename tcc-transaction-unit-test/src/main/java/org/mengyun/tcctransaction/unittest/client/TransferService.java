@@ -29,6 +29,15 @@ public class TransferService {
         accountServiceProxy.transferTo(toAccountId, amount);
     }
 
+    @Compensable(confirmMethod = "transferConfirm", cancelMethod = "transferCancel")
+    @Transactional
+    public void transferWithTimeout(long fromAccountId, long toAccountId, int amount) {
+
+        TraceLog.debug(MessageConstants.TRANSFER_SERVER_TRANSFER_CALLED);
+        accountServiceProxy.transferFrom(fromAccountId, amount);
+        accountServiceProxy.transferToWithTimeout(toAccountId, amount);
+    }
+
 //    @Compensable(confirmMethod = "transferConfirm", cancelMethod = "transferCancel")
 //    @Transactional
 //    public void transferWithEmbeddedParticipants(long fromAccountId, long toAccountId, int amount) {
