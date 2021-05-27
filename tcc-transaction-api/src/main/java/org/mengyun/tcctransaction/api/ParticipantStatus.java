@@ -12,9 +12,9 @@ public enum ParticipantStatus {
     public static ParticipantStatus valueOf(int id) {
 
         switch (id) {
-            case 1:
-                return TRY_SUCCESS;
             case 2:
+                return TRY_SUCCESS;
+            case 3:
                 return TRY_FAILED;
             default:
                 return TRYING;

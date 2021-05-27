@@ -2,6 +2,8 @@ package org.mengyun.tcctransaction.unit.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mengyun.tcctransaction.repository.TransactionRepository;
+import org.mengyun.tcctransaction.spring.recovery.RecoverConfiguration;
 import org.mengyun.tcctransaction.unittest.client.TransferService;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.mengyun.tcctransaction.unittest.repository.SubAccountRepository;
@@ -21,6 +23,9 @@ public class TransferServiceTest extends AbstractTestCase {
 
     @Autowired
     private TransferService transferService;
+
+    @Autowired
+    private RecoverConfiguration recoverConfiguration;
 
     @Test
     public void testTransfer() {
@@ -50,8 +55,8 @@ public class TransferServiceTest extends AbstractTestCase {
     }
 
     @Test
-    public void testTransferWithTryFailed() {
-
+    public void testTransferWithTryFailedByTimeout() {
+        System.out.println("testTransferWithTryFailed will cost about 30s， please wait!");
         //given
 
         //when
@@ -78,6 +83,49 @@ public class TransferServiceTest extends AbstractTestCase {
 
         Assert.assertEquals(MessageConstants.TRANSFER_SERVER_TRANSFER_CANCEL_CALLED, messages.get(3));
         Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CANCEL_CALLED, messages.get(4));
-//        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CONFIRM_CALLED, messages.get(5));
+
+        try {
+            Thread.sleep(10000l);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+         messages = TraceLog.getMessages();
+        Assert.assertEquals(7, messages.size());
+        Assert.assertEquals(MessageConstants.TRANSFER_SERVER_TRANSFER_CANCEL_CALLED, messages.get(5));
+        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CANCEL_CALLED, messages.get(6));
+
+    }
+
+    @Test
+    public void testTransferWithTryFailedByException() {
+        System.out.println("testTransferWithTryFailed will cost about 30s， please wait!");
+        //given
+
+        //when
+        try {
+            transferService.transferWithException(1, 2, 50);
+        } catch (Throwable e) {
+
+        }
+
+        //then
+        SubAccount subAccountFrom = subAccountRepository.findById(1L);
+
+        SubAccount subAccountTo = subAccountRepository.findById(2L);
+
+        Assert.assertTrue(subAccountFrom.getBalanceAmount() == 100);
+        Assert.assertTrue(subAccountTo.getBalanceAmount() == 100);
+
+        List<String> messages = TraceLog.getMessages();
+        Assert.assertEquals(6, messages.size());
+
+        Assert.assertEquals(MessageConstants.TRANSFER_SERVER_TRANSFER_CALLED, messages.get(0));
+        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CALLED, messages.get(1));
+        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CALLED, messages.get(2));
+
+        Assert.assertEquals(MessageConstants.TRANSFER_SERVER_TRANSFER_CANCEL_CALLED, messages.get(3));
+        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CANCEL_CALLED, messages.get(4));
+        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CANCEL_CALLED, messages.get(5));
     }
 }

@@ -20,6 +20,4 @@ public interface TransactionConfigurator {
     RecoverFrequency getRecoverFrequency();
 
     Lock getRecoveryLock();
-
-//    Set<Class<? extends Exception>> getDelayCancelExceptions();
 }

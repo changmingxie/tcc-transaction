@@ -193,7 +193,7 @@ public class TransactionRecovery {
 
                 transaction.setStatus(CANCELLING);
                 transactionRepository.update(transaction);
-                transaction.rollback();
+                transaction.rollback(true);
                 transactionRepository.delete(transaction);
             }
 

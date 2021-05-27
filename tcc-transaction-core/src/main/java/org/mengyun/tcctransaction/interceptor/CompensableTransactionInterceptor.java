@@ -25,24 +25,14 @@ public class CompensableTransactionInterceptor {
 
     private TransactionManager transactionManager;
 
-//    private Set<Class<? extends Exception>> delayCancelExceptions = new HashSet<Class<? extends Exception>>();
-
     public void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
-//
-//    public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayCancelExceptions) {
-//        this.delayCancelExceptions.addAll(delayCancelExceptions);
-//    }
 
     public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
 
         Transaction transaction = transactionManager.getCurrentTransaction();
         CompensableMethodContext compensableMethodContext = new CompensableMethodContext(pjp, transaction);
-
-//        if (!TransactionUtils.isLegalTransactionContext(isTransactionActive, compensableMethodContext)) {
-//            throw new SystemException("no active compensable transaction while propagation is mandatory for method " + compensableMethodContext.getMethod().getName());
-//        }
 
         // if method is @Compensable and no transaction context and no transaction, then root
         // else if method is @Compensable and has transaction context and no transaction ,then provider
@@ -67,10 +57,6 @@ public class CompensableTransactionInterceptor {
 
         boolean asyncCancel = compensableMethodContext.getAnnotation().asyncCancel();
 
-//        Set<Class<? extends Exception>> allDelayCancelExceptions = new HashSet<Class<? extends Exception>>();
-//        allDelayCancelExceptions.addAll(this.delayCancelExceptions);
-//        allDelayCancelExceptions.addAll(Arrays.asList(compensableMethodContext.getAnnotation().delayCancelExceptions()));
-
         try {
 
             transaction = transactionManager.begin(compensableMethodContext.getUniqueIdentity());
@@ -78,13 +64,6 @@ public class CompensableTransactionInterceptor {
             try {
                 returnValue = compensableMethodContext.proceed();
             } catch (Throwable tryingException) {
-
-//                if (!isDelayCancelException(tryingException, allDelayCancelExceptions)) {
-//
-//                    logger.warn(String.format("compensable transaction trying failed. transaction content:%s", JSON.toJSONString(transaction)), tryingException);
-//
-//                    transactionManager.rollback(asyncCancel);
-//                }
 
                 transactionManager.rollback(asyncCancel);
 
@@ -166,22 +145,4 @@ public class CompensableTransactionInterceptor {
 
         return ReflectionUtils.getNullValue(method.getReturnType());
     }
-
-    private boolean isDelayCancelException(Throwable throwable, Set<Class<? extends Exception>> delayCancelExceptions) {
-
-        if (delayCancelExceptions != null) {
-            for (Class delayCancelException : delayCancelExceptions) {
-
-                Throwable rootCause = ExceptionUtils.getRootCause(throwable);
-
-                if (delayCancelException.isAssignableFrom(throwable.getClass())
-                        || (rootCause != null && delayCancelException.isAssignableFrom(rootCause.getClass()))) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
 }

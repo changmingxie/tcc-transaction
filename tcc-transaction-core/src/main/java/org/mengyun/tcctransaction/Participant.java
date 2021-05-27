@@ -33,8 +33,9 @@ public class Participant implements Serializable {
         this.transactionContextEditorClass = transactionContextEditorClass;
     }
 
-    public void rollback() {
-        Terminator.invoke(new TransactionContext(xid, TransactionStatus.CANCELLING.getId(), status), cancelInvocationContext, transactionContextEditorClass);
+    public void rollback(boolean force) {
+
+        Terminator.invoke(new TransactionContext(xid, TransactionStatus.CANCELLING.getId(), force ? ParticipantStatus.TRY_SUCCESS.getId() : status), cancelInvocationContext, transactionContextEditorClass);
     }
 
     public void commit() {

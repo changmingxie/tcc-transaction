@@ -23,7 +23,6 @@ public class ConfigurableTransactionAspect extends CompensableTransactionAspect 
 
         CompensableTransactionInterceptor compensableTransactionInterceptor = new CompensableTransactionInterceptor();
         compensableTransactionInterceptor.setTransactionManager(transactionManager);
-//        compensableTransactionInterceptor.setDelayCancelExceptions(transactionConfigurator.getDelayCancelExceptions());
 
         this.setCompensableTransactionInterceptor(compensableTransactionInterceptor);
     }

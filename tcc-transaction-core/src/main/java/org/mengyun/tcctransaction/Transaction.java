@@ -90,9 +90,9 @@ public class Transaction implements Serializable {
         }
     }
 
-    public void rollback() {
+    public void rollback(boolean force) {
         for (Participant participant : participants) {
-            participant.rollback();
+            participant.rollback(force);
         }
     }
 
@@ -142,7 +142,7 @@ public class Transaction implements Serializable {
 
     public boolean isTryFailed() {
         for (Participant participant : participants) {
-            if (participant.getStatus().equals(ParticipantStatus.TRY_FAILED.getId())) {
+            if (participant.getStatus().equals(ParticipantStatus.TRY_FAILED)) {
                 return true;
             }
         }

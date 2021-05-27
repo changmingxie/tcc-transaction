@@ -43,10 +43,17 @@ public class AccountServiceImpl implements AccountService {
     public void transferToWithTimeout(TransactionContext transactionContext, long accountId, int amount) {
         TraceLog.debug(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CALLED);
         try {
-            Thread.sleep(5000l);
+            Thread.sleep(2000l);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    @Compensable(propagation = Propagation.REQUIRED, confirmMethod = "transferToConfirm", cancelMethod = "transferToCancel")
+    public void transferToWithException(TransactionContext transactionContext, long accountId, int amount) {
+        TraceLog.debug(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CALLED);
+        throw new RuntimeException("mock try failed");
     }
 
     public void transferFromConfirm(TransactionContext transactionContext, long accountId, int amount) {

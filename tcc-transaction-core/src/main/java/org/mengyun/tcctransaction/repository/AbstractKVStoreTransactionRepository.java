@@ -73,6 +73,8 @@ public abstract class AbstractKVStoreTransactionRepository<T> extends CacheableT
 
             page.setNextOffset(nextShardOffset.toString());
             page.setData(transactions);
+
+
             return page;
 
         } catch (Exception e) {

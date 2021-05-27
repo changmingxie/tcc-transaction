@@ -36,12 +36,22 @@ public class AccountServiceStub implements AccountService {
         CompletableFuture future = CompletableFuture.runAsync(() -> accountService.transferToWithTimeout(transactionContext, accountId, amount));
 
         try {
-            future.get(500l,TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+            future.get(1000l, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
+            throw new RuntimeException(e);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void transferToWithException(TransactionContext transactionContext, long accountId, int amount) {
+
+        CompletableFuture future = CompletableFuture.runAsync(() -> accountService.transferToWithException(transactionContext, accountId, amount));
+
+        try {
+            future.get();
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }

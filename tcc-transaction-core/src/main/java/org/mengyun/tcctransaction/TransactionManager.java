@@ -136,7 +136,7 @@ public class TransactionManager {
 
     private void rollbackTransaction(Transaction transaction) {
         try {
-            transaction.rollback();
+            transaction.rollback(false);
             transactionRepository.delete(transaction);
         } catch (Throwable rollbackException) {
             logger.warn("compensable transaction rollback failed, recovery job will try to rollback later.", rollbackException);

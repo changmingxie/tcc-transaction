@@ -43,11 +43,7 @@ public class RecoverConfiguration implements TransactionConfigurator {
 
     private int asyncTerminateThreadQueueSize = 1024;
 
-//    private Set<Class<? extends Exception>> delayCancelExceptions = new HashSet<Class<? extends Exception>>();
-
     public RecoverConfiguration() {
-//        delayCancelExceptions.add(TransactionOptimisticLockException.class);
-//        delayCancelExceptions.add(SocketTimeoutException.class);
     }
 
     @PostConstruct
@@ -135,13 +131,5 @@ public class RecoverConfiguration implements TransactionConfigurator {
     public void setTriggerName(String triggerName) {
         this.triggerName = triggerName;
     }
-
-//    public Set<Class<? extends Exception>> getDelayCancelExceptions() {
-//        return this.delayCancelExceptions;
-//    }
-//
-//    public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayCancelExceptions) {
-//        this.delayCancelExceptions.addAll(delayCancelExceptions);
-//    }
 
 }

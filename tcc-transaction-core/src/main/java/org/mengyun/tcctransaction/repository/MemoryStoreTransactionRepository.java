@@ -69,7 +69,6 @@ public class MemoryStoreTransactionRepository extends AbstractKVStoreTransaction
 
             @Override
             public void close() throws IOException {
-                db.clear();
             }
         };
     }

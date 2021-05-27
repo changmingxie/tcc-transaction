@@ -11,5 +11,7 @@ public interface AccountService {
 
     void transferToWithTimeout(TransactionContext transactionContext, long accountId, int amount);
 
+    void transferToWithException(TransactionContext transactionContext, long accountId, int amount);
+
     void transferFrom(TransactionContext transactionContext, long accountId, int amount);
 }
