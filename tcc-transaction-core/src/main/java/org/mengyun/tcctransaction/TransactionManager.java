@@ -35,14 +35,17 @@ public class TransactionManager {
 
     public Transaction begin(Object uniqueIdentify) {
         Transaction transaction = new Transaction(uniqueIdentify, TransactionType.ROOT);
-        transactionRepository.create(transaction);
+
+        //for performance tuning, at create stage do not persistent
+//        transactionRepository.create(transaction);
         registerTransaction(transaction);
         return transaction;
     }
 
     public Transaction begin() {
         Transaction transaction = new Transaction(TransactionType.ROOT);
-        transactionRepository.create(transaction);
+        //for performance tuning, at create stage do not persistent
+//        transactionRepository.create(transaction);
         registerTransaction(transaction);
         return transaction;
     }
@@ -50,8 +53,9 @@ public class TransactionManager {
     public Transaction propagationNewBegin(TransactionContext transactionContext) {
 
         Transaction transaction = new Transaction(transactionContext);
-        transactionRepository.create(transaction);
 
+        //for performance tuning, at create stage do not persistent
+//        transactionRepository.create(transaction);
         registerTransaction(transaction);
         return transaction;
     }
@@ -65,6 +69,18 @@ public class TransactionManager {
             return transaction;
         } else {
             throw new NoExistedTransactionException();
+        }
+    }
+
+    public void enlistParticipant(Participant participant) {
+        Transaction transaction = this.getCurrentTransaction();
+        transaction.enlistParticipant(participant);
+
+        if (transaction.getVersion() == 0l) {
+            // transaction.getVersion() is zero which means never persistent before, need call create to persistent.
+            transactionRepository.create(transaction);
+        } else {
+            transactionRepository.update(transaction);
         }
     }
 
@@ -180,11 +196,6 @@ public class TransactionManager {
         }
     }
 
-    public void enlistParticipant(Participant participant) {
-        Transaction transaction = this.getCurrentTransaction();
-        transaction.enlistParticipant(participant);
-        transactionRepository.update(transaction);
-    }
 
     public void update(Participant participant) {
         Transaction transaction = this.getCurrentTransaction();

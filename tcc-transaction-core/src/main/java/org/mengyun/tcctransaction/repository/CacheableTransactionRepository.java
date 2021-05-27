@@ -31,6 +31,7 @@ public abstract class CacheableTransactionRepository implements TransactionRepos
 
     @Override
     public int create(Transaction transaction) {
+        transaction.setVersion(1l);
         int result = doCreate(transaction);
         if (result > 0) {
             putToCache(transaction);

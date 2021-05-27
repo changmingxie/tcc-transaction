@@ -29,7 +29,7 @@ public class Transaction implements Serializable {
     private TransactionType transactionType;
     private volatile int retriedCount = 0;
     private Date lastUpdateTime = new Date();
-    private long version = 1;
+    private long version = 0;
 
     public Transaction() {
 
