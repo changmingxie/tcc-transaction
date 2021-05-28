@@ -1,10 +1,7 @@
-package org.mengyun.tcctransaction.spring.recovery;
+package org.mengyun.tcctransaction.recovery;
 
 import org.mengyun.tcctransaction.SystemException;
-import org.mengyun.tcctransaction.recovery.TransactionRecovery;
-import org.quartz.Scheduler;
-import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
-import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean;
+import org.quartz.*;
 
 /**
  * Created by changming.xie on 6/2/16.
@@ -27,24 +24,14 @@ public class RecoverScheduledJob {
     public void init() {
 
         try {
-            MethodInvokingJobDetailFactoryBean jobDetail = new MethodInvokingJobDetailFactoryBean();
-            jobDetail.setTargetObject(transactionRecovery);
-            jobDetail.setTargetMethod("startRecover");
+            JobDetail jobDetail = JobBuilder.newJob(QuartzRecoveryTask.class).withIdentity(jobName).build();
+            jobDetail.getJobDataMap().put(QuartzRecoveryTask.RECOVERY_INSTANCE_KEY, transactionRecovery);
 
-            jobDetail.setName(jobName);
+            CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerName)
+                    .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)
+                            .withMisfireHandlingInstructionDoNothing()).build();
 
-            jobDetail.setConcurrent(false);
-            jobDetail.afterPropertiesSet();
-
-            CronTriggerFactoryBean cronTrigger = new CronTriggerFactoryBean();
-
-            cronTrigger.setBeanName(triggerName);
-
-            cronTrigger.setCronExpression(cronExpression);
-            cronTrigger.setJobDetail(jobDetail.getObject());
-            cronTrigger.afterPropertiesSet();
-
-            scheduler.scheduleJob(jobDetail.getObject(), cronTrigger.getObject());
+            scheduler.scheduleJob(jobDetail, cronTrigger);
 
             scheduler.startDelayed(delayStartSeconds);
 

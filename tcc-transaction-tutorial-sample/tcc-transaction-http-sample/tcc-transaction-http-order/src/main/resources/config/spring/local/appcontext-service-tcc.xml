@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xmlns="http://www.springframework.org/schema/beans" xmlns:tcc="http://www.tcctransaction.org/schema/tcc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.tcctransaction.org/schema/tcc http://www.tcctransaction.org/schema/tcc.xsd">
 
     <util:properties id="redis" location="classpath:redis.properties"/>
     <util:properties id="zk" location="classpath:zk.properties"/>
 
-    <bean class="org.mengyun.tcctransaction.spring.recovery.RecoverConfiguration">
-        <property name="transactionRepository" ref="transactionRepository"/>
-        <property name="recoverFrequency">
-            <bean class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">
-                <property name="maxRetryCount" value="30"/>
-                <property name="recoverDuration" value="30"/>
-                <property name="cronExpression" value="0/15 * * * * ?"/>
-                <property name="fetchPageSize" value="200"/>
-            </bean>
-        </property>
+    <tcc:annotation-driven transaction-repository="transactionRepository" recover-frequency="recoverFrequency"/>
+
+    <bean id="recoverFrequency" class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">
+        <property name="maxRetryCount" value="30"/>
+        <property name="recoverDuration" value="30"/>
+        <property name="cronExpression" value="0/15 * * * * ?"/>
+        <property name="fetchPageSize" value="200"/>
     </bean>
 
     <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.SentinelTransactionRepository"

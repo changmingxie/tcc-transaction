@@ -1,24 +1,15 @@
-package org.mengyun.tcctransaction.spring.recovery;
+package org.mengyun.tcctransaction.recovery;
 
 import org.mengyun.tcctransaction.TransactionManager;
-import org.mengyun.tcctransaction.TransactionOptimisticLockException;
-import org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency;
-import org.mengyun.tcctransaction.recovery.RecoverFrequency;
-import org.mengyun.tcctransaction.recovery.RecoveryLock;
-import org.mengyun.tcctransaction.recovery.TransactionRecovery;
 import org.mengyun.tcctransaction.repository.CacheableTransactionRepository;
 import org.mengyun.tcctransaction.repository.TransactionRepository;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.net.SocketTimeoutException;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -35,8 +26,6 @@ public class RecoverConfiguration implements TransactionConfigurator {
     private RecoveryLock recoveryLock = RecoveryLock.DEFAULT_LOCK;
 
     private Scheduler scheduler;
-    private String jobName;
-    private String triggerName;
     private int threadCount = Runtime.getRuntime().availableProcessors();
 
     private int asyncTerminateThreadPoolSize = threadCount * 2 + 1;
@@ -65,8 +54,8 @@ public class RecoverConfiguration implements TransactionConfigurator {
         transactionRecovery.setTransactionConfigurator(this);
 
         RecoverScheduledJob recoveryScheduledJob = new RecoverScheduledJob();
-        recoveryScheduledJob.setJobName(StringUtils.isEmpty(jobName) ? "compensableRecoverJob" : jobName);
-        recoveryScheduledJob.setTriggerName(StringUtils.isEmpty(triggerName) ? "compensableTrigger" : triggerName);
+        recoveryScheduledJob.setJobName("compensableRecoverJob");
+        recoveryScheduledJob.setTriggerName("compensableTrigger");
 
         recoveryScheduledJob.setTransactionRecovery(transactionRecovery);
         recoveryScheduledJob.setCronExpression(getRecoverFrequency().getCronExpression());
@@ -123,13 +112,4 @@ public class RecoverConfiguration implements TransactionConfigurator {
     public void setRecoveryLock(RecoveryLock recoveryLock) {
         this.recoveryLock = recoveryLock;
     }
-
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
-    }
-
-    public void setTriggerName(String triggerName) {
-        this.triggerName = triggerName;
-    }
-
 }

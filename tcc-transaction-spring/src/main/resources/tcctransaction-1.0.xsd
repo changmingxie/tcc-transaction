@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.tcctransaction.org/schema/tcc" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.tcctransaction.org/schema/tcc" elementFormDefault="qualified"
+            attributeFormDefault="unqualified"
+>
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+
+    <xsd:element name="annotation-driven">
+        <xsd:complexType>
+            <xsd:attribute name="transaction-repository" type="xsd:string" default="transactionRepository"/>
+            <xsd:attribute name="recover-frequency" type="xsd:string"/>
+            <xsd:attribute name="recover-lock" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

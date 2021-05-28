@@ -1,9 +1,9 @@
-package org.mengyun.tcctransaction.unit.test;
+package org.mengyun.tcctransaction.unittest;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mengyun.tcctransaction.repository.TransactionRepository;
-import org.mengyun.tcctransaction.spring.recovery.RecoverConfiguration;
+import org.mengyun.tcctransaction.recovery.RecoverConfiguration;
+import org.mengyun.tcctransaction.spring.annotation.EnableTccTransaction;
 import org.mengyun.tcctransaction.unittest.client.TransferService;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.mengyun.tcctransaction.unittest.repository.SubAccountRepository;
@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * Created by changmingxie on 12/3/15.
  */
+@EnableTccTransaction
 public class TransferServiceTest extends AbstractTestCase {
 
     @Autowired

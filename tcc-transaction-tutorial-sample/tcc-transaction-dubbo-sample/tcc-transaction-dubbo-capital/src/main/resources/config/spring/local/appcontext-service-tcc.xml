@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns="http://www.springframework.org/schema/beans" xmlns:tcc="http://www.tcctransaction.org/schema/tcc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.tcctransaction.org/schema/tcc http://www.tcctransaction.org/schema/tcc.xsd">
 
-    <bean class="org.mengyun.tcctransaction.spring.recovery.RecoverConfiguration" depends-on="springBeanFactory">
-        <property name="transactionRepository">
-            <bean class="org.mengyun.tcctransaction.repository.MemoryStoreTransactionRepository">
-                <property name="domain" value="TCC:DUBBO:CAPITAL:"/>
-            </bean>
-            <!--            <bean class="org.aggregateframework.transaction.repository.ShardJedisTransactionRepository">-->
-            <!--                <property name="domain" value="AGG:SAMPLE:SHARDJEDIS:"/>-->
-            <!--                <property name="shardedJedisPool" ref="shardedJedisPool"/>-->
-            <!--            </bean>-->
-            <!--            <bean class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">-->
-            <!--                <property name="domain" value="TCC:DUBBO:CAPITAL:JEDIS:"/>-->
-            <!--                <property name="jedisPool" ref="jedisPool"/>-->
-            <!--            </bean>-->
-            <!--            <bean class="org.aggregateframework.transaction.repository.JedisClusterTransactionRepository">-->
-            <!--                <property name="domain" value="AGG:SAMPLE:JEDISCLUSTER:"/>-->
-            <!--                <property name="jedisCluster" ref="jedisCluster"/>-->
-            <!--            </bean>-->
-        </property>
-        <!--        <property name="recoverFrequency">-->
-        <!--            <bean class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">-->
-        <!--                <property name="maxRetryCount" value="30"/>-->
-        <!--                <property name="recoverDuration" value="5"/>-->
-        <!--                <property name="cronExpression" value="0/5 * * * * ? "/>-->
-        <!--                <property name="fetchPageSize" value="200"/>-->
-        <!--            </bean>-->
-        <!--        </property>-->
+
+    <tcc:annotation-driven transaction-repository="transactionRepository"/>
+
+    <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.MemoryStoreTransactionRepository">
+        <property name="domain" value="TCC:DUBBO:CAPITAL:"/>
     </bean>
+
+    <!--            <bean class="org.aggregateframework.transaction.repository.ShardJedisTransactionRepository">-->
+    <!--                <property name="domain" value="AGG:SAMPLE:SHARDJEDIS:"/>-->
+    <!--                <property name="shardedJedisPool" ref="shardedJedisPool"/>-->
+    <!--            </bean>-->
+    <!--            <bean class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">-->
+    <!--                <property name="domain" value="TCC:DUBBO:CAPITAL:JEDIS:"/>-->
+    <!--                <property name="jedisPool" ref="jedisPool"/>-->
+    <!--            </bean>-->
+    <!--            <bean class="org.aggregateframework.transaction.repository.JedisClusterTransactionRepository">-->
+    <!--                <property name="domain" value="AGG:SAMPLE:JEDISCLUSTER:"/>-->
+    <!--                <property name="jedisCluster" ref="jedisCluster"/>-->
+    <!--            </bean>-->
+
+    <!--        <property name="recoverFrequency">-->
+    <!--            <bean class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">-->
+    <!--                <property name="maxRetryCount" value="30"/>-->
+    <!--                <property name="recoverDuration" value="5"/>-->
+    <!--                <property name="cronExpression" value="0/5 * * * * ? "/>-->
+    <!--                <property name="fetchPageSize" value="200"/>-->
+    <!--            </bean>-->
+    <!--        </property>-->
+
 
     <!--    <util:properties id="redis" location="classpath:redis.properties"/>-->
 

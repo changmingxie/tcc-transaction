@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.spring.support;
+package org.mengyun.tcctransaction.spring.factory;
 
 import org.mengyun.tcctransaction.support.BeanFactory;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
@@ -13,7 +13,6 @@ import java.util.Map;
 /**
  * Created by changmingxie on 11/22/15.
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class SpringBeanFactory implements BeanFactory, ApplicationContextAware {
 
     private ApplicationContext applicationContext;

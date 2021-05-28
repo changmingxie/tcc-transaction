@@ -8,6 +8,8 @@ import org.mengyun.tcctransaction.support.TransactionConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Created by changmingxie on 10/30/15.
  */
@@ -17,6 +19,7 @@ public class ConfigurableTransactionAspect extends CompensableTransactionAspect 
     @Autowired
     private TransactionConfigurator transactionConfigurator;
 
+    @PostConstruct
     public void init() {
 
         TransactionManager transactionManager = transactionConfigurator.getTransactionManager();

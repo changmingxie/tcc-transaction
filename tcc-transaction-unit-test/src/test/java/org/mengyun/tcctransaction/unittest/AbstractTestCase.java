@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.unit.test;
+package org.mengyun.tcctransaction.unittest;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-        "classpath:/tcc-transaction-unit-test.xml", "classpath:/tcc-transaction.xml"})
+        "classpath:/tcc-transaction-unit-test.xml"})
 public abstract class AbstractTestCase {
 
 

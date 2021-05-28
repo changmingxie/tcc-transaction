@@ -7,15 +7,19 @@ import org.mengyun.tcctransaction.support.TransactionConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Created by changmingxie on 11/8/15.
  */
 @Aspect
 public class ConfigurableCoordinatorAspect extends ResourceCoordinatorAspect implements Ordered {
 
+
     @Autowired
     private TransactionConfigurator transactionConfigurator;
 
+    @PostConstruct
     public void init() {
 
         ResourceCoordinatorInterceptor resourceCoordinatorInterceptor = new ResourceCoordinatorInterceptor();

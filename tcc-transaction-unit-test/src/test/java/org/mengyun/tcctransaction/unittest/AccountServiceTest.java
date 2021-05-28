@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.unit.test;
+package org.mengyun.tcctransaction.unittest;
 
 import org.junit.Assert;
 import org.junit.Test;
