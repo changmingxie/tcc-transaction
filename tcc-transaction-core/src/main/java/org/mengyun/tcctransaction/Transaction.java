@@ -30,6 +30,7 @@ public class Transaction implements Serializable {
     private volatile int retriedCount = 0;
     private Date lastUpdateTime = new Date();
     private long version = 0;
+    private TransactionXid rootXid;
 
     public Transaction() {
 
@@ -37,14 +38,14 @@ public class Transaction implements Serializable {
 
     public Transaction(TransactionContext transactionContext) {
         this.xid = transactionContext.getXid();
+        this.rootXid = transactionContext.getRootXid();
+
         this.status = TransactionStatus.TRYING;
         this.transactionType = TransactionType.BRANCH;
     }
 
     public Transaction(TransactionType transactionType) {
-        this.xid = new TransactionXid();
-        this.status = TransactionStatus.TRYING;
-        this.transactionType = transactionType;
+        this(null, transactionType);
     }
 
     public Transaction(Object uniqueIdentity, TransactionType transactionType) {
@@ -52,6 +53,10 @@ public class Transaction implements Serializable {
         this.xid = new TransactionXid(uniqueIdentity);
         this.status = TransactionStatus.TRYING;
         this.transactionType = transactionType;
+
+        if (transactionType.equals(TransactionType.ROOT)) {
+            this.rootXid = xid;
+        }
     }
 
     public void enlistParticipant(Participant participant) {
@@ -84,15 +89,20 @@ public class Transaction implements Serializable {
     }
 
     public void commit() {
-
         for (Participant participant : participants) {
-            participant.commit();
+            if (!participant.getStatus().equals(ParticipantStatus.CONFIRM_SUCCESS)) {
+                participant.commit();
+                participant.setStatus(ParticipantStatus.CONFIRM_SUCCESS);
+            }
         }
     }
 
-    public void rollback(boolean force) {
+    public void rollback() {
         for (Participant participant : participants) {
-            participant.rollback(force);
+            if (!participant.getStatus().equals(ParticipantStatus.CANCEL_SUCCESS)) {
+                participant.rollback();
+                participant.setStatus(ParticipantStatus.CANCEL_SUCCESS);
+            }
         }
     }
 
@@ -147,5 +157,13 @@ public class Transaction implements Serializable {
             }
         }
         return false;
+    }
+
+    public TransactionXid getRootXid() {
+        return rootXid;
+    }
+
+    public void setRootXid(TransactionXid rootXid) {
+        this.rootXid = rootXid;
     }
 }

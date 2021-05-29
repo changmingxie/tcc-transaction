@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by changmingxie on 10/30/15.
  */
-public class JdbcTransactionRepository extends CacheableTransactionRepository {
+public class JdbcTransactionRepository extends AbstractTransactionRepository {
 
     private String domain;
 

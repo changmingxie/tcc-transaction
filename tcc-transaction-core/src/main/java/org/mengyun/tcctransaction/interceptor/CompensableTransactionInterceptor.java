@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.mengyun.tcctransaction.IllegalTransactionStatusException;
 import org.mengyun.tcctransaction.NoExistedTransactionException;
@@ -14,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Set;
 
 /**
  * Created by changmingxie on 10/30/15.
@@ -93,7 +91,22 @@ public class CompensableTransactionInterceptor {
             switch (TransactionStatus.valueOf(compensableMethodContext.getTransactionContext().getStatus())) {
                 case TRYING:
                     transaction = transactionManager.propagationNewBegin(compensableMethodContext.getTransactionContext());
-                    return compensableMethodContext.proceed();
+
+                    Object result = null;
+
+                    try {
+                        result = compensableMethodContext.proceed();
+
+                        //TODO: need tuning here, async change the status to tuning the invoke chain performance
+                        //transactionManager.changeStatus(TransactionStatus.TRY_SUCCESS, asyncSave);
+                        transactionManager.changeStatus(TransactionStatus.TRY_SUCCESS, true);
+                    } catch (Throwable e) {
+                        transactionManager.changeStatus(TransactionStatus.TRY_FAILED);
+                        throw e;
+                    }
+
+                    return result;
+
                 case CONFIRMING:
                     try {
                         transaction = transactionManager.propagationExistBegin(compensableMethodContext.getTransactionContext());
@@ -106,28 +119,24 @@ public class CompensableTransactionInterceptor {
                 case CANCELLING:
 
                     try {
+
+                        //The transaction' status of this branch transaction, passed from consumer side.
+                        int transactionStatusFromConsumer = compensableMethodContext.getTransactionContext().getParticipantStatus();
+
                         transaction = transactionManager.propagationExistBegin(compensableMethodContext.getTransactionContext());
 
-
-                        //The participant' status of this branch transaction, passed from consumer side.
-                        int participantStatus = compensableMethodContext.getTransactionContext().getParticipantStatus();
-
-                        if (participantStatus == ParticipantStatus.TRY_FAILED.getId()) {
-
-                            if (transaction.isTryFailed()) {
-                                // In this case, the  TRY_FAILED status of the participant passed from consumer side is caused by any of the transaction's participants,
-                                // can safely rollback the transaction.
-                                transactionManager.rollback(asyncCancel);
-                            } else {
-                                // In this case, the participant' status of this branch transaction passed from consumer side is TRY_FAILED,
-                                // while the transaction has no any try failed participant, which means the participant's status seem from consumer side
-                                // is not caused by any of the transaction participant, maybe caused by timeout exception or another.
-                                // The transaction's participants maybe still running(try stage), cannot directly rollback, need waiting for the recovery job to rollback it.
-                                throw new IllegalTransactionStatusException("Branch transaction maybe is trying, cannot rollback directly, waiting for recovery job to rollback.");
-                            }
-                        } else {
-                            //The status of participant of this branch transaction is TRYING_SUCCESS, can safely rollback the transaction, too
+                        // Only if transaction's status is at TRY_SUCCESS、TRY_FAILED、CANCELLING stage we can call rollback.
+                        // If transactionStatusFromConsumer is TRY_SUCCESS, no mate current transaction is TRYING or not, also can rollback.
+                        // transaction's status is TRYING while transactionStatusFromConsumer is TRY_SUCCESS may happen when transaction's changeStatus is async.
+                        if (transaction.getStatus().equals(TransactionStatus.TRY_SUCCESS)
+                                || transaction.getStatus().equals(TransactionStatus.TRY_FAILED)
+                                || transaction.getStatus().equals(TransactionStatus.CANCELLING)
+                                || transactionStatusFromConsumer == ParticipantStatus.TRY_SUCCESS.getId()) {
                             transactionManager.rollback(asyncCancel);
+                        } else {
+                            //in this case, transaction's Status is TRYING and transactionStatusFromConsumer is TRY_FAILED
+                            // this may happen if timeout exception throws during rpc call.
+                            throw new IllegalTransactionStatusException("Branch transaction status is TRYING, cannot rollback directly, waiting for recovery job to rollback.");
                         }
 
                     } catch (NoExistedTransactionException exception) {

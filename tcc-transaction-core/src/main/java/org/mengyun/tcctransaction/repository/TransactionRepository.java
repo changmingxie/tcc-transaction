@@ -1,8 +1,8 @@
 package org.mengyun.tcctransaction.repository;
 
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.api.TransactionXid;
 
+import javax.transaction.xa.Xid;
 import java.io.Closeable;
 import java.util.Date;
 
@@ -19,7 +19,7 @@ public interface TransactionRepository extends Closeable {
 
     int delete(Transaction transaction);
 
-    Transaction findByXid(TransactionXid xid);
+    Transaction findByXid(Xid xid);
 
     Page<Transaction> findAllUnmodifiedSince(Date date, String offset, int pageSize);
 

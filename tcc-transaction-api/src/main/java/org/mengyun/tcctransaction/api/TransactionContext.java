@@ -17,16 +17,18 @@ public class TransactionContext implements Serializable {
 
 
     private Map<String, String> attachments = new ConcurrentHashMap<String, String>();
+    private TransactionXid rootXid;
 
     public TransactionContext() {
 
     }
 
-    public TransactionContext(TransactionXid xid, int status) {
-        this(xid,status,ParticipantStatus.TRYING.getId());
+    public TransactionContext(TransactionXid rootXid, TransactionXid xid, int status) {
+        this(rootXid, xid, status, ParticipantStatus.TRYING.getId());
     }
 
-    public TransactionContext(TransactionXid xid, int status,int participantStatus) {
+    public TransactionContext(TransactionXid rootXid, TransactionXid xid, int status, int participantStatus) {
+        this.rootXid = rootXid;
         this.xid = xid;
         this.status = status;
         this.participantStatus = participantStatus;
@@ -65,5 +67,13 @@ public class TransactionContext implements Serializable {
 
     public void setParticipantStatus(int participantStatus) {
         this.participantStatus = participantStatus;
+    }
+
+    public TransactionXid getRootXid() {
+        return rootXid;
+    }
+
+    public void setRootXid(TransactionXid rootXid) {
+        this.rootXid = rootXid;
     }
 }

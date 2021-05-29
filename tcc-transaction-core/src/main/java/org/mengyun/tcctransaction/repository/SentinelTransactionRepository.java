@@ -7,13 +7,13 @@ import org.mengyun.tcctransaction.ha.SentinelController;
 import javax.transaction.xa.Xid;
 import java.util.Date;
 
-public class SentinelTransactionRepository extends CacheableTransactionRepository {
+public class SentinelTransactionRepository extends AbstractTransactionRepository {
 
     private SentinelController sentinelController;
 
-    private CacheableTransactionRepository workTransactionRepository;
+    private AbstractTransactionRepository workTransactionRepository;
 
-    private CacheableTransactionRepository degradedTransactionRepository;
+    private AbstractTransactionRepository degradedTransactionRepository;
 
     public SentinelTransactionRepository() {
     }
@@ -31,10 +31,6 @@ public class SentinelTransactionRepository extends CacheableTransactionRepositor
         if (sentinelController == null) {
             throw new SystemException("SentinelController cann't be null");
         }
-
-        //disable cache
-        workTransactionRepository.setExpireDuration(0);
-        degradedTransactionRepository.setExpireDuration(0);
     }
 
     @Override
@@ -94,19 +90,19 @@ public class SentinelTransactionRepository extends CacheableTransactionRepositor
         this.sentinelController = sentinelController;
     }
 
-    public CacheableTransactionRepository getWorkTransactionRepository() {
+    public AbstractTransactionRepository getWorkTransactionRepository() {
         return workTransactionRepository;
     }
 
-    public void setWorkTransactionRepository(CacheableTransactionRepository workTransactionRepository) {
+    public void setWorkTransactionRepository(AbstractTransactionRepository workTransactionRepository) {
         this.workTransactionRepository = workTransactionRepository;
     }
 
-    public CacheableTransactionRepository getDegradedTransactionRepository() {
+    public AbstractTransactionRepository getDegradedTransactionRepository() {
         return degradedTransactionRepository;
     }
 
-    public void setDegradedTransactionRepository(CacheableTransactionRepository degradedTransactionRepository) {
+    public void setDegradedTransactionRepository(AbstractTransactionRepository degradedTransactionRepository) {
         this.degradedTransactionRepository = degradedTransactionRepository;
     }
 

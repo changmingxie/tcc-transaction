@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.unittest;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mengyun.tcctransaction.recovery.RecoverConfiguration;
 import org.mengyun.tcctransaction.spring.annotation.EnableTccTransaction;
 import org.mengyun.tcctransaction.unittest.client.TransferService;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
@@ -24,9 +23,6 @@ public class TransferServiceTest extends AbstractTestCase {
 
     @Autowired
     private TransferService transferService;
-
-    @Autowired
-    private RecoverConfiguration recoverConfiguration;
 
     @Test
     public void testTransfer() {
@@ -92,9 +88,8 @@ public class TransferServiceTest extends AbstractTestCase {
         }
 
          messages = TraceLog.getMessages();
-        Assert.assertEquals(7, messages.size());
-        Assert.assertEquals(MessageConstants.TRANSFER_SERVER_TRANSFER_CANCEL_CALLED, messages.get(5));
-        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CANCEL_CALLED, messages.get(6));
+        Assert.assertEquals(6, messages.size());
+        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CANCEL_CALLED, messages.get(5));
 
     }
 

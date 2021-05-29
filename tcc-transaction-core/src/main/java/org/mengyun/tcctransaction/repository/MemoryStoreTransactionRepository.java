@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MemoryStoreTransactionRepository extends AbstractKVStoreTransactionRepository<Map<Xid, Transaction>> {
+public class MemoryStoreTransactionRepository extends AbstractKVStoreTransactionRepository<Map<Xid, Transaction>> implements LocalStorable {
 
     private Map<Xid, Transaction> db = new ConcurrentHashMap<>();
 

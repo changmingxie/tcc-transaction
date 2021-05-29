@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.recovery;
 
 import org.mengyun.tcctransaction.TransactionManager;
-import org.mengyun.tcctransaction.repository.CacheableTransactionRepository;
 import org.mengyun.tcctransaction.repository.TransactionRepository;
 import org.mengyun.tcctransaction.support.TransactionConfigurator;
 import org.quartz.Scheduler;
@@ -10,9 +9,6 @@ import org.quartz.SchedulerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Properties;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -26,11 +22,6 @@ public class RecoverConfiguration implements TransactionConfigurator {
     private RecoveryLock recoveryLock = RecoveryLock.DEFAULT_LOCK;
 
     private Scheduler scheduler;
-    private int threadCount = Runtime.getRuntime().availableProcessors();
-
-    private int asyncTerminateThreadPoolSize = threadCount * 2 + 1;
-
-    private int asyncTerminateThreadQueueSize = 1024;
 
     public RecoverConfiguration() {
     }
@@ -39,16 +30,6 @@ public class RecoverConfiguration implements TransactionConfigurator {
     public void init() throws Exception {
         transactionManager = new TransactionManager();
         transactionManager.setTransactionRepository(transactionRepository);
-
-        transactionManager.setExecutorService(new ThreadPoolExecutor(asyncTerminateThreadPoolSize,
-                asyncTerminateThreadPoolSize,
-                0l,
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(asyncTerminateThreadQueueSize), new ThreadPoolExecutor.AbortPolicy()));
-
-        if (transactionRepository instanceof CacheableTransactionRepository) {
-            ((CacheableTransactionRepository) transactionRepository).setExpireDuration(recoverFrequency.getRecoverDuration());
-        }
 
         TransactionRecovery transactionRecovery = new TransactionRecovery();
         transactionRecovery.setTransactionConfigurator(this);
@@ -62,7 +43,7 @@ public class RecoverConfiguration implements TransactionConfigurator {
         recoveryScheduledJob.setDelayStartSeconds(recoverFrequency.getRecoverDuration());
 
         Properties conf = new Properties();
-        conf.put("org.quartz.threadPool.threadCount", String.valueOf(threadCount));
+        conf.put("org.quartz.threadPool.threadCount", String.valueOf(Runtime.getRuntime().availableProcessors()));
         conf.put("org.quartz.scheduler.instanceName", "recovery-quartz");
 
         if (scheduler == null) {

@@ -65,7 +65,7 @@ public class AccountServiceTest extends AbstractTestCase {
     public void testTransferFromWithTransactionContext() {
 
         //given
-        TransactionContext transactionContext = new TransactionContext(new TransactionXid(), TransactionStatus.TRYING.getId());
+        TransactionContext transactionContext = new TransactionContext(new TransactionXid(), new TransactionXid(), TransactionStatus.TRYING.getId());
         //when
         accountService.transferFrom(transactionContext, 1, 50);
 
@@ -85,7 +85,7 @@ public class AccountServiceTest extends AbstractTestCase {
     public void testTransferToWithTransactionContext() {
 
         //given
-        TransactionContext transactionContext = new TransactionContext(new TransactionXid(), TransactionStatus.TRYING.getId());
+        TransactionContext transactionContext = new TransactionContext(new TransactionXid(), new TransactionXid(), TransactionStatus.TRYING.getId());
         //when
         accountService.transferTo(transactionContext, 2, 50);
 

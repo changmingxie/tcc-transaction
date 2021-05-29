@@ -5,7 +5,7 @@ package org.mengyun.tcctransaction.api;
  */
 public enum TransactionStatus {
 
-    TRYING(1), CONFIRMING(2), CANCELLING(3);
+    TRYING(1), CONFIRMING(2), CANCELLING(3), TRY_SUCCESS(11), TRY_FAILED(12);
 
     private int id;
 
@@ -20,8 +20,14 @@ public enum TransactionStatus {
                 return TRYING;
             case 2:
                 return CONFIRMING;
-            default:
+            case 3:
                 return CANCELLING;
+            case 11:
+                return TRY_SUCCESS;
+            case 12:
+                return TRY_FAILED;
+            default:
+                throw new IllegalArgumentException("the id "+id+" of TransactionStatus is illegal.");
         }
     }
 

@@ -39,9 +39,14 @@ public class ResourceCoordinatorInterceptor {
                     participant.setStatus(ParticipantStatus.TRY_SUCCESS);
                 } catch (Throwable e) {
                     participant.setStatus(ParticipantStatus.TRY_FAILED);
-                    transactionManager.update(participant);
+
+                    //if root transaction, here no need persistent transaction
+                    // because following stage is rollback, transaction's status is changed to CANCELING and save
+//                    transactionManager.update(participant);
+//
                     throw e;
                 }
+
 
                 return result;
             }
@@ -66,7 +71,7 @@ public class ResourceCoordinatorInterceptor {
         TransactionXid xid = new TransactionXid(transaction.getXid().getGlobalTransactionId());
 
         if (compensableMethodContext.getTransactionContext() == null) {
-            FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(new TransactionContext(xid, TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId()), pjp.getTarget(), ((MethodSignature) pjp.getSignature()).getMethod(), pjp.getArgs());
+            FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(new TransactionContext(transaction.getRootXid(), xid, TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId()), pjp.getTarget(), ((MethodSignature) pjp.getSignature()).getMethod(), pjp.getArgs());
         }
 
         Class targetClass = ReflectionUtils.getDeclaringType(pjp.getTarget().getClass(), compensableMethodContext.getMethod().getName(), compensableMethodContext.getMethod().getParameterTypes());
@@ -82,6 +87,7 @@ public class ResourceCoordinatorInterceptor {
 
         Participant participant =
                 new Participant(
+                        transaction.getRootXid(),
                         xid,
                         confirmInvocation,
                         cancelInvocation,

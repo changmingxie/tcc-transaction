@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class FileSystemTransactionRepository extends CacheableTransactionRepository {
+public class FileSystemTransactionRepository extends AbstractTransactionRepository {
 
     static final Logger log = LoggerFactory.getLogger(FileSystemTransactionRepository.class.getSimpleName());
 

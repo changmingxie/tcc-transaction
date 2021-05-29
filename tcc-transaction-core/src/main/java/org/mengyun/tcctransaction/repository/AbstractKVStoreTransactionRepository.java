@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public abstract class AbstractKVStoreTransactionRepository<T> extends CacheableTransactionRepository {
+public abstract class AbstractKVStoreTransactionRepository<T> extends AbstractTransactionRepository {
 
     static final Logger log = LoggerFactory.getLogger(AbstractKVStoreTransactionRepository.class.getSimpleName());
 

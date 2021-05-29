@@ -32,19 +32,23 @@ import static org.mengyun.tcctransaction.api.TransactionStatus.CONFIRMING;
  */
 public class TransactionRecovery {
 
-    public static final int CONCURRENT_RECOVERY_TIMEOUT = 10;
-    public static final int MAX_ERROR_COUNT_SHREDHOLD = 15;
-    static final Logger logger = LoggerFactory.getLogger(TransactionRecovery.class.getSimpleName());
-    static volatile ExecutorService recoveryExecutorService = null;
-    private AtomicInteger retryExceedMaxCount = new AtomicInteger();
+    public static final int CONCURRENT_RECOVERY_TIMEOUT = 60;
 
-    private AtomicInteger recoveryErrorCount = new AtomicInteger();
+    public static final int MAX_ERROR_COUNT_SHREDHOLD = 15;
+
+    static final Logger logger = LoggerFactory.getLogger(TransactionRecovery.class.getSimpleName());
+
+    static volatile ExecutorService recoveryExecutorService = null;
+
+    private TransactionConfigurator transactionConfigurator;
+
+    private AtomicInteger triggerMaxRetryPrintCount = new AtomicInteger();
+
+    private AtomicInteger recoveryFailedPrintCount = new AtomicInteger();
 
     private volatile int logMaxPrintCount = MAX_ERROR_COUNT_SHREDHOLD;
 
     private Lock logSync = new ReentrantLock();
-
-    private TransactionConfigurator transactionConfigurator;
 
     public void setTransactionConfigurator(TransactionConfigurator transactionConfigurator) {
         this.transactionConfigurator = transactionConfigurator;
@@ -52,11 +56,7 @@ public class TransactionRecovery {
 
     public void startRecover() {
 
-        ensureRecoveryExecutorInitialized(transactionConfigurator.getRecoverFrequency().getConcurrentRecoveryThreadCount());
-
-        logMaxPrintCount = transactionConfigurator.getRecoverFrequency().getFetchPageSize() / 2
-                > MAX_ERROR_COUNT_SHREDHOLD ?
-                MAX_ERROR_COUNT_SHREDHOLD : transactionConfigurator.getRecoverFrequency().getFetchPageSize() / 2;
+        ensureRecoveryInitialized();
 
         TransactionRepository transactionRepository = transactionConfigurator.getTransactionRepository();
 
@@ -75,6 +75,7 @@ public class TransactionRecovery {
         }
     }
 
+
     public void startRecover(TransactionRepository transactionRepository) {
 
         Lock recoveryLock = transactionRepository instanceof LocalStorable ? RecoveryLock.DEFAULT_LOCK : transactionConfigurator.getRecoveryLock();
@@ -90,7 +91,6 @@ public class TransactionRecovery {
                     Page<Transaction> page = loadErrorTransactionsByPage(transactionRepository, offset);
 
                     if (page.getData().size() > 0) {
-                        //recoverErrorTransactions(transactionRepository, page.getData());
                         concurrentRecoveryErrorTransactions(transactionRepository, page.getData());
                         offset = page.getNextOffset();
                         totalCount += page.getData().size();
@@ -120,9 +120,7 @@ public class TransactionRecovery {
 
     private void concurrentRecoveryErrorTransactions(TransactionRepository transactionRepository, List<Transaction> transactions) throws InterruptedException, ExecutionException {
 
-        retryExceedMaxCount.set(0);
-        recoveryErrorCount.set(0);
-
+        initLogStatistics();
 
         List<RecoverTask> tasks = new ArrayList<>();
         for (Transaction transaction : transactions) {
@@ -138,8 +136,7 @@ public class TransactionRecovery {
 
     private void recoverErrorTransactions(TransactionRepository transactionRepository, List<Transaction> transactions) {
 
-        retryExceedMaxCount.set(0);
-        recoveryErrorCount.set(0);
+        initLogStatistics();
 
         for (Transaction transaction : transactions) {
             recoverErrorTransaction(transactionRepository, transaction);
@@ -152,15 +149,15 @@ public class TransactionRecovery {
 
             logSync.lock();
             try {
-                if (retryExceedMaxCount.get() < logMaxPrintCount) {
+                if (triggerMaxRetryPrintCount.get() < logMaxPrintCount) {
                     logger.error(String.format(
                             "recover failed with max retry count,will not try again. txid:%s, status:%s,retried count:%d,transaction content:%s",
                             transaction.getXid(),
                             transaction.getStatus().getId(),
                             transaction.getRetriedCount(),
                             JSON.toJSONString(transaction)));
-                    retryExceedMaxCount.incrementAndGet();
-                } else if (retryExceedMaxCount.get() == logMaxPrintCount) {
+                    triggerMaxRetryPrintCount.incrementAndGet();
+                } else if (triggerMaxRetryPrintCount.get() == logMaxPrintCount) {
                     logger.error("Too many transaction's retried count max then MaxRetryCount during one page transactions recover process , will not print errors again!");
                 }
 
@@ -171,30 +168,61 @@ public class TransactionRecovery {
             return;
         }
 
-        if (transaction.getTransactionType().equals(TransactionType.BRANCH)
-                && (transaction.getCreateTime().getTime() +
-                transactionConfigurator.getRecoverFrequency().getMaxRetryCount() *
-                        transactionConfigurator.getRecoverFrequency().getRecoverDuration() * 1000
-                > System.currentTimeMillis())) {
-            return;
-        }
-
         try {
-            transaction.setRetriedCount(transaction.getRetriedCount() + 1);
 
-            if (transaction.getStatus().equals(CONFIRMING)) {
+            if (transaction.getTransactionType().equals(TransactionType.ROOT)) {
 
-                transaction.setStatus(CONFIRMING);
-                transactionRepository.update(transaction);
-                transaction.commit();
-                transactionRepository.delete(transaction);
-            } else if (transaction.getStatus().equals(CANCELLING)
-                    || transaction.getTransactionType().equals(TransactionType.ROOT)) {
+                switch (transaction.getStatus()) {
+                    case CONFIRMING:
+                        commitTransaction(transactionRepository, transaction);
+                        break;
+                    case CANCELLING:
+                        rollbackTransaction(transactionRepository, transaction);
+                        break;
+                    default:
+                        //the transaction status is TRYING, ignore it.
+                        break;
 
-                transaction.setStatus(CANCELLING);
-                transactionRepository.update(transaction);
-                transaction.rollback(true);
-                transactionRepository.delete(transaction);
+                }
+
+            } else {
+
+                //transaction type is BRANCH
+                switch (transaction.getStatus()) {
+                    case CONFIRMING:
+                        commitTransaction(transactionRepository, transaction);
+                        break;
+                    case CANCELLING:
+                    case TRY_FAILED:
+                        rollbackTransaction(transactionRepository, transaction);
+                        break;
+                    case TRY_SUCCESS:
+
+                        //check the root transaction
+                        Transaction rootTransaction = transactionRepository.findByXid(transaction.getRootXid());
+
+                        if (rootTransaction == null) {
+                            // In this case means the root transaction is already rollback.
+                            // Need cancel this branch transaction.
+                            rollbackTransaction(transactionRepository, transaction);
+                        } else {
+                            switch (rootTransaction.getStatus()) {
+                                case CONFIRMING:
+                                    commitTransaction(transactionRepository, transaction);
+                                    break;
+                                case CANCELLING:
+                                    rollbackTransaction(transactionRepository, transaction);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
+                    default:
+                        // the transaction status is TRYING, ignore it.
+                        break;
+                }
+
             }
 
         } catch (Throwable throwable) {
@@ -211,14 +239,14 @@ public class TransactionRecovery {
 
                 logSync.lock();
                 try {
-                    if (recoveryErrorCount.get() < logMaxPrintCount) {
+                    if (recoveryFailedPrintCount.get() < logMaxPrintCount) {
                         logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d,transaction content:%s",
                                 transaction.getXid(),
                                 transaction.getStatus().getId(),
                                 transaction.getRetriedCount(),
                                 JSON.toJSONString(transaction)), throwable);
-                        recoveryErrorCount.incrementAndGet();
-                    } else if (recoveryErrorCount.get() == logMaxPrintCount) {
+                        recoveryFailedPrintCount.incrementAndGet();
+                    } else if (recoveryFailedPrintCount.get() == logMaxPrintCount) {
                         logger.error("Too many transaction's recover error during one page transactions recover process , will not print errors again!");
                     }
                 } finally {
@@ -228,15 +256,46 @@ public class TransactionRecovery {
         }
     }
 
-    private void ensureRecoveryExecutorInitialized(int concurrentRecoveryThreadCount) {
+    private void rollbackTransaction(TransactionRepository transactionRepository, Transaction transaction) {
+        transaction.setRetriedCount(transaction.getRetriedCount() + 1);
+        transaction.setStatus(CANCELLING);
+        transactionRepository.update(transaction);
+        transaction.rollback();
+        transactionRepository.delete(transaction);
+    }
+
+    private void commitTransaction(TransactionRepository transactionRepository, Transaction transaction) {
+        transaction.setRetriedCount(transaction.getRetriedCount() + 1);
+        transaction.setStatus(CONFIRMING);
+        transactionRepository.update(transaction);
+        transaction.commit();
+        transactionRepository.delete(transaction);
+    }
+
+
+    private void ensureRecoveryInitialized() {
+
         if (recoveryExecutorService == null) {
             synchronized (TransactionRecovery.class) {
                 if (recoveryExecutorService == null) {
-                    recoveryExecutorService = Executors.newFixedThreadPool(concurrentRecoveryThreadCount);
+
+                    recoveryExecutorService = Executors.newFixedThreadPool(transactionConfigurator.getRecoverFrequency().getConcurrentRecoveryThreadCount());
+
+                    logMaxPrintCount = transactionConfigurator.getRecoverFrequency().getFetchPageSize() / 2
+                            > MAX_ERROR_COUNT_SHREDHOLD ?
+                            MAX_ERROR_COUNT_SHREDHOLD : transactionConfigurator.getRecoverFrequency().getFetchPageSize() / 2;
+
+
                 }
             }
         }
     }
+
+    private void initLogStatistics() {
+        triggerMaxRetryPrintCount.set(0);
+        recoveryFailedPrintCount.set(0);
+    }
+
 
     class RecoverTask implements Callable<Void> {
 

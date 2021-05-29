@@ -11,6 +11,8 @@ public class Participant implements Serializable {
 
     private static final long serialVersionUID = 4127729421281425247L;
     Class<? extends TransactionContextEditor> transactionContextEditorClass;
+
+    private TransactionXid rootXid;
     private TransactionXid xid;
     private InvocationContext confirmInvocationContext;
     private InvocationContext cancelInvocationContext;
@@ -20,34 +22,20 @@ public class Participant implements Serializable {
 
     }
 
-    public Participant(TransactionXid xid, InvocationContext confirmInvocationContext, InvocationContext cancelInvocationContext, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
+    public Participant(TransactionXid rootXid, TransactionXid xid, InvocationContext confirmInvocationContext, InvocationContext cancelInvocationContext, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
         this.xid = xid;
+        this.rootXid = rootXid;
         this.confirmInvocationContext = confirmInvocationContext;
         this.cancelInvocationContext = cancelInvocationContext;
         this.transactionContextEditorClass = transactionContextEditorClass;
     }
 
-    public Participant(InvocationContext confirmInvocationContext, InvocationContext cancelInvocationContext, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
-        this.confirmInvocationContext = confirmInvocationContext;
-        this.cancelInvocationContext = cancelInvocationContext;
-        this.transactionContextEditorClass = transactionContextEditorClass;
-    }
-
-    public void rollback(boolean force) {
-
-        Terminator.invoke(new TransactionContext(xid, TransactionStatus.CANCELLING.getId(), force ? ParticipantStatus.TRY_SUCCESS.getId() : status), cancelInvocationContext, transactionContextEditorClass);
+    public void rollback() {
+        Terminator.invoke(new TransactionContext(rootXid, xid, TransactionStatus.CANCELLING.getId(), status), cancelInvocationContext, transactionContextEditorClass);
     }
 
     public void commit() {
-        Terminator.invoke(new TransactionContext(xid, TransactionStatus.CONFIRMING.getId(), status), confirmInvocationContext, transactionContextEditorClass);
-    }
-
-    public TransactionXid getXid() {
-        return xid;
-    }
-
-    public void setXid(TransactionXid xid) {
-        this.xid = xid;
+        Terminator.invoke(new TransactionContext(rootXid, xid, TransactionStatus.CONFIRMING.getId(), status), confirmInvocationContext, transactionContextEditorClass);
     }
 
     public InvocationContext getConfirmInvocationContext() {

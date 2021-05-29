@@ -5,7 +5,6 @@ import org.mengyun.tcctransaction.TransactionManager;
 import org.mengyun.tcctransaction.recovery.RecoverFrequency;
 import org.mengyun.tcctransaction.repository.TransactionRepository;
 
-import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
 /**
