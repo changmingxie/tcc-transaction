@@ -40,6 +40,15 @@ public class TransferService {
 
     @Compensable(confirmMethod = "transferConfirm", cancelMethod = "transferCancel")
     @Transactional
+    public void transferWithTimeoutBeforeBranchTransactionStart(long fromAccountId, long toAccountId, int amount) {
+
+        TraceLog.debug(MessageConstants.TRANSFER_SERVER_TRANSFER_CALLED);
+        accountServiceProxy.transferFrom(fromAccountId, amount);
+        accountServiceProxy.transferToWithTimeoutBeforeBranchTransactionStart(toAccountId, amount);
+    }
+
+    @Compensable(confirmMethod = "transferConfirm", cancelMethod = "transferCancel")
+    @Transactional
     public void transferWithException(long fromAccountId, long toAccountId, int amount) {
 
         TraceLog.debug(MessageConstants.TRANSFER_SERVER_TRANSFER_CALLED);

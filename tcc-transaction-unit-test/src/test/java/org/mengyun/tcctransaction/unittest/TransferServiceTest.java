@@ -87,8 +87,49 @@ public class TransferServiceTest extends AbstractTestCase {
             e.printStackTrace();
         }
 
-         messages = TraceLog.getMessages();
+        messages = TraceLog.getMessages();
         Assert.assertEquals(6, messages.size());
+        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CANCEL_CALLED, messages.get(5));
+
+    }
+
+    @Test
+    public void testTransferWithTimeoutAndCancelBeforeBranchTransactionStart() {
+        System.out.println("testTransferWithTimeoutToTryAndCancelBeforeBranchTransactionStart will cost about 30s， please wait!");
+        //given
+
+        //when
+        try {
+            transferService.transferWithTimeoutBeforeBranchTransactionStart(1, 2, 50);
+        } catch (Throwable e) {
+
+        }
+
+        //then
+        SubAccount subAccountFrom = subAccountRepository.findById(1L);
+
+        SubAccount subAccountTo = subAccountRepository.findById(2L);
+
+        Assert.assertTrue(subAccountFrom.getBalanceAmount() == 100);
+        Assert.assertTrue(subAccountTo.getBalanceAmount() == 100);
+
+        List<String> messages = TraceLog.getMessages();
+        Assert.assertEquals(4, messages.size());
+
+        Assert.assertEquals(MessageConstants.TRANSFER_SERVER_TRANSFER_CALLED, messages.get(0));
+        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CALLED, messages.get(1));
+        Assert.assertEquals(MessageConstants.TRANSFER_SERVER_TRANSFER_CANCEL_CALLED, messages.get(2));
+        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CANCEL_CALLED, messages.get(3));
+
+        try {
+            Thread.sleep(10000l);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        messages = TraceLog.getMessages();
+        Assert.assertEquals(6, messages.size());
+        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CALLED, messages.get(4));
         Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CANCEL_CALLED, messages.get(5));
 
     }

@@ -24,6 +24,11 @@ public class AccountServiceProxy {
         accountService.transferToWithTimeout(null, accountId, amount);
     }
 
+
+    public void transferToWithTimeoutBeforeBranchTransactionStart(final long accountId, final int amount) {
+        accountService.transferToWithTimeoutBeforeBranchTransactionStart(null, accountId, amount);
+    }
+
     public void transferToWithException(final long accountId, final int amount) {
         accountService.transferToWithException(null, accountId, amount);
     }

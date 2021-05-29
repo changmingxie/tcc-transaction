@@ -56,6 +56,13 @@ public class AccountServiceImpl implements AccountService {
         throw new RuntimeException("mock try failed");
     }
 
+
+    @Override
+    public void transferToWithTimeoutBeforeBranchTransactionStart(TransactionContext transactionContext, long accountId, int amount) {
+        throw new UnsupportedOperationException();
+    }
+
+
     public void transferFromConfirm(TransactionContext transactionContext, long accountId, int amount) {
         TraceLog.debug(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CONFIRM_CALLED);
         SubAccount subAccount = subAccountRepository.findById(accountId);
