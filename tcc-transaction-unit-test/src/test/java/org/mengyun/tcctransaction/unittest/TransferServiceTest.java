@@ -122,7 +122,7 @@ public class TransferServiceTest extends AbstractTestCase {
         Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CANCEL_CALLED, messages.get(3));
 
         try {
-            Thread.sleep(10000l);
+            Thread.sleep(15000l);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.unittest.client;
 
 import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.unittest.service.AccountService;
 import org.mengyun.tcctransaction.unittest.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,10 +51,12 @@ public class AccountServiceStub implements AccountService {
             @Override
             public void run() {
 
-                try {
-                    Thread.sleep(4000l);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if (transactionContext.getStatus() == TransactionStatus.TRYING.getId()) {
+                    try {
+                        Thread.sleep(4000l);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 accountService.transferTo(transactionContext, accountId, amount);
             }
