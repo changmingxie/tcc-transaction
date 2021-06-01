@@ -20,4 +20,7 @@ public interface ObjectSerializer<T> {
      * @return the equivalent object instance
      */
     T deserialize(byte[] bytes);
+
+
+    T clone(T object);
 }

@@ -1,87 +1,105 @@
 package org.mengyun.tcctransaction.repository.helper;
 
-import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.serializer.ObjectSerializer;
-import org.mengyun.tcctransaction.utils.ByteUtils;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import redis.clients.jedis.*;
+import redis.clients.jedis.exceptions.JedisDataException;
 
 import javax.transaction.xa.Xid;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Created by changming.xie on 9/15/16.
  */
 public class RedisHelper {
 
+    static final Logger log = LoggerFactory.getLogger(RedisHelper.class.getSimpleName());
+
+    public static int SCAN_COUNT = 30;
+    public static String SCAN_TEST_PATTERN = "*";
+
+    public static String REDIS_SCAN_INIT_CURSOR = ShardOffset.SCAN_INIT_CURSOR;
 
     public static byte[] getRedisKey(String keyPrefix, Xid xid) {
-        byte[] prefix = keyPrefix.getBytes();
-        byte[] globalTransactionId = xid.getGlobalTransactionId();
-        byte[] branchQualifier = xid.getBranchQualifier();
-
-        byte[] key = new byte[prefix.length + globalTransactionId.length + branchQualifier.length];
-        System.arraycopy(prefix, 0, key, 0, prefix.length);
-        System.arraycopy(globalTransactionId, 0, key, prefix.length, globalTransactionId.length);
-        System.arraycopy(branchQualifier, 0, key, prefix.length + globalTransactionId.length, branchQualifier.length);
-        return key;
+        return new StringBuilder().append(keyPrefix).append(xid.toString()).toString().getBytes();
     }
 
-    public static byte[] getKeyValue(JedisPool jedisPool, final byte[] key) {
-        return execute(jedisPool, new JedisCallback<byte[]>() {
-                    @Override
-                    public byte[] doInJedis(Jedis jedis) {
-
-                        Map<byte[], byte[]> fieldValueMap = jedis.hgetAll(key);
-
-                        List<Map.Entry<byte[], byte[]>> entries = new ArrayList<Map.Entry<byte[], byte[]>>(fieldValueMap.entrySet());
-                        Collections.sort(entries, new Comparator<Map.Entry<byte[], byte[]>>() {
-                            @Override
-                            public int compare(Map.Entry<byte[], byte[]> entry1, Map.Entry<byte[], byte[]> entry2) {
-                                return (int) (ByteUtils.bytesToLong(entry1.getKey()) - ByteUtils.bytesToLong(entry2.getKey()));
-                            }
-                        });
-
-                        if (entries.isEmpty())
-                            return null;
-
-                        byte[] content = entries.get(entries.size() - 1).getValue();
-
-                        return content;
-                    }
-                }
-        );
-    }
-
-    public static byte[] getKeyValue(Jedis jedis, final byte[] key) {
-
-        Map<byte[], byte[]> fieldValueMap = jedis.hgetAll(key);
-
-        List<Map.Entry<byte[], byte[]>> entries = new ArrayList<Map.Entry<byte[], byte[]>>(fieldValueMap.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<byte[], byte[]>>() {
-            @Override
-            public int compare(Map.Entry<byte[], byte[]> entry1, Map.Entry<byte[], byte[]> entry2) {
-                return (int) (ByteUtils.bytesToLong(entry1.getKey()) - ByteUtils.bytesToLong(entry2.getKey()));
-            }
-        });
-
-        if (entries.isEmpty())
-            return null;
-
-        byte[] content = entries.get(entries.size() - 1).getValue();
-
-        return content;
+    public static byte[] getRedisKey(String keyPrefix, String globalTransactionId, String branchQualifier) {
+        return new StringBuilder().append(keyPrefix)
+                .append(globalTransactionId)
+                .append(":")
+                .append(branchQualifier)
+                .toString()
+                .getBytes();
     }
 
     public static <T> T execute(JedisPool jedisPool, JedisCallback<T> callback) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        try (Jedis jedis = jedisPool.getResource()) {
             return callback.doInJedis(jedis);
-        } finally {
-            if (jedis != null) {
-                jedis.close();
+        }
+    }
+
+    public static <T> T execute(ShardedJedisPool jedisPool, ShardedJedisCallback<T> callback) {
+        try (ShardedJedis jedis = jedisPool.getResource()) {
+            return callback.doInJedis(jedis);
+        }
+    }
+
+    public static ScanParams buildDefaultScanParams(String pattern, int count) {
+        return new ScanParams().match(pattern).count(count);
+    }
+
+    public static boolean isSupportScanCommand(Jedis jedis) {
+        try {
+            ScanParams scanParams = buildDefaultScanParams(SCAN_TEST_PATTERN, SCAN_COUNT);
+            jedis.scan(REDIS_SCAN_INIT_CURSOR, scanParams);
+        } catch (JedisDataException e) {
+            log.error(e.getMessage(), e);
+            log.info("Redis **NOT** support scan command");
+            return false;
+        }
+
+        log.info("Redis support scan command");
+        return true;
+    }
+
+    static public boolean isSupportScanCommand(JedisPool pool) {
+        return execute(pool, jedis -> isSupportScanCommand(jedis));
+    }
+
+    static public boolean isSupportScanCommand(ShardedJedisPool shardedJedisPool) {
+        Collection<Jedis> allShards = shardedJedisPool.getResource().getAllShards();
+
+        for (Jedis jedis : allShards) {
+            try {
+                jedis.connect();
+                if (!isSupportScanCommand(jedis)) {
+                    return false;
+                }
+            } finally {
+                if (jedis.isConnected()) {
+                    jedis.disconnect();
+                }
             }
         }
+
+        return true;
+    }
+
+    static public boolean isSupportScanCommand(JedisCluster jedisCluster) {
+        Map<String, JedisPool> jedisPoolMap = jedisCluster.getClusterNodes();
+
+        for (Map.Entry<String, JedisPool> entry : jedisPoolMap.entrySet()) {
+            if (!isSupportScanCommand(entry.getValue())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static ScanParams scanArgs(String pattern, int count) {
+        return new ScanParams().match(pattern).count(count);
     }
 }

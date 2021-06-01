@@ -1,69 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.mengyun.tcctransaction.unittest"/>
 
+    <!--    <bean class="org.mengyun.tcctransaction.spring.support.TccTransactionConfiguration"/>-->
 
-    <bean class="org.mengyun.tcctransaction.spring.recover.DefaultRecoverConfig">
+<!--    <tcc:annotation-driven transaction-repository="transactionRepository" recover-frequency="recoverFrequency"/>-->
+
+    <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.MemoryStoreTransactionRepository"/>
+
+    <bean id="recoverFrequency" class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">
         <property name="maxRetryCount" value="30"/>
         <property name="recoverDuration" value="5"/>
-        <property name="cronExpression" value="0/15 * * * * ?"/>
+        <property name="cronExpression" value="0/5 * * * * ? "/>
+        <property name="fetchPageSize" value="200"/>
     </bean>
-
-    <!--<bean id="transactionRepository"-->
-          <!--class="org.mengyun.tcctransaction.spring.repository.SpringJdbcTransactionRepository">-->
-        <!--<property name="dataSource" ref="tccDataSource"/>-->
-        <!--<property name="domain" value="UT"/>-->
-        <!--<property name="tbSuffix" value="_UT"/>-->
-    <!--</bean>-->
-
-    <bean id="transactionSerializer" class="org.mengyun.tcctransaction.serializer.JdkSerializationSerializer"/>
-
-
-    <!--<bean id="tccDataSource" class="org.apache.commons.dbcp.BasicDataSource"-->
-          <!--destroy-method="close">-->
-        <!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
-        <!--<property name="url" value="jdbc:mysql://127.0.0.1:3306/TCC"/>-->
-        <!--<property name="username" value="root"/>-->
-        <!--<property name="password" value=""/>-->
-    <!--</bean>-->
-
-    <!--<bean id="transactionRepository"-->
-    <!--class="org.mengyun.tcctransaction.repository.ZooKeeperTransactionRepository">-->
-    <!--&lt;!&ndash;<property name="zkServers" value="localhost:2181,localhost:2183,localhost:2185"/>&ndash;&gt;-->
-    <!--<property name="zkServers" value="localhost:2181"/>-->
-    <!--<property name="zkTimeout" value="10000"/>-->
-    <!--<property name="zkRootPath" value="/tcc_ut"/>-->
-    <!--</bean>-->
-
-
-    <!--recommanded way; to use this, make sure redis is safely durable,which means need set redis as AOF mode and always fsync.
-      appendonly yes
-      appendfsync always
-      -->
-    <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.RedisTransactionRepository">
-    <property name="keyPrefix" value="tcc_ut_"/>
-    <property name="jedisPool" ref="jedisPool"/>
-    </bean>
-
-    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-    <property name="maxTotal" value="1000"/>
-    <property name="maxWaitMillis" value="1000"/>
-    </bean>
-
-    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-    <constructor-arg index="0" ref="jedisPoolConfig"/>
-    <constructor-arg index="1" value="127.0.0.1"/>
-    <constructor-arg index="2" value="6379" type="int"/>
-    <constructor-arg index="3" value="1000" type="int"/>
-    <!--<constructor-arg index="4" value="${redis.password}"/>-->
-    </bean>
-
-    <!--<bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.FileSystemTransactionRepository">-->
-    <!--<property name="rootPath" value="/data/tcc"/>-->
-    <!--</bean>-->
-
 </beans>

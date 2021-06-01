@@ -1,9 +1,11 @@
 package org.mengyun.tcctransaction.repository;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.repository.helper.TransactionSerializer;
-import org.mengyun.tcctransaction.serializer.JdkSerializationSerializer;
-import org.mengyun.tcctransaction.serializer.ObjectSerializer;
+import org.mengyun.tcctransaction.serializer.KryoTransactionSerializer;
+import org.mengyun.tcctransaction.serializer.TransactionSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.transaction.xa.Xid;
 import java.io.File;
@@ -12,29 +14,27 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
-/**
- * Created by changming.xie on 2/24/16.
- * this repository is suitable for single node, not for cluster nodes
- */
-public class FileSystemTransactionRepository extends CachableTransactionRepository {
+public class FileSystemTransactionRepository extends AbstractTransactionRepository {
 
-    private String rootPath = "/tcc";
+    static final Logger log = LoggerFactory.getLogger(FileSystemTransactionRepository.class.getSimpleName());
+
+    private static final String FILE_NAME_DELIMITER = "&";
+    private static final String FILE_NAME_PATTERN = "*-*-*-*-*" + FILE_NAME_DELIMITER + "*-*-*-*-*";
+
+    private String domain = "/var/log/";
 
     private volatile boolean initialized;
 
-    private ObjectSerializer serializer = new JdkSerializationSerializer();
-
-    public void setSerializer(ObjectSerializer serializer) {
-        this.serializer = serializer;
-    }
-
-    public void setRootPath(String rootPath) {
-        this.rootPath = rootPath;
-    }
+    private TransactionSerializer serializer = new KryoTransactionSerializer();
 
     @Override
     protected int doCreate(Transaction transaction) {
@@ -45,8 +45,13 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
     @Override
     protected int doUpdate(Transaction transaction) {
 
-        transaction.updateVersion();
-        transaction.updateTime();
+        Transaction foundTransaction = doFindOne(transaction.getXid());
+        if (foundTransaction.getVersion() != transaction.getVersion()) {
+            return 0;
+        }
+
+        transaction.setVersion(transaction.getVersion() + 1);
+        transaction.setLastUpdateTime(new Date());
 
         writeFile(transaction);
         return 1;
@@ -54,17 +59,18 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
 
     @Override
     protected int doDelete(Transaction transaction) {
-
         String fullFileName = getFullFileName(transaction.getXid());
         File file = new File(fullFileName);
         if (file.exists()) {
-            file.delete();
+            return file.delete() ? 1 : 0;
         }
         return 1;
     }
 
     @Override
     protected Transaction doFindOne(Xid xid) {
+
+        makeDirIfNecessary();
 
         String fullFileName = getFullFileName(xid);
         File file = new File(fullFileName);
@@ -77,71 +83,113 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
     }
 
     @Override
-    protected List<Transaction> doFindAllUnmodifiedSince(Date date) {
+    protected Page<Transaction> doFindAllUnmodifiedSince(Date date, String offset, int pageSize) {
 
-        List<Transaction> allTransactions = doFindAll();
+        List<Transaction> fetchedTransactions = new ArrayList<>();
 
-        List<Transaction> allUnmodifiedSince = new ArrayList<Transaction>();
+        String tryFetchOffset = offset;
 
-        for (Transaction transaction : allTransactions) {
-            if (transaction.getLastUpdateTime().compareTo(date) < 0) {
-                allUnmodifiedSince.add(transaction);
-            }
-        }
+        int haveFetchedCount = 0;
 
-        return allUnmodifiedSince;
-    }
+        do {
 
+            Page<Transaction> page = doFindAll(tryFetchOffset, pageSize - haveFetchedCount);
 
-    protected List<Transaction> doFindAll() {
+            tryFetchOffset = page.getNextOffset();
 
-        List<Transaction> transactions = new ArrayList<Transaction>();
-        File path = new File(rootPath);
-        File[] files = path.listFiles();
-
-        for (File file : files) {
-            Transaction transaction = readTransaction(file);
-            transactions.add(transaction);
-        }
-
-        return transactions;
-    }
-
-    private String getFullFileName(Xid xid) {
-        return String.format("%s/%s", rootPath, xid);
-    }
-
-    private void makeDirIfNecessory() {
-        if (!initialized) {
-            synchronized (FileSystemTransactionRepository.class) {
-                if (!initialized) {
-                    File rootPathFile = new File(rootPath);
-                    if (!rootPathFile.exists()) {
-
-                        boolean result = rootPathFile.mkdir();
-
-                        if (!result) {
-                            throw new TransactionIOException("cannot create root path, the path to create is:" + rootPath);
-                        }
-
-                        initialized = true;
-                    } else if (!rootPathFile.isDirectory()) {
-                        throw new TransactionIOException("rootPath is not directory");
-                    }
+            for (Transaction transaction : page.getData()) {
+                if (transaction.getLastUpdateTime().compareTo(date) < 0) {
+                    fetchedTransactions.add(transaction);
                 }
             }
+
+            haveFetchedCount += page.getData().size();
+
+            if (page.getData().size() <= 0 || haveFetchedCount >= pageSize) {
+                break;
+            }
+        } while (true);
+
+
+        return new Page<Transaction>(tryFetchOffset, fetchedTransactions);
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    /*
+     * offset: jedisIndex:cursor,eg = 0:0,1:0
+     * */
+    protected Page<Transaction> doFindAll(String offset, int maxFindCount) {
+
+        makeDirIfNecessary();
+
+        Page<Transaction> page = new Page<Transaction>();
+
+        Path dir = Paths.get(domain);
+
+        int currentOffset = StringUtils.isEmpty(offset) ? 0 : Integer.valueOf(offset);
+        int nextOffset = currentOffset;
+
+        int index = 0;
+
+        List<Transaction> transactions = new ArrayList<Transaction>();
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, FILE_NAME_PATTERN)) {
+
+            for (Path path : stream) {
+
+                if (index < currentOffset) {
+                    index++;
+                    continue;
+                }
+
+                if (index < currentOffset + maxFindCount) {
+
+                    try {
+
+                        Transaction transaction = readTransaction(path.toFile());
+                        if (transaction != null) {
+                            transactions.add(transaction);
+                        }
+
+                    } catch (Exception e) {
+                        // ignore the read error.
+                    }
+
+                    index++;
+                    nextOffset = index;
+                } else {
+                    break;
+                }
+            }
+
+            page.setNextOffset(String.valueOf(nextOffset));
+            page.setData(transactions);
+
+            return page;
+
+        } catch (IOException e) {
+            throw new TransactionIOException(e);
         }
     }
 
+
     private void writeFile(Transaction transaction) {
-        makeDirIfNecessory();
+        makeDirIfNecessary();
 
         String file = getFullFileName(transaction.getXid());
 
         FileChannel channel = null;
         RandomAccessFile raf = null;
 
-        byte[] content = TransactionSerializer.serialize(serializer, transaction);
+        byte[] content = serializer.serialize(transaction);
         try {
             raf = new RandomAccessFile(file, "rw");
             channel = raf.getChannel();
@@ -178,8 +226,9 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
             fis.read(content);
 
             if (content != null) {
-                return TransactionSerializer.deserialize(serializer, content);
+                return serializer.deserialize(content);
             }
+
         } catch (Exception e) {
             throw new TransactionIOException(e);
         } finally {
@@ -193,5 +242,34 @@ public class FileSystemTransactionRepository extends CachableTransactionReposito
         }
 
         return null;
+    }
+
+
+    private void makeDirIfNecessary() {
+        if (!initialized) {
+            synchronized (FileSystemTransactionRepository.class) {
+                if (!initialized) {
+                    File rootPathFile = new File(domain);
+                    if (!rootPathFile.exists()) {
+
+                        boolean result = rootPathFile.mkdir();
+
+                        if (!result) {
+                            throw new TransactionIOException("cannot create root path, the path to create is:" + domain);
+                        }
+
+                        initialized = true;
+                    } else if (!rootPathFile.isDirectory()) {
+                        throw new TransactionIOException("rootPath is not directory");
+                    }
+                }
+            }
+        }
+    }
+
+    private String getFullFileName(Xid xid) {
+        return String.format(domain.endsWith("/") ? "%s%s" + FILE_NAME_DELIMITER + "%s" : "%s/%s" + FILE_NAME_DELIMITER + "%s", domain,
+                UUID.nameUUIDFromBytes(xid.getGlobalTransactionId()).toString(),
+                UUID.nameUUIDFromBytes(xid.getBranchQualifier()).toString());
     }
 }

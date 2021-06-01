@@ -1,16 +1,20 @@
 package org.mengyun.tcctransaction.sample.dubbo.redpacket.service;
 
-import org.mengyun.tcctransaction.Compensable;
-import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.entity.RedPacketAccount;
-import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.entity.TradeOrder;
-import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.repository.RedPacketAccountRepository;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.dto.RedPacketTradeOrderDto;
-import org.mengyun.tcctransaction.sample.dubbo.redpacket.domain.repository.TradeOrderRepository;
+import org.mengyun.tcctransaction.sample.redpacket.domain.entity.RedPacketAccount;
+import org.mengyun.tcctransaction.sample.redpacket.domain.entity.TradeOrder;
+import org.mengyun.tcctransaction.sample.redpacket.domain.repository.RedPacketAccountRepository;
+import org.mengyun.tcctransaction.sample.redpacket.domain.repository.TradeOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Calendar;
 
 /**
  * Created by changming.xie on 4/2/16.
@@ -25,52 +29,88 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     TradeOrderRepository tradeOrderRepository;
 
     @Override
-    @Compensable(confirmMethod = "confirmRecord",cancelMethod = "cancelRecord")
+    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
     @Transactional
-    public String record(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
-        System.out.println("red packet try record called");
+    public String record(RedPacketTradeOrderDto tradeOrderDto) {
 
-        TradeOrder tradeOrder = new TradeOrder(
-                tradeOrderDto.getSelfUserId(),
-                tradeOrderDto.getOppositeUserId(),
-                tradeOrderDto.getMerchantOrderNo(),
-                tradeOrderDto.getAmount()
-        );
+        try {
+            Thread.sleep(1000l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-        tradeOrderRepository.insert(tradeOrder);
+        System.out.println("red packet try record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
-        RedPacketAccount transferFromAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getSelfUserId());
+        TradeOrder foundTradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
-        transferFromAccount.transferFrom(tradeOrderDto.getAmount());
+        //check if trade order has been recorded, if yes, return success directly.
+        if (foundTradeOrder == null) {
 
-        redPacketAccountRepository.save(transferFromAccount);
+            TradeOrder tradeOrder = new TradeOrder(
+                    tradeOrderDto.getSelfUserId(),
+                    tradeOrderDto.getOppositeUserId(),
+                    tradeOrderDto.getMerchantOrderNo(),
+                    tradeOrderDto.getAmount()
+            );
+
+            try {
+
+                tradeOrderRepository.insert(tradeOrder);
+
+                RedPacketAccount transferFromAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getSelfUserId());
+
+                transferFromAccount.transferFrom(tradeOrderDto.getAmount());
+
+                redPacketAccountRepository.save(transferFromAccount);
+            } catch (DataIntegrityViolationException e) {
+                //this exception may happen when insert trade order concurrently, if happened, ignore this insert operation.
+            }
+        }
 
         return "success";
     }
 
     @Transactional
-    public void confirmRecord(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
-        System.out.println("red packet confirm record called");
+    public void confirmRecord(RedPacketTradeOrderDto tradeOrderDto) {
+
+        try {
+            Thread.sleep(1000l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("red packet confirm record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
-        tradeOrder.confirm();
-        tradeOrderRepository.update(tradeOrder);
+        //check if the trade order status is DRAFT, if yes, return directly, ensure idempotency.
+        if (tradeOrder != null && tradeOrder.getStatus().equals("DRAFT")) {
+            tradeOrder.confirm();
+            tradeOrderRepository.update(tradeOrder);
 
-        RedPacketAccount transferToAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getOppositeUserId());
+            RedPacketAccount transferToAccount = redPacketAccountRepository.findByUserId(tradeOrderDto.getOppositeUserId());
 
-        transferToAccount.transferTo(tradeOrderDto.getAmount());
+            transferToAccount.transferTo(tradeOrderDto.getAmount());
 
-        redPacketAccountRepository.save(transferToAccount);
+            redPacketAccountRepository.save(transferToAccount);
+        }
     }
 
     @Transactional
-    public void cancelRecord(TransactionContext transactionContext, RedPacketTradeOrderDto tradeOrderDto) {
-        System.out.println("red packet cancel record called");
+    public void cancelRecord(RedPacketTradeOrderDto tradeOrderDto) {
+
+        try {
+            Thread.sleep(1000l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("red packet cancel record called. time seq:" + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 
         TradeOrder tradeOrder = tradeOrderRepository.findByMerchantOrderNo(tradeOrderDto.getMerchantOrderNo());
 
-        if(null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
+        //check if the trade order status is DRAFT, if yes, return directly, ensure idempotency.
+        if (null != tradeOrder && "DRAFT".equals(tradeOrder.getStatus())) {
             tradeOrder.cancel();
             tradeOrderRepository.update(tradeOrder);
 

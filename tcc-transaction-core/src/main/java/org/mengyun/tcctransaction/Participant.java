@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction;
 
-import org.mengyun.tcctransaction.api.TransactionXid;
+import org.mengyun.tcctransaction.api.*;
 
 import java.io.Serializable;
 
@@ -10,33 +10,47 @@ import java.io.Serializable;
 public class Participant implements Serializable {
 
     private static final long serialVersionUID = 4127729421281425247L;
-    private TransactionXid xid;
+    Class<? extends TransactionContextEditor> transactionContextEditorClass;
 
-    private Terminator terminator;
+    private TransactionXid rootXid;
+    private TransactionXid xid;
+    private InvocationContext confirmInvocationContext;
+    private InvocationContext cancelInvocationContext;
+    private int status = ParticipantStatus.TRYING.getId();
 
     public Participant() {
 
     }
 
-    public Participant(TransactionXid xid, Terminator terminator) {
+    public Participant(TransactionXid rootXid, TransactionXid xid, InvocationContext confirmInvocationContext, InvocationContext cancelInvocationContext, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
         this.xid = xid;
-        this.terminator = terminator;
+        this.rootXid = rootXid;
+        this.confirmInvocationContext = confirmInvocationContext;
+        this.cancelInvocationContext = cancelInvocationContext;
+        this.transactionContextEditorClass = transactionContextEditorClass;
     }
 
     public void rollback() {
-        terminator.rollback();
+        Terminator.invoke(new TransactionContext(rootXid, xid, TransactionStatus.CANCELLING.getId(), status), cancelInvocationContext, transactionContextEditorClass);
     }
 
     public void commit() {
-        terminator.commit();
+        Terminator.invoke(new TransactionContext(rootXid, xid, TransactionStatus.CONFIRMING.getId(), status), confirmInvocationContext, transactionContextEditorClass);
     }
 
-    public Terminator getTerminator() {
-        return terminator;
+    public InvocationContext getConfirmInvocationContext() {
+        return confirmInvocationContext;
     }
 
-    public TransactionXid getXid() {
-        return xid;
+    public InvocationContext getCancelInvocationContext() {
+        return cancelInvocationContext;
     }
 
+    public void setStatus(ParticipantStatus status) {
+        this.status = status.getId();
+    }
+
+    public ParticipantStatus getStatus() {
+        return ParticipantStatus.valueOf(this.status);
+    }
 }

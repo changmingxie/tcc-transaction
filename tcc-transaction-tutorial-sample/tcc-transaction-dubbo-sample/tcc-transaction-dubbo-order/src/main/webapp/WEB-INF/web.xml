@@ -1,28 +1,29 @@
-<!DOCTYPE web-app PUBLIC
-        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.0"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
-<web-app>
     <display-name>Sample Dubbo Order</display-name>
 
     <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>tcc-transaction-dubbo-order</param-value>
+    </context-param>
+
+    <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath*:config/spring/local/appcontext-*.xml,classpath:tcc-transaction.xml
+        <param-value>
+            classpath:tcc-transaction-dubbo.xml,classpath*:config/spring/local/appcontext-*.xml
         </param-value>
     </context-param>
 
     <context-param>
-        <param-name>log4jConfigLocation</param-name>
-        <param-value>classpath:log/log4j.xml</param-value>
-    </context-param>
-
-    <context-param>
-        <param-name>log4jRefreshInterval</param-name>
-        <param-value>60000</param-value>
+        <param-name>log4jConfiguration</param-name>
+        <param-value>classpath:log4j2.xml</param-value>
     </context-param>
 
     <listener>
-        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+        <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
     </listener>
 
     <listener>
@@ -30,8 +31,7 @@
     </listener>
 
     <filter>
-        <filter-name>characterEncodingFilter</filter-name>
-        <display-name>Character Encoding Filter</display-name>
+        <filter-name>encodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
         <init-param>
             <param-name>encoding</param-name>
@@ -43,10 +43,27 @@
         </init-param>
     </filter>
 
+    <filter>
+        <filter-name>log4jServletFilter</filter-name>
+        <filter-class>org.apache.logging.log4j.web.Log4jServletFilter</filter-class>
+    </filter>
+
     <filter-mapping>
-        <filter-name>characterEncodingFilter</filter-name>
+        <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>log4jServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+
 
     <servlet>
         <servlet-name>springmvc</servlet-name>

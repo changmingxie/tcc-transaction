@@ -7,11 +7,11 @@ public class StringUtils {
 
     public static boolean isNotEmpty(String value) {
 
-        if(value == null) {
+        if (value == null) {
             return false;
         }
 
-        if(value.equals("")) {
+        if (value.equals("")) {
             return false;
         }
 

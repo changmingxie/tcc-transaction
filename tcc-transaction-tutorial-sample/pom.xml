@@ -1,19 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <parent>
-        <artifactId>tcc-transaction</artifactId>
+        <artifactId>tcc-transaction-parent</artifactId>
         <groupId>org.mengyun</groupId>
-        <version>1.1.6.6</version>
+        <version>${revision}</version>
+        <relativePath>../tcc-transaction-parent/pom.xml</relativePath>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tcc-transaction-tutorial-sample</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>tcc-transaction-dubbo-sample</module>
+        <module>tcc-transaction-http-sample</module>
+        <module>tcc-transaction-sample-domain</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

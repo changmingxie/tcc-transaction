@@ -1,0 +1,2 @@
+tccJavassist=org.mengyun.tcctransaction.dubbo.proxy.javassist.TccJavassistProxyFactory
+tccJdk=org.mengyun.tcctransaction.dubbo.proxy.jdk.TccJdkProxyFactory

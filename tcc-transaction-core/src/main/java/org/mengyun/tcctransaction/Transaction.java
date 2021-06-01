@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction;
 
 
+import org.mengyun.tcctransaction.api.ParticipantStatus;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.TransactionXid;
@@ -20,24 +21,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Transaction implements Serializable {
 
     private static final long serialVersionUID = 7291423944314337931L;
-
+    private final Date createTime = new Date();
+    private final List<Participant> participants = new ArrayList<Participant>();
+    private final Map<String, Object> attachments = new ConcurrentHashMap<String, Object>();
     private TransactionXid xid;
-
     private TransactionStatus status;
-
     private TransactionType transactionType;
-
     private volatile int retriedCount = 0;
-
-    private Date createTime = new Date();
-
     private Date lastUpdateTime = new Date();
-
-    private long version = 1;
-
-    private List<Participant> participants = new ArrayList<Participant>();
-
-    private Map<String, Object> attachments = new ConcurrentHashMap<String, Object>();
+    private long version = 0;
+    private TransactionXid rootXid;
 
     public Transaction() {
 
@@ -45,14 +38,25 @@ public class Transaction implements Serializable {
 
     public Transaction(TransactionContext transactionContext) {
         this.xid = transactionContext.getXid();
+        this.rootXid = transactionContext.getRootXid();
+
         this.status = TransactionStatus.TRYING;
         this.transactionType = TransactionType.BRANCH;
     }
 
     public Transaction(TransactionType transactionType) {
-        this.xid = new TransactionXid();
+        this(null, transactionType);
+    }
+
+    public Transaction(Object uniqueIdentity, TransactionType transactionType) {
+
+        this.xid = new TransactionXid(uniqueIdentity);
         this.status = TransactionStatus.TRYING;
         this.transactionType = transactionType;
+
+        if (transactionType.equals(TransactionType.ROOT)) {
+            this.rootXid = xid;
+        }
     }
 
     public void enlistParticipant(Participant participant) {
@@ -68,6 +72,9 @@ public class Transaction implements Serializable {
         return status;
     }
 
+    public void setStatus(TransactionStatus status) {
+        this.status = status;
+    }
 
     public List<Participant> getParticipants() {
         return participants;
@@ -81,17 +88,21 @@ public class Transaction implements Serializable {
         this.status = status;
     }
 
-
     public void commit() {
-
         for (Participant participant : participants) {
-            participant.commit();
+            if (!participant.getStatus().equals(ParticipantStatus.CONFIRM_SUCCESS)) {
+                participant.commit();
+                participant.setStatus(ParticipantStatus.CONFIRM_SUCCESS);
+            }
         }
     }
 
     public void rollback() {
         for (Participant participant : participants) {
-            participant.rollback();
+            if (!participant.getStatus().equals(ParticipantStatus.CANCEL_SUCCESS)) {
+                participant.rollback();
+                participant.setStatus(ParticipantStatus.CANCEL_SUCCESS);
+            }
         }
     }
 
@@ -99,12 +110,12 @@ public class Transaction implements Serializable {
         return retriedCount;
     }
 
-    public void addRetriedCount() {
-        this.retriedCount++;
+    public void setRetriedCount(int retriedCount) {
+        this.retriedCount = retriedCount;
     }
 
-    public void resetRetriedCount(int retriedCount) {
-        this.retriedCount = retriedCount;
+    public synchronized void addRetriedCount() {
+        this.retriedCount++;
     }
 
     public Map<String, Object> getAttachments() {
@@ -115,12 +126,12 @@ public class Transaction implements Serializable {
         return version;
     }
 
-    public void updateVersion() {
-        this.version++;
-    }
-
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public void updateVersion() {
+        this.version++;
     }
 
     public Date getLastUpdateTime() {
@@ -139,5 +150,20 @@ public class Transaction implements Serializable {
         this.lastUpdateTime = new Date();
     }
 
+    public boolean isTryFailed() {
+        for (Participant participant : participants) {
+            if (participant.getStatus().equals(ParticipantStatus.TRY_FAILED)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public TransactionXid getRootXid() {
+        return rootXid;
+    }
+
+    public void setRootXid(TransactionXid rootXid) {
+        this.rootXid = rootXid;
+    }
 }

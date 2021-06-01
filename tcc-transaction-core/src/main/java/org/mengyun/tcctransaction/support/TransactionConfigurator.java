@@ -1,18 +1,22 @@
 package org.mengyun.tcctransaction.support;
 
-import org.mengyun.tcctransaction.recover.RecoverConfig;
+
 import org.mengyun.tcctransaction.TransactionManager;
-import org.mengyun.tcctransaction.TransactionRepository;
+import org.mengyun.tcctransaction.recovery.RecoverFrequency;
+import org.mengyun.tcctransaction.repository.TransactionRepository;
+
+import java.util.concurrent.locks.Lock;
 
 /**
- * Created by changmingxie on 11/10/15.
+ * Created by changming.xie on 2/24/17.
  */
 public interface TransactionConfigurator {
 
-    public TransactionManager getTransactionManager();
+    TransactionManager getTransactionManager();
 
-    public TransactionRepository getTransactionRepository();
+    TransactionRepository getTransactionRepository();
 
-    public RecoverConfig getRecoverConfig();
+    RecoverFrequency getRecoverFrequency();
 
+    Lock getRecoveryLock();
 }
