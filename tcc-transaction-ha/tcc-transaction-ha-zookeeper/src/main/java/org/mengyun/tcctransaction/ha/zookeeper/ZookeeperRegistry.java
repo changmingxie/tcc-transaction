@@ -60,7 +60,11 @@ public class ZookeeperRegistry implements Registry {
                     ok = true;
                     log.info("Succeed to register infrastructure [{}] for path {}", registration, path);
                 } catch (KeeperException.NodeExistsException ignore) {
-                    curator.delete().forPath(path);
+                    try {
+                        curator.delete().forPath(path);
+                    } catch (KeeperException.NodeExistsException ignore2) {
+                        
+                    }
                 }
             }
         } catch (Exception ex) {
