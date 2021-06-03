@@ -63,7 +63,7 @@ public class ZookeeperRegistry implements Registry {
                     try {
                         curator.delete().forPath(path);
                     } catch (KeeperException.NodeExistsException ignore2) {
-                        
+
                     }
                 }
             }
