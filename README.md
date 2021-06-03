@@ -32,5 +32,7 @@ https://github.com/changmingxie/tcc-transaction/wiki/3-%E5%B8%B8%E8%A7%81%E9%97%
 
 
 讨论群：
+
 钉钉扫码入群
-https://raw.githubusercontent.com/changmingxie/tcc-transaction/master-1.6.x/material/tcc-transaction-dingdingtalk.jpg
+
+![钉钉扫码入群](https://raw.githubusercontent.com/changmingxie/tcc-transaction/master-1.6.x/material/tcc-transaction-dingdingtalk.jpg)
