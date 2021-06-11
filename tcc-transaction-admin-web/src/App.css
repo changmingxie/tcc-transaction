@@ -1,0 +1,36 @@
+.search-box {
+  display: flex;
+  flex-direction: row;
+}
+
+.search-box .ant-btn {
+  margin-left: 8px;
+}
+
+.site-layout-content {
+  padding: 12px;
+}
+
+.tab-3-body {
+  background-color: #fff;
+  padding-top: 20px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 1px;
+}
+
+.tab-3-row {
+  padding: 6px;
+}
+
+.tab-3-switch-label {
+  padding-left: 12px;
+}
+
+#root {
+  height: 100%;
+}
+
+.layout {
+  height: 100%;
+}
