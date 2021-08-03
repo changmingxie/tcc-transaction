@@ -20,6 +20,10 @@ public abstract class ResourceCoordinatorAspect {
 
     @Around("transactionContextCall()")
     public Object interceptTransactionContextMethod(ProceedingJoinPoint pjp) throws Throwable {
+        return interceptTransactionContextMethod(new AspectJTransactionMethodJoinPoint(pjp));
+    }
+
+    public Object interceptTransactionContextMethod(TransactionMethodJoinPoint pjp) throws Throwable {
         return resourceCoordinatorInterceptor.interceptTransactionContextMethod(pjp);
     }
 

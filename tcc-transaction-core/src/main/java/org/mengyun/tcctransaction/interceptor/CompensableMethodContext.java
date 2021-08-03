@@ -1,7 +1,5 @@
 package org.mengyun.tcctransaction.interceptor;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.api.*;
 import org.mengyun.tcctransaction.common.ParticipantRole;
@@ -15,7 +13,7 @@ import java.lang.reflect.Method;
  */
 public class CompensableMethodContext {
 
-    ProceedingJoinPoint pjp = null;
+    TransactionMethodJoinPoint pjp = null;
     Method method = null;
 
     Compensable compensable = null;
@@ -28,14 +26,14 @@ public class CompensableMethodContext {
 
     private Transaction transaction = null;
 
-    public CompensableMethodContext(ProceedingJoinPoint pjp, Transaction transaction) {
+    public CompensableMethodContext(TransactionMethodJoinPoint pjp, Transaction transaction) {
 
         this.pjp = pjp;
 
         this.method = getCompensableMethod();
 
         if (method == null) {
-            throw new RuntimeException(String.format("join point not found method, point is : %s", pjp.getSignature().getName()));
+            throw new RuntimeException(String.format("join point not found method, point is : %s", pjp.getMethod().getName()));
         }
 
         this.compensable = method.getAnnotation(Compensable.class);
@@ -120,7 +118,7 @@ public class CompensableMethodContext {
 
         //Method is @Compensable annotated, and has active transaction, and also has transaction context.
         //then the method need enlist the transaction as CONSUMER role, its role maybe PROVIDER before.
-        if(compensable != null && transaction != null && transactionContext != null) {
+        if (compensable != null && transaction != null && transactionContext != null) {
             return ParticipantRole.CONSUMER;
         }
 
@@ -137,7 +135,7 @@ public class CompensableMethodContext {
 
     private Method getCompensableMethod() {
 
-        Method method = ((MethodSignature) (pjp.getSignature())).getMethod();
+        Method method = pjp.getMethod();
 
         Method foundMethod = null;
 
@@ -148,7 +146,7 @@ public class CompensableMethodContext {
 
             Method targetMethod = null;
             try {
-                targetMethod = pjp.getTarget().getClass().getMethod(method.getName(), method.getParameterTypes());
+                targetMethod = pjp.getTargetClass().getMethod(method.getName(), method.getParameterTypes());
             } catch (NoSuchMethodException e) {
                 targetMethod = null;
             }

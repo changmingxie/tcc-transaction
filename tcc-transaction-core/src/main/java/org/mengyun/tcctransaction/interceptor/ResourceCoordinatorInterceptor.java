@@ -1,7 +1,5 @@
 package org.mengyun.tcctransaction.interceptor;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.InvocationContext;
 import org.mengyun.tcctransaction.Participant;
 import org.mengyun.tcctransaction.Transaction;
@@ -23,7 +21,7 @@ public class ResourceCoordinatorInterceptor {
         this.transactionManager = transactionManager;
     }
 
-    public Object interceptTransactionContextMethod(ProceedingJoinPoint pjp) throws Throwable {
+    public Object interceptTransactionContextMethod(TransactionMethodJoinPoint pjp) throws Throwable {
 
         Transaction transaction = transactionManager.getCurrentTransaction();
 
@@ -55,7 +53,7 @@ public class ResourceCoordinatorInterceptor {
         return pjp.proceed(pjp.getArgs());
     }
 
-    private Participant enlistParticipant(ProceedingJoinPoint pjp) {
+    private Participant enlistParticipant(TransactionMethodJoinPoint pjp) {
 
         Transaction transaction = transactionManager.getCurrentTransaction();
         CompensableMethodContext compensableMethodContext = new CompensableMethodContext(pjp, transaction);
@@ -71,10 +69,10 @@ public class ResourceCoordinatorInterceptor {
         TransactionXid xid = new TransactionXid(transaction.getXid().getGlobalTransactionId());
 
         if (compensableMethodContext.getTransactionContext() == null) {
-            FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(new TransactionContext(transaction.getRootXid(), xid, TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId()), pjp.getTarget(), ((MethodSignature) pjp.getSignature()).getMethod(), pjp.getArgs());
+            FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(new TransactionContext(transaction.getRootXid(), xid, TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId()), pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
         }
 
-        Class targetClass = ReflectionUtils.getDeclaringType(pjp.getTarget().getClass(), compensableMethodContext.getMethod().getName(), compensableMethodContext.getMethod().getParameterTypes());
+        Class targetClass = ReflectionUtils.getDeclaringType(pjp.getTargetClass(), compensableMethodContext.getMethod().getName(), compensableMethodContext.getMethod().getParameterTypes());
 
 
         InvocationContext confirmInvocation = new InvocationContext(targetClass,

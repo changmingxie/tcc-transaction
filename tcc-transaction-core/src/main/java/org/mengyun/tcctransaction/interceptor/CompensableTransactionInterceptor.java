@@ -27,7 +27,7 @@ public class CompensableTransactionInterceptor {
         this.transactionManager = transactionManager;
     }
 
-    public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
+    public Object interceptCompensableMethod(TransactionMethodJoinPoint pjp) throws Throwable {
 
         Transaction transaction = transactionManager.getCurrentTransaction();
         CompensableMethodContext compensableMethodContext = new CompensableMethodContext(pjp, transaction);
@@ -43,7 +43,6 @@ public class CompensableTransactionInterceptor {
                 return pjp.proceed();
         }
     }
-
 
     private Object rootMethodProceed(CompensableMethodContext compensableMethodContext) throws Throwable {
 
@@ -80,7 +79,6 @@ public class CompensableTransactionInterceptor {
     private Object providerMethodProceed(CompensableMethodContext compensableMethodContext) throws Throwable {
 
         Transaction transaction = null;
-
 
         boolean asyncConfirm = compensableMethodContext.getAnnotation().asyncConfirm();
 
