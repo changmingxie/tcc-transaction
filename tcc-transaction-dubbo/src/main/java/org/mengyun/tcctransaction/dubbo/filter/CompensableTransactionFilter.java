@@ -40,7 +40,7 @@ public class CompensableTransactionFilter implements Filter {
             EnableTcc enableTcc = method.getAnnotation(EnableTcc.class);
 
             if (enableTcc != null) {
-                DubboInvokeProceedingJoinPoint pjp = new DubboInvokeProceedingJoinPoint(invocation, null, DubboTransactionContextEditor.class);
+                DubboInvokeProceedingJoinPoint pjp = new DubboInvokeProceedingJoinPoint(invoker, invocation, null, DubboTransactionContextEditor.class);
                 return (Result) FactoryBuilder.factoryOf(ResourceCoordinatorAspect.class).getInstance().interceptTransactionContextMethod(pjp);
             } else {
                 return invoker.invoke(invocation);

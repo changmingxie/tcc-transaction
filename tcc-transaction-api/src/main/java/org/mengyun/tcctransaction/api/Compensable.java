@@ -22,5 +22,5 @@ public @interface Compensable {
 
     public boolean asyncCancel() default false;
 
-    public Class<? extends TransactionContextEditor> transactionContextEditor() default ParameterTransactionContextEditor.class;
+    public Class<? extends TransactionContextEditor> transactionContextEditor() default NullableTransactionContextEditor.class;
 }

@@ -2,6 +2,7 @@ package org.mengyun.tcctransaction.dubbo.filter;
 
 import org.apache.dubbo.rpc.Constants;
 import org.apache.dubbo.rpc.Invocation;
+import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.model.ConsumerMethodModel;
 import org.apache.dubbo.rpc.model.ConsumerModel;
 import org.mengyun.tcctransaction.api.Compensable;
@@ -12,11 +13,13 @@ import java.lang.reflect.Method;
 
 public class DubboInvokeProceedingJoinPoint implements TransactionMethodJoinPoint {
 
+    private Invoker invoker;
     private Invocation invocation;
     Compensable compensable;
     Class<? extends TransactionContextEditor> transactionContextEditorClass;
 
-    public DubboInvokeProceedingJoinPoint(Invocation invocation, Compensable compensable, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
+    public DubboInvokeProceedingJoinPoint(Invoker invoker, Invocation invocation, Compensable compensable, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
+        this.invoker = invoker;
         this.invocation = invocation;
         this.compensable = compensable;
         this.transactionContextEditorClass = transactionContextEditorClass;
@@ -54,7 +57,7 @@ public class DubboInvokeProceedingJoinPoint implements TransactionMethodJoinPoin
 
     @Override
     public Object proceed() throws Throwable {
-        return invocation.getInvoker().invoke(invocation);
+        return invoker.invoke(invocation);
     }
 
     @Override

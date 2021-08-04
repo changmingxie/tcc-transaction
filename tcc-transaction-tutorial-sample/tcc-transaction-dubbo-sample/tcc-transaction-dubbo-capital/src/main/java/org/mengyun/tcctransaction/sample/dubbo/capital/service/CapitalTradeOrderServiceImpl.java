@@ -29,7 +29,7 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     TradeOrderRepository tradeOrderRepository;
 
     @Override
-    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord")
+    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
     @Transactional
     public String record(CapitalTradeOrderDto tradeOrderDto) {
 

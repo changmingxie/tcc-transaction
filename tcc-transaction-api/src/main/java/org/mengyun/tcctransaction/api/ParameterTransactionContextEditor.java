@@ -37,9 +37,9 @@ public class ParameterTransactionContextEditor implements TransactionContextEdit
 
         if (position >= 0) {
             return (TransactionContext) args[position];
+        } else {
+            throw new RuntimeException("No TransactionContext parameter exist while get TransactionContext with ParameterTransactionContextEditor!");
         }
-
-        return null;
     }
 
     @Override
@@ -48,6 +48,8 @@ public class ParameterTransactionContextEditor implements TransactionContextEdit
         int position = getTransactionContextParamPosition(method.getParameterTypes());
         if (position >= 0) {
             args[position] = transactionContext;
+        } else {
+            throw new RuntimeException("No TransactionContext parameter exist while set TransactionContext with ParameterTransactionContextEditor!");
         }
     }
 }
