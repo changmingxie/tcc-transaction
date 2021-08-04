@@ -7,6 +7,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.Propagation;
 import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
+import org.mengyun.tcctransaction.interceptor.AspectJTransactionMethodJoinPoint;
 import org.mengyun.tcctransaction.interceptor.ResourceCoordinatorAspect;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
@@ -38,12 +39,12 @@ public class TccInvokerInvocationHandler extends InvokerInvocationHandler {
             if (StringUtils.isEmpty(compensable.confirmMethod())) {
                 ReflectionUtils.changeAnnotationValue(compensable, "confirmMethod", method.getName());
                 ReflectionUtils.changeAnnotationValue(compensable, "cancelMethod", method.getName());
-                ReflectionUtils.changeAnnotationValue(compensable, "transactionContextEditor", DubboTransactionContextEditor.class);
+//                ReflectionUtils.changeAnnotationValue(compensable, "transactionContextEditor", DubboTransactionContextEditor.class);
                 ReflectionUtils.changeAnnotationValue(compensable, "propagation", Propagation.SUPPORTS);
             }
 
             ProceedingJoinPoint pjp = new MethodProceedingJoinPoint(proxy, target, method, args);
-            return FactoryBuilder.factoryOf(ResourceCoordinatorAspect.class).getInstance().interceptTransactionContextMethod(pjp);
+            return FactoryBuilder.factoryOf(ResourceCoordinatorAspect.class).getInstance().interceptTransactionContextMethod(new AspectJTransactionMethodJoinPoint(pjp,compensable,DubboTransactionContextEditor.class));
         } else {
             return super.invoke(target, method, args);
         }

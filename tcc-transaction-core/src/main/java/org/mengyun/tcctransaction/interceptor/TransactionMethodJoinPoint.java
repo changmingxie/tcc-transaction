@@ -1,10 +1,15 @@
 package org.mengyun.tcctransaction.interceptor;
 
+import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.TransactionContextEditor;
+
 import java.lang.reflect.Method;
 
 public interface TransactionMethodJoinPoint {
 
-    Class getTargetClass();
+    Compensable getCompensable();
+
+    Class<? extends TransactionContextEditor> getTransactionContextEditorClass();
 
     Method getMethod();
 
@@ -14,7 +19,7 @@ public interface TransactionMethodJoinPoint {
 
     Object proceed() throws Throwable;
 
-    Object proceed(Object[] var1) throws Throwable;
+    Object proceed(Object[] args) throws Throwable;
 
 
 }

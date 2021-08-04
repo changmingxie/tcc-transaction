@@ -40,7 +40,7 @@ public class CompensableTransactionInterceptor {
             case PROVIDER:
                 return providerMethodProceed(compensableMethodContext);
             default:
-                return pjp.proceed();
+                return compensableMethodContext.proceed();
         }
     }
 

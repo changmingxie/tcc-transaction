@@ -1,7 +1,10 @@
 package org.mengyun.tcctransaction.interceptor;
 
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.api.*;
+import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.api.TransactionContextEditor;
+import org.mengyun.tcctransaction.api.UniqueIdentity;
 import org.mengyun.tcctransaction.common.ParticipantRole;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 
@@ -14,52 +17,25 @@ import java.lang.reflect.Method;
 public class CompensableMethodContext {
 
     TransactionMethodJoinPoint pjp = null;
-    Method method = null;
-
-    Compensable compensable = null;
-    Propagation propagation = null;
-
-    TransactionContext transactionContext = null;
-    Class<? extends TransactionContextEditor> transactionContextEditorClass;
-    String confirmMethodName = null;
-    String cancelMethodName = null;
 
     private Transaction transaction = null;
 
-    public CompensableMethodContext(TransactionMethodJoinPoint pjp, Transaction transaction) {
+    TransactionContext transactionContext = null;
 
+    Compensable compensable = null;
+
+    public CompensableMethodContext(TransactionMethodJoinPoint pjp, Transaction transaction) {
         this.pjp = pjp;
 
-        this.method = getCompensableMethod();
-
-        if (method == null) {
-            throw new RuntimeException(String.format("join point not found method, point is : %s", pjp.getMethod().getName()));
-        }
-
-        this.compensable = method.getAnnotation(Compensable.class);
-
-        if (this.compensable != null) {
-            this.propagation = compensable.propagation();
-            transactionContextEditorClass = compensable.transactionContextEditor();
-            confirmMethodName = this.compensable.confirmMethod();
-            cancelMethodName = this.compensable.cancelMethod();
-        } else {
-            transactionContextEditorClass = Compensable.DefaultTransactionContextEditor.class;
-            confirmMethodName = this.method.getName();
-            cancelMethodName = this.method.getName();
-        }
-
-        this.transactionContext = FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().get(pjp.getTarget(), method, pjp.getArgs());
-
         this.transaction = transaction;
+
+        this.compensable = pjp.getCompensable();
+
+        this.transactionContext = FactoryBuilder.factoryOf(pjp.getTransactionContextEditorClass()).getInstance().get(pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
     }
 
     public Compensable getAnnotation() {
         return compensable;
-    }
-
-    public Propagation getPropagation() {
-        return propagation;
     }
 
     public TransactionContext getTransactionContext() {
@@ -67,7 +43,7 @@ public class CompensableMethodContext {
     }
 
     public Method getMethod() {
-        return method;
+        return pjp.getMethod();
     }
 
     public Object getUniqueIdentity() {
@@ -133,50 +109,19 @@ public class CompensableMethodContext {
     }
 
 
-    private Method getCompensableMethod() {
-
-        Method method = pjp.getMethod();
-
-        Method foundMethod = null;
-
-        //first find if exist @Compensable
-        if (method.getAnnotation(Compensable.class) != null) {
-            foundMethod = method;
-        } else {
-
-            Method targetMethod = null;
-            try {
-                targetMethod = pjp.getTargetClass().getMethod(method.getName(), method.getParameterTypes());
-            } catch (NoSuchMethodException e) {
-                targetMethod = null;
-            }
-
-            if (targetMethod != null && targetMethod.getAnnotation(Compensable.class) != null) {
-                foundMethod = targetMethod;
-            } else {
-
-                if (Compensable.DefaultTransactionContextEditor.getTransactionContextParamPosition(method.getParameterTypes()) >= 0) {
-                    foundMethod = method;
-                }
-            }
-        }
-
-        return foundMethod;
-    }
-
     public Object proceed() throws Throwable {
         return this.pjp.proceed();
     }
 
     public Class<? extends TransactionContextEditor> getTransactionContextEditorClass() {
-        return transactionContextEditorClass;
+        return pjp.getTransactionContextEditorClass();
     }
 
     public String getConfirmMethodName() {
-        return confirmMethodName;
+        return compensable == null ? pjp.getMethod().getName() : compensable.confirmMethod();
     }
 
     public String getCancelMethodName() {
-        return cancelMethodName;
+        return compensable == null ? pjp.getMethod().getName() : compensable.cancelMethod();
     }
 }

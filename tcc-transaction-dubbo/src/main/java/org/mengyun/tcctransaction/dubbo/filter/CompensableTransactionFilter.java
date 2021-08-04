@@ -4,7 +4,9 @@ import com.alibaba.dubbo.common.Constants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.rpc.*;
 import org.mengyun.tcctransaction.SystemException;
-import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.EnableTcc;
+import org.mengyun.tcctransaction.api.ParameterTransactionContextEditor;
+import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.mengyun.tcctransaction.interceptor.ResourceCoordinatorAspect;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 
@@ -16,7 +18,8 @@ public class CompensableTransactionFilter implements Filter {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
 
-        return invoker.invoke(invocation);
+//        return invoker.invoke(invocation);
+        return doInvoke(invoker, invocation);
     }
 
     private Result doInvoke(Invoker<?> invoker, Invocation invocation) {
@@ -27,14 +30,18 @@ public class CompensableTransactionFilter implements Filter {
 
             method = invoker.getInterface().getMethod(invocation.getMethodName(), invocation.getParameterTypes());
 
-            Compensable compensable = method.getAnnotation(Compensable.class);
+            boolean hasTransactionContextParameter = ParameterTransactionContextEditor.getTransactionContextParamPosition(invocation.getParameterTypes()) > 0;
 
-            if (compensable != null) {
+            if (hasTransactionContextParameter) {
+                // in this case, will handler by ResourceCoordinatorAspect
+                return invoker.invoke(invocation);
+            }
 
-                DubboInvokeProceedingJoinPoint pjp = new DubboInvokeProceedingJoinPoint(invocation);
+            EnableTcc enableTcc = method.getAnnotation(EnableTcc.class);
 
+            if (enableTcc != null) {
+                DubboInvokeProceedingJoinPoint pjp = new DubboInvokeProceedingJoinPoint(invocation, null, DubboTransactionContextEditor.class);
                 return (Result) FactoryBuilder.factoryOf(ResourceCoordinatorAspect.class).getInstance().interceptTransactionContextMethod(pjp);
-
             } else {
                 return invoker.invoke(invocation);
             }

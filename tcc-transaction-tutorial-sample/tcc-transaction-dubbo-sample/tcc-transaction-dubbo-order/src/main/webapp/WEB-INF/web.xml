@@ -13,7 +13,7 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            classpath:tcc-transaction-dubbo.xml,classpath*:config/spring/local/appcontext-*.xml
+            classpath*:config/spring/local/appcontext-*.xml
         </param-value>
     </context-param>
 

@@ -4,6 +4,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.mengyun.tcctransaction.api.Compensable;
 
 /**
  * Created by changmingxie on 10/30/15.
@@ -18,13 +20,15 @@ public abstract class CompensableTransactionAspect {
     }
 
     @Pointcut("@annotation(org.mengyun.tcctransaction.api.Compensable)")
-    public void compensableService() {
+    public void compensableTransactionPointcut() {
 
     }
 
-    @Around("compensableService()")
+    @Around("compensableTransactionPointcut()")
     public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
-        return compensableTransactionInterceptor.interceptCompensableMethod(new AspectJTransactionMethodJoinPoint(pjp));
+
+        Compensable compensable = ((MethodSignature) pjp.getSignature()).getMethod().getAnnotation(Compensable.class);
+        return compensableTransactionInterceptor.interceptCompensableMethod(new AspectJTransactionMethodJoinPoint(pjp, compensable, compensable.transactionContextEditor()));
     }
 
     public abstract int getOrder();

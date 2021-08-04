@@ -29,7 +29,7 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     TradeOrderRepository tradeOrderRepository;
 
     @Override
-    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
+    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord")
     @Transactional
     public String record(RedPacketTradeOrderDto tradeOrderDto) {
 
