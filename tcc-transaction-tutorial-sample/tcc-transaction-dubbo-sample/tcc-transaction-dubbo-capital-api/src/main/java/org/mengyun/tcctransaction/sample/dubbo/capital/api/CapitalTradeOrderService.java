@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.sample.dubbo.capital.api;
 
-import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.EnableTcc;
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.dto.CapitalTradeOrderDto;
 
 /**
@@ -8,7 +8,7 @@ import org.mengyun.tcctransaction.sample.dubbo.capital.api.dto.CapitalTradeOrder
  */
 public interface CapitalTradeOrderService {
 
-    @Compensable
+    @EnableTcc
     public String record(CapitalTradeOrderDto tradeOrderDto);
 
 }

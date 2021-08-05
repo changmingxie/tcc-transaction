@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.mengyun.tcctransaction.IllegalTransactionStatusException;
 import org.mengyun.tcctransaction.NoExistedTransactionException;
 import org.mengyun.tcctransaction.Transaction;
@@ -27,7 +26,7 @@ public class CompensableTransactionInterceptor {
         this.transactionManager = transactionManager;
     }
 
-    public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
+    public Object interceptCompensableMethod(TransactionMethodJoinPoint pjp) throws Throwable {
 
         Transaction transaction = transactionManager.getCurrentTransaction();
         CompensableMethodContext compensableMethodContext = new CompensableMethodContext(pjp, transaction);
@@ -40,10 +39,9 @@ public class CompensableTransactionInterceptor {
             case PROVIDER:
                 return providerMethodProceed(compensableMethodContext);
             default:
-                return pjp.proceed();
+                return compensableMethodContext.proceed();
         }
     }
-
 
     private Object rootMethodProceed(CompensableMethodContext compensableMethodContext) throws Throwable {
 
@@ -80,7 +78,6 @@ public class CompensableTransactionInterceptor {
     private Object providerMethodProceed(CompensableMethodContext compensableMethodContext) throws Throwable {
 
         Transaction transaction = null;
-
 
         boolean asyncConfirm = compensableMethodContext.getAnnotation().asyncConfirm();
 

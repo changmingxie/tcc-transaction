@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.sample.dubbo.redpacket.api;
 
-import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.EnableTcc;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.dto.RedPacketTradeOrderDto;
 
 /**
@@ -8,6 +8,6 @@ import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.dto.RedPacketTradeO
  */
 public interface RedPacketTradeOrderService {
 
-    @Compensable
+    @EnableTcc
     public String record(RedPacketTradeOrderDto tradeOrderDto);
 }

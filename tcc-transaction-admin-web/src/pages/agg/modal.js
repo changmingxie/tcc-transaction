@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, message, Modal } from "antd";
+import {Form, Input, message, Modal} from "antd";
 import * as api from "../../api/agg";
 
 

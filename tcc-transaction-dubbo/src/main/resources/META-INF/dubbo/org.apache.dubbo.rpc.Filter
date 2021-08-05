@@ -1,1 +1,1 @@
-compensableTransactinFilter=org.mengyun.tcctransaction.dubbo.filter.CompensableTransactionFilter
+compensableTransaction=org.mengyun.tcctransaction.dubbo.filter.CompensableTransactionFilter

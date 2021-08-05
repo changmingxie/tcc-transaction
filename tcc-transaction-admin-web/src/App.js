@@ -1,7 +1,6 @@
-import React from 'react';
 import {Provider} from 'react-redux';
 import {Layout, Menu} from 'antd';
-import {Link, BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
 import 'antd/dist/antd.css';
 import './App.css';
 import Domain from './pages/tcc/domain/index';

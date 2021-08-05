@@ -1,7 +1,6 @@
-import React from 'react';
-import { Space, Table, Button } from 'antd';
-import { columns as originColumns } from '../common/constants';
-import { restore } from '../common/api';
+import {Button, Space, Table} from 'antd';
+import {columns as originColumns} from '../common/constants';
+import {restore} from '../common/api';
 
 const columns = originColumns.concat({
   title: 'Operation',
