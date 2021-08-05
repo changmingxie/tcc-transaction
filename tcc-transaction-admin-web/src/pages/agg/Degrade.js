@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Switch, Row, Col, Divider } from 'antd';
-import { getDegradeList, degrade } from '../../api/agg';
+import {useEffect, useState} from 'react';
+import {Col, Divider, Row, Switch} from 'antd';
+import {degrade, getDegradeList} from '../../api/agg';
 
 const Page = () => {
   const [domains, setDomains] = useState([]);
@@ -36,7 +36,7 @@ const Page = () => {
   return (
     <>
       <div className="tab-3-body">
-        
+
         <Row>
           <Col flex="auto" style={{ paddingLeft: 12, fontWeight: 'bolder' }}>Domain</Col>
           <Col flex="200px" style={{ fontWeight: 'bolder' }}>状态</Col>
@@ -65,7 +65,7 @@ const Page = () => {
         }
       </div>
       <div>
-        
+
       </div>
     </>
   )

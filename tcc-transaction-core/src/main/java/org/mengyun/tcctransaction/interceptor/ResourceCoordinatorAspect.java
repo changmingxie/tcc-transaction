@@ -6,7 +6,11 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.NullableTransactionContextEditor;
 import org.mengyun.tcctransaction.api.ParameterTransactionContextEditor;
+import org.mengyun.tcctransaction.api.TransactionContextEditor;
+
+import java.lang.reflect.Method;
 
 /**
  * Created by changmingxie on 11/8/15.
@@ -24,12 +28,24 @@ public abstract class ResourceCoordinatorAspect {
 
     @Around("transactionResourcePointcut()")
     public Object interceptTransactionResourceMethodWithCompensableAnnotation(ProceedingJoinPoint pjp) throws Throwable {
-        Compensable compensable = ((MethodSignature) pjp.getSignature()).getMethod().getAnnotation(Compensable.class);
+
+        Method method = ((MethodSignature) pjp.getSignature()).getMethod();
+
+        Compensable compensable = method.getAnnotation(Compensable.class);
+
+        Class<? extends TransactionContextEditor> transactionContextEditor = NullableTransactionContextEditor.class;
+
         if (compensable != null) {
-            return interceptTransactionContextMethod(new AspectJTransactionMethodJoinPoint(pjp, compensable, compensable.transactionContextEditor()));
-        } else {
-            return interceptTransactionContextMethod(new AspectJTransactionMethodJoinPoint(pjp, null, ParameterTransactionContextEditor.class));
+            transactionContextEditor = compensable.transactionContextEditor();
         }
+
+        if (transactionContextEditor.equals(NullableTransactionContextEditor.class)
+                && ParameterTransactionContextEditor.hasTransactionContextParameter(method.getParameterTypes())) {
+
+            transactionContextEditor = ParameterTransactionContextEditor.class;
+        }
+
+        return interceptTransactionContextMethod(new AspectJTransactionMethodJoinPoint(pjp, compensable, transactionContextEditor));
     }
 
     public Object interceptTransactionContextMethod(TransactionMethodJoinPoint pjp) throws Throwable {

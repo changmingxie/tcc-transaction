@@ -1,6 +1,5 @@
-import React from 'react';
-import { Layout, Menu } from 'antd';
-import { Switch, Route, Link } from 'react-router-dom';
+import {Layout, Menu} from 'antd';
+import {Link, Route, Switch} from 'react-router-dom';
 // @ts-ignore
 import Domain from './domain';
 import Degrade from './Degrade';

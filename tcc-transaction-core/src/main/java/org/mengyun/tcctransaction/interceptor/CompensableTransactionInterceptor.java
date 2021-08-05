@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.mengyun.tcctransaction.IllegalTransactionStatusException;
 import org.mengyun.tcctransaction.NoExistedTransactionException;
 import org.mengyun.tcctransaction.Transaction;

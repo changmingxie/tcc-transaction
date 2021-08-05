@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Cascader } from 'antd';
+import {useState} from 'react';
+import {Button, Cascader} from 'antd';
 
 const SearchBox = ({
   onChange,
@@ -13,7 +13,7 @@ const SearchBox = ({
   };
 
   const handleAdd = () => {}
-  
+
   return (
     <div className="search-box">
       <Cascader

@@ -17,22 +17,13 @@ public class CompensableTransactionFilter implements Filter {
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-
-//        return invoker.invoke(invocation);
-        return doInvoke(invoker, invocation);
-    }
-
-    private Result doInvoke(Invoker<?> invoker, Invocation invocation) {
-
         Method method = null;
 
         try {
 
             method = invoker.getInterface().getMethod(invocation.getMethodName(), invocation.getParameterTypes());
 
-            boolean hasTransactionContextParameter = ParameterTransactionContextEditor.getTransactionContextParamPosition(invocation.getParameterTypes()) > 0;
-
-            if (hasTransactionContextParameter) {
+            if (ParameterTransactionContextEditor.hasTransactionContextParameter(invocation.getParameterTypes())) {
                 // in this case, will handler by ResourceCoordinatorAspect
                 return invoker.invoke(invocation);
             }

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Switch, Row, Col, Divider } from 'antd';
-import { getDegradeList, degrade } from '../../common/api';
+import {useEffect, useState} from 'react';
+import {Col, Divider, Row, Switch} from 'antd';
+import {degrade, getDegradeList} from '../../common/api';
 
 const Page = () => {
   const [domains, setDomains] = useState([]);
@@ -64,7 +64,7 @@ const Page = () => {
         }
       </div>
       <div>
-        
+
       </div>
     </>
   )

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Button, Cascader, Modal, message, Form } from 'antd';
+import {useEffect, useState} from 'react';
+import {Button, Cascader, Form, message, Modal, Table} from 'antd';
 import ReactJson from 'react-json-view';
 import * as api from '../../api/agg';
 import CreateModal from './modal';

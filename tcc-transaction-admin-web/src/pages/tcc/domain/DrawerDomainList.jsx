@@ -1,8 +1,8 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Domain } from "../../../store/actions/domain";
+import {useDispatch, useSelector} from "react-redux";
+import {Domain} from "../../../store/actions/domain";
 import * as api from "../../../common/api";
-import { Row, Col, Button, Popconfirm, message } from "antd";
+import {Button, Col, message, Popconfirm, Row} from "antd";
 
 const DrawerDomainList = () => {
   const { domainData } = useSelector(

@@ -17,6 +17,10 @@ public class ParameterTransactionContextEditor implements TransactionContextEdit
         return position;
     }
 
+    public static boolean hasTransactionContextParameter(Class<?>[] parameterTypes) {
+        return getTransactionContextParamPosition(parameterTypes) >= 0;
+    }
+
     public static TransactionContext getTransactionContextFromArgs(Object[] args) {
 
         TransactionContext transactionContext = null;

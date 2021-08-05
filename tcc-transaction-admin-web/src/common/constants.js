@@ -1,4 +1,3 @@
-import React from 'react';
 import {Button, Modal} from 'antd';
 import ReactJson from 'react-json-view';
 

@@ -6,6 +6,11 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.api.Compensable;
+import org.mengyun.tcctransaction.api.NullableTransactionContextEditor;
+import org.mengyun.tcctransaction.api.ParameterTransactionContextEditor;
+import org.mengyun.tcctransaction.api.TransactionContextEditor;
+
+import java.lang.reflect.Method;
 
 /**
  * Created by changmingxie on 10/30/15.
@@ -27,8 +32,23 @@ public abstract class CompensableTransactionAspect {
     @Around("compensableTransactionPointcut()")
     public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
 
-        Compensable compensable = ((MethodSignature) pjp.getSignature()).getMethod().getAnnotation(Compensable.class);
-        return compensableTransactionInterceptor.interceptCompensableMethod(new AspectJTransactionMethodJoinPoint(pjp, compensable, compensable.transactionContextEditor()));
+        Method method = ((MethodSignature) pjp.getSignature()).getMethod();
+
+        Compensable compensable = method.getAnnotation(Compensable.class);
+
+        Class<? extends TransactionContextEditor> transactionContextEditor = NullableTransactionContextEditor.class;
+
+        if (compensable != null) {
+            transactionContextEditor = compensable.transactionContextEditor();
+        }
+
+        if (transactionContextEditor.equals(NullableTransactionContextEditor.class)
+                && ParameterTransactionContextEditor.hasTransactionContextParameter(method.getParameterTypes())) {
+
+            transactionContextEditor = ParameterTransactionContextEditor.class;
+        }
+
+        return compensableTransactionInterceptor.interceptCompensableMethod(new AspectJTransactionMethodJoinPoint(pjp, compensable, transactionContextEditor));
     }
 
     public abstract int getOrder();
