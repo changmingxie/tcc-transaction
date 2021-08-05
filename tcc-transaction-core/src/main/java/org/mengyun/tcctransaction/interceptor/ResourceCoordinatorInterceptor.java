@@ -16,7 +16,6 @@ public class ResourceCoordinatorInterceptor {
 
     private TransactionManager transactionManager;
 
-
     public void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
