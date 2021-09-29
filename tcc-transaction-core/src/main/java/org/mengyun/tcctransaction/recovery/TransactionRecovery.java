@@ -203,7 +203,7 @@ public class TransactionRecovery {
                         }
 
                         //check the root transaction
-                        Transaction rootTransaction = transactionRepository.findByXid(transaction.getRootXid());
+                        Transaction rootTransaction = transactionRepository.findByRootXid(transaction.getRootXid());
 
                         if (rootTransaction == null) {
                             // In this case means the root transaction is already rollback.
