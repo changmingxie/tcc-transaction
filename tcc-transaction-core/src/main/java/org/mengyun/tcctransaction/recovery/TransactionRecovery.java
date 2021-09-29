@@ -198,6 +198,10 @@ public class TransactionRecovery {
                         break;
                     case TRY_SUCCESS:
 
+                        if(transactionRepository.getRootDomain() == null) {
+                            break;
+                        }
+
                         //check the root transaction
                         Transaction rootTransaction = transactionRepository.findByXid(transaction.getRootXid());
 

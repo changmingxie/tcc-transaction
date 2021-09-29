@@ -73,6 +73,15 @@ public class SentinelTransactionRepository extends AbstractTransactionRepository
     }
 
     @Override
+    protected Transaction doFindRootOne(Xid xid) {
+        if (!sentinelController.degrade()) {
+            return workTransactionRepository.doFindRootOne(xid);
+        } else {
+            return degradedTransactionRepository.doFindRootOne(xid);
+        }
+    }
+
+    @Override
     protected Page<Transaction> doFindAllUnmodifiedSince(Date date, String offset, int pageSize) {
 
         if (!sentinelController.degrade()) {
@@ -108,6 +117,19 @@ public class SentinelTransactionRepository extends AbstractTransactionRepository
 
     @Override
     public String getDomain() {
-        return null;
+        if (!sentinelController.degrade()) {
+            return workTransactionRepository.getDomain();
+        } else {
+            return degradedTransactionRepository.getDomain();
+        }
+    }
+
+    @Override
+    public String getRootDomain() {
+        if (!sentinelController.degrade()) {
+            return workTransactionRepository.getRootDomain();
+        } else {
+            return degradedTransactionRepository.getRootDomain();
+        }
     }
 }

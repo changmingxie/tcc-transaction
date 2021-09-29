@@ -4,6 +4,7 @@ import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.repository.helper.RedisCommands;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
 import org.mengyun.tcctransaction.repository.helper.TransactionStoreSerializer;
+import org.mengyun.tcctransaction.utils.CollectionUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ScanParams;
@@ -21,7 +22,7 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
     @Override
     protected int doCreate(final Transaction transaction) {
 
-        try (RedisCommands commands = getRedisCommands(RedisHelper.getRedisKey(domain, transaction.getXid()))) {
+        try (RedisCommands commands = getRedisCommands(RedisHelper.getRedisKey(getDomain(), transaction.getXid()))) {
             Long statusCode = createByScriptCommand(commands, transaction);
             return statusCode.intValue();
         } catch (Exception e) {
@@ -32,7 +33,7 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
     @Override
     protected int doUpdate(final Transaction transaction) {
 
-        try (RedisCommands commands = getRedisCommands(RedisHelper.getRedisKey(domain, transaction.getXid()))) {
+        try (RedisCommands commands = getRedisCommands(RedisHelper.getRedisKey(getDomain(), transaction.getXid()))) {
 
             Long statusCode = updateByScriptCommand(commands, transaction);
 
@@ -45,9 +46,9 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
     @Override
     protected int doDelete(final Transaction transaction) {
 
-        try (RedisCommands commands = getRedisCommands(RedisHelper.getRedisKey(domain, transaction.getXid()))) {
+        try (RedisCommands commands = getRedisCommands(RedisHelper.getRedisKey(getDomain(), transaction.getXid()))) {
 
-            Long result = commands.del(RedisHelper.getRedisKey(domain, transaction.getXid()));
+            Long result = commands.del(RedisHelper.getRedisKey(getDomain(), transaction.getXid()));
 
             return result.intValue();
         } catch (Exception e) {
@@ -57,7 +58,15 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
 
     @Override
     protected Transaction doFindOne(final Xid xid) {
+        return doFind(getDomain(),xid);
+    }
 
+    @Override
+    protected Transaction doFindRootOne(Xid xid) {
+        return doFind(getRootDomain(),xid);
+    }
+
+    private Transaction doFind(String domain, Xid xid) {
         try (RedisCommands commands = getRedisCommands(RedisHelper.getRedisKey(domain, xid))) {
 
             Long startTime = System.currentTimeMillis();
@@ -69,7 +78,7 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
             }
 
             if (content != null && content.size() > 0) {
-                return TransactionStoreSerializer.deserialize(serializer, content);
+                return TransactionStoreSerializer.deserialize(getSerializer(), content);
             }
             return null;
         } catch (Exception e) {
@@ -80,7 +89,7 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
     protected Long createByScriptCommand(RedisCommands commands, Transaction transaction) {
         List<byte[]> params = new ArrayList<byte[]>();
 
-        for (Map.Entry<byte[], byte[]> entry : TransactionStoreSerializer.serialize(serializer, transaction)
+        for (Map.Entry<byte[], byte[]> entry : TransactionStoreSerializer.serialize(getSerializer(), transaction)
                 .entrySet()) {
             params.add(entry.getKey());
             params.add(entry.getValue());
@@ -89,7 +98,7 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
         Object result = commands.eval(
                 "if redis.call('exists', KEYS[1]) == 0 then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;"
                         .getBytes(),
-                Arrays.asList(RedisHelper.getRedisKey(domain, transaction.getXid())),
+                Arrays.asList(RedisHelper.getRedisKey(getDomain(), transaction.getXid())),
                 params);
 
         return (Long) result;
@@ -102,7 +111,7 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
 
         List<byte[]> params = new ArrayList<byte[]>();
 
-        for (Map.Entry<byte[], byte[]> entry : TransactionStoreSerializer.serialize(serializer, transaction)
+        for (Map.Entry<byte[], byte[]> entry : TransactionStoreSerializer.serialize(getSerializer(), transaction)
                 .entrySet()) {
             params.add(entry.getKey());
             params.add(entry.getValue());
@@ -112,7 +121,7 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
                 "if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
                 transaction.getVersion() - 1).getBytes(),
                 Arrays.asList(RedisHelper.getRedisKey(
-                        domain,
+                        getDomain(),
                         transaction.getXid())),
                 params);
 
@@ -137,7 +146,7 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
         for (Object data : result) {
 
             if (data != null && data instanceof Map && ((Map<byte[], byte[]>) data).size() > 0) {
-                list.add(TransactionStoreSerializer.deserialize(serializer, (Map<byte[], byte[]>) data));
+                list.add(TransactionStoreSerializer.deserialize(getSerializer(), (Map<byte[], byte[]>) data));
             } else if (data instanceof JedisMovedDataException) {
                 // ignore the data, this case may happen under redis cluster.
                 log.warn("ignore the data, this case may happen under redis cluster.", data);
@@ -154,7 +163,7 @@ public abstract class AbstractRedisTransactionRepository extends AbstractKVStore
 
         Page<byte[]> page = new Page<>();
 
-        ScanParams scanParams = RedisHelper.buildDefaultScanParams(domain + "*", maxFindCount);
+        ScanParams scanParams = RedisHelper.buildDefaultScanParams(getDomain() + "*", maxFindCount);
 
         ScanResult<String> scanResult = shard.scan(currentCursor, scanParams);
 

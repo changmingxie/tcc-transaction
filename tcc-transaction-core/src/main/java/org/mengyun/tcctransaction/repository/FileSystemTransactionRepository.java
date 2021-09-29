@@ -32,7 +32,27 @@ public class FileSystemTransactionRepository extends AbstractTransactionReposito
 
     private String domain = "/var/log/";
 
+    private String rootDomain = "/var/log";
+
     private volatile boolean initialized;
+
+    @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    @Override
+    public String getRootDomain() {
+        return rootDomain;
+    }
+
+    public void setRootDomain(String rootDomain) {
+        this.rootDomain = rootDomain;
+    }
 
     private TransactionSerializer serializer = new KryoTransactionSerializer();
 
@@ -69,17 +89,12 @@ public class FileSystemTransactionRepository extends AbstractTransactionReposito
 
     @Override
     protected Transaction doFindOne(Xid xid) {
+        return doFind(domain,xid);
+    }
 
-        makeDirIfNecessary();
-
-        String fullFileName = getFullFileName(xid);
-        File file = new File(fullFileName);
-
-        if (file.exists()) {
-            return readTransaction(file);
-        }
-
-        return null;
+    @Override
+    protected Transaction doFindRootOne(Xid xid) {
+        return doFind(rootDomain,xid);
     }
 
     @Override
@@ -114,21 +129,25 @@ public class FileSystemTransactionRepository extends AbstractTransactionReposito
         return new Page<Transaction>(tryFetchOffset, fetchedTransactions);
     }
 
-    @Override
-    public String getDomain() {
-        return domain;
-    }
+    private Transaction doFind(String domain,Xid xid) {
+        makeDirIfNecessary(domain);
 
-    public void setDomain(String domain) {
-        this.domain = domain;
+        String fullFileName = getFullFileName(xid);
+        File file = new File(fullFileName);
+
+        if (file.exists()) {
+            return readTransaction(file);
+        }
+
+        return null;
     }
 
     /*
      * offset: jedisIndex:cursor,eg = 0:0,1:0
      * */
-    protected Page<Transaction> doFindAll(String offset, int maxFindCount) {
+    private Page<Transaction> doFindAll(String offset, int maxFindCount) {
 
-        makeDirIfNecessary();
+        makeDirIfNecessary(domain);
 
         Page<Transaction> page = new Page<Transaction>();
 
@@ -180,9 +199,8 @@ public class FileSystemTransactionRepository extends AbstractTransactionReposito
         }
     }
 
-
     private void writeFile(Transaction transaction) {
-        makeDirIfNecessary();
+        makeDirIfNecessary(domain);
 
         String file = getFullFileName(transaction.getXid());
 
@@ -244,8 +262,7 @@ public class FileSystemTransactionRepository extends AbstractTransactionReposito
         return null;
     }
 
-
-    private void makeDirIfNecessary() {
+    private void makeDirIfNecessary(String domain) {
         if (!initialized) {
             synchronized (FileSystemTransactionRepository.class) {
                 if (!initialized) {

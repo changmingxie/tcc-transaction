@@ -103,4 +103,9 @@ public class MemoryStoreTransactionRepository extends AbstractKVStoreTransaction
     protected Transaction doFindOne(Xid xid) {
         return db.get(xid);
     }
+
+    @Override
+    protected Transaction doFindRootOne(Xid xid) {
+        return db.get(xid);
+    }
 }

@@ -10,7 +10,10 @@
 
 <!--    <tcc:annotation-driven transaction-repository="transactionRepository" recover-frequency="recoverFrequency"/>-->
 
-    <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.MemoryStoreTransactionRepository"/>
+    <bean id="transactionRepository" class="org.mengyun.tcctransaction.repository.MemoryStoreTransactionRepository">
+        <property name="domain" value="ut"/>
+        <property name="rootDomain" value="ut"/>
+    </bean>
 
     <bean id="recoverFrequency" class="org.mengyun.tcctransaction.recovery.DefaultRecoverFrequency">
         <property name="maxRetryCount" value="30"/>

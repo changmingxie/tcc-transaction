@@ -15,9 +15,29 @@ public abstract class AbstractKVStoreTransactionRepository<T> extends AbstractTr
 
     static final Logger log = LoggerFactory.getLogger(AbstractKVStoreTransactionRepository.class.getSimpleName());
 
-    String domain;
+    private String domain;
 
-    TransactionSerializer serializer = new KryoTransactionSerializer();
+    private String rootDomain;
+
+    private TransactionSerializer serializer = new KryoTransactionSerializer();
+
+    @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    @Override
+    public String getRootDomain() {
+        return rootDomain;
+    }
+
+    public void setRootDomain(String rootDomain) {
+        this.rootDomain = rootDomain;
+    }
 
     public void setSerializer(TransactionSerializer serializer) {
         this.serializer = serializer;
@@ -154,12 +174,7 @@ public abstract class AbstractKVStoreTransactionRepository<T> extends AbstractTr
 
     protected abstract ShardHolder<T> getShardHolder();
 
-    @Override
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
+    public TransactionSerializer getSerializer() {
+        return serializer;
     }
 }

@@ -24,9 +24,31 @@ public class JdbcTransactionRepository extends AbstractTransactionRepository {
 
     private String tbSuffix;
 
+    private String rootDomain;
+
+    private String rootTbSuffix;
+
     private DataSource dataSource;
 
     private TransactionSerializer serializer = new KryoTransactionSerializer();
+
+    @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public void setRootDomain(String rootDomain) {
+        this.rootDomain = rootDomain;
+    }
+
+    @Override
+    public String getRootDomain() {
+        return rootDomain;
+    }
 
     public String getTbSuffix() {
         return tbSuffix;
@@ -34,6 +56,14 @@ public class JdbcTransactionRepository extends AbstractTransactionRepository {
 
     public void setTbSuffix(String tbSuffix) {
         this.tbSuffix = tbSuffix;
+    }
+
+    public String getRootTbSuffix() {
+        return rootTbSuffix;
+    }
+
+    public void setRootTbSuffix(String rootTbSuffix) {
+        this.rootTbSuffix = rootTbSuffix;
     }
 
     public void setSerializer(TransactionSerializer serializer) {
@@ -46,15 +76,6 @@ public class JdbcTransactionRepository extends AbstractTransactionRepository {
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
-    }
-
-    @Override
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
     }
 
     @Override
@@ -179,14 +200,14 @@ public class JdbcTransactionRepository extends AbstractTransactionRepository {
         }
     }
 
+    @Override
     protected Transaction doFindOne(Xid xid) {
+        return doFind(getDomain(),getTableName(),xid);
+    }
 
-        List<Transaction> transactions = doFind(Arrays.asList(xid));
-
-        if (!CollectionUtils.isEmpty(transactions)) {
-            return transactions.get(0);
-        }
-        return null;
+    @Override
+    protected Transaction doFindRootOne(Xid xid) {
+        return doFind(getRootDomain(),getRootTableName(),xid);
     }
 
     @Override
@@ -232,7 +253,17 @@ public class JdbcTransactionRepository extends AbstractTransactionRepository {
         return new Page<Transaction>(String.valueOf(currentOffset + transactions.size()), transactions);
     }
 
-    protected List<Transaction> doFind(List<Xid> xids) {
+    private Transaction doFind(String domain, String tableName,Xid xid) {
+
+        List<Transaction> transactions = doFinds(domain,tableName,Arrays.asList(xid));
+
+        if (!CollectionUtils.isEmpty(transactions)) {
+            return transactions.get(0);
+        }
+        return null;
+    }
+
+    private List<Transaction> doFinds(String domain, String tableName,List<Xid> xids) {
 
         List<Transaction> transactions = new ArrayList<Transaction>();
 
@@ -287,7 +318,7 @@ public class JdbcTransactionRepository extends AbstractTransactionRepository {
         return transactions;
     }
 
-    protected void constructTransactions(ResultSet resultSet, List<Transaction> transactions) throws SQLException {
+    private void constructTransactions(ResultSet resultSet, List<Transaction> transactions) throws SQLException {
         while (resultSet.next()) {
             byte[] transactionBytes = resultSet.getBytes(3);
             Transaction transaction = (Transaction) serializer.deserialize(transactionBytes);
@@ -299,8 +330,7 @@ public class JdbcTransactionRepository extends AbstractTransactionRepository {
         }
     }
 
-
-    protected Connection getConnection() {
+    private Connection getConnection() {
         try {
             return this.dataSource.getConnection();
         } catch (SQLException e) {
@@ -308,7 +338,7 @@ public class JdbcTransactionRepository extends AbstractTransactionRepository {
         }
     }
 
-    protected void releaseConnection(Connection con) {
+    private void releaseConnection(Connection con) {
         try {
             if (con != null && !con.isClosed()) {
                 con.close();
@@ -331,4 +361,10 @@ public class JdbcTransactionRepository extends AbstractTransactionRepository {
     private String getTableName() {
         return StringUtils.isNotEmpty(tbSuffix) ? "AGG_TRANSACTION_" + tbSuffix : "AGG_TRANSACTION";
     }
+
+
+    private String getRootTableName() {
+        return StringUtils.isNotEmpty(rootTbSuffix) ? "AGG_TRANSACTION_" + rootTbSuffix : "AGG_TRANSACTION";
+    }
+
 }

@@ -31,9 +31,21 @@ public class RocksDbTransactionRepository extends AbstractKVStoreTransactionRepo
 
     private RocksDB db;
 
+    private Options rootOptions;
+
+    private RocksDB rootDb;
+
     private String location = "/var/log/";
 
     private volatile boolean initialized = false;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public RocksDbTransactionRepository() {
 
@@ -50,8 +62,14 @@ public class RocksDbTransactionRepository extends AbstractKVStoreTransactionRepo
                         // the Options class contains a set of configurable DB options
                         // that determines the behaviour of the database.
                         options = new Options().setCreateIfMissing(true).setKeepLogFileNum(1l);
-                    String filePath = getPath(this.location, this.domain);
+                    String filePath = getPath(this.location, this.getDomain());
                     db = RocksDB.open(options, filePath);
+
+                    if(this.getRootDomain() != null) {
+                        rootOptions = new Options().setCreateIfMissing(true).setKeepLogFileNum(1l);
+                        String rootFilePath = getPath(this.location, this.getRootDomain());
+                        rootDb = RocksDB.open(rootOptions, filePath);
+                    }
 
                     initialized = true;
                 }
@@ -63,7 +81,7 @@ public class RocksDbTransactionRepository extends AbstractKVStoreTransactionRepo
     protected int doCreate(Transaction transaction) {
 
         try {
-            db.put(transaction.getXid().toString().getBytes(), serializer.serialize(transaction));
+            db.put(transaction.getXid().toString().getBytes(), getSerializer().serialize(transaction));
             return 1;
         } catch (RocksDBException e) {
             throw new TransactionIOException(e);
@@ -82,7 +100,7 @@ public class RocksDbTransactionRepository extends AbstractKVStoreTransactionRepo
 
             transaction.setVersion(transaction.getVersion() + 1);
             transaction.setLastUpdateTime(new Date());
-            db.put(transaction.getXid().toString().getBytes(), serializer.serialize(transaction));
+            db.put(transaction.getXid().toString().getBytes(), getSerializer().serialize(transaction));
             return 1;
         } catch (RocksDBException e) {
             throw new TransactionIOException(e);
@@ -102,16 +120,12 @@ public class RocksDbTransactionRepository extends AbstractKVStoreTransactionRepo
 
     @Override
     protected Transaction doFindOne(Xid xid) {
+        return doFind(db,xid);
+    }
 
-        try {
-            byte[] values = db.get(xid.toString().getBytes());
-            if (ArrayUtils.isNotEmpty(values)) {
-                return serializer.deserialize(values);
-            }
-        } catch (RocksDBException e) {
-            throw new TransactionIOException(e);
-        }
-        return null;
+    @Override
+    protected Transaction doFindRootOne(Xid xid) {
+        return doFind(rootDb,xid);
     }
 
     @Override
@@ -165,7 +179,7 @@ public class RocksDbTransactionRepository extends AbstractKVStoreTransactionRepo
         for (byte[] value : allValues) {
 
             if (value != null) {
-                list.add(serializer.deserialize(value));
+                list.add(getSerializer().deserialize(value));
             }
         }
 
@@ -194,19 +208,18 @@ public class RocksDbTransactionRepository extends AbstractKVStoreTransactionRepo
             db.close();
         }
 
+        if(rootDb != null) {
+            rootDb.close();
+        }
+
         if (options != null) {
             options.close();
         }
-    }
 
-    public String getLocation() {
-        return location;
+        if(rootOptions != null) {
+            rootOptions.close();
+        }
     }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
 
     private String getPath(String location, String domain) {
 
@@ -222,5 +235,18 @@ public class RocksDbTransactionRepository extends AbstractKVStoreTransactionRepo
         stringBuilder.append(domain);
 
         return stringBuilder.toString();
+    }
+
+    private Transaction doFind(RocksDB db, Xid xid) {
+
+        try {
+            byte[] values = db.get(xid.toString().getBytes());
+            if (ArrayUtils.isNotEmpty(values)) {
+                return getSerializer().deserialize(values);
+            }
+        } catch (RocksDBException e) {
+            throw new TransactionIOException(e);
+        }
+        return null;
     }
 }

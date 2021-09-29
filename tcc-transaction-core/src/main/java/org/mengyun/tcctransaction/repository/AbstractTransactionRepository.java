@@ -41,9 +41,13 @@ public abstract class AbstractTransactionRepository implements TransactionReposi
 
     @Override
     public Transaction findByXid(Xid transactionXid) {
-
         Transaction transaction = doFindOne(transactionXid);
+        return transaction;
+    }
 
+    @Override
+    public Transaction findByRootXid(Xid transactionXid) {
+        Transaction transaction = doFindRootOne(transactionXid);
         return transaction;
     }
 
@@ -62,6 +66,8 @@ public abstract class AbstractTransactionRepository implements TransactionReposi
     protected abstract int doDelete(Transaction transaction);
 
     protected abstract Transaction doFindOne(Xid xid);
+
+    protected abstract Transaction doFindRootOne(Xid xid);
 
     protected abstract Page<Transaction> doFindAllUnmodifiedSince(Date date, String offset, int pageSize);
 

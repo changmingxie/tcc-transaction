@@ -13,6 +13,8 @@ public interface TransactionRepository extends Closeable {
 
     String getDomain();
 
+    String getRootDomain();
+
     int create(Transaction transaction);
 
     int update(Transaction transaction);
@@ -20,6 +22,8 @@ public interface TransactionRepository extends Closeable {
     int delete(Transaction transaction);
 
     Transaction findByXid(Xid xid);
+
+    Transaction findByRootXid(Xid xid);
 
     Page<Transaction> findAllUnmodifiedSince(Date date, String offset, int pageSize);
 
