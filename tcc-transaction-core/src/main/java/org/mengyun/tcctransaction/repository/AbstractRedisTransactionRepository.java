@@ -4,7 +4,6 @@ import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.repository.helper.RedisCommands;
 import org.mengyun.tcctransaction.repository.helper.RedisHelper;
 import org.mengyun.tcctransaction.repository.helper.TransactionStoreSerializer;
-import org.mengyun.tcctransaction.utils.CollectionUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ScanParams;

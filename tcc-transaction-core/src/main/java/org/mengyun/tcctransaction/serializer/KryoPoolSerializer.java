@@ -3,9 +3,8 @@ package org.mengyun.tcctransaction.serializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.pool.KryoCallback;
-import com.esotericsoftware.kryo.pool.KryoFactory;
-import com.esotericsoftware.kryo.pool.KryoPool;
+import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
+import com.esotericsoftware.kryo.util.Pool;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
 import java.io.ByteArrayInputStream;
@@ -22,7 +21,7 @@ public class KryoPoolSerializer<T> implements ObjectSerializer<T> {
 
     protected int initPoolSize = DEFAULT_MAX_POOL_SIZE;
 
-    KryoPool pool = null;
+    Pool<Kryo> kryoPool = null;
 
     public KryoPoolSerializer() {
         init();
@@ -36,69 +35,85 @@ public class KryoPoolSerializer<T> implements ObjectSerializer<T> {
 
     protected void init() {
 
-        KryoFactory factory = new KryoFactory() {
-            public Kryo create() {
+        kryoPool = new Pool<Kryo>(true,true,initPoolSize) {
+            @Override
+            protected Kryo create() {
                 Kryo kryo = new Kryo();
                 kryo.setReferences(true);
                 kryo.setRegistrationRequired(false);
-//            kryo.setDefaultSerializer(CompatibleFieldSerializer.class);
-//                kryo.setWarnUnregisteredClasses(true);
-                //Fix the NPE bug when deserializing Collections.
-                ((Kryo.DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy())
+
+                ((DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy())
                         .setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+
+
+
                 initHook(kryo);
                 return kryo;
             }
         };
 
-        pool = new KryoPool.Builder(factory).softReferences().build();
-
         List<Kryo> preCreatedKryos = new ArrayList<>();
         for (int i = 0; i < initPoolSize; i++) {
-            preCreatedKryos.add(pool.borrow());
+            preCreatedKryos.add(kryoPool.obtain());
         }
 
         for (Kryo kryo : preCreatedKryos) {
-            pool.release(kryo);
+            kryoPool.free(kryo);
         }
     }
 
     @Override
     public byte[] serialize(final T object) {
 
-        return pool.run(new KryoCallback<byte[]>() {
-            public byte[] execute(Kryo kryo) {
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                Output output = new Output(byteArrayOutputStream);
+        Kryo kryo = kryoPool.obtain();
+        try {
 
-                kryo.writeClassAndObject(output, object);
-                output.flush();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            Output output = new Output(byteArrayOutputStream);
 
-                return byteArrayOutputStream.toByteArray();
+            kryo.writeClassAndObject(output, object);
+            output.flush();
+
+            return byteArrayOutputStream.toByteArray();
+
+        } finally {
+            if(kryo != null) {
+                kryoPool.free(kryo);
             }
-        });
+        }
     }
 
     @Override
     public T deserialize(final byte[] bytes) {
 
-        return pool.run(new KryoCallback<T>() {
-            public T execute(Kryo kryo) {
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-                Input input = new Input(byteArrayInputStream);
+        Kryo kryo = kryoPool.obtain();
+        try {
 
-                return (T) kryo.readClassAndObject(input);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+            Input input = new Input(byteArrayInputStream);
+
+            return (T) kryo.readClassAndObject(input);
+
+        } finally {
+            if(kryo != null) {
+                kryoPool.free(kryo);
             }
-        });
+        }
     }
 
     @Override
     public T clone(final T object) {
-        return pool.run(new KryoCallback<T>() {
-            public T execute(Kryo kryo) {
-                return kryo.copy(object);
+
+        Kryo kryo = kryoPool.obtain();
+        try {
+
+            return kryo.copy(object);
+
+        } finally {
+            if(kryo != null) {
+                kryoPool.free(kryo);
             }
-        });
+        }
     }
 
     protected void initHook(Kryo kryo) {
