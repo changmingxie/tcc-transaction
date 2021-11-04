@@ -3,7 +3,7 @@ package org.mengyun.tcctransaction.repository;
 import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.api.TransactionStatus;
-import org.mengyun.tcctransaction.serializer.KryoTransactionSerializer;
+import org.mengyun.tcctransaction.serializer.RegisterableKryoTransactionSerializer;
 import org.mengyun.tcctransaction.serializer.TransactionSerializer;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
 
@@ -30,7 +30,7 @@ public class JdbcTransactionRepository extends AbstractTransactionRepository {
 
     private DataSource dataSource;
 
-    private TransactionSerializer serializer = new KryoTransactionSerializer();
+    private TransactionSerializer serializer = new RegisterableKryoTransactionSerializer();
 
     @Override
     public String getDomain() {

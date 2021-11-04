@@ -2,7 +2,7 @@ package org.mengyun.tcctransaction.repository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.serializer.KryoTransactionSerializer;
+import org.mengyun.tcctransaction.serializer.RegisterableKryoTransactionSerializer;
 import org.mengyun.tcctransaction.serializer.TransactionSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class FileSystemTransactionRepository extends AbstractTransactionReposito
         this.rootDomain = rootDomain;
     }
 
-    private TransactionSerializer serializer = new KryoTransactionSerializer();
+    private TransactionSerializer serializer = new RegisterableKryoTransactionSerializer();
 
     @Override
     protected int doCreate(Transaction transaction) {

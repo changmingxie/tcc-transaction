@@ -3,7 +3,7 @@ package org.mengyun.tcctransaction.repository;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.repository.helper.ShardHolder;
 import org.mengyun.tcctransaction.repository.helper.ShardOffset;
-import org.mengyun.tcctransaction.serializer.KryoTransactionSerializer;
+import org.mengyun.tcctransaction.serializer.RegisterableKryoTransactionSerializer;
 import org.mengyun.tcctransaction.serializer.TransactionSerializer;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ public abstract class AbstractKVStoreTransactionRepository<T> extends AbstractTr
 
     private String rootDomain;
 
-    private TransactionSerializer serializer = new KryoTransactionSerializer();
+    private TransactionSerializer serializer = new RegisterableKryoTransactionSerializer();
 
     @Override
     public String getDomain() {
