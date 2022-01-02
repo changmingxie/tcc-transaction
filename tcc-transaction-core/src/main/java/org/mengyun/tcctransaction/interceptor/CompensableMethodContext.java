@@ -99,9 +99,9 @@ public class CompensableMethodContext {
         }
 
         //Method is not @Compensable annotated, but with TransactionContext Param.
-        // If currently there is a active transaction and transaction context is null,
+        // If currently there is a active transaction,
         // then need enlist the transaction with CONSUMER role.
-        if (compensable == null && transaction != null && transactionContext == null) {
+        if (compensable == null && transaction != null) {
             return ParticipantRole.CONSUMER;
         }
 
