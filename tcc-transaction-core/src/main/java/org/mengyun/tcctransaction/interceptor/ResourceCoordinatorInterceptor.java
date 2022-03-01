@@ -5,7 +5,6 @@ import org.mengyun.tcctransaction.Participant;
 import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionManager;
 import org.mengyun.tcctransaction.api.*;
-import org.mengyun.tcctransaction.common.ParticipantRole;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
 
@@ -32,6 +31,7 @@ public class ResourceCoordinatorInterceptor {
 
                 Object result = null;
                 try {
+                    FactoryBuilder.factoryOf(participant.getTransactionContextEditorClass()).getInstance().set(new TransactionContext(transaction.getRootXid(), participant.getXid(), TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId()), pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
                     result = pjp.proceed(pjp.getArgs());
                     participant.setStatus(ParticipantStatus.TRY_SUCCESS);
                 } catch (Throwable e) {
@@ -57,22 +57,13 @@ public class ResourceCoordinatorInterceptor {
         Transaction transaction = transactionManager.getCurrentTransaction();
         CompensableMethodContext compensableMethodContext = new CompensableMethodContext(pjp, transaction);
 
-        if (compensableMethodContext.getParticipantRole().equals(ParticipantRole.NORMAL)) {
-            return null;
-        }
-
         String confirmMethodName = compensableMethodContext.getConfirmMethodName();
         String cancelMethodName = compensableMethodContext.getCancelMethodName();
         Class<? extends TransactionContextEditor> transactionContextEditorClass = compensableMethodContext.getTransactionContextEditorClass();
 
         TransactionXid xid = new TransactionXid(transaction.getXid().getGlobalTransactionId());
 
-        if (compensableMethodContext.getTransactionContext() == null) {
-            FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(new TransactionContext(transaction.getRootXid(), xid, TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId()), pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
-        }
-
         Class targetClass = ReflectionUtils.getDeclaringType(pjp.getTarget().getClass(), compensableMethodContext.getMethod().getName(), compensableMethodContext.getMethod().getParameterTypes());
-
 
         InvocationContext confirmInvocation = new InvocationContext(targetClass,
                 confirmMethodName,

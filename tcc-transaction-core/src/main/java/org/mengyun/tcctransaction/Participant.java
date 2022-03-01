@@ -2,6 +2,7 @@ package org.mengyun.tcctransaction;
 
 import org.mengyun.tcctransaction.api.*;
 
+import javax.transaction.xa.Xid;
 import java.io.Serializable;
 
 /**
@@ -10,9 +11,12 @@ import java.io.Serializable;
 public class Participant implements Serializable {
 
     private static final long serialVersionUID = 4127729421281425247L;
+
     Class<? extends TransactionContextEditor> transactionContextEditorClass;
 
     private TransactionXid rootXid;
+
+
     private TransactionXid xid;
     private InvocationContext confirmInvocationContext;
     private InvocationContext cancelInvocationContext;
@@ -53,4 +57,13 @@ public class Participant implements Serializable {
     public ParticipantStatus getStatus() {
         return ParticipantStatus.valueOf(this.status);
     }
+
+    public TransactionXid getXid() {
+        return xid;
+    }
+
+    public Class<? extends TransactionContextEditor> getTransactionContextEditorClass() {
+        return transactionContextEditorClass;
+    }
+
 }

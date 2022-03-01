@@ -4,6 +4,7 @@ import com.alibaba.dubbo.common.Constants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.rpc.*;
 import org.mengyun.tcctransaction.SystemException;
+import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.EnableTcc;
 import org.mengyun.tcctransaction.api.ParameterTransactionContextEditor;
 import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;

@@ -5,7 +5,7 @@ package org.mengyun.tcctransaction.common;
  */
 public enum ParticipantRole {
     ROOT,
-    CONSUMER,
+//    CONSUMER,
     PROVIDER,
     NORMAL;
 }

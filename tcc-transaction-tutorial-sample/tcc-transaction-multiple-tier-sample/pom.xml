@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>tcc-transaction-tutorial-sample</artifactId>
+        <groupId>org.mengyun</groupId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>tcc-transaction-multiple-tier-sample</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>tcc-transaction-multiple-tier-trade</module>
+        <module>tcc-transaction-multiple-tier-trade-order-api</module>
+        <module>tcc-transaction-multiple-tier-trade-order</module>
+
+        <module>tcc-transaction-multiple-tier-trade-point-api</module>
+        <module>tcc-transaction-multiple-tier-trade-point</module>
+
+        <module>tcc-transaction-multiple-tier-pay-api</module>
+        <module>tcc-transaction-multiple-tier-pay</module>
+
+        <module>tcc-transaction-multiple-tier-pay-account-api</module>
+        <module>tcc-transaction-multiple-tier-pay-account</module>
+
+        <module>tcc-transaction-multiple-tier-pay-point-api</module>
+        <module>tcc-transaction-multiple-tier-pay-point</module>
+
+    </modules>
+
+    <!--    <build>-->
+    <!--        <plugins>-->
+    <!--            <plugin>-->
+    <!--                <groupId>org.springframework.boot</groupId>-->
+    <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+    <!--                <configuration>-->
+    <!--                    <executable>true</executable>-->
+    <!--                </configuration>-->
+    <!--                <executions>-->
+    <!--                    <execution>-->
+    <!--                        <goals>-->
+    <!--                            <goal>repackage</goal>-->
+    <!--                        </goals>-->
+    <!--                    </execution>-->
+    <!--                </executions>-->
+    <!--            </plugin>-->
+    <!--        </plugins>-->
+    <!--    </build>-->
+
+</project>

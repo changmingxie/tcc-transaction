@@ -27,12 +27,29 @@ public enum TransactionStatus {
             case 12:
                 return TRY_FAILED;
             default:
-                throw new IllegalArgumentException("the id "+id+" of TransactionStatus is illegal.");
+                throw new IllegalArgumentException("the id " + id + " of TransactionStatus is illegal.");
         }
     }
 
     public int getId() {
         return id;
+    }
+
+    public String toString() {
+        switch (id) {
+            case 1:
+                return "TRYING";
+            case 2:
+                return "CONFIRMING";
+            case 3:
+                return "CANCELLING";
+            case 11:
+                return "TRY_SUCCESS";
+            case 12:
+                return "TRY_FAILED";
+            default:
+                throw new IllegalArgumentException("the id " + id + " of TransactionStatus is illegal.");
+        }
     }
 
 }
