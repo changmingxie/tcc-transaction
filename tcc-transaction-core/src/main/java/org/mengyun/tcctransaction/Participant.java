@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction;
 
 import org.mengyun.tcctransaction.api.*;
 
-import javax.transaction.xa.Xid;
 import java.io.Serializable;
 
 /**
