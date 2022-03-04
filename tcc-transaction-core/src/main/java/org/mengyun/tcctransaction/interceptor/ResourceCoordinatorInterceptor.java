@@ -6,7 +6,6 @@ import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.TransactionManager;
 import org.mengyun.tcctransaction.api.*;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
-import org.mengyun.tcctransaction.utils.ReflectionUtils;
 
 /**
  * Created by changmingxie on 11/8/15.
@@ -63,15 +62,15 @@ public class ResourceCoordinatorInterceptor {
 
         TransactionXid xid = new TransactionXid(transaction.getXid().getGlobalTransactionId());
 
-        Class targetClass = ReflectionUtils.getDeclaringType(pjp.getTarget().getClass(), compensableMethodContext.getMethod().getName(), compensableMethodContext.getMethod().getParameterTypes());
+        Class targetClass = compensableMethodContext.getDeclaredClass();
 
         InvocationContext confirmInvocation = new InvocationContext(targetClass,
                 confirmMethodName,
-                compensableMethodContext.getMethod().getParameterTypes(), pjp.getArgs());
+                compensableMethodContext.getMethod().getParameterTypes(), compensableMethodContext.getArgs());
 
         InvocationContext cancelInvocation = new InvocationContext(targetClass,
                 cancelMethodName,
-                compensableMethodContext.getMethod().getParameterTypes(), pjp.getArgs());
+                compensableMethodContext.getMethod().getParameterTypes(), compensableMethodContext.getArgs());
 
         Participant participant =
                 new Participant(

@@ -108,7 +108,6 @@ public class CompensableMethodContext {
         return ParticipantRole.NORMAL;
     }
 
-
     public Object proceed() throws Throwable {
         return this.pjp.proceed();
     }
@@ -123,5 +122,13 @@ public class CompensableMethodContext {
 
     public String getCancelMethodName() {
         return compensable == null ? pjp.getMethod().getName() : compensable.cancelMethod();
+    }
+
+    public Class<?> getDeclaredClass() {
+        return pjp.getDeclaredClass();
+    }
+
+    public Object[] getArgs() {
+        return pjp.getArgs();
     }
 }

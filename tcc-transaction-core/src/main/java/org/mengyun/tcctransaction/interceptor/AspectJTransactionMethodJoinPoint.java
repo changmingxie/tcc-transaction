@@ -4,6 +4,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.TransactionContextEditor;
+import org.mengyun.tcctransaction.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
 
@@ -13,10 +14,14 @@ public class AspectJTransactionMethodJoinPoint implements TransactionMethodJoinP
     Compensable compensable;
     Class<? extends TransactionContextEditor> transactionContextEditorClass;
 
+    private Class declaredClass = null;
+
     public AspectJTransactionMethodJoinPoint(ProceedingJoinPoint pjp, Compensable compensable, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
         this.pjp = pjp;
         this.compensable = compensable;
         this.transactionContextEditorClass = transactionContextEditorClass;
+
+        declaredClass = ReflectionUtils.getDeclaringType(pjp.getTarget().getClass(), getMethod().getName(), getMethod().getParameterTypes());
     }
 
     @Override
@@ -27,6 +32,11 @@ public class AspectJTransactionMethodJoinPoint implements TransactionMethodJoinP
     @Override
     public Class<? extends TransactionContextEditor> getTransactionContextEditorClass() {
         return transactionContextEditorClass;
+    }
+
+    @Override
+    public Class<?> getDeclaredClass() {
+        return declaredClass;
     }
 
     @Override

@@ -1,13 +1,12 @@
 package org.mengyun.tcctransaction.dubbo.filter;
 
-import org.apache.dubbo.rpc.Constants;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.model.ConsumerMethodModel;
-import org.apache.dubbo.rpc.model.ConsumerModel;
+import org.mengyun.tcctransaction.SystemException;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.TransactionContextEditor;
 import org.mengyun.tcctransaction.interceptor.TransactionMethodJoinPoint;
+import org.mengyun.tcctransaction.support.FactoryBuilder;
 
 import java.lang.reflect.Method;
 
@@ -18,11 +17,22 @@ public class DubboInvokeProceedingJoinPoint implements TransactionMethodJoinPoin
     Compensable compensable;
     Class<? extends TransactionContextEditor> transactionContextEditorClass;
 
+    private Method method = null;
+    private Object target;
+
     public DubboInvokeProceedingJoinPoint(Invoker invoker, Invocation invocation, Compensable compensable, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
         this.invoker = invoker;
         this.invocation = invocation;
         this.compensable = compensable;
         this.transactionContextEditorClass = transactionContextEditorClass;
+
+        try {
+            method = invoker.getInterface().getMethod(invocation.getMethodName(), invocation.getParameterTypes());
+        } catch (NoSuchMethodException e) {
+            throw new SystemException(e);
+        }
+
+        target = FactoryBuilder.factoryOf(getDeclaredClass()).getInstance();
     }
 
     @Override
@@ -36,18 +46,18 @@ public class DubboInvokeProceedingJoinPoint implements TransactionMethodJoinPoin
     }
 
     @Override
+    public Class<?> getDeclaredClass() {
+        return invoker.getInterface();
+    }
+
+    @Override
     public Method getMethod() {
-//        try {
-//            return getTargetClass().getMethod(invocation.getMethodName(), invocation.getParameterTypes());
-//        } catch (NoSuchMethodException e) {
-//            throw new SystemException(e);
-//        }
-        return ((ConsumerMethodModel) invocation.getAttributes().get(Constants.METHOD_MODEL)).getMethod();
+        return method;
     }
 
     @Override
     public Object getTarget() {
-        return ((ConsumerModel) invocation.getAttributes().get(Constants.CONSUMER_MODEL)).getProxyObject();
+        return target;
     }
 
     @Override

@@ -11,6 +11,8 @@ public interface TransactionMethodJoinPoint {
 
     Class<? extends TransactionContextEditor> getTransactionContextEditorClass();
 
+    Class<?> getDeclaredClass();
+
     Method getMethod();
 
     Object getTarget();
