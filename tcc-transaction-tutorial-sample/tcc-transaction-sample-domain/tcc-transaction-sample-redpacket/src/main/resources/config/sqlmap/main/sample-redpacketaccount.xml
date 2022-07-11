@@ -10,12 +10,10 @@
     </resultMap>
 
     <sql id="sql_select">
-        SELECT
-        RED_PACKET_ACCOUNT_ID,
-        BALANCE_AMOUNT,
-        USER_ID
-        FROM
-        RED_RED_PACKET_ACCOUNT
+        SELECT RED_PACKET_ACCOUNT_ID,
+               BALANCE_AMOUNT,
+               USER_ID
+        FROM RED_RED_PACKET_ACCOUNT
     </sql>
 
 
@@ -30,22 +28,16 @@
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO RED_RED_PACKET_ACCOUNT
-        (
-        BALANCE_AMOUNT,
-        USER_ID
-        )
-        VALUES
-            (
-            #{balanceAmount},
-            #{userId}
-            )
+        (BALANCE_AMOUNT,
+         USER_ID)
+        VALUES (#{balanceAmount},
+                #{userId})
     </insert>
 
     <update id="update" parameterType="org.mengyun.tcctransaction.sample.redpacket.domain.entity.RedPacketAccount">
         UPDATE
-        RED_RED_PACKET_ACCOUNT
-        SET
-        BALANCE_AMOUNT = #{balanceAmount}
+            RED_RED_PACKET_ACCOUNT
+        SET BALANCE_AMOUNT = #{balanceAmount}
         WHERE RED_PACKET_ACCOUNT_ID = #{id}
     </update>
 </mapper>

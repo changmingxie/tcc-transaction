@@ -9,11 +9,9 @@
     </resultMap>
 
     <sql id="sql_select">
-        SELECT
-        SHOP_ID,
-        OWNER_USER_ID
-        FROM
-        ORD_SHOP
+        SELECT SHOP_ID,
+               OWNER_USER_ID
+        FROM ORD_SHOP
     </sql>
 
     <select id="findById" resultMap="result">

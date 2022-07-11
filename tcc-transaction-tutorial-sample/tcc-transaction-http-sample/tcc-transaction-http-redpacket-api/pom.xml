@@ -12,12 +12,5 @@
 
     <artifactId>tcc-transaction-http-redpacket-api</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.mengyun</groupId>
-            <artifactId>tcc-transaction-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 
 </project>

@@ -1,13 +1,71 @@
-spring:
-  application:
-    name: @project.build.finalName@
-  resources:
-    chain:
-      cache: false
 server:
   servlet:
-    context-path: /@project.build.finalName@
-  port: @web.port@
-zookeeper:
-  digest: @zookeeper.digest@
-  connect-string: @zookeeper.address@
+    context-path: /tcc-transaction-dashboard
+  port: 22332
+
+logging:
+  level:
+    root: info
+spring:
+  application:
+    name: tcc-transaction-dashboard
+  tcc:
+    dashboard:
+      userName: admin
+      password: 123456
+#      data-fetch-type: local
+      data-fetch-type: tccserver
+      registry: # data-fetch-type为server时使用
+        registry-type: direct
+        direct:
+          server-addresses: http://localhost:12332
+#        nacos:
+#          server-addr: localhost:8848
+#        zookeeper:
+#          connect-string: localhost:2181
+#    storage:
+#      storageType: memory
+#      storageType: rocksdb
+#      storageType: redis
+#      storageType: jdbc
+#      storage-type: redis
+#      storageType: redis_cluster
+#      storageType: shard_redis
+#      jdbc: # 测试ok
+#        password: welcome1
+#      redis: # 测试ok
+#        host: 127.0.0.1
+#        port: 6379
+#        database: 0
+#        pool-config:
+#          max-total: 100
+#          max-idle: 100
+#          min-idle: 10
+#          max-wait-millis: 300
+#      redis-cluster: # 待测试
+#        max-attempts: 5
+#        so-timeout: 300
+#        connection-timeout: 1000
+#        nodes:
+#          - host: 127.0.0.1
+#            port: 6379
+#          - host: 127.0.0.1
+#            port: 6380
+#          - host: 127.0.0.1
+#            port: 6381
+#      shard-redis: # 测试ok
+#        nodes:
+#          - host: 127.0.0.1
+#            port: 16379
+#          - host: 127.0.0.1
+#            port: 16380
+#          - host: 127.0.0.1
+#            port: 16381
+    recovery:
+#      update-job-forcibly: false
+      recovery-enabled: false
+      quartz-clustered: true
+#      quartz-data-source-url: jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true
+#      quartz-data-source-driver: com.mysql.jdbc.Driver
+#      quartz-data-source-user: root
+#      quartz-data-source-password: welcome1

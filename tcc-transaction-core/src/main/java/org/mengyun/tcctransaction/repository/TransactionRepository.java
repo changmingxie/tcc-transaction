@@ -1,8 +1,9 @@
 package org.mengyun.tcctransaction.repository;
 
-import org.mengyun.tcctransaction.Transaction;
+import org.mengyun.tcctransaction.api.Xid;
+import org.mengyun.tcctransaction.storage.Page;
+import org.mengyun.tcctransaction.transaction.Transaction;
 
-import javax.transaction.xa.Xid;
 import java.io.Closeable;
 import java.util.Date;
 
@@ -13,8 +14,6 @@ public interface TransactionRepository extends Closeable {
 
     String getDomain();
 
-    String getRootDomain();
-
     int create(Transaction transaction);
 
     int update(Transaction transaction);
@@ -23,7 +22,7 @@ public interface TransactionRepository extends Closeable {
 
     Transaction findByXid(Xid xid);
 
-    Transaction findByRootXid(Xid xid);
+    boolean supportRecovery();
 
     Page<Transaction> findAllUnmodifiedSince(Date date, String offset, int pageSize);
 

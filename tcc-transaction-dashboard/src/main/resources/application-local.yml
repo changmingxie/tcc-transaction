@@ -1,0 +1,51 @@
+# dashbaord local模式专项配置
+server:
+  servlet:
+    context-path: /tcc-transaction-dashboard
+  port: 22332
+
+logging:
+  level:
+    root: info
+spring:
+  application:
+    name: tcc-transaction-dashboard
+  tcc:
+    dashboard:
+      dataFetchType: local
+    storage:
+      storageType: memory
+#      storageType: jdbc
+#      storage-type: redis
+#      storageType: redis_cluster
+#      storageType: shard_redis
+      jdbc: # 测试ok
+        password: welcome1
+      redis: # 测试ok
+        host: 127.0.0.1
+        port: 6379
+        database: 0
+        pool-config:
+          max-total: 100
+          max-idle: 100
+          min-idle: 10
+          max-wait-millis: 300
+      redis-cluster: # 待测试
+        max-attempts: 5
+        so-timeout: 300
+        connection-timeout: 1000
+        nodes:
+          - host: 127.0.0.1
+            port: 6379
+          - host: 127.0.0.1
+            port: 6380
+          - host: 127.0.0.1
+            port: 6381
+      shard-redis: # 测试ok
+        nodes:
+          - host: 127.0.0.1
+            port: 6379
+          - host: 127.0.0.1
+            port: 6380
+          - host: 127.0.0.1
+            port: 6381

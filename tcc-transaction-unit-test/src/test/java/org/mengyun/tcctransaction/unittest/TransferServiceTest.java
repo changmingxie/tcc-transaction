@@ -2,7 +2,7 @@ package org.mengyun.tcctransaction.unittest;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mengyun.tcctransaction.spring.annotation.EnableTccTransaction;
+import org.mengyun.tcctransaction.TccClient;
 import org.mengyun.tcctransaction.unittest.client.TransferService;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.mengyun.tcctransaction.unittest.repository.SubAccountRepository;
@@ -15,14 +15,17 @@ import java.util.List;
 /**
  * Created by changmingxie on 12/3/15.
  */
-@EnableTccTransaction
-public class TransferServiceTest extends AbstractTestCase {
+
+public abstract class TransferServiceTest extends AbstractTestCase {
 
     @Autowired
     SubAccountRepository subAccountRepository;
 
     @Autowired
     private TransferService transferService;
+
+    @Autowired
+    private TccClient tccClient;
 
     @Test
     public void testTransfer() {
@@ -53,7 +56,7 @@ public class TransferServiceTest extends AbstractTestCase {
 
     @Test
     public void testTransferWithTryFailedByTimeout() {
-        System.out.println("testTransferWithTryFailed will cost about 30s， please wait!");
+        System.out.println(String.format("testTransferWithTryFailed will cost about %ds， please wait!", tccClient.getClientConfig().getRecoverDuration() * 2));
         //given
 
         //when
@@ -82,12 +85,13 @@ public class TransferServiceTest extends AbstractTestCase {
         Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CANCEL_CALLED, messages.get(4));
 
         try {
-            Thread.sleep(10000l);
+            Thread.sleep(tccClient.getClientConfig().getRecoverDuration() * 2 * 1000l);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         messages = TraceLog.getMessages();
+
         Assert.assertEquals(6, messages.size());
         Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CANCEL_CALLED, messages.get(5));
 
@@ -95,7 +99,7 @@ public class TransferServiceTest extends AbstractTestCase {
 
     @Test
     public void testTransferWithTimeoutAndCancelBeforeBranchTransactionStart() {
-        System.out.println("testTransferWithTimeoutToTryAndCancelBeforeBranchTransactionStart will cost about 30s， please wait!");
+        System.out.println(String.format("testTransferWithTimeoutToTryAndCancelBeforeBranchTransactionStart will cost about %ds，please wait!", tccClient.getClientConfig().getRecoverDuration() * 2));
         //given
 
         //when
@@ -122,15 +126,10 @@ public class TransferServiceTest extends AbstractTestCase {
         Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CANCEL_CALLED, messages.get(3));
 
         try {
-            Thread.sleep(15000l);
+            Thread.sleep(tccClient.getClientConfig().getRecoverDuration() * 2 * 1000l);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        messages = TraceLog.getMessages();
-        Assert.assertEquals(6, messages.size());
-        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CALLED, messages.get(4));
-        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CANCEL_CALLED, messages.get(5));
 
     }
 

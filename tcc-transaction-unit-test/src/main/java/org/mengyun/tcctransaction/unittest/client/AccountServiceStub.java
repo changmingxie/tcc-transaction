@@ -1,7 +1,9 @@
 package org.mengyun.tcctransaction.unittest.client;
 
+import org.mengyun.tcctransaction.api.EnableTcc;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
+import org.mengyun.tcctransaction.context.TransactionContextHolder;
 import org.mengyun.tcctransaction.unittest.service.AccountService;
 import org.mengyun.tcctransaction.unittest.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,16 @@ public class AccountServiceStub implements AccountService {
     @Autowired
     private AccountServiceImpl accountService;
 
+    @EnableTcc
     @Override
     public void transferTo(TransactionContext transactionContext, long accountId, int amount) {
 
-        CompletableFuture future = CompletableFuture.runAsync(() -> accountService.transferTo(transactionContext, accountId, amount));
+        TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
+
+        CompletableFuture future = CompletableFuture.runAsync(() ->{
+
+            TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
+            accountService.transferTo(transactionContext, accountId, amount);});
 
         try {
             future.get();
@@ -32,9 +40,15 @@ public class AccountServiceStub implements AccountService {
         }
     }
 
+    @EnableTcc
     public void transferToWithTimeout(TransactionContext transactionContext, long accountId, int amount) {
 
-        CompletableFuture future = CompletableFuture.runAsync(() -> accountService.transferToWithTimeout(transactionContext, accountId, amount));
+        TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
+
+        CompletableFuture future = CompletableFuture.runAsync(() -> {
+            TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
+            accountService.transferToWithTimeout(transactionContext, accountId, amount);
+        });
 
         try {
             future.get(1000l, TimeUnit.MILLISECONDS);
@@ -45,15 +59,19 @@ public class AccountServiceStub implements AccountService {
         }
     }
 
+    @EnableTcc
     public void transferToWithTimeoutBeforeBranchTransactionStart(TransactionContext transactionContext, long accountId, int amount) {
 
+        TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
         CompletableFuture future = CompletableFuture.runAsync(new Runnable() {
             @Override
             public void run() {
 
-                if (transactionContext.getStatus() == TransactionStatus.TRYING.getId()) {
+                TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
+
+                if (transactionContext1.getStatus() == TransactionStatus.TRYING.getId()) {
                     try {
-                        Thread.sleep(4000l);
+                        Thread.sleep(3000l);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -71,10 +89,15 @@ public class AccountServiceStub implements AccountService {
         }
     }
 
+    @EnableTcc
     @Override
     public void transferToWithException(TransactionContext transactionContext, long accountId, int amount) {
 
-        CompletableFuture future = CompletableFuture.runAsync(() -> accountService.transferToWithException(transactionContext, accountId, amount));
+        TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
+        CompletableFuture future = CompletableFuture.runAsync(() -> {
+            TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
+            accountService.transferToWithException(transactionContext, accountId, amount);
+        });
 
         try {
             future.get();
@@ -84,10 +107,15 @@ public class AccountServiceStub implements AccountService {
     }
 
 
+    @EnableTcc
     @Override
     public void transferFrom(TransactionContext transactionContext, long accountId, int amount) {
 
-        CompletableFuture future = CompletableFuture.runAsync(() -> accountService.transferFrom(transactionContext, accountId, amount));
+        TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
+        CompletableFuture future = CompletableFuture.runAsync(() -> {
+            TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
+            accountService.transferFrom(transactionContext, accountId, amount);
+        });
 
         try {
             future.get();

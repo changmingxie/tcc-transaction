@@ -1,0 +1,22 @@
+server:
+  port: 9998
+
+spring:
+  tcc:
+    storage:
+      max-attempts: 1
+  cloud:
+    # 服务暴露方式一 默认不使用注册中心
+    # 服务暴露方式二 服务暴露使用nacos为注册中心
+    nacos:
+      discovery:
+        enabled: false
+        server-addr: 127.0.0.1:8848
+    # 服务暴露方式三 使用zookeeper为注册中心
+    zookeeper:
+      enabled: false
+      connect-string: localhost:2181
+
+logging:
+  level:
+    root: info

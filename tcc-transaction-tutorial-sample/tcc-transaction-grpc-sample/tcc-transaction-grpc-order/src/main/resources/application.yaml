@@ -1,0 +1,43 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: tcc-transaction-grpc-order
+  freemarker:
+    template-loader-path: classpath:/ftl/
+    suffix: .ftl
+    settings:
+      template_update_delay: 5
+      default_encoding: UTF-8
+      locale: UTF-8
+      datetime_format: yyyy-MM-dd HH:mm:ss
+      time_format: HH:mm:ss
+      number_format: 0.####
+      boolean_format: true,false
+      whitespace_stripping: true
+      tag_syntax: auto_detect
+      url_escaping_charset: UTF-8
+      classic_compatible: true
+  tcc:
+    recovery:
+      max-retry-count: 30
+      recover-duration: 30
+      cron-expression: 0/15 * * * * ?
+      fetch-page-size: 200
+    storage:
+      storage-type: memory
+      domain: "TCC:GRPC:ORDER:"
+      serializer-type: customized
+      transaction-serializer-class-name: org.mengyun.tcctransaction.serializer.json.JacksonTransactionSerializer
+server:
+  port: 8081
+grpc:
+  client:
+    capital:
+      port: 8002
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+    redpacket:
+      port: 8003
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true

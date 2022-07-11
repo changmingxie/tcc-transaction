@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.sample.dubbo.capital.service;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.mengyun.tcctransaction.sample.capital.domain.entity.CapitalAccount;
 import org.mengyun.tcctransaction.sample.capital.domain.entity.TradeOrder;
 import org.mengyun.tcctransaction.sample.capital.domain.repository.CapitalAccountRepository;
@@ -29,7 +28,7 @@ public class CapitalTradeOrderServiceImpl implements CapitalTradeOrderService {
     TradeOrderRepository tradeOrderRepository;
 
     @Override
-    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
+    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord")
     @Transactional
     public String record(CapitalTradeOrderDto tradeOrderDto) {
 

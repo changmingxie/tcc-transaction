@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.sample.dubbo.redpacket.service;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketTradeOrderService;
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.dto.RedPacketTradeOrderDto;
 import org.mengyun.tcctransaction.sample.redpacket.domain.entity.RedPacketAccount;
@@ -29,7 +28,7 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     TradeOrderRepository tradeOrderRepository;
 
     @Override
-    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord", transactionContextEditor = DubboTransactionContextEditor.class)
+    @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord")
     @Transactional
     public String record(RedPacketTradeOrderDto tradeOrderDto) {
 

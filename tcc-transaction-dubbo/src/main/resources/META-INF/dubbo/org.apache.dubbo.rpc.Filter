@@ -1,1 +1,3 @@
-compensableTransaction=org.mengyun.tcctransaction.dubbo.filter.CompensableTransactionFilter
+transactionContextDecodeFilter=org.mengyun.tcctransaction.dubbo.filter.TransactionContextDecodeFilter
+transactionContextEncodeFilter=org.mengyun.tcctransaction.dubbo.filter.TransactionContextEncodeFilter
+compensableTransactionFilter=org.mengyun.tcctransaction.dubbo.filter.CompensableTransactionFilter

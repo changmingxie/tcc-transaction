@@ -9,6 +9,7 @@ import {Domain} from '../actions/domain';
 const defaultState = {
   domainData: [],
   currentDomain: '',
+  xidString: null,
   refresh: 0,
 };
 
@@ -17,7 +18,8 @@ export default function domain(state = defaultState, {type, payload}) {
     case Domain.UPDATE_DOMAIN_DATA:
       return {...state, domainData: payload};
     case Domain.UPDATE_CURRENT_DOMAIN:
-      return {...state, currentDomain: payload, refresh: state.refresh + 1};
+      // console.log("UPDATE_CURRENT_DOMAIN", state);
+      return {...state, currentDomain: payload.domain, xidString: payload.xidString, refresh: state.refresh + 1};
     default:
       return state;
   }

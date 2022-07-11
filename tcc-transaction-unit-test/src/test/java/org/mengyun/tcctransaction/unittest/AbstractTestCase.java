@@ -6,15 +6,13 @@ import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.mengyun.tcctransaction.unittest.repository.SubAccountRepository;
 import org.mengyun.tcctransaction.unittest.utils.TraceLog;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Created by changmingxie on 12/2/15.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:/tcc-transaction-unit-test.xml"})
+@RunWith(SpringRunner.class)
+//@DirtiesContext
 public abstract class AbstractTestCase {
 
 
@@ -22,7 +20,7 @@ public abstract class AbstractTestCase {
     SubAccountRepository subAccountRepository;
 
     @Before
-    public void init() {
+    public void init() throws Exception {
         initMethodCallSeq();
         buildAccount();
     }

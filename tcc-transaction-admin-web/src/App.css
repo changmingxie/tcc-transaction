@@ -9,6 +9,8 @@
 
 .site-layout-content {
   padding: 12px;
+  overflow: scroll;
+  max-height: 48rem;
 }
 
 .tab-3-body {
@@ -33,4 +35,11 @@
 
 .layout {
   height: 100%;
+}
+
+.login-container {
+  min-height: 100%;
+  width: 100%;
+  background-color: #2d3a4b;
+  overflow: hidden;
 }

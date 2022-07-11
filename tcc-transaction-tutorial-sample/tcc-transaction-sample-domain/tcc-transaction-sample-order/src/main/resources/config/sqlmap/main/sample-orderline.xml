@@ -11,13 +11,11 @@
     </resultMap>
 
     <sql id="sql_select">
-        SELECT
-        ORDER_LINE_ID,
-        PRODUCT_ID,
-        QUANTITY,
-        UNIT_PRICE
-        FROM
-        TCC_ORDER_LINE
+        SELECT ORDER_LINE_ID,
+               PRODUCT_ID,
+               QUANTITY,
+               UNIT_PRICE
+        FROM TCC_ORDER_LINE
     </sql>
 
     <select id="findById" resultMap="result">
@@ -27,16 +25,11 @@
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO ORD_ORDER_LINE
-        (
-        PRODUCT_ID,
-        QUANTITY,
-        UNIT_PRICE
-        )
-        VALUES
-        (
-        #{productId},
-        #{quantity},
-        #{unitPrice}
-        )
+        (PRODUCT_ID,
+         QUANTITY,
+         UNIT_PRICE)
+        VALUES (#{productId},
+                #{quantity},
+                #{unitPrice})
     </insert>
 </mapper>

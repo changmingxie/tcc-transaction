@@ -1,0 +1,29 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: tcc-transaction-grpc-capital
+  tcc:
+    storage:
+      storage-type: memory
+      domain: "TCC:GRPC:CAPITAL:"
+      location: /tmp
+      serializer-type: customized
+      transaction-serializer-class-name: org.mengyun.tcctransaction.serializer.json.JacksonTransactionSerializer
+    recovery:
+      max-retry-count: 30
+      cron-expression: 0/15 * * * * ?
+      fetch-page-size: 200
+server:
+  port: 8082
+  servlet:
+    context-path: /${spring.application.name}
+
+grpc:
+  server:
+    port: 8002
+
+logging:
+  level:
+    root: info
+

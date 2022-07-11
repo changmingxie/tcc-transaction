@@ -95,7 +95,7 @@ function getClientEnvironment(publicUrl) {
     }, {}),
   };
 
-  return { raw, stringified };
+  return {raw, stringified};
 }
 
 module.exports = getClientEnvironment;

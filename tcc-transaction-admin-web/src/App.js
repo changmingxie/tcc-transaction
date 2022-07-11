@@ -1,49 +1,35 @@
+import React from 'react';
 import {Provider} from 'react-redux';
-import {Layout, Menu} from 'antd';
-import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
+import {HashRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import 'antd/dist/antd.css';
 import './App.css';
+
+import Login from './pages/tcc/login/index';
+import Welcome from './pages/tcc/welcome/index';
 import Domain from './pages/tcc/domain/index';
-import Degrade from './pages/tcc/Degrade';
+import Transaction from './pages/tcc/transaction/index';
+import Task from "./pages/tcc/task/index";
+
 import store from './store';
+import TccLayout from "./layout/TccLayout";
 
-const {Header, Content} = Layout;
-
-function App() {
+function App(props) {
   return (
     <Provider store={store}>
-      <Router basename="/gatekeeper/tcc-transaction-web">
-        <Layout className="layout">
-          <Header
-            style={{
-              backgroundColor: '#fff',
-              fontSize: 18,
-              fontWeight: 'bold',
-            }}
-          >
-            <div style={{float: 'left', marginRight: 80}}>TCC TRANSACTION管理后台</div>
-            <Menu mode="horizontal">
-              <Menu.Item>
-                <Link to="/normal">常规</Link>
-              </Menu.Item>
-              <Menu.Item>
-                <Link to="/degrade">降级配置</Link>
-              </Menu.Item>
-            </Menu>
-          </Header>
-          <Content>
-            <div className="site-layout-content">
-              <Switch>
-                <Route path="/normal">
-                  <Domain/>
-                </Route>
-                <Route path="/degrade">
-                  <Degrade/>
-                </Route>
-              </Switch>
-            </div>
-          </Content>
-        </Layout>
+      <Router forceRefresh={false}>
+        <Switch>
+          <Route key="login" path="/login" component={Login}></Route>
+          <TccLayout routeList={
+            <>
+              <Route path="/welcome" component={Welcome}></Route>
+              <Route path="/domain" component={Domain}></Route>
+              <Route path="/transaction" component={Transaction}></Route>
+              <Route path="/task" component={Task}></Route>
+            </>
+          }>
+          </TccLayout>
+          <Redirect to="/welcome" from="/"/>
+        </Switch>
       </Router>
     </Provider>
   );

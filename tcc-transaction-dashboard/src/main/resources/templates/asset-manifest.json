@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/tcc-transaction-dashboard/static/css/main.013a3909.chunk.css",
+    "main.js": "/tcc-transaction-dashboard/static/js/main.65b9b73b.chunk.js",
+    "main.js.map": "/tcc-transaction-dashboard/static/js/main.65b9b73b.chunk.js.map",
+    "runtime-main.js": "/tcc-transaction-dashboard/static/js/runtime-main.c6ab0bfd.js",
+    "runtime-main.js.map": "/tcc-transaction-dashboard/static/js/runtime-main.c6ab0bfd.js.map",
+    "static/css/2.4f57d18e.chunk.css": "/tcc-transaction-dashboard/static/css/2.4f57d18e.chunk.css",
+    "static/js/2.6cbb4a27.chunk.js": "/tcc-transaction-dashboard/static/js/2.6cbb4a27.chunk.js",
+    "static/js/2.6cbb4a27.chunk.js.map": "/tcc-transaction-dashboard/static/js/2.6cbb4a27.chunk.js.map",
+    "index.html": "/tcc-transaction-dashboard/index.html",
+    "precache-manifest.620f1bf5e8b4956d125178c483b0e7f9.js": "/tcc-transaction-dashboard/precache-manifest.620f1bf5e8b4956d125178c483b0e7f9.js",
+    "service-worker.js": "/tcc-transaction-dashboard/service-worker.js",
+    "static/css/2.4f57d18e.chunk.css.map": "/tcc-transaction-dashboard/static/css/2.4f57d18e.chunk.css.map",
+    "static/css/main.013a3909.chunk.css.map": "/tcc-transaction-dashboard/static/css/main.013a3909.chunk.css.map",
+    "static/js/2.6cbb4a27.chunk.js.LICENSE.txt": "/tcc-transaction-dashboard/static/js/2.6cbb4a27.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c6ab0bfd.js",
+    "static/css/2.4f57d18e.chunk.css",
+    "static/js/2.6cbb4a27.chunk.js",
+    "static/css/main.013a3909.chunk.css",
+    "static/js/main.65b9b73b.chunk.js"
+  ]
+}

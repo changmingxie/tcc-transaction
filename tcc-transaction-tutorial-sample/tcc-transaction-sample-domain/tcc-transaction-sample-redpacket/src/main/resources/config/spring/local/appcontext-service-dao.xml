@@ -13,8 +13,8 @@
 
     <bean id="redPacketAccountDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface"
-                  value="org.mengyun.tcctransaction.sample.redpacket.infrastructure.dao.RedPacketAccountDao"></property>
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+                  value="org.mengyun.tcctransaction.sample.redpacket.infrastructure.dao.RedPacketAccountDao"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 
     <bean id="tradeOrderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">

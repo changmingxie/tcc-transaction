@@ -1,12 +1,12 @@
 package org.mengyun.tcctransaction.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import org.mengyun.tcctransaction.IllegalTransactionStatusException;
-import org.mengyun.tcctransaction.NoExistedTransactionException;
-import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.TransactionManager;
 import org.mengyun.tcctransaction.api.ParticipantStatus;
 import org.mengyun.tcctransaction.api.TransactionStatus;
+import org.mengyun.tcctransaction.exception.IllegalTransactionStatusException;
+import org.mengyun.tcctransaction.exception.NoExistedTransactionException;
+import org.mengyun.tcctransaction.transaction.Transaction;
+import org.mengyun.tcctransaction.transaction.TransactionManager;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,10 +93,7 @@ public class CompensableTransactionInterceptor {
 
                     try {
                         result = compensableMethodContext.proceed();
-
-                        //TODO: need tuning here, async change the status to tuning the invoke chain performance
-                        //transactionManager.changeStatus(TransactionStatus.TRY_SUCCESS, asyncSave);
-                        transactionManager.changeStatus(TransactionStatus.TRY_SUCCESS, true);
+                        transactionManager.changeStatus(TransactionStatus.TRY_SUCCESS);
                     } catch (Throwable e) {
                         transactionManager.changeStatus(TransactionStatus.TRY_FAILED);
                         throw e;

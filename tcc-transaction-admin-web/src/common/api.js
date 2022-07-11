@@ -1,88 +1,115 @@
-import axios from 'axios';
+import http from "./http";
 
+export function getAllDomainKeys() {
+  return http.get('/tcc-transaction-dashboard/api/domain/allKeys')
+}
 
-export function getDomains() {
-  return axios
-    .get('/tcc-transaction-dashboard/api/domains')
-    .then(res => res.data.reduce((prev, val) => {
-      return prev.concat({
-        ...val,
-        value: val.label
-      })
-    }, []) || []);
+export function getAllDomains() {
+  return http.get('/tcc-transaction-dashboard/api/domain/all')
+}
+
+export function domainCreate(params) {
+  return http.post("/tcc-transaction-dashboard/api/domain/create",{
+    ...params
+  });
+}
+
+export function domainModify(params) {
+  return http.post("/tcc-transaction-dashboard/api/domain/modify",{
+    ...params
+  });
+}
+
+export function domainDelete(params) {
+  return http.post("/tcc-transaction-dashboard/api/domain/delete",{
+    ...params
+  });
+}
+
+export function domainAlertTest(params) {
+  return http.post("/tcc-transaction-dashboard/api/domain/alertTest",{
+    ...params
+  });
 }
 
 export function getManageList({
-  domain,
-  row,
-  isDeleted,
-  pageNum,
-  pageSize,
-}) {
-  return axios
-    .get(`/tcc-transaction-dashboard/api/manage?domain=${domain}&row=${row}&isDeleted=${isDeleted}&pageNum=${pageNum}&pageSize=${pageSize}`)
-    .then(res => res.data || {
-      items: []
-    });
-}
-
-export function reset(params) {
-  let url = '/tcc-transaction-dashboard/api/reset?';
-  Object.keys(params).forEach(key => {
-    url += `${key}=${encodeURIComponent(params[key])}&`
-  });
-  url = url.substring(0, url.length - 1);
-  return axios.put(url)
+                                domain,
+                                xidString,
+                                offset,
+                                pageSize, deleted
+                              }) {
+  return http.post("/tcc-transaction-dashboard/api/transaction/list", {
+    domain,
+    xidString,
+    offset,
+    pageSize,
+    markDeleted: deleted
+  })
 }
 
 export function confirm(params) {
-  let url = '/tcc-transaction-dashboard/api/confirm?';
-  Object.keys(params).forEach(key => {
-    url += `${key}=${encodeURIComponent(params[key])}&`
+  return http.post("/tcc-transaction-dashboard/api/transaction/confirm", {
+    domain: params.domain,
+    xidString: params.xidString
   });
-  url = url.substring(0, url.length - 1);
-  return axios.put(url)
+}
+
+export function reset(params) {
+  return http.post("/tcc-transaction-dashboard/api/transaction/reset", {
+    domain: params.domain,
+    xidString: params.xidString
+  });
 }
 
 export function cancel(params) {
-  let url = '/tcc-transaction-dashboard/api/cancel?';
-  Object.keys(params).forEach(key => {
-    url += `${key}=${encodeURIComponent(params[key])}&`
+  return http.post("/tcc-transaction-dashboard/api/transaction/cancel", {
+    domain: params.domain,
+    xidString: params.xidString
   });
-  url = url.substring(0, url.length - 1);
-  return axios.put(url)
 }
 
 export function remove(params) {
-  let url = '/tcc-transaction-dashboard/api/delete?';
-  Object.keys(params).forEach(key => {
-    url += `${key}=${encodeURIComponent(params[key])}&`
+  return http.post("/tcc-transaction-dashboard/api/transaction/markDeleted", {
+    domain: params.domain,
+    xidString: params.xidString
   });
-  url = url.substring(0, url.length - 1);
-  return axios.delete(url)
 }
 
 export function restore(params) {
-  let url = '/tcc-transaction-dashboard/api/restore?';
-  Object.keys(params).forEach(key => {
-    url += `${key}=${encodeURIComponent(params[key])}&`
+  return http.post("/tcc-transaction-dashboard/api/transaction/restore", {
+    domain: params.domain,
+    xidString: params.xidString
   });
-  url = url.substring(0, url.length - 1);
-  return axios.put(url)
 }
 
-export function getDegradeList() {
-  return axios
-    .get('/tcc-transaction-dashboard/api/degrade')
-    .then(res => res.data.data);
+
+export function getAllTask() {
+  return http.get('/tcc-transaction-dashboard/api/task/all');
 }
 
-export function degrade(domain, isDegrade) {
-  const url = `/tcc-transaction-dashboard/api/degrade?domain=${domain}&degrade=${isDegrade}`;
-  return axios.put(url);
+export function taskPause(domain) {
+  return http.get('/tcc-transaction-dashboard/api/task/pause/' + domain);
 }
 
-export function deleteDomain(domainName) {
-  const url = `/tcc-transaction-dashboard/api/domain?domain=${domainName}`;
-  return axios.delete(url);
+export function taskResume(domain) {
+  return http.get('/tcc-transaction-dashboard/api/task/resume/' + domain);
+}
+
+export function taskDelete(domain) {
+  return http.get('/tcc-transaction-dashboard/api/task/delete/' + domain);
+}
+
+export function taskModifyCron(params) {
+  return http.post("/tcc-transaction-dashboard/api/task/modifyCron",
+    {
+      domain: params.domain,
+      cronExpression: params.cronExpression
+    });
+}
+
+
+export function userLogin(params) {
+  return http.post("/tcc-transaction-dashboard/api/user/login", {
+    ...params
+  });
 }

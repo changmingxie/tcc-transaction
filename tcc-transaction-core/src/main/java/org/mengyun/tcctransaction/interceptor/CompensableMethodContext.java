@@ -1,12 +1,12 @@
 package org.mengyun.tcctransaction.interceptor;
 
-import org.mengyun.tcctransaction.Transaction;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.api.TransactionContext;
-import org.mengyun.tcctransaction.api.TransactionContextEditor;
 import org.mengyun.tcctransaction.api.UniqueIdentity;
 import org.mengyun.tcctransaction.common.ParticipantRole;
+import org.mengyun.tcctransaction.context.TransactionContextEditor;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
+import org.mengyun.tcctransaction.transaction.Transaction;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -17,12 +17,9 @@ import java.lang.reflect.Method;
 public class CompensableMethodContext {
 
     TransactionMethodJoinPoint pjp = null;
-
-    private Transaction transaction = null;
-
     TransactionContext transactionContext = null;
-
     Compensable compensable = null;
+    private Transaction transaction = null;
 
     public CompensableMethodContext(TransactionMethodJoinPoint pjp, Transaction transaction) {
         this.pjp = pjp;

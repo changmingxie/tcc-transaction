@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tcc="http://www.tcctransaction.org/schema/tcc" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.tcctransaction.org/schema/tcc http://www.tcctransaction.org/schema/tcc.xsd">
+
+    <context:component-scan base-package="org.mengyun.tcctransaction.unittest"/>
+
+    <tcc:annotation-driven client-config="clientConfig"/>
+    <bean id="clientConfig" class="org.mengyun.tcctransaction.ClientConfig">
+        <property name="recoveryConfig" ref="recoveryProperties"/>
+    </bean>
+
+    <bean id="recoveryProperties" class="org.mengyun.tcctransaction.properties.RecoveryProperties">
+        <property name="maxRetryCount" value="30"/>
+        <property name="recoverDuration" value="5"/>
+        <property name="cronExpression" value="0/5 * * * * ? "/>
+        <property name="fetchPageSize" value="200"/>
+    </bean>
+
+</beans>

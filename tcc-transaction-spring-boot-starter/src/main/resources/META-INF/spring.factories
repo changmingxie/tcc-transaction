@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.mengyun.tcctransaction.springboot.starter.TccTransactionAutoConfiguration
+org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
+org.mengyun.tcctransaction.springboot.starter.TccTransactionConfigurationFilter

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>tcc-transaction-tutorial-sample</artifactId>
+        <groupId>org.mengyun</groupId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>tcc-transaction-grpc-sample</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>tcc-transaction-grpc-order</module>
+        <module>tcc-transaction-grpc-capital</module>
+        <module>tcc-transaction-grpc-capital-api</module>
+        <module>tcc-transaction-grpc-redpacket-api</module>
+        <module>tcc-transaction-grpc-redpacket</module>
+    </modules>
+
+    <properties>
+        <os.plugin.version>1.6.0</os.plugin.version>
+        <grpc.version>1.17.1</grpc.version>
+        <protoc.version>3.6.1</protoc.version>
+        <protobuf.plugin.version>0.6.1</protobuf.plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-all</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

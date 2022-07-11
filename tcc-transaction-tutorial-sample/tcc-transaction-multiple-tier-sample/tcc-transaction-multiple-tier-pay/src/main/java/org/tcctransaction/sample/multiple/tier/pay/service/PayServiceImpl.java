@@ -4,7 +4,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.dubbo.context.DubboTransactionContextEditor;
 import org.tcctransaction.sample.multiple.tier.pay.account.api.PayAccountService;
 import org.tcctransaction.sample.multiple.tier.pay.api.PayService;
 import org.tcctransaction.sample.multiple.tier.pay.point.api.PayPointService;
@@ -21,7 +20,7 @@ public class PayServiceImpl implements PayService {
     PayPointService payPointService;
 
     @Override
-    @Compensable(confirmMethod = "confirm", cancelMethod = "cancel", transactionContextEditor = DubboTransactionContextEditor.class)
+    @Compensable(confirmMethod = "confirm", cancelMethod = "cancel")
     public void deduct() {
         System.out.println("PayServiceImpl.place called at : " + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss SSS"));
 

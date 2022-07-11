@@ -14,16 +14,14 @@
     </resultMap>
 
     <sql id="sql_select">
-        SELECT
-        ID,
-        SELF_USER_ID,
-        OPPOSITE_USER_ID,
-        MERCHANT_ORDER_NO,
-        AMOUNT,
-        STATUS,
-        VERSION
-        FROM
-        RED_TRADE_ORDER
+        SELECT ID,
+               SELF_USER_ID,
+               OPPOSITE_USER_ID,
+               MERCHANT_ORDER_NO,
+               AMOUNT,
+               STATUS,
+               VERSION
+        FROM RED_TRADE_ORDER
     </sql>
 
     <select id="findByMerchantOrderNo" resultMap="result">
@@ -34,31 +32,26 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.mengyun.tcctransaction.sample.redpacket.domain.entity.TradeOrder">
         INSERT INTO RED_TRADE_ORDER
-        (
-        SELF_USER_ID,
-        OPPOSITE_USER_ID,
-        MERCHANT_ORDER_NO,
-        AMOUNT,
-        STATUS,
-        VERSION
-        )
-        VALUES
-        (
-        #{selfUserId},
-        #{oppositeUserId},
-        #{merchantOrderNo},
-        #{amount},
-        #{status},
-        #{version}
-        )
+        (SELF_USER_ID,
+         OPPOSITE_USER_ID,
+         MERCHANT_ORDER_NO,
+         AMOUNT,
+         STATUS,
+         VERSION)
+        VALUES (#{selfUserId},
+                #{oppositeUserId},
+                #{merchantOrderNo},
+                #{amount},
+                #{status},
+                #{version})
     </insert>
 
     <update id="update" parameterType="org.mengyun.tcctransaction.sample.redpacket.domain.entity.TradeOrder">
         UPDATE
-        RED_TRADE_ORDER
-        SET
-        STATUS = #{status},
-        VERSION = #{version}
-        WHERE ID = #{id} AND VERSION = #{version}-1
+            RED_TRADE_ORDER
+        SET STATUS  = #{status},
+            VERSION = #{version}
+        WHERE ID = #{id}
+          AND VERSION = #{version} - 1
     </update>
 </mapper>

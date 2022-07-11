@@ -10,35 +10,35 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TransactionContext implements Serializable {
 
     private static final long serialVersionUID = -8199390103169700387L;
+    private Xid xid;
+    private Xid rootXid;
+    private String rootDomain;
 
-    private TransactionXid xid;
     private int status = TransactionStatus.TRYING.getId();
     private int participantStatus = ParticipantStatus.TRYING.getId();
-
-
     private Map<String, String> attachments = new ConcurrentHashMap<String, String>();
-    private TransactionXid rootXid;
 
     public TransactionContext() {
 
     }
 
-    public TransactionContext(TransactionXid rootXid, TransactionXid xid, int status) {
-        this(rootXid, xid, status, ParticipantStatus.TRYING.getId());
+    public TransactionContext(String rootDomain, Xid rootXid, Xid xid, int status) {
+        this(rootDomain, rootXid, xid, status, ParticipantStatus.TRYING.getId());
     }
 
-    public TransactionContext(TransactionXid rootXid, TransactionXid xid, int status, int participantStatus) {
+    public TransactionContext(String rootDomain, Xid rootXid, Xid xid, int status, int participantStatus) {
+        this.rootDomain = rootDomain;
         this.rootXid = rootXid;
         this.xid = xid;
         this.status = status;
         this.participantStatus = participantStatus;
     }
 
-    public TransactionXid getXid() {
-        return xid.clone();
+    public Xid getXid() {
+        return xid;
     }
 
-    public void setXid(TransactionXid xid) {
+    public void setXid(Xid xid) {
         this.xid = xid;
     }
 
@@ -52,6 +52,14 @@ public class TransactionContext implements Serializable {
         }
     }
 
+    public String getRootDomain() {
+        return rootDomain;
+    }
+
+    public void setRootDomain(String rootDomain) {
+        this.rootDomain = rootDomain;
+    }
+
     public int getStatus() {
         return status;
     }
@@ -59,7 +67,6 @@ public class TransactionContext implements Serializable {
     public void setStatus(int status) {
         this.status = status;
     }
-
 
     public int getParticipantStatus() {
         return participantStatus;
@@ -69,11 +76,11 @@ public class TransactionContext implements Serializable {
         this.participantStatus = participantStatus;
     }
 
-    public TransactionXid getRootXid() {
+    public Xid getRootXid() {
         return rootXid;
     }
 
-    public void setRootXid(TransactionXid rootXid) {
+    public void setRootXid(Xid rootXid) {
         this.rootXid = rootXid;
     }
 }

@@ -3,7 +3,7 @@ package org.mengyun.tcctransaction.interceptor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.api.TransactionContextEditor;
+import org.mengyun.tcctransaction.context.TransactionContextEditor;
 import org.mengyun.tcctransaction.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;

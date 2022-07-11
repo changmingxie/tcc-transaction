@@ -25,6 +25,6 @@ public class SubAccountRepository {
     }
 
     public void save(SubAccount subAccount) {
-        subAccountMap.put(subAccount.getId(),subAccount);
+        subAccountMap.put(subAccount.getId(), subAccount);
     }
 }

@@ -37,21 +37,6 @@
                 <artifactId>tcc-transaction-dubbo</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.mengyun.ha</groupId>
-                <artifactId>tcc-transaction-ha-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mengyun.ha</groupId>
-                <artifactId>tcc-transaction-ha-spring</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mengyun.ha</groupId>
-                <artifactId>tcc-transaction-ha-zookeeper</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

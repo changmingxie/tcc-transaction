@@ -1,0 +1,2 @@
+org.mengyun.tcctransaction.discovery.loadbalance.RandomLoadBalanceProvider
+org.mengyun.tcctransaction.discovery.loadbalance.RoundRobinLoadBalanceProvider

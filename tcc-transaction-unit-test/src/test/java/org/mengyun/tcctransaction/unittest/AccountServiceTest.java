@@ -1,19 +1,25 @@
 package org.mengyun.tcctransaction.unittest;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
-import org.mengyun.tcctransaction.api.TransactionXid;
+import org.mengyun.tcctransaction.context.TransactionContextHolder;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.mengyun.tcctransaction.unittest.repository.SubAccountRepository;
 import org.mengyun.tcctransaction.unittest.service.AccountServiceImpl;
 import org.mengyun.tcctransaction.unittest.utils.MessageConstants;
 import org.mengyun.tcctransaction.unittest.utils.TraceLog;
+import org.mengyun.tcctransaction.xid.TransactionXid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
+
+@ContextConfiguration(locations = {
+        "classpath:/tcc-transaction-ut-with-memory-storage.xml"})
 public class AccountServiceTest extends AbstractTestCase {
 
     @Autowired
@@ -21,6 +27,11 @@ public class AccountServiceTest extends AbstractTestCase {
 
     @Autowired
     private AccountServiceImpl accountService;
+
+    @After
+    public void after() {
+        TransactionContextHolder.clear();
+    }
 
     @Test
     public void testTransferFromWithoutTransactionContext() {
@@ -65,7 +76,8 @@ public class AccountServiceTest extends AbstractTestCase {
     public void testTransferFromWithTransactionContext() {
 
         //given
-        TransactionContext transactionContext = new TransactionContext(new TransactionXid(), new TransactionXid(), TransactionStatus.TRYING.getId());
+        TransactionContext transactionContext = new TransactionContext(null, new TransactionXid(null), new TransactionXid(null), TransactionStatus.TRYING.getId());
+        TransactionContextHolder.setCurrentTransactionContext(transactionContext);
         //when
         accountService.transferFrom(transactionContext, 1, 50);
 
@@ -85,7 +97,8 @@ public class AccountServiceTest extends AbstractTestCase {
     public void testTransferToWithTransactionContext() {
 
         //given
-        TransactionContext transactionContext = new TransactionContext(new TransactionXid(), new TransactionXid(), TransactionStatus.TRYING.getId());
+        TransactionContext transactionContext = new TransactionContext(null, new TransactionXid(null), new TransactionXid(null), TransactionStatus.TRYING.getId());
+        TransactionContextHolder.setCurrentTransactionContext(transactionContext);
         //when
         accountService.transferTo(transactionContext, 2, 50);
 

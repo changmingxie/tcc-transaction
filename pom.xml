@@ -14,7 +14,7 @@
     <properties>
 
         <java.version>1.8</java.version>
-        <revision>1.8.1</revision>
+        <revision>2.0.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -36,11 +36,15 @@
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-spring</module>
         <module>tcc-transaction-dashboard</module>
+        <module>tcc-transaction-server</module>
         <module>tcc-transaction-dubbo</module>
         <module>tcc-transaction-bom</module>
-        <module>tcc-transaction-ha</module>
         <module>tcc-transaction-unit-test</module>
         <module>tcc-transaction-tutorial-sample</module>
+        <module>tcc-transaction-spring-boot-starter</module>
+        <module>tcc-transaction-distribution</module>
+        <module>tcc-transaction-http</module>
+        <module>tcc-transaction-grpc</module>
     </modules>
 
     <build>

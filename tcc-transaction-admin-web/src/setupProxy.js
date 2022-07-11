@@ -1,7 +1,7 @@
 /* eslint-disable */
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const {createProxyMiddleware} = require('http-proxy-middleware');
 
-module.exports = function(app) {
+module.exports = function (app) {
   let env = '';
 
   switch (process.env.REACT_APP_ENV) {
@@ -13,16 +13,15 @@ module.exports = function(app) {
       break;
   }
 
-  app.use(
-    createProxyMiddleware(
-      [
-        '/tcc-transaction-server',
-        '/tcc-transaction-dashboard',
-      ],
-      {
-        target: 'http://localhost:8888/',
-        changeOrigin: true,
-      }
-    )
-  );
+  // app.use(
+  //   createProxyMiddleware(
+  //     [
+  //       '/tcc-transaction-dashboard',
+  //     ],
+  //     {
+  //       target: 'http://localhost:8888/',
+  //       changeOrigin: true,
+  //     }
+  //   )
+  // );
 };

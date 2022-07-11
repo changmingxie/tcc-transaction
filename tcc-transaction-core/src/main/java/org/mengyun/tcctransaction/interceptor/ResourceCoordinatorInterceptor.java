@@ -1,11 +1,15 @@
 package org.mengyun.tcctransaction.interceptor;
 
-import org.mengyun.tcctransaction.InvocationContext;
-import org.mengyun.tcctransaction.Participant;
-import org.mengyun.tcctransaction.Transaction;
-import org.mengyun.tcctransaction.TransactionManager;
-import org.mengyun.tcctransaction.api.*;
+import org.mengyun.tcctransaction.api.ParticipantStatus;
+import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.api.TransactionStatus;
+import org.mengyun.tcctransaction.context.TransactionContextEditor;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
+import org.mengyun.tcctransaction.transaction.InvocationContext;
+import org.mengyun.tcctransaction.transaction.Participant;
+import org.mengyun.tcctransaction.transaction.Transaction;
+import org.mengyun.tcctransaction.transaction.TransactionManager;
+import org.mengyun.tcctransaction.xid.TransactionXid;
 
 /**
  * Created by changmingxie on 11/8/15.
@@ -29,8 +33,9 @@ public class ResourceCoordinatorInterceptor {
             if (participant != null) {
 
                 Object result = null;
+                TransactionContext transactionContext = new TransactionContext(transaction.getRootDomain(), transaction.getRootXid(), participant.getXid(), TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId());
+                FactoryBuilder.factoryOf(participant.getTransactionContextEditorClass()).getInstance().set(transactionContext, pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
                 try {
-                    FactoryBuilder.factoryOf(participant.getTransactionContextEditorClass()).getInstance().set(new TransactionContext(transaction.getRootXid(), participant.getXid(), TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId()), pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
                     result = pjp.proceed(pjp.getArgs());
                     participant.setStatus(ParticipantStatus.TRY_SUCCESS);
                 } catch (Throwable e) {
@@ -41,6 +46,8 @@ public class ResourceCoordinatorInterceptor {
 //                    transactionManager.update(participant);
 //
                     throw e;
+                } finally {
+                    FactoryBuilder.factoryOf(participant.getTransactionContextEditorClass()).getInstance().clear(transactionContext, pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
                 }
 
 
@@ -59,8 +66,7 @@ public class ResourceCoordinatorInterceptor {
         String confirmMethodName = compensableMethodContext.getConfirmMethodName();
         String cancelMethodName = compensableMethodContext.getCancelMethodName();
         Class<? extends TransactionContextEditor> transactionContextEditorClass = compensableMethodContext.getTransactionContextEditorClass();
-
-        TransactionXid xid = new TransactionXid(transaction.getXid().getGlobalTransactionId());
+        TransactionXid xid = TransactionXid.withUniqueIdentity(null);
 
         Class targetClass = compensableMethodContext.getDeclaredClass();
 
@@ -74,6 +80,7 @@ public class ResourceCoordinatorInterceptor {
 
         Participant participant =
                 new Participant(
+                        transaction.getRootDomain(),
                         transaction.getRootXid(),
                         xid,
                         confirmInvocation,

@@ -22,11 +22,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mengyun.ha</groupId>
-            <artifactId>tcc-transaction-ha-zookeeper</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
         </dependency>
@@ -45,6 +40,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -74,28 +73,58 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mengyun</groupId>
+            <artifactId>tcc-transaction-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <finalName>tcc-transaction-dashboard</finalName>
-
-        <filters>
-            <filter>src/main/config/${active.profile}/diff.properties</filter>
-        </filters>
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -103,46 +132,68 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <!--copy文件到指定目录下 -->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-resources-plugin</artifactId>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>copy-spring-boot-webapp</id>-->
+            <!--                        <phase>validate</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>copy-resources</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <encoding>utf-8</encoding>-->
+            <!--                            <outputDirectory>src/main/resources/templates</outputDirectory>-->
+            <!--                            <resources>-->
+            <!--                                <resource>-->
+            <!--                                    <directory>${project.basedir}/../tcc-transaction-admin-web/dist</directory>-->
+            <!--                                </resource>-->
+            <!--                            </resources>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.codehaus.mojo</groupId>-->
+            <!--                <artifactId>exec-maven-plugin</artifactId>-->
+            <!--                <version>1.6.0</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>exec-npm-install</id>-->
+            <!--                        <phase>compile</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>exec</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <executable>npm</executable>-->
+            <!--                            <arguments>-->
+            <!--                                <argument>install</argument>-->
+            <!--                                <argument>&#45;&#45;registry=http://registry.npm.taobao.org</argument>-->
+            <!--                            </arguments>-->
+            <!--                            <workingDirectory>${project.basedir}/../tcc-transaction-admin-web</workingDirectory>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+
+            <!--                    <execution>-->
+            <!--                        <id>exec-npm-build</id>-->
+            <!--                        <phase>compile</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>exec</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <executable>npm</executable>-->
+            <!--                            <arguments>-->
+            <!--                                <argument>run</argument>-->
+            <!--                                <argument>build</argument>-->
+            <!--                            </arguments>-->
+            <!--                            <workingDirectory>${project.basedir}/../tcc-transaction-admin-web</workingDirectory>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <active.profile>dev</active.profile>
-                <tcc.log>/tmp</tcc.log>
-                <zookeeper.digest/>
-            </properties>
-        </profile>
-        <profile>
-            <id>test</id>
-            <properties>
-                <active.profile>test</active.profile>
-                <tcc.log>/logs</tcc.log>
-                <zookeeper.digest/>
-            </properties>
-        </profile>
-        <profile>
-            <id>prd</id>
-            <properties>
-                <active.profile>prd</active.profile>
-                <tcc.log>/var/log</tcc.log>
-                <zookeeper.digest/>
-            </properties>
-        </profile>
-        <profile>
-            <id>uat</id>
-            <properties>
-                <active.profile>uat</active.profile>
-                <tcc.log>/var/log</tcc.log>
-                <zookeeper.digest/>
-            </properties>
-        </profile>
-
-    </profiles>
 
 </project>

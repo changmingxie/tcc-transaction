@@ -1,0 +1,25 @@
+# dashbaord tccserver模式专项配置
+server:
+  servlet:
+    context-path: /tcc-transaction-dashboard
+  port: 22332
+
+logging:
+  level:
+    root: info
+spring:
+  application:
+    name: tcc-transaction-dashboard
+  tcc:
+    dashboard:
+      userName: admin
+      password: 123456
+      data-fetch-type: tccserver
+      registry:
+        registry-type: direct  # 切换tcc-server注册中心
+        direct:
+          server-addresses: http://localhost:12332
+        nacos:
+          server-addr: localhost:8848
+        zookeeper:
+          connect-string: localhost:2181

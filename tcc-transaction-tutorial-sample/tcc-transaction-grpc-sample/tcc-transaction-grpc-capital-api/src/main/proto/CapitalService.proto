@@ -1,0 +1,35 @@
+syntax="proto3";
+
+option java_package = "org.mengyun.tcctransaction.sample.grpc.capital.api";
+
+service CapitalService{
+    rpc getCapitalAccountByUserId (CapitalAccountRequest) returns (CapitalAccountReply){
+    }
+
+    rpc record (CapitalTradeOrderDto) returns(RecordReply){
+    }
+}
+
+message CapitalAccountRequest{
+    sint64 userId=1;
+}
+
+message CapitalAccountReply{
+    string amount=1;
+}
+
+message RecordReply {
+    string message=1;
+}
+
+message CapitalTradeOrderDto {
+    sint64 selfUserId = 1;
+
+    sint64 oppositeUserId = 2;
+
+    string orderTitle = 3;
+
+    string merchantOrderNo = 4;
+
+    string amount = 5;
+}

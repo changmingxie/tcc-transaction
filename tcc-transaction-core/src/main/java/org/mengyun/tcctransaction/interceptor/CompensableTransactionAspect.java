@@ -6,9 +6,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.api.NullableTransactionContextEditor;
-import org.mengyun.tcctransaction.api.ParameterTransactionContextEditor;
-import org.mengyun.tcctransaction.api.TransactionContextEditor;
+import org.mengyun.tcctransaction.context.ThreadLocalTransactionContextEditor;
+import org.mengyun.tcctransaction.transaction.TransactionManager;
 
 import java.lang.reflect.Method;
 
@@ -18,10 +17,10 @@ import java.lang.reflect.Method;
 @Aspect
 public abstract class CompensableTransactionAspect {
 
-    private CompensableTransactionInterceptor compensableTransactionInterceptor;
+    private CompensableTransactionInterceptor compensableTransactionInterceptor = new CompensableTransactionInterceptor();
 
-    public void setCompensableTransactionInterceptor(CompensableTransactionInterceptor compensableTransactionInterceptor) {
-        this.compensableTransactionInterceptor = compensableTransactionInterceptor;
+    public void setTransactionManager(TransactionManager transactionManager) {
+        this.compensableTransactionInterceptor.setTransactionManager(transactionManager);
     }
 
     @Pointcut("@annotation(org.mengyun.tcctransaction.api.Compensable)")
@@ -36,19 +35,7 @@ public abstract class CompensableTransactionAspect {
 
         Compensable compensable = method.getAnnotation(Compensable.class);
 
-        Class<? extends TransactionContextEditor> transactionContextEditor = NullableTransactionContextEditor.class;
-
-        if (compensable != null) {
-            transactionContextEditor = compensable.transactionContextEditor();
-        }
-
-        if (transactionContextEditor.equals(NullableTransactionContextEditor.class)
-                && ParameterTransactionContextEditor.hasTransactionContextParameter(method.getParameterTypes())) {
-
-            transactionContextEditor = ParameterTransactionContextEditor.class;
-        }
-
-        return compensableTransactionInterceptor.interceptCompensableMethod(new AspectJTransactionMethodJoinPoint(pjp, compensable, transactionContextEditor));
+        return compensableTransactionInterceptor.interceptCompensableMethod(new AspectJTransactionMethodJoinPoint(pjp, compensable, ThreadLocalTransactionContextEditor.class));
     }
 
     public abstract int getOrder();

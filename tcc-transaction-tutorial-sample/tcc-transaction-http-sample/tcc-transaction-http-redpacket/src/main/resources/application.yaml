@@ -1,0 +1,44 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: tcc-transaction-http-redpacket
+  tcc:
+    storage:
+      storage-type: remoting
+      domain: "TCC:FEIGN:REDPACKET:"
+#      location: /tmp/${spring.tcc.storage.domain}
+#      serializer-type: customized
+#      transaction-serializer-class-name: org.mengyun.tcctransaction.serializer.json.JacksonTransactionSerializer
+#      shard-redis: # 测试ok
+#        nodes:
+#          - host: 127.0.0.1
+#            port: 16379
+#          - host: 127.0.0.1
+#            port: 16380
+#          - host: 127.0.0.1
+#            port: 16381
+    recovery:
+#      max-retry-count: 30
+#      cron-expression: 0/15 * * * * ?
+#      fetch-page-size: 200
+      recovery-enabled: false
+    registry:
+      registry-type: direct
+      cluster-name: default
+      direct:
+        server-addresses: 127.0.0.1:2332
+#      zookeeper:
+#        connect-string: 127.0.0.1:2181
+#        max-retries: 4
+#      nacos:
+#        server-addr: 127.0.0.1:8848
+server:
+  port: 8083
+  servlet:
+    context-path: /${spring.application.name}
+
+logging:
+  level:
+    root: info
+

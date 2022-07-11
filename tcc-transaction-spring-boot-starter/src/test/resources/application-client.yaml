@@ -1,0 +1,52 @@
+spring:
+  tcc:
+    request-process-thread-queue-capacity: 1024
+    storage:
+      kryo-pool-size: 512
+      storage-type: memory
+      jdbc:
+        password: 123456
+      redis:
+        host: 127.0.0.1
+        port: 6379
+        database: 0
+        pool-config:
+          max-total: 100
+          max-idle: 100
+          min-idle: 10
+          max-wait-millis: 300
+      redis-cluster:
+        max-attempts: 5
+        so-timeout: 300
+        connection-timeout: 1000
+        nodes:
+          - host: 127.0.0.1
+            port: 6379
+          - host: 127.0.0.1
+            port: 6380
+          - host: 127.0.0.1
+            port: 6381
+      shard-redis:
+        nodes:
+          - host: 127.0.0.1
+            port: 6379
+          - host: 127.0.0.1
+            port: 6380
+          - host: 127.0.0.1
+            port: 6381
+    recovery:
+      recovery-enabled: true
+      update-job-forcibly: true
+    registry:
+      registry-type: direct
+      load-balance-type: RoundRobin
+      cluster-name: default
+      zookeeper:
+        connect-string: 127.0.0.1:2181
+        max-retries: 4
+      nacos:
+        server-addr: 127.0.0.1:8848
+      direct:
+        server-addresses: 127.0.0.1:2332
+    remoting:
+      reconnect-interval-seconds: 5

@@ -48,6 +48,10 @@
             <artifactId>spring-context-support</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.xfvape.uid</groupId>
+            <artifactId>uid-generator</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

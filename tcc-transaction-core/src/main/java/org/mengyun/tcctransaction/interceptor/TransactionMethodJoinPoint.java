@@ -1,7 +1,7 @@
 package org.mengyun.tcctransaction.interceptor;
 
 import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.api.TransactionContextEditor;
+import org.mengyun.tcctransaction.context.TransactionContextEditor;
 
 import java.lang.reflect.Method;
 

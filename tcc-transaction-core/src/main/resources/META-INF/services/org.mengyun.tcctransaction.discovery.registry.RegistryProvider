@@ -1,0 +1,4 @@
+org.mengyun.tcctransaction.discovery.registry.nacos.NacosRegistryServiceProvider
+org.mengyun.tcctransaction.discovery.registry.zookeeper.ZookeeperRegistryProvider
+org.mengyun.tcctransaction.discovery.registry.direct.DirectRegistryProvider
+org.mengyun.tcctransaction.discovery.registry.custom.CustomRegistryProvider
