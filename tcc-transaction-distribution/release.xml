@@ -26,8 +26,16 @@
     </fileSets>
     <files>
         <file>
+            <source>../tcc-transaction-server/target/classes/application.yaml</source>
+            <outputDirectory>server/conf/</outputDirectory>
+        </file>
+        <file>
             <source>../tcc-transaction-server/target/tcc-transaction-server.jar</source>
             <outputDirectory>server/lib/</outputDirectory>
+        </file>
+        <file>
+            <source>../tcc-transaction-dashboard/target/classes/application.yaml</source>
+            <outputDirectory>dashboard/conf/</outputDirectory>
         </file>
         <file>
             <source>../tcc-transaction-dashboard/target/tcc-transaction-dashboard.jar</source>
