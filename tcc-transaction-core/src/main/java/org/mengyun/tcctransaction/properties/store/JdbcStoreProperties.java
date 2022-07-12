@@ -13,7 +13,7 @@ public class JdbcStoreProperties {
     private String driverClass = "com.mysql.jdbc.Driver";
     private String username = "root";
     private String password = "welcome1";
-    private String jdbcUrl = "jdbc:mysql://127.0.0.1:3306/TCC?useSSL=false";
+    private String jdbcUrl = "jdbc:mysql://127.0.0.1:3306/TCC?useSSL=false&connectTimeout=1000&socketTimeout=5000";
     private int initialPoolSize = 10;
     private int minPoolSize = 10;
     private int maxPoolSize = 50;

@@ -17,7 +17,7 @@ public class RecoveryProperties implements RecoveryConfig {
     private boolean isRecoveryEnabled = true;
     private int quartzThreadPoolThreadCount = Runtime.getRuntime().availableProcessors() * 2 + 1;
     private String quartzDataSourceDriver = "com.mysql.jdbc.Driver";
-    private String quartzDataSourceUrl = "jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true";
+    private String quartzDataSourceUrl = "jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true&connectTimeout=1000&socketTimeout=5000";
     private String quartzDataSourceUser = "root";
     private String quartzDataSourcePassword = "welcome1";
     private String quartzDataSourceValidationQuery = "select 1";

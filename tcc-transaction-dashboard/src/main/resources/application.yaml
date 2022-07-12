@@ -13,7 +13,6 @@ spring:
     dashboard:
       userName: admin
       password: 123456
-#      data-fetch-type: local
       data-fetch-type: tccserver
       registry: # data-fetch-type为server时使用
         registry-type: direct
@@ -31,9 +30,9 @@ spring:
 #      storage-type: redis
 #      storageType: redis_cluster
 #      storageType: shard_redis
-#      jdbc: # 测试ok
+#      jdbc:
 #        password: welcome1
-#      redis: # 测试ok
+#      redis:
 #        host: 127.0.0.1
 #        port: 6379
 #        database: 0
@@ -42,7 +41,7 @@ spring:
 #          max-idle: 100
 #          min-idle: 10
 #          max-wait-millis: 300
-#      redis-cluster: # 待测试
+#      redis-cluster:
 #        max-attempts: 5
 #        so-timeout: 300
 #        connection-timeout: 1000
@@ -53,7 +52,7 @@ spring:
 #            port: 6380
 #          - host: 127.0.0.1
 #            port: 6381
-#      shard-redis: # 测试ok
+#      shard-redis:
 #        nodes:
 #          - host: 127.0.0.1
 #            port: 16379
