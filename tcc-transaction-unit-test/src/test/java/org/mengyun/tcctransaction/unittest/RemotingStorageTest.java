@@ -97,7 +97,7 @@ public class RemotingStorageTest {
 
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2 + 1);
 
-        int totalCount = 1000;
+        int totalCount = 1;
         AtomicInteger index = new AtomicInteger(0);
 
         long startTimeMillis = System.currentTimeMillis();
