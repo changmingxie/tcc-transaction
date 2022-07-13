@@ -9,13 +9,12 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>tcc-transaction-dubbo-redpacket</artifactId>
-    <packaging>war</packaging>
     <dependencies>
+
         <dependency>
             <groupId>org.mengyun</groupId>
-            <artifactId>tcc-transaction-dubbo-redpacket-api</artifactId>
+            <artifactId>tcc-transaction-spring</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -26,14 +25,19 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.mengyun</groupId>
-            <artifactId>tcc-transaction-sample-redpacket</artifactId>
+            <artifactId>tcc-transaction-dubbo-redpacket-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mengyun</groupId>
-            <artifactId>tcc-transaction-spring</artifactId>
+            <artifactId>tcc-transaction-sample-redpacket</artifactId>
             <version>${project.version}</version>
         </dependency>
 

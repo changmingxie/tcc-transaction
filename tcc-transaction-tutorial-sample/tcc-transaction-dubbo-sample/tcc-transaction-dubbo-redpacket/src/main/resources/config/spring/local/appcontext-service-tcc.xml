@@ -9,26 +9,15 @@
     <bean class="org.mengyun.tcctransaction.ClientConfig" id="clientConfig">
         <property name="recoveryConfig">
             <bean class="org.mengyun.tcctransaction.properties.RecoveryProperties">
-                <!--服务模式关闭补偿任务-->
-                <property name="recoveryEnabled" value="false"/>
+                <!--开启补偿任务-->
+                <property name="recoveryEnabled" value="true"/>
             </bean>
         </property>
         <property name="storeConfig">
             <bean class="org.mengyun.tcctransaction.properties.store.StoreProperties">
                 <property name="domain" value="TCC:DUBBO:REDPACKET"/>
-                <property name="storageType" value="REMOTING"/>
-            </bean>
-        </property>
-        <!--在storageType=REMOTING需要使用-->
-        <property name="registryConfig">
-            <bean class="org.mengyun.tcctransaction.properties.registry.ClientRegistryProperties">
-                <property name="registryType" value="direct"/>
-                <property name="direct">
-                    <bean class="org.mengyun.tcctransaction.discovery.registry.direct.DirectRegistryProperties">
-                        <!--server ip和port-->
-                        <property name="serverAddresses" value="127.0.0.1:2332"/>
-                    </bean>
-                </property>
+                <!--本地存储模式(MEMORY)-->
+                <property name="storageType" value="MEMORY"/>
             </bean>
         </property>
     </bean>
