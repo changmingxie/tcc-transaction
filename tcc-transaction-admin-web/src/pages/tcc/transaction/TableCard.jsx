@@ -109,11 +109,11 @@ const TableCard = (props) => {
     reloadHandler(Promise.all(resultPromiseList));
   };
 
-  const contentFormat = (content)=>{
-    try{
+  const contentFormat = (content) => {
+    try {
       return JSON.parse(content)
-    }catch (e){
-      return {'content':content};
+    } catch (e) {
+      return {'content': content};
     }
   }
 
@@ -179,7 +179,7 @@ const TableCard = (props) => {
       }
 
       <Space size="small" style={{float: "right"}}>
-        <Tag color="#f50">总数:{total>fetchNum?total+', 仅显示'+fetchNum+'条':total}</Tag>
+        <Tag color="#f50">总数:{total > fetchNum ? total + ', 仅显示' + fetchNum + '条' : total}</Tag>
       </Space>
       <Table
         rowKey={record => record.xidString}

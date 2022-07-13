@@ -206,7 +206,7 @@ public class TccServer implements TccService {
 
                     Set<Channel> channels = FactoryBuilder.factoryOf(ChannelGroupMap.class).getInstance().getAllChannels(domain);
 
-                    if(channels == null) {
+                    if (channels == null) {
                         return;
                     }
 

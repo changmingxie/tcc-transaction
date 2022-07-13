@@ -4,2625 +4,2790 @@
 package org.mengyun.tcctransaction.sample.grpc.redpacket.api;
 
 public final class RedPacketServiceOuterClass {
-  private RedPacketServiceOuterClass() {}
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistryLite registry) {
-  }
+    private static final com.google.protobuf.Descriptors.Descriptor
+            internal_static_RedPacketAccountRequest_descriptor;
+    private static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internal_static_RedPacketAccountRequest_fieldAccessorTable;
+    private static final com.google.protobuf.Descriptors.Descriptor
+            internal_static_RedPacketAccountReply_descriptor;
+    private static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internal_static_RedPacketAccountReply_fieldAccessorTable;
+    private static final com.google.protobuf.Descriptors.Descriptor
+            internal_static_RecordReply_descriptor;
+    private static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internal_static_RecordReply_fieldAccessorTable;
+    private static final com.google.protobuf.Descriptors.Descriptor
+            internal_static_RedPacketTradeOrderDto_descriptor;
+    private static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internal_static_RedPacketTradeOrderDto_fieldAccessorTable;
+    private static com.google.protobuf.Descriptors.FileDescriptor
+            descriptor;
 
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-        (com.google.protobuf.ExtensionRegistryLite) registry);
-  }
-  public interface RedPacketAccountRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:RedPacketAccountRequest)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>sint64 userId = 1;</code>
-     */
-    long getUserId();
-  }
-  /**
-   * Protobuf type {@code RedPacketAccountRequest}
-   */
-  public  static final class RedPacketAccountRequest extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:RedPacketAccountRequest)
-      RedPacketAccountRequestOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use RedPacketAccountRequest.newBuilder() to construct.
-    private RedPacketAccountRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private RedPacketAccountRequest() {
-      userId_ = 0L;
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private RedPacketAccountRequest(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-
-              userId_ = input.readSInt64();
-              break;
-            }
-            default: {
-              if (!parseUnknownFieldProto3(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_descriptor;
+    static {
+        java.lang.String[] descriptorData = {
+                "\n\026RedPacketService.proto\")\n\027RedPacketAcc" +
+                        "ountRequest\022\016\n\006userId\030\001 \001(\022\"\'\n\025RedPacket" +
+                        "AccountReply\022\016\n\006amount\030\001 \001(\t\"\036\n\013RecordRe" +
+                        "ply\022\017\n\007message\030\001 \001(\t\"\201\001\n\026RedPacketTradeO" +
+                        "rderDto\022\022\n\nselfUserId\030\001 \001(\022\022\026\n\016oppositeU" +
+                        "serId\030\002 \001(\022\022\022\n\norderTitle\030\003 \001(\t\022\027\n\017merch" +
+                        "antOrderNo\030\004 \001(\t\022\016\n\006amount\030\005 \001(\t2\230\001\n\020Red" +
+                        "PacketService\022Q\n\033getRedPacketAccountByUs" +
+                        "erId\022\030.RedPacketAccountRequest\032\026.RedPack" +
+                        "etAccountReply\"\000\0221\n\006record\022\027.RedPacketTr" +
+                        "adeOrderDto\032\014.RecordReply\"\000B6\n4org.mengy" +
+                        "un.tcctransaction.sample.grpc.redpacket." +
+                        "apib\006proto3"
+        };
+        com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
+                new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
+                    public com.google.protobuf.ExtensionRegistry assignDescriptors(
+                            com.google.protobuf.Descriptors.FileDescriptor root) {
+                        descriptor = root;
+                        return null;
+                    }
+                };
+        com.google.protobuf.Descriptors.FileDescriptor
+                .internalBuildGeneratedFileFrom(descriptorData,
+                        new com.google.protobuf.Descriptors.FileDescriptor[]{
+                        }, assigner);
+        internal_static_RedPacketAccountRequest_descriptor =
+                getDescriptor().getMessageTypes().get(0);
+        internal_static_RedPacketAccountRequest_fieldAccessorTable = new
+                com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+                internal_static_RedPacketAccountRequest_descriptor,
+                new java.lang.String[]{"UserId",});
+        internal_static_RedPacketAccountReply_descriptor =
+                getDescriptor().getMessageTypes().get(1);
+        internal_static_RedPacketAccountReply_fieldAccessorTable = new
+                com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+                internal_static_RedPacketAccountReply_descriptor,
+                new java.lang.String[]{"Amount",});
+        internal_static_RecordReply_descriptor =
+                getDescriptor().getMessageTypes().get(2);
+        internal_static_RecordReply_fieldAccessorTable = new
+                com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+                internal_static_RecordReply_descriptor,
+                new java.lang.String[]{"Message",});
+        internal_static_RedPacketTradeOrderDto_descriptor =
+                getDescriptor().getMessageTypes().get(3);
+        internal_static_RedPacketTradeOrderDto_fieldAccessorTable = new
+                com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+                internal_static_RedPacketTradeOrderDto_descriptor,
+                new java.lang.String[]{"SelfUserId", "OppositeUserId", "OrderTitle", "MerchantOrderNo", "Amount",});
     }
 
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.Builder.class);
+    private RedPacketServiceOuterClass() {
     }
 
-    public static final int USERID_FIELD_NUMBER = 1;
-    private long userId_;
-    /**
-     * <code>sint64 userId = 1;</code>
-     */
-    public long getUserId() {
-      return userId_;
+    public static void registerAllExtensions(
+            com.google.protobuf.ExtensionRegistryLite registry) {
     }
 
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
+    public static void registerAllExtensions(
+            com.google.protobuf.ExtensionRegistry registry) {
+        registerAllExtensions(
+                (com.google.protobuf.ExtensionRegistryLite) registry);
     }
 
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (userId_ != 0L) {
-        output.writeSInt64(1, userId_);
-      }
-      unknownFields.writeTo(output);
+    public static com.google.protobuf.Descriptors.FileDescriptor
+    getDescriptor() {
+        return descriptor;
+    }
+    public interface RedPacketAccountRequestOrBuilder extends
+            // @@protoc_insertion_point(interface_extends:RedPacketAccountRequest)
+            com.google.protobuf.MessageOrBuilder {
+
+        /**
+         * <code>sint64 userId = 1;</code>
+         */
+        long getUserId();
+    }
+    public interface RedPacketAccountReplyOrBuilder extends
+            // @@protoc_insertion_point(interface_extends:RedPacketAccountReply)
+            com.google.protobuf.MessageOrBuilder {
+
+        /**
+         * <code>string amount = 1;</code>
+         */
+        java.lang.String getAmount();
+
+        /**
+         * <code>string amount = 1;</code>
+         */
+        com.google.protobuf.ByteString
+        getAmountBytes();
+    }
+    public interface RecordReplyOrBuilder extends
+            // @@protoc_insertion_point(interface_extends:RecordReply)
+            com.google.protobuf.MessageOrBuilder {
+
+        /**
+         * <code>string message = 1;</code>
+         */
+        java.lang.String getMessage();
+
+        /**
+         * <code>string message = 1;</code>
+         */
+        com.google.protobuf.ByteString
+        getMessageBytes();
+    }
+    public interface RedPacketTradeOrderDtoOrBuilder extends
+            // @@protoc_insertion_point(interface_extends:RedPacketTradeOrderDto)
+            com.google.protobuf.MessageOrBuilder {
+
+        /**
+         * <code>sint64 selfUserId = 1;</code>
+         */
+        long getSelfUserId();
+
+        /**
+         * <code>sint64 oppositeUserId = 2;</code>
+         */
+        long getOppositeUserId();
+
+        /**
+         * <code>string orderTitle = 3;</code>
+         */
+        java.lang.String getOrderTitle();
+
+        /**
+         * <code>string orderTitle = 3;</code>
+         */
+        com.google.protobuf.ByteString
+        getOrderTitleBytes();
+
+        /**
+         * <code>string merchantOrderNo = 4;</code>
+         */
+        java.lang.String getMerchantOrderNo();
+
+        /**
+         * <code>string merchantOrderNo = 4;</code>
+         */
+        com.google.protobuf.ByteString
+        getMerchantOrderNoBytes();
+
+        /**
+         * <code>string amount = 5;</code>
+         */
+        java.lang.String getAmount();
+
+        /**
+         * <code>string amount = 5;</code>
+         */
+        com.google.protobuf.ByteString
+        getAmountBytes();
     }
 
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (userId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeSInt64Size(1, userId_);
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest)) {
-        return super.equals(obj);
-      }
-      org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest other = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest) obj;
-
-      boolean result = true;
-      result = result && (getUserId()
-          == other.getUserId());
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + USERID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getUserId());
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
     /**
      * Protobuf type {@code RedPacketAccountRequest}
      */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:RedPacketAccountRequest)
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequestOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.Builder.class);
-      }
-
-      // Construct using org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        userId_ = 0L;
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_descriptor;
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest getDefaultInstanceForType() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest build() {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest buildPartial() {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest result = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest(this);
-        result.userId_ = userId_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest) {
-          return mergeFrom((org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest other) {
-        if (other == org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.getDefaultInstance()) return this;
-        if (other.getUserId() != 0L) {
-          setUserId(other.getUserId());
-        }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private long userId_ ;
-      /**
-       * <code>sint64 userId = 1;</code>
-       */
-      public long getUserId() {
-        return userId_;
-      }
-      /**
-       * <code>sint64 userId = 1;</code>
-       */
-      public Builder setUserId(long value) {
-        
-        userId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>sint64 userId = 1;</code>
-       */
-      public Builder clearUserId() {
-        
-        userId_ = 0L;
-        onChanged();
-        return this;
-      }
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFieldsProto3(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:RedPacketAccountRequest)
-    }
-
-    // @@protoc_insertion_point(class_scope:RedPacketAccountRequest)
-    private static final org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest();
-    }
-
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<RedPacketAccountRequest>
-        PARSER = new com.google.protobuf.AbstractParser<RedPacketAccountRequest>() {
-      @java.lang.Override
-      public RedPacketAccountRequest parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new RedPacketAccountRequest(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<RedPacketAccountRequest> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<RedPacketAccountRequest> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface RedPacketAccountReplyOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:RedPacketAccountReply)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>string amount = 1;</code>
-     */
-    java.lang.String getAmount();
-    /**
-     * <code>string amount = 1;</code>
-     */
-    com.google.protobuf.ByteString
-        getAmountBytes();
-  }
-  /**
-   * Protobuf type {@code RedPacketAccountReply}
-   */
-  public  static final class RedPacketAccountReply extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:RedPacketAccountReply)
-      RedPacketAccountReplyOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use RedPacketAccountReply.newBuilder() to construct.
-    private RedPacketAccountReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private RedPacketAccountReply() {
-      amount_ = "";
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private RedPacketAccountReply(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              amount_ = s;
-              break;
+    public static final class RedPacketAccountRequest extends
+            com.google.protobuf.GeneratedMessageV3 implements
+            // @@protoc_insertion_point(message_implements:RedPacketAccountRequest)
+            RedPacketAccountRequestOrBuilder {
+        public static final int USERID_FIELD_NUMBER = 1;
+        private static final long serialVersionUID = 0L;
+        // @@protoc_insertion_point(class_scope:RedPacketAccountRequest)
+        private static final org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest DEFAULT_INSTANCE;
+        private static final com.google.protobuf.Parser<RedPacketAccountRequest>
+                PARSER = new com.google.protobuf.AbstractParser<RedPacketAccountRequest>() {
+            @java.lang.Override
+            public RedPacketAccountRequest parsePartialFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException {
+                return new RedPacketAccountRequest(input, extensionRegistry);
             }
-            default: {
-              if (!parseUnknownFieldProto3(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
+        };
+
+        static {
+            DEFAULT_INSTANCE = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest();
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
+
+        private long userId_;
+        private byte memoizedIsInitialized = -1;
+
+        // Use RedPacketAccountRequest.newBuilder() to construct.
+        private RedPacketAccountRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+            super(builder);
+        }
+        private RedPacketAccountRequest() {
+            userId_ = 0L;
+        }
+
+        private RedPacketAccountRequest(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            this();
+            if (extensionRegistry == null) {
+                throw new java.lang.NullPointerException();
+            }
+            int mutable_bitField0_ = 0;
+            com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+                    com.google.protobuf.UnknownFieldSet.newBuilder();
+            try {
+                boolean done = false;
+                while (!done) {
+                    int tag = input.readTag();
+                    switch (tag) {
+                        case 0:
+                            done = true;
+                            break;
+                        case 8: {
+
+                            userId_ = input.readSInt64();
+                            break;
+                        }
+                        default: {
+                            if (!parseUnknownFieldProto3(
+                                    input, unknownFields, extensionRegistry, tag)) {
+                                done = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                throw e.setUnfinishedMessage(this);
+            } catch (java.io.IOException e) {
+                throw new com.google.protobuf.InvalidProtocolBufferException(
+                        e).setUnfinishedMessage(this);
+            } finally {
+                this.unknownFields = unknownFields.build();
+                makeExtensionsImmutable();
+            }
+        }
+
+        public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_descriptor;
-    }
+            return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_descriptor;
+        }
 
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
+                java.nio.ByteBuffer data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
+                java.nio.ByteBuffer data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
+                com.google.protobuf.ByteString data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
+                com.google.protobuf.ByteString data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(byte[] data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
+                byte[] data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(java.io.InputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
+                java.io.InputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseDelimitedFrom(java.io.InputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseDelimitedWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseDelimitedFrom(
+                java.io.InputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
+                com.google.protobuf.CodedInputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parseFrom(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return DEFAULT_INSTANCE.toBuilder();
+        }
+
+        public static Builder newBuilder(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest prototype) {
+            return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static com.google.protobuf.Parser<RedPacketAccountRequest> parser() {
+            return PARSER;
+        }
+
+        @java.lang.Override
+        public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+            return this.unknownFields;
+        }
+
+        @java.lang.Override
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.Builder.class);
+            return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_fieldAccessorTable
+                    .ensureFieldAccessorsInitialized(
+                            org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.Builder.class);
+        }
+
+        /**
+         * <code>sint64 userId = 1;</code>
+         */
+        public long getUserId() {
+            return userId_;
+        }
+
+        @java.lang.Override
+        public final boolean isInitialized() {
+            byte isInitialized = memoizedIsInitialized;
+            if (isInitialized == 1) return true;
+            if (isInitialized == 0) return false;
+
+            memoizedIsInitialized = 1;
+            return true;
+        }
+
+        @java.lang.Override
+        public void writeTo(com.google.protobuf.CodedOutputStream output)
+                throws java.io.IOException {
+            if (userId_ != 0L) {
+                output.writeSInt64(1, userId_);
+            }
+            unknownFields.writeTo(output);
+        }
+
+        @java.lang.Override
+        public int getSerializedSize() {
+            int size = memoizedSize;
+            if (size != -1) return size;
+
+            size = 0;
+            if (userId_ != 0L) {
+                size += com.google.protobuf.CodedOutputStream
+                        .computeSInt64Size(1, userId_);
+            }
+            size += unknownFields.getSerializedSize();
+            memoizedSize = size;
+            return size;
+        }
+
+        @java.lang.Override
+        public boolean equals(final java.lang.Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (!(obj instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest)) {
+                return super.equals(obj);
+            }
+            org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest other = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest) obj;
+
+            boolean result = true;
+            result = result && (getUserId()
+                    == other.getUserId());
+            result = result && unknownFields.equals(other.unknownFields);
+            return result;
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            if (memoizedHashCode != 0) {
+                return memoizedHashCode;
+            }
+            int hash = 41;
+            hash = (19 * hash) + getDescriptor().hashCode();
+            hash = (37 * hash) + USERID_FIELD_NUMBER;
+            hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+                    getUserId());
+            hash = (29 * hash) + unknownFields.hashCode();
+            memoizedHashCode = hash;
+            return hash;
+        }
+
+        @java.lang.Override
+        public Builder newBuilderForType() {
+            return newBuilder();
+        }
+
+        @java.lang.Override
+        public Builder toBuilder() {
+            return this == DEFAULT_INSTANCE
+                    ? new Builder() : new Builder().mergeFrom(this);
+        }
+
+        @java.lang.Override
+        protected Builder newBuilderForType(
+                com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+            Builder builder = new Builder(parent);
+            return builder;
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.Parser<RedPacketAccountRequest> getParserForType() {
+            return PARSER;
+        }
+
+        @java.lang.Override
+        public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest getDefaultInstanceForType() {
+            return DEFAULT_INSTANCE;
+        }
+
+        /**
+         * Protobuf type {@code RedPacketAccountRequest}
+         */
+        public static final class Builder extends
+                com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+                // @@protoc_insertion_point(builder_implements:RedPacketAccountRequest)
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequestOrBuilder {
+            private long userId_;
+
+            // Construct using org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.newBuilder()
+            private Builder() {
+                maybeForceBuilderInitialization();
+            }
+
+            private Builder(
+                    com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+                super(parent);
+                maybeForceBuilderInitialization();
+            }
+
+            public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_descriptor;
+            }
+
+            @java.lang.Override
+            protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_fieldAccessorTable
+                        .ensureFieldAccessorsInitialized(
+                                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.Builder.class);
+            }
+
+            private void maybeForceBuilderInitialization() {
+                if (com.google.protobuf.GeneratedMessageV3
+                        .alwaysUseFieldBuilders) {
+                }
+            }
+
+            @java.lang.Override
+            public Builder clear() {
+                super.clear();
+                userId_ = 0L;
+
+                return this;
+            }
+
+            @java.lang.Override
+            public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_descriptor;
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest getDefaultInstanceForType() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.getDefaultInstance();
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest build() {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest result = buildPartial();
+                if (!result.isInitialized()) {
+                    throw newUninitializedMessageException(result);
+                }
+                return result;
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest buildPartial() {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest result = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest(this);
+                result.userId_ = userId_;
+                onBuilt();
+                return result;
+            }
+
+            @java.lang.Override
+            public Builder clone() {
+                return (Builder) super.clone();
+            }
+
+            @java.lang.Override
+            public Builder setField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    java.lang.Object value) {
+                return (Builder) super.setField(field, value);
+            }
+
+            @java.lang.Override
+            public Builder clearField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field) {
+                return (Builder) super.clearField(field);
+            }
+
+            @java.lang.Override
+            public Builder clearOneof(
+                    com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+                return (Builder) super.clearOneof(oneof);
+            }
+
+            @java.lang.Override
+            public Builder setRepeatedField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    int index, java.lang.Object value) {
+                return (Builder) super.setRepeatedField(field, index, value);
+            }
+
+            @java.lang.Override
+            public Builder addRepeatedField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    java.lang.Object value) {
+                return (Builder) super.addRepeatedField(field, value);
+            }
+
+            @java.lang.Override
+            public Builder mergeFrom(com.google.protobuf.Message other) {
+                if (other instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest) {
+                    return mergeFrom((org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest) other);
+                } else {
+                    super.mergeFrom(other);
+                    return this;
+                }
+            }
+
+            public Builder mergeFrom(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest other) {
+                if (other == org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest.getDefaultInstance())
+                    return this;
+                if (other.getUserId() != 0L) {
+                    setUserId(other.getUserId());
+                }
+                this.mergeUnknownFields(other.unknownFields);
+                onChanged();
+                return this;
+            }
+
+            @java.lang.Override
+            public final boolean isInitialized() {
+                return true;
+            }
+
+            @java.lang.Override
+            public Builder mergeFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws java.io.IOException {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest parsedMessage = null;
+                try {
+                    parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                    parsedMessage = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest) e.getUnfinishedMessage();
+                    throw e.unwrapIOException();
+                } finally {
+                    if (parsedMessage != null) {
+                        mergeFrom(parsedMessage);
+                    }
+                }
+                return this;
+            }
+
+            /**
+             * <code>sint64 userId = 1;</code>
+             */
+            public long getUserId() {
+                return userId_;
+            }
+
+            /**
+             * <code>sint64 userId = 1;</code>
+             */
+            public Builder setUserId(long value) {
+
+                userId_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>sint64 userId = 1;</code>
+             */
+            public Builder clearUserId() {
+
+                userId_ = 0L;
+                onChanged();
+                return this;
+            }
+
+            @java.lang.Override
+            public final Builder setUnknownFields(
+                    final com.google.protobuf.UnknownFieldSet unknownFields) {
+                return super.setUnknownFieldsProto3(unknownFields);
+            }
+
+            @java.lang.Override
+            public final Builder mergeUnknownFields(
+                    final com.google.protobuf.UnknownFieldSet unknownFields) {
+                return super.mergeUnknownFields(unknownFields);
+            }
+
+
+            // @@protoc_insertion_point(builder_scope:RedPacketAccountRequest)
+        }
+
     }
 
-    public static final int AMOUNT_FIELD_NUMBER = 1;
-    private volatile java.lang.Object amount_;
-    /**
-     * <code>string amount = 1;</code>
-     */
-    public java.lang.String getAmount() {
-      java.lang.Object ref = amount_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        amount_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string amount = 1;</code>
-     */
-    public com.google.protobuf.ByteString
-        getAmountBytes() {
-      java.lang.Object ref = amount_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        amount_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (!getAmountBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, amount_);
-      }
-      unknownFields.writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (!getAmountBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, amount_);
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply)) {
-        return super.equals(obj);
-      }
-      org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply other = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply) obj;
-
-      boolean result = true;
-      result = result && getAmount()
-          .equals(other.getAmount());
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getAmount().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
     /**
      * Protobuf type {@code RedPacketAccountReply}
      */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:RedPacketAccountReply)
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReplyOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.Builder.class);
-      }
-
-      // Construct using org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        amount_ = "";
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_descriptor;
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply getDefaultInstanceForType() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply build() {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply buildPartial() {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply result = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply(this);
-        result.amount_ = amount_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply) {
-          return mergeFrom((org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply other) {
-        if (other == org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.getDefaultInstance()) return this;
-        if (!other.getAmount().isEmpty()) {
-          amount_ = other.amount_;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private java.lang.Object amount_ = "";
-      /**
-       * <code>string amount = 1;</code>
-       */
-      public java.lang.String getAmount() {
-        java.lang.Object ref = amount_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          amount_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string amount = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getAmountBytes() {
-        java.lang.Object ref = amount_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          amount_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string amount = 1;</code>
-       */
-      public Builder setAmount(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        amount_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string amount = 1;</code>
-       */
-      public Builder clearAmount() {
-        
-        amount_ = getDefaultInstance().getAmount();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string amount = 1;</code>
-       */
-      public Builder setAmountBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        amount_ = value;
-        onChanged();
-        return this;
-      }
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFieldsProto3(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:RedPacketAccountReply)
-    }
-
-    // @@protoc_insertion_point(class_scope:RedPacketAccountReply)
-    private static final org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply();
-    }
-
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<RedPacketAccountReply>
-        PARSER = new com.google.protobuf.AbstractParser<RedPacketAccountReply>() {
-      @java.lang.Override
-      public RedPacketAccountReply parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new RedPacketAccountReply(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<RedPacketAccountReply> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<RedPacketAccountReply> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface RecordReplyOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:RecordReply)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>string message = 1;</code>
-     */
-    java.lang.String getMessage();
-    /**
-     * <code>string message = 1;</code>
-     */
-    com.google.protobuf.ByteString
-        getMessageBytes();
-  }
-  /**
-   * Protobuf type {@code RecordReply}
-   */
-  public  static final class RecordReply extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:RecordReply)
-      RecordReplyOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use RecordReply.newBuilder() to construct.
-    private RecordReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private RecordReply() {
-      message_ = "";
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private RecordReply(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              message_ = s;
-              break;
+    public static final class RedPacketAccountReply extends
+            com.google.protobuf.GeneratedMessageV3 implements
+            // @@protoc_insertion_point(message_implements:RedPacketAccountReply)
+            RedPacketAccountReplyOrBuilder {
+        public static final int AMOUNT_FIELD_NUMBER = 1;
+        private static final long serialVersionUID = 0L;
+        // @@protoc_insertion_point(class_scope:RedPacketAccountReply)
+        private static final org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply DEFAULT_INSTANCE;
+        private static final com.google.protobuf.Parser<RedPacketAccountReply>
+                PARSER = new com.google.protobuf.AbstractParser<RedPacketAccountReply>() {
+            @java.lang.Override
+            public RedPacketAccountReply parsePartialFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException {
+                return new RedPacketAccountReply(input, extensionRegistry);
             }
-            default: {
-              if (!parseUnknownFieldProto3(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
+        };
+
+        static {
+            DEFAULT_INSTANCE = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply();
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
+
+        private volatile java.lang.Object amount_;
+        private byte memoizedIsInitialized = -1;
+
+        // Use RedPacketAccountReply.newBuilder() to construct.
+        private RedPacketAccountReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+            super(builder);
+        }
+        private RedPacketAccountReply() {
+            amount_ = "";
+        }
+
+        private RedPacketAccountReply(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            this();
+            if (extensionRegistry == null) {
+                throw new java.lang.NullPointerException();
+            }
+            int mutable_bitField0_ = 0;
+            com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+                    com.google.protobuf.UnknownFieldSet.newBuilder();
+            try {
+                boolean done = false;
+                while (!done) {
+                    int tag = input.readTag();
+                    switch (tag) {
+                        case 0:
+                            done = true;
+                            break;
+                        case 10: {
+                            java.lang.String s = input.readStringRequireUtf8();
+
+                            amount_ = s;
+                            break;
+                        }
+                        default: {
+                            if (!parseUnknownFieldProto3(
+                                    input, unknownFields, extensionRegistry, tag)) {
+                                done = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                throw e.setUnfinishedMessage(this);
+            } catch (java.io.IOException e) {
+                throw new com.google.protobuf.InvalidProtocolBufferException(
+                        e).setUnfinishedMessage(this);
+            } finally {
+                this.unknownFields = unknownFields.build();
+                makeExtensionsImmutable();
+            }
+        }
+
+        public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_descriptor;
-    }
+            return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_descriptor;
+        }
 
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
+                java.nio.ByteBuffer data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
+                java.nio.ByteBuffer data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
+                com.google.protobuf.ByteString data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
+                com.google.protobuf.ByteString data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(byte[] data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
+                byte[] data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(java.io.InputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
+                java.io.InputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseDelimitedFrom(java.io.InputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseDelimitedWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseDelimitedFrom(
+                java.io.InputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
+                com.google.protobuf.CodedInputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parseFrom(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return DEFAULT_INSTANCE.toBuilder();
+        }
+
+        public static Builder newBuilder(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply prototype) {
+            return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static com.google.protobuf.Parser<RedPacketAccountReply> parser() {
+            return PARSER;
+        }
+
+        @java.lang.Override
+        public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+            return this.unknownFields;
+        }
+
+        @java.lang.Override
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.Builder.class);
+            return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_fieldAccessorTable
+                    .ensureFieldAccessorsInitialized(
+                            org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.Builder.class);
+        }
+
+        /**
+         * <code>string amount = 1;</code>
+         */
+        public java.lang.String getAmount() {
+            java.lang.Object ref = amount_;
+            if (ref instanceof java.lang.String) {
+                return (java.lang.String) ref;
+            } else {
+                com.google.protobuf.ByteString bs =
+                        (com.google.protobuf.ByteString) ref;
+                java.lang.String s = bs.toStringUtf8();
+                amount_ = s;
+                return s;
+            }
+        }
+
+        /**
+         * <code>string amount = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+        getAmountBytes() {
+            java.lang.Object ref = amount_;
+            if (ref instanceof java.lang.String) {
+                com.google.protobuf.ByteString b =
+                        com.google.protobuf.ByteString.copyFromUtf8(
+                                (java.lang.String) ref);
+                amount_ = b;
+                return b;
+            } else {
+                return (com.google.protobuf.ByteString) ref;
+            }
+        }
+
+        @java.lang.Override
+        public final boolean isInitialized() {
+            byte isInitialized = memoizedIsInitialized;
+            if (isInitialized == 1) return true;
+            if (isInitialized == 0) return false;
+
+            memoizedIsInitialized = 1;
+            return true;
+        }
+
+        @java.lang.Override
+        public void writeTo(com.google.protobuf.CodedOutputStream output)
+                throws java.io.IOException {
+            if (!getAmountBytes().isEmpty()) {
+                com.google.protobuf.GeneratedMessageV3.writeString(output, 1, amount_);
+            }
+            unknownFields.writeTo(output);
+        }
+
+        @java.lang.Override
+        public int getSerializedSize() {
+            int size = memoizedSize;
+            if (size != -1) return size;
+
+            size = 0;
+            if (!getAmountBytes().isEmpty()) {
+                size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, amount_);
+            }
+            size += unknownFields.getSerializedSize();
+            memoizedSize = size;
+            return size;
+        }
+
+        @java.lang.Override
+        public boolean equals(final java.lang.Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (!(obj instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply)) {
+                return super.equals(obj);
+            }
+            org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply other = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply) obj;
+
+            boolean result = true;
+            result = result && getAmount()
+                    .equals(other.getAmount());
+            result = result && unknownFields.equals(other.unknownFields);
+            return result;
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            if (memoizedHashCode != 0) {
+                return memoizedHashCode;
+            }
+            int hash = 41;
+            hash = (19 * hash) + getDescriptor().hashCode();
+            hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
+            hash = (53 * hash) + getAmount().hashCode();
+            hash = (29 * hash) + unknownFields.hashCode();
+            memoizedHashCode = hash;
+            return hash;
+        }
+
+        @java.lang.Override
+        public Builder newBuilderForType() {
+            return newBuilder();
+        }
+
+        @java.lang.Override
+        public Builder toBuilder() {
+            return this == DEFAULT_INSTANCE
+                    ? new Builder() : new Builder().mergeFrom(this);
+        }
+
+        @java.lang.Override
+        protected Builder newBuilderForType(
+                com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+            Builder builder = new Builder(parent);
+            return builder;
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.Parser<RedPacketAccountReply> getParserForType() {
+            return PARSER;
+        }
+
+        @java.lang.Override
+        public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply getDefaultInstanceForType() {
+            return DEFAULT_INSTANCE;
+        }
+
+        /**
+         * Protobuf type {@code RedPacketAccountReply}
+         */
+        public static final class Builder extends
+                com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+                // @@protoc_insertion_point(builder_implements:RedPacketAccountReply)
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReplyOrBuilder {
+            private java.lang.Object amount_ = "";
+
+            // Construct using org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.newBuilder()
+            private Builder() {
+                maybeForceBuilderInitialization();
+            }
+
+            private Builder(
+                    com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+                super(parent);
+                maybeForceBuilderInitialization();
+            }
+
+            public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_descriptor;
+            }
+
+            @java.lang.Override
+            protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_fieldAccessorTable
+                        .ensureFieldAccessorsInitialized(
+                                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.Builder.class);
+            }
+
+            private void maybeForceBuilderInitialization() {
+                if (com.google.protobuf.GeneratedMessageV3
+                        .alwaysUseFieldBuilders) {
+                }
+            }
+
+            @java.lang.Override
+            public Builder clear() {
+                super.clear();
+                amount_ = "";
+
+                return this;
+            }
+
+            @java.lang.Override
+            public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_descriptor;
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply getDefaultInstanceForType() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.getDefaultInstance();
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply build() {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply result = buildPartial();
+                if (!result.isInitialized()) {
+                    throw newUninitializedMessageException(result);
+                }
+                return result;
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply buildPartial() {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply result = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply(this);
+                result.amount_ = amount_;
+                onBuilt();
+                return result;
+            }
+
+            @java.lang.Override
+            public Builder clone() {
+                return (Builder) super.clone();
+            }
+
+            @java.lang.Override
+            public Builder setField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    java.lang.Object value) {
+                return (Builder) super.setField(field, value);
+            }
+
+            @java.lang.Override
+            public Builder clearField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field) {
+                return (Builder) super.clearField(field);
+            }
+
+            @java.lang.Override
+            public Builder clearOneof(
+                    com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+                return (Builder) super.clearOneof(oneof);
+            }
+
+            @java.lang.Override
+            public Builder setRepeatedField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    int index, java.lang.Object value) {
+                return (Builder) super.setRepeatedField(field, index, value);
+            }
+
+            @java.lang.Override
+            public Builder addRepeatedField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    java.lang.Object value) {
+                return (Builder) super.addRepeatedField(field, value);
+            }
+
+            @java.lang.Override
+            public Builder mergeFrom(com.google.protobuf.Message other) {
+                if (other instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply) {
+                    return mergeFrom((org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply) other);
+                } else {
+                    super.mergeFrom(other);
+                    return this;
+                }
+            }
+
+            public Builder mergeFrom(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply other) {
+                if (other == org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply.getDefaultInstance())
+                    return this;
+                if (!other.getAmount().isEmpty()) {
+                    amount_ = other.amount_;
+                    onChanged();
+                }
+                this.mergeUnknownFields(other.unknownFields);
+                onChanged();
+                return this;
+            }
+
+            @java.lang.Override
+            public final boolean isInitialized() {
+                return true;
+            }
+
+            @java.lang.Override
+            public Builder mergeFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws java.io.IOException {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply parsedMessage = null;
+                try {
+                    parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                    parsedMessage = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply) e.getUnfinishedMessage();
+                    throw e.unwrapIOException();
+                } finally {
+                    if (parsedMessage != null) {
+                        mergeFrom(parsedMessage);
+                    }
+                }
+                return this;
+            }
+
+            /**
+             * <code>string amount = 1;</code>
+             */
+            public java.lang.String getAmount() {
+                java.lang.Object ref = amount_;
+                if (!(ref instanceof java.lang.String)) {
+                    com.google.protobuf.ByteString bs =
+                            (com.google.protobuf.ByteString) ref;
+                    java.lang.String s = bs.toStringUtf8();
+                    amount_ = s;
+                    return s;
+                } else {
+                    return (java.lang.String) ref;
+                }
+            }
+
+            /**
+             * <code>string amount = 1;</code>
+             */
+            public Builder setAmount(
+                    java.lang.String value) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+
+                amount_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string amount = 1;</code>
+             */
+            public com.google.protobuf.ByteString
+            getAmountBytes() {
+                java.lang.Object ref = amount_;
+                if (ref instanceof String) {
+                    com.google.protobuf.ByteString b =
+                            com.google.protobuf.ByteString.copyFromUtf8(
+                                    (java.lang.String) ref);
+                    amount_ = b;
+                    return b;
+                } else {
+                    return (com.google.protobuf.ByteString) ref;
+                }
+            }
+
+            /**
+             * <code>string amount = 1;</code>
+             */
+            public Builder setAmountBytes(
+                    com.google.protobuf.ByteString value) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                checkByteStringIsUtf8(value);
+
+                amount_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string amount = 1;</code>
+             */
+            public Builder clearAmount() {
+
+                amount_ = getDefaultInstance().getAmount();
+                onChanged();
+                return this;
+            }
+
+            @java.lang.Override
+            public final Builder setUnknownFields(
+                    final com.google.protobuf.UnknownFieldSet unknownFields) {
+                return super.setUnknownFieldsProto3(unknownFields);
+            }
+
+            @java.lang.Override
+            public final Builder mergeUnknownFields(
+                    final com.google.protobuf.UnknownFieldSet unknownFields) {
+                return super.mergeUnknownFields(unknownFields);
+            }
+
+
+            // @@protoc_insertion_point(builder_scope:RedPacketAccountReply)
+        }
+
     }
 
-    public static final int MESSAGE_FIELD_NUMBER = 1;
-    private volatile java.lang.Object message_;
-    /**
-     * <code>string message = 1;</code>
-     */
-    public java.lang.String getMessage() {
-      java.lang.Object ref = message_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        message_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string message = 1;</code>
-     */
-    public com.google.protobuf.ByteString
-        getMessageBytes() {
-      java.lang.Object ref = message_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        message_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (!getMessageBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, message_);
-      }
-      unknownFields.writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (!getMessageBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, message_);
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply)) {
-        return super.equals(obj);
-      }
-      org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply other = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply) obj;
-
-      boolean result = true;
-      result = result && getMessage()
-          .equals(other.getMessage());
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
-      hash = (53 * hash) + getMessage().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
     /**
      * Protobuf type {@code RecordReply}
      */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:RecordReply)
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReplyOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.Builder.class);
-      }
-
-      // Construct using org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        message_ = "";
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_descriptor;
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply getDefaultInstanceForType() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply build() {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply buildPartial() {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply result = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply(this);
-        result.message_ = message_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply) {
-          return mergeFrom((org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply other) {
-        if (other == org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.getDefaultInstance()) return this;
-        if (!other.getMessage().isEmpty()) {
-          message_ = other.message_;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private java.lang.Object message_ = "";
-      /**
-       * <code>string message = 1;</code>
-       */
-      public java.lang.String getMessage() {
-        java.lang.Object ref = message_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          message_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string message = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getMessageBytes() {
-        java.lang.Object ref = message_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          message_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string message = 1;</code>
-       */
-      public Builder setMessage(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        message_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string message = 1;</code>
-       */
-      public Builder clearMessage() {
-        
-        message_ = getDefaultInstance().getMessage();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string message = 1;</code>
-       */
-      public Builder setMessageBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        message_ = value;
-        onChanged();
-        return this;
-      }
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFieldsProto3(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:RecordReply)
-    }
-
-    // @@protoc_insertion_point(class_scope:RecordReply)
-    private static final org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply();
-    }
-
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<RecordReply>
-        PARSER = new com.google.protobuf.AbstractParser<RecordReply>() {
-      @java.lang.Override
-      public RecordReply parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new RecordReply(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<RecordReply> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<RecordReply> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  public interface RedPacketTradeOrderDtoOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:RedPacketTradeOrderDto)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>sint64 selfUserId = 1;</code>
-     */
-    long getSelfUserId();
-
-    /**
-     * <code>sint64 oppositeUserId = 2;</code>
-     */
-    long getOppositeUserId();
-
-    /**
-     * <code>string orderTitle = 3;</code>
-     */
-    java.lang.String getOrderTitle();
-    /**
-     * <code>string orderTitle = 3;</code>
-     */
-    com.google.protobuf.ByteString
-        getOrderTitleBytes();
-
-    /**
-     * <code>string merchantOrderNo = 4;</code>
-     */
-    java.lang.String getMerchantOrderNo();
-    /**
-     * <code>string merchantOrderNo = 4;</code>
-     */
-    com.google.protobuf.ByteString
-        getMerchantOrderNoBytes();
-
-    /**
-     * <code>string amount = 5;</code>
-     */
-    java.lang.String getAmount();
-    /**
-     * <code>string amount = 5;</code>
-     */
-    com.google.protobuf.ByteString
-        getAmountBytes();
-  }
-  /**
-   * Protobuf type {@code RedPacketTradeOrderDto}
-   */
-  public  static final class RedPacketTradeOrderDto extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:RedPacketTradeOrderDto)
-      RedPacketTradeOrderDtoOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use RedPacketTradeOrderDto.newBuilder() to construct.
-    private RedPacketTradeOrderDto(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private RedPacketTradeOrderDto() {
-      selfUserId_ = 0L;
-      oppositeUserId_ = 0L;
-      orderTitle_ = "";
-      merchantOrderNo_ = "";
-      amount_ = "";
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    private RedPacketTradeOrderDto(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-
-              selfUserId_ = input.readSInt64();
-              break;
+    public static final class RecordReply extends
+            com.google.protobuf.GeneratedMessageV3 implements
+            // @@protoc_insertion_point(message_implements:RecordReply)
+            RecordReplyOrBuilder {
+        public static final int MESSAGE_FIELD_NUMBER = 1;
+        private static final long serialVersionUID = 0L;
+        // @@protoc_insertion_point(class_scope:RecordReply)
+        private static final org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply DEFAULT_INSTANCE;
+        private static final com.google.protobuf.Parser<RecordReply>
+                PARSER = new com.google.protobuf.AbstractParser<RecordReply>() {
+            @java.lang.Override
+            public RecordReply parsePartialFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException {
+                return new RecordReply(input, extensionRegistry);
             }
-            case 16: {
+        };
 
-              oppositeUserId_ = input.readSInt64();
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              orderTitle_ = s;
-              break;
-            }
-            case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              merchantOrderNo_ = s;
-              break;
-            }
-            case 42: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              amount_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownFieldProto3(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
+        static {
+            DEFAULT_INSTANCE = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply();
         }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
+
+        private volatile java.lang.Object message_;
+        private byte memoizedIsInitialized = -1;
+
+        // Use RecordReply.newBuilder() to construct.
+        private RecordReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+            super(builder);
+        }
+        private RecordReply() {
+            message_ = "";
+        }
+
+        private RecordReply(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            this();
+            if (extensionRegistry == null) {
+                throw new java.lang.NullPointerException();
+            }
+            int mutable_bitField0_ = 0;
+            com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+                    com.google.protobuf.UnknownFieldSet.newBuilder();
+            try {
+                boolean done = false;
+                while (!done) {
+                    int tag = input.readTag();
+                    switch (tag) {
+                        case 0:
+                            done = true;
+                            break;
+                        case 10: {
+                            java.lang.String s = input.readStringRequireUtf8();
+
+                            message_ = s;
+                            break;
+                        }
+                        default: {
+                            if (!parseUnknownFieldProto3(
+                                    input, unknownFields, extensionRegistry, tag)) {
+                                done = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                throw e.setUnfinishedMessage(this);
+            } catch (java.io.IOException e) {
+                throw new com.google.protobuf.InvalidProtocolBufferException(
+                        e).setUnfinishedMessage(this);
+            } finally {
+                this.unknownFields = unknownFields.build();
+                makeExtensionsImmutable();
+            }
+        }
+
+        public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_descriptor;
-    }
+            return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_descriptor;
+        }
 
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
+                java.nio.ByteBuffer data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
+                java.nio.ByteBuffer data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
+                com.google.protobuf.ByteString data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
+                com.google.protobuf.ByteString data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(byte[] data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
+                byte[] data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(java.io.InputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
+                java.io.InputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseDelimitedFrom(java.io.InputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseDelimitedWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseDelimitedFrom(
+                java.io.InputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
+                com.google.protobuf.CodedInputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parseFrom(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return DEFAULT_INSTANCE.toBuilder();
+        }
+
+        public static Builder newBuilder(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply prototype) {
+            return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static com.google.protobuf.Parser<RecordReply> parser() {
+            return PARSER;
+        }
+
+        @java.lang.Override
+        public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+            return this.unknownFields;
+        }
+
+        @java.lang.Override
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.Builder.class);
+            return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_fieldAccessorTable
+                    .ensureFieldAccessorsInitialized(
+                            org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.Builder.class);
+        }
+
+        /**
+         * <code>string message = 1;</code>
+         */
+        public java.lang.String getMessage() {
+            java.lang.Object ref = message_;
+            if (ref instanceof java.lang.String) {
+                return (java.lang.String) ref;
+            } else {
+                com.google.protobuf.ByteString bs =
+                        (com.google.protobuf.ByteString) ref;
+                java.lang.String s = bs.toStringUtf8();
+                message_ = s;
+                return s;
+            }
+        }
+
+        /**
+         * <code>string message = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+        getMessageBytes() {
+            java.lang.Object ref = message_;
+            if (ref instanceof java.lang.String) {
+                com.google.protobuf.ByteString b =
+                        com.google.protobuf.ByteString.copyFromUtf8(
+                                (java.lang.String) ref);
+                message_ = b;
+                return b;
+            } else {
+                return (com.google.protobuf.ByteString) ref;
+            }
+        }
+
+        @java.lang.Override
+        public final boolean isInitialized() {
+            byte isInitialized = memoizedIsInitialized;
+            if (isInitialized == 1) return true;
+            if (isInitialized == 0) return false;
+
+            memoizedIsInitialized = 1;
+            return true;
+        }
+
+        @java.lang.Override
+        public void writeTo(com.google.protobuf.CodedOutputStream output)
+                throws java.io.IOException {
+            if (!getMessageBytes().isEmpty()) {
+                com.google.protobuf.GeneratedMessageV3.writeString(output, 1, message_);
+            }
+            unknownFields.writeTo(output);
+        }
+
+        @java.lang.Override
+        public int getSerializedSize() {
+            int size = memoizedSize;
+            if (size != -1) return size;
+
+            size = 0;
+            if (!getMessageBytes().isEmpty()) {
+                size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, message_);
+            }
+            size += unknownFields.getSerializedSize();
+            memoizedSize = size;
+            return size;
+        }
+
+        @java.lang.Override
+        public boolean equals(final java.lang.Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (!(obj instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply)) {
+                return super.equals(obj);
+            }
+            org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply other = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply) obj;
+
+            boolean result = true;
+            result = result && getMessage()
+                    .equals(other.getMessage());
+            result = result && unknownFields.equals(other.unknownFields);
+            return result;
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            if (memoizedHashCode != 0) {
+                return memoizedHashCode;
+            }
+            int hash = 41;
+            hash = (19 * hash) + getDescriptor().hashCode();
+            hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
+            hash = (53 * hash) + getMessage().hashCode();
+            hash = (29 * hash) + unknownFields.hashCode();
+            memoizedHashCode = hash;
+            return hash;
+        }
+
+        @java.lang.Override
+        public Builder newBuilderForType() {
+            return newBuilder();
+        }
+
+        @java.lang.Override
+        public Builder toBuilder() {
+            return this == DEFAULT_INSTANCE
+                    ? new Builder() : new Builder().mergeFrom(this);
+        }
+
+        @java.lang.Override
+        protected Builder newBuilderForType(
+                com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+            Builder builder = new Builder(parent);
+            return builder;
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.Parser<RecordReply> getParserForType() {
+            return PARSER;
+        }
+
+        @java.lang.Override
+        public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply getDefaultInstanceForType() {
+            return DEFAULT_INSTANCE;
+        }
+
+        /**
+         * Protobuf type {@code RecordReply}
+         */
+        public static final class Builder extends
+                com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+                // @@protoc_insertion_point(builder_implements:RecordReply)
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReplyOrBuilder {
+            private java.lang.Object message_ = "";
+
+            // Construct using org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.newBuilder()
+            private Builder() {
+                maybeForceBuilderInitialization();
+            }
+
+            private Builder(
+                    com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+                super(parent);
+                maybeForceBuilderInitialization();
+            }
+
+            public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_descriptor;
+            }
+
+            @java.lang.Override
+            protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_fieldAccessorTable
+                        .ensureFieldAccessorsInitialized(
+                                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.Builder.class);
+            }
+
+            private void maybeForceBuilderInitialization() {
+                if (com.google.protobuf.GeneratedMessageV3
+                        .alwaysUseFieldBuilders) {
+                }
+            }
+
+            @java.lang.Override
+            public Builder clear() {
+                super.clear();
+                message_ = "";
+
+                return this;
+            }
+
+            @java.lang.Override
+            public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_descriptor;
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply getDefaultInstanceForType() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.getDefaultInstance();
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply build() {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply result = buildPartial();
+                if (!result.isInitialized()) {
+                    throw newUninitializedMessageException(result);
+                }
+                return result;
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply buildPartial() {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply result = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply(this);
+                result.message_ = message_;
+                onBuilt();
+                return result;
+            }
+
+            @java.lang.Override
+            public Builder clone() {
+                return (Builder) super.clone();
+            }
+
+            @java.lang.Override
+            public Builder setField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    java.lang.Object value) {
+                return (Builder) super.setField(field, value);
+            }
+
+            @java.lang.Override
+            public Builder clearField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field) {
+                return (Builder) super.clearField(field);
+            }
+
+            @java.lang.Override
+            public Builder clearOneof(
+                    com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+                return (Builder) super.clearOneof(oneof);
+            }
+
+            @java.lang.Override
+            public Builder setRepeatedField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    int index, java.lang.Object value) {
+                return (Builder) super.setRepeatedField(field, index, value);
+            }
+
+            @java.lang.Override
+            public Builder addRepeatedField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    java.lang.Object value) {
+                return (Builder) super.addRepeatedField(field, value);
+            }
+
+            @java.lang.Override
+            public Builder mergeFrom(com.google.protobuf.Message other) {
+                if (other instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply) {
+                    return mergeFrom((org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply) other);
+                } else {
+                    super.mergeFrom(other);
+                    return this;
+                }
+            }
+
+            public Builder mergeFrom(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply other) {
+                if (other == org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply.getDefaultInstance())
+                    return this;
+                if (!other.getMessage().isEmpty()) {
+                    message_ = other.message_;
+                    onChanged();
+                }
+                this.mergeUnknownFields(other.unknownFields);
+                onChanged();
+                return this;
+            }
+
+            @java.lang.Override
+            public final boolean isInitialized() {
+                return true;
+            }
+
+            @java.lang.Override
+            public Builder mergeFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws java.io.IOException {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply parsedMessage = null;
+                try {
+                    parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                    parsedMessage = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply) e.getUnfinishedMessage();
+                    throw e.unwrapIOException();
+                } finally {
+                    if (parsedMessage != null) {
+                        mergeFrom(parsedMessage);
+                    }
+                }
+                return this;
+            }
+
+            /**
+             * <code>string message = 1;</code>
+             */
+            public java.lang.String getMessage() {
+                java.lang.Object ref = message_;
+                if (!(ref instanceof java.lang.String)) {
+                    com.google.protobuf.ByteString bs =
+                            (com.google.protobuf.ByteString) ref;
+                    java.lang.String s = bs.toStringUtf8();
+                    message_ = s;
+                    return s;
+                } else {
+                    return (java.lang.String) ref;
+                }
+            }
+
+            /**
+             * <code>string message = 1;</code>
+             */
+            public Builder setMessage(
+                    java.lang.String value) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+
+                message_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string message = 1;</code>
+             */
+            public com.google.protobuf.ByteString
+            getMessageBytes() {
+                java.lang.Object ref = message_;
+                if (ref instanceof String) {
+                    com.google.protobuf.ByteString b =
+                            com.google.protobuf.ByteString.copyFromUtf8(
+                                    (java.lang.String) ref);
+                    message_ = b;
+                    return b;
+                } else {
+                    return (com.google.protobuf.ByteString) ref;
+                }
+            }
+
+            /**
+             * <code>string message = 1;</code>
+             */
+            public Builder setMessageBytes(
+                    com.google.protobuf.ByteString value) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                checkByteStringIsUtf8(value);
+
+                message_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string message = 1;</code>
+             */
+            public Builder clearMessage() {
+
+                message_ = getDefaultInstance().getMessage();
+                onChanged();
+                return this;
+            }
+
+            @java.lang.Override
+            public final Builder setUnknownFields(
+                    final com.google.protobuf.UnknownFieldSet unknownFields) {
+                return super.setUnknownFieldsProto3(unknownFields);
+            }
+
+            @java.lang.Override
+            public final Builder mergeUnknownFields(
+                    final com.google.protobuf.UnknownFieldSet unknownFields) {
+                return super.mergeUnknownFields(unknownFields);
+            }
+
+
+            // @@protoc_insertion_point(builder_scope:RecordReply)
+        }
+
     }
 
-    public static final int SELFUSERID_FIELD_NUMBER = 1;
-    private long selfUserId_;
-    /**
-     * <code>sint64 selfUserId = 1;</code>
-     */
-    public long getSelfUserId() {
-      return selfUserId_;
-    }
-
-    public static final int OPPOSITEUSERID_FIELD_NUMBER = 2;
-    private long oppositeUserId_;
-    /**
-     * <code>sint64 oppositeUserId = 2;</code>
-     */
-    public long getOppositeUserId() {
-      return oppositeUserId_;
-    }
-
-    public static final int ORDERTITLE_FIELD_NUMBER = 3;
-    private volatile java.lang.Object orderTitle_;
-    /**
-     * <code>string orderTitle = 3;</code>
-     */
-    public java.lang.String getOrderTitle() {
-      java.lang.Object ref = orderTitle_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        orderTitle_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string orderTitle = 3;</code>
-     */
-    public com.google.protobuf.ByteString
-        getOrderTitleBytes() {
-      java.lang.Object ref = orderTitle_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        orderTitle_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int MERCHANTORDERNO_FIELD_NUMBER = 4;
-    private volatile java.lang.Object merchantOrderNo_;
-    /**
-     * <code>string merchantOrderNo = 4;</code>
-     */
-    public java.lang.String getMerchantOrderNo() {
-      java.lang.Object ref = merchantOrderNo_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        merchantOrderNo_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string merchantOrderNo = 4;</code>
-     */
-    public com.google.protobuf.ByteString
-        getMerchantOrderNoBytes() {
-      java.lang.Object ref = merchantOrderNo_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        merchantOrderNo_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int AMOUNT_FIELD_NUMBER = 5;
-    private volatile java.lang.Object amount_;
-    /**
-     * <code>string amount = 5;</code>
-     */
-    public java.lang.String getAmount() {
-      java.lang.Object ref = amount_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        amount_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string amount = 5;</code>
-     */
-    public com.google.protobuf.ByteString
-        getAmountBytes() {
-      java.lang.Object ref = amount_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        amount_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (selfUserId_ != 0L) {
-        output.writeSInt64(1, selfUserId_);
-      }
-      if (oppositeUserId_ != 0L) {
-        output.writeSInt64(2, oppositeUserId_);
-      }
-      if (!getOrderTitleBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, orderTitle_);
-      }
-      if (!getMerchantOrderNoBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, merchantOrderNo_);
-      }
-      if (!getAmountBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, amount_);
-      }
-      unknownFields.writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (selfUserId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeSInt64Size(1, selfUserId_);
-      }
-      if (oppositeUserId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeSInt64Size(2, oppositeUserId_);
-      }
-      if (!getOrderTitleBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, orderTitle_);
-      }
-      if (!getMerchantOrderNoBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, merchantOrderNo_);
-      }
-      if (!getAmountBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, amount_);
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto)) {
-        return super.equals(obj);
-      }
-      org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto other = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto) obj;
-
-      boolean result = true;
-      result = result && (getSelfUserId()
-          == other.getSelfUserId());
-      result = result && (getOppositeUserId()
-          == other.getOppositeUserId());
-      result = result && getOrderTitle()
-          .equals(other.getOrderTitle());
-      result = result && getMerchantOrderNo()
-          .equals(other.getMerchantOrderNo());
-      result = result && getAmount()
-          .equals(other.getAmount());
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + SELFUSERID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getSelfUserId());
-      hash = (37 * hash) + OPPOSITEUSERID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getOppositeUserId());
-      hash = (37 * hash) + ORDERTITLE_FIELD_NUMBER;
-      hash = (53 * hash) + getOrderTitle().hashCode();
-      hash = (37 * hash) + MERCHANTORDERNO_FIELD_NUMBER;
-      hash = (53 * hash) + getMerchantOrderNo().hashCode();
-      hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
-      hash = (53 * hash) + getAmount().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
     /**
      * Protobuf type {@code RedPacketTradeOrderDto}
      */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:RedPacketTradeOrderDto)
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDtoOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.Builder.class);
-      }
-
-      // Construct using org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        selfUserId_ = 0L;
-
-        oppositeUserId_ = 0L;
-
-        orderTitle_ = "";
-
-        merchantOrderNo_ = "";
-
-        amount_ = "";
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_descriptor;
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto getDefaultInstanceForType() {
-        return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto build() {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto buildPartial() {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto result = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto(this);
-        result.selfUserId_ = selfUserId_;
-        result.oppositeUserId_ = oppositeUserId_;
-        result.orderTitle_ = orderTitle_;
-        result.merchantOrderNo_ = merchantOrderNo_;
-        result.amount_ = amount_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto) {
-          return mergeFrom((org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto other) {
-        if (other == org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.getDefaultInstance()) return this;
-        if (other.getSelfUserId() != 0L) {
-          setSelfUserId(other.getSelfUserId());
-        }
-        if (other.getOppositeUserId() != 0L) {
-          setOppositeUserId(other.getOppositeUserId());
-        }
-        if (!other.getOrderTitle().isEmpty()) {
-          orderTitle_ = other.orderTitle_;
-          onChanged();
-        }
-        if (!other.getMerchantOrderNo().isEmpty()) {
-          merchantOrderNo_ = other.merchantOrderNo_;
-          onChanged();
-        }
-        if (!other.getAmount().isEmpty()) {
-          amount_ = other.amount_;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private long selfUserId_ ;
-      /**
-       * <code>sint64 selfUserId = 1;</code>
-       */
-      public long getSelfUserId() {
-        return selfUserId_;
-      }
-      /**
-       * <code>sint64 selfUserId = 1;</code>
-       */
-      public Builder setSelfUserId(long value) {
-        
-        selfUserId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>sint64 selfUserId = 1;</code>
-       */
-      public Builder clearSelfUserId() {
-        
-        selfUserId_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long oppositeUserId_ ;
-      /**
-       * <code>sint64 oppositeUserId = 2;</code>
-       */
-      public long getOppositeUserId() {
-        return oppositeUserId_;
-      }
-      /**
-       * <code>sint64 oppositeUserId = 2;</code>
-       */
-      public Builder setOppositeUserId(long value) {
-        
-        oppositeUserId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>sint64 oppositeUserId = 2;</code>
-       */
-      public Builder clearOppositeUserId() {
-        
-        oppositeUserId_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object orderTitle_ = "";
-      /**
-       * <code>string orderTitle = 3;</code>
-       */
-      public java.lang.String getOrderTitle() {
-        java.lang.Object ref = orderTitle_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          orderTitle_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string orderTitle = 3;</code>
-       */
-      public com.google.protobuf.ByteString
-          getOrderTitleBytes() {
-        java.lang.Object ref = orderTitle_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          orderTitle_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string orderTitle = 3;</code>
-       */
-      public Builder setOrderTitle(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        orderTitle_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string orderTitle = 3;</code>
-       */
-      public Builder clearOrderTitle() {
-        
-        orderTitle_ = getDefaultInstance().getOrderTitle();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string orderTitle = 3;</code>
-       */
-      public Builder setOrderTitleBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        orderTitle_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object merchantOrderNo_ = "";
-      /**
-       * <code>string merchantOrderNo = 4;</code>
-       */
-      public java.lang.String getMerchantOrderNo() {
-        java.lang.Object ref = merchantOrderNo_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          merchantOrderNo_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string merchantOrderNo = 4;</code>
-       */
-      public com.google.protobuf.ByteString
-          getMerchantOrderNoBytes() {
-        java.lang.Object ref = merchantOrderNo_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          merchantOrderNo_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string merchantOrderNo = 4;</code>
-       */
-      public Builder setMerchantOrderNo(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        merchantOrderNo_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string merchantOrderNo = 4;</code>
-       */
-      public Builder clearMerchantOrderNo() {
-        
-        merchantOrderNo_ = getDefaultInstance().getMerchantOrderNo();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string merchantOrderNo = 4;</code>
-       */
-      public Builder setMerchantOrderNoBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        merchantOrderNo_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object amount_ = "";
-      /**
-       * <code>string amount = 5;</code>
-       */
-      public java.lang.String getAmount() {
-        java.lang.Object ref = amount_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          amount_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>string amount = 5;</code>
-       */
-      public com.google.protobuf.ByteString
-          getAmountBytes() {
-        java.lang.Object ref = amount_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          amount_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string amount = 5;</code>
-       */
-      public Builder setAmount(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        amount_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string amount = 5;</code>
-       */
-      public Builder clearAmount() {
-        
-        amount_ = getDefaultInstance().getAmount();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string amount = 5;</code>
-       */
-      public Builder setAmountBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        amount_ = value;
-        onChanged();
-        return this;
-      }
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFieldsProto3(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:RedPacketTradeOrderDto)
-    }
-
-    // @@protoc_insertion_point(class_scope:RedPacketTradeOrderDto)
-    private static final org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto();
-    }
-
-    public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<RedPacketTradeOrderDto>
-        PARSER = new com.google.protobuf.AbstractParser<RedPacketTradeOrderDto>() {
-      @java.lang.Override
-      public RedPacketTradeOrderDto parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new RedPacketTradeOrderDto(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<RedPacketTradeOrderDto> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<RedPacketTradeOrderDto> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_RedPacketAccountRequest_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_RedPacketAccountRequest_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_RedPacketAccountReply_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_RedPacketAccountReply_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_RecordReply_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_RecordReply_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_RedPacketTradeOrderDto_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_RedPacketTradeOrderDto_fieldAccessorTable;
-
-  public static com.google.protobuf.Descriptors.FileDescriptor
-      getDescriptor() {
-    return descriptor;
-  }
-  private static  com.google.protobuf.Descriptors.FileDescriptor
-      descriptor;
-  static {
-    java.lang.String[] descriptorData = {
-      "\n\026RedPacketService.proto\")\n\027RedPacketAcc" +
-      "ountRequest\022\016\n\006userId\030\001 \001(\022\"\'\n\025RedPacket" +
-      "AccountReply\022\016\n\006amount\030\001 \001(\t\"\036\n\013RecordRe" +
-      "ply\022\017\n\007message\030\001 \001(\t\"\201\001\n\026RedPacketTradeO" +
-      "rderDto\022\022\n\nselfUserId\030\001 \001(\022\022\026\n\016oppositeU" +
-      "serId\030\002 \001(\022\022\022\n\norderTitle\030\003 \001(\t\022\027\n\017merch" +
-      "antOrderNo\030\004 \001(\t\022\016\n\006amount\030\005 \001(\t2\230\001\n\020Red" +
-      "PacketService\022Q\n\033getRedPacketAccountByUs" +
-      "erId\022\030.RedPacketAccountRequest\032\026.RedPack" +
-      "etAccountReply\"\000\0221\n\006record\022\027.RedPacketTr" +
-      "adeOrderDto\032\014.RecordReply\"\000B6\n4org.mengy" +
-      "un.tcctransaction.sample.grpc.redpacket." +
-      "apib\006proto3"
-    };
-    com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
-          public com.google.protobuf.ExtensionRegistry assignDescriptors(
-              com.google.protobuf.Descriptors.FileDescriptor root) {
-            descriptor = root;
-            return null;
-          }
+    public static final class RedPacketTradeOrderDto extends
+            com.google.protobuf.GeneratedMessageV3 implements
+            // @@protoc_insertion_point(message_implements:RedPacketTradeOrderDto)
+            RedPacketTradeOrderDtoOrBuilder {
+        public static final int SELFUSERID_FIELD_NUMBER = 1;
+        public static final int OPPOSITEUSERID_FIELD_NUMBER = 2;
+        public static final int ORDERTITLE_FIELD_NUMBER = 3;
+        public static final int MERCHANTORDERNO_FIELD_NUMBER = 4;
+        public static final int AMOUNT_FIELD_NUMBER = 5;
+        private static final long serialVersionUID = 0L;
+        // @@protoc_insertion_point(class_scope:RedPacketTradeOrderDto)
+        private static final org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto DEFAULT_INSTANCE;
+        private static final com.google.protobuf.Parser<RedPacketTradeOrderDto>
+                PARSER = new com.google.protobuf.AbstractParser<RedPacketTradeOrderDto>() {
+            @java.lang.Override
+            public RedPacketTradeOrderDto parsePartialFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws com.google.protobuf.InvalidProtocolBufferException {
+                return new RedPacketTradeOrderDto(input, extensionRegistry);
+            }
         };
-    com.google.protobuf.Descriptors.FileDescriptor
-      .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[] {
-        }, assigner);
-    internal_static_RedPacketAccountRequest_descriptor =
-      getDescriptor().getMessageTypes().get(0);
-    internal_static_RedPacketAccountRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_RedPacketAccountRequest_descriptor,
-        new java.lang.String[] { "UserId", });
-    internal_static_RedPacketAccountReply_descriptor =
-      getDescriptor().getMessageTypes().get(1);
-    internal_static_RedPacketAccountReply_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_RedPacketAccountReply_descriptor,
-        new java.lang.String[] { "Amount", });
-    internal_static_RecordReply_descriptor =
-      getDescriptor().getMessageTypes().get(2);
-    internal_static_RecordReply_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_RecordReply_descriptor,
-        new java.lang.String[] { "Message", });
-    internal_static_RedPacketTradeOrderDto_descriptor =
-      getDescriptor().getMessageTypes().get(3);
-    internal_static_RedPacketTradeOrderDto_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_RedPacketTradeOrderDto_descriptor,
-        new java.lang.String[] { "SelfUserId", "OppositeUserId", "OrderTitle", "MerchantOrderNo", "Amount", });
-  }
 
-  // @@protoc_insertion_point(outer_class_scope)
+        static {
+            DEFAULT_INSTANCE = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto();
+        }
+
+        private long selfUserId_;
+        private long oppositeUserId_;
+        private volatile java.lang.Object orderTitle_;
+        private volatile java.lang.Object merchantOrderNo_;
+        private volatile java.lang.Object amount_;
+        private byte memoizedIsInitialized = -1;
+
+        // Use RedPacketTradeOrderDto.newBuilder() to construct.
+        private RedPacketTradeOrderDto(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+            super(builder);
+        }
+
+        private RedPacketTradeOrderDto() {
+            selfUserId_ = 0L;
+            oppositeUserId_ = 0L;
+            orderTitle_ = "";
+            merchantOrderNo_ = "";
+            amount_ = "";
+        }
+
+        private RedPacketTradeOrderDto(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            this();
+            if (extensionRegistry == null) {
+                throw new java.lang.NullPointerException();
+            }
+            int mutable_bitField0_ = 0;
+            com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+                    com.google.protobuf.UnknownFieldSet.newBuilder();
+            try {
+                boolean done = false;
+                while (!done) {
+                    int tag = input.readTag();
+                    switch (tag) {
+                        case 0:
+                            done = true;
+                            break;
+                        case 8: {
+
+                            selfUserId_ = input.readSInt64();
+                            break;
+                        }
+                        case 16: {
+
+                            oppositeUserId_ = input.readSInt64();
+                            break;
+                        }
+                        case 26: {
+                            java.lang.String s = input.readStringRequireUtf8();
+
+                            orderTitle_ = s;
+                            break;
+                        }
+                        case 34: {
+                            java.lang.String s = input.readStringRequireUtf8();
+
+                            merchantOrderNo_ = s;
+                            break;
+                        }
+                        case 42: {
+                            java.lang.String s = input.readStringRequireUtf8();
+
+                            amount_ = s;
+                            break;
+                        }
+                        default: {
+                            if (!parseUnknownFieldProto3(
+                                    input, unknownFields, extensionRegistry, tag)) {
+                                done = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                throw e.setUnfinishedMessage(this);
+            } catch (java.io.IOException e) {
+                throw new com.google.protobuf.InvalidProtocolBufferException(
+                        e).setUnfinishedMessage(this);
+            } finally {
+                this.unknownFields = unknownFields.build();
+                makeExtensionsImmutable();
+            }
+        }
+
+        public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+            return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_descriptor;
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
+                java.nio.ByteBuffer data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
+                java.nio.ByteBuffer data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
+                com.google.protobuf.ByteString data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
+                com.google.protobuf.ByteString data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(byte[] data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
+                byte[] data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return PARSER.parseFrom(data, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(java.io.InputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
+                java.io.InputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseDelimitedFrom(java.io.InputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseDelimitedWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseDelimitedFrom(
+                java.io.InputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
+                com.google.protobuf.CodedInputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parseFrom(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageV3
+                    .parseWithIOException(PARSER, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return DEFAULT_INSTANCE.toBuilder();
+        }
+
+        public static Builder newBuilder(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto prototype) {
+            return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+        }
+
+        public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        public static com.google.protobuf.Parser<RedPacketTradeOrderDto> parser() {
+            return PARSER;
+        }
+
+        @java.lang.Override
+        public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+            return this.unknownFields;
+        }
+
+        @java.lang.Override
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+            return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_fieldAccessorTable
+                    .ensureFieldAccessorsInitialized(
+                            org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.Builder.class);
+        }
+
+        /**
+         * <code>sint64 selfUserId = 1;</code>
+         */
+        public long getSelfUserId() {
+            return selfUserId_;
+        }
+
+        /**
+         * <code>sint64 oppositeUserId = 2;</code>
+         */
+        public long getOppositeUserId() {
+            return oppositeUserId_;
+        }
+
+        /**
+         * <code>string orderTitle = 3;</code>
+         */
+        public java.lang.String getOrderTitle() {
+            java.lang.Object ref = orderTitle_;
+            if (ref instanceof java.lang.String) {
+                return (java.lang.String) ref;
+            } else {
+                com.google.protobuf.ByteString bs =
+                        (com.google.protobuf.ByteString) ref;
+                java.lang.String s = bs.toStringUtf8();
+                orderTitle_ = s;
+                return s;
+            }
+        }
+
+        /**
+         * <code>string orderTitle = 3;</code>
+         */
+        public com.google.protobuf.ByteString
+        getOrderTitleBytes() {
+            java.lang.Object ref = orderTitle_;
+            if (ref instanceof java.lang.String) {
+                com.google.protobuf.ByteString b =
+                        com.google.protobuf.ByteString.copyFromUtf8(
+                                (java.lang.String) ref);
+                orderTitle_ = b;
+                return b;
+            } else {
+                return (com.google.protobuf.ByteString) ref;
+            }
+        }
+
+        /**
+         * <code>string merchantOrderNo = 4;</code>
+         */
+        public java.lang.String getMerchantOrderNo() {
+            java.lang.Object ref = merchantOrderNo_;
+            if (ref instanceof java.lang.String) {
+                return (java.lang.String) ref;
+            } else {
+                com.google.protobuf.ByteString bs =
+                        (com.google.protobuf.ByteString) ref;
+                java.lang.String s = bs.toStringUtf8();
+                merchantOrderNo_ = s;
+                return s;
+            }
+        }
+
+        /**
+         * <code>string merchantOrderNo = 4;</code>
+         */
+        public com.google.protobuf.ByteString
+        getMerchantOrderNoBytes() {
+            java.lang.Object ref = merchantOrderNo_;
+            if (ref instanceof java.lang.String) {
+                com.google.protobuf.ByteString b =
+                        com.google.protobuf.ByteString.copyFromUtf8(
+                                (java.lang.String) ref);
+                merchantOrderNo_ = b;
+                return b;
+            } else {
+                return (com.google.protobuf.ByteString) ref;
+            }
+        }
+
+        /**
+         * <code>string amount = 5;</code>
+         */
+        public java.lang.String getAmount() {
+            java.lang.Object ref = amount_;
+            if (ref instanceof java.lang.String) {
+                return (java.lang.String) ref;
+            } else {
+                com.google.protobuf.ByteString bs =
+                        (com.google.protobuf.ByteString) ref;
+                java.lang.String s = bs.toStringUtf8();
+                amount_ = s;
+                return s;
+            }
+        }
+
+        /**
+         * <code>string amount = 5;</code>
+         */
+        public com.google.protobuf.ByteString
+        getAmountBytes() {
+            java.lang.Object ref = amount_;
+            if (ref instanceof java.lang.String) {
+                com.google.protobuf.ByteString b =
+                        com.google.protobuf.ByteString.copyFromUtf8(
+                                (java.lang.String) ref);
+                amount_ = b;
+                return b;
+            } else {
+                return (com.google.protobuf.ByteString) ref;
+            }
+        }
+
+        @java.lang.Override
+        public final boolean isInitialized() {
+            byte isInitialized = memoizedIsInitialized;
+            if (isInitialized == 1) return true;
+            if (isInitialized == 0) return false;
+
+            memoizedIsInitialized = 1;
+            return true;
+        }
+
+        @java.lang.Override
+        public void writeTo(com.google.protobuf.CodedOutputStream output)
+                throws java.io.IOException {
+            if (selfUserId_ != 0L) {
+                output.writeSInt64(1, selfUserId_);
+            }
+            if (oppositeUserId_ != 0L) {
+                output.writeSInt64(2, oppositeUserId_);
+            }
+            if (!getOrderTitleBytes().isEmpty()) {
+                com.google.protobuf.GeneratedMessageV3.writeString(output, 3, orderTitle_);
+            }
+            if (!getMerchantOrderNoBytes().isEmpty()) {
+                com.google.protobuf.GeneratedMessageV3.writeString(output, 4, merchantOrderNo_);
+            }
+            if (!getAmountBytes().isEmpty()) {
+                com.google.protobuf.GeneratedMessageV3.writeString(output, 5, amount_);
+            }
+            unknownFields.writeTo(output);
+        }
+
+        @java.lang.Override
+        public int getSerializedSize() {
+            int size = memoizedSize;
+            if (size != -1) return size;
+
+            size = 0;
+            if (selfUserId_ != 0L) {
+                size += com.google.protobuf.CodedOutputStream
+                        .computeSInt64Size(1, selfUserId_);
+            }
+            if (oppositeUserId_ != 0L) {
+                size += com.google.protobuf.CodedOutputStream
+                        .computeSInt64Size(2, oppositeUserId_);
+            }
+            if (!getOrderTitleBytes().isEmpty()) {
+                size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, orderTitle_);
+            }
+            if (!getMerchantOrderNoBytes().isEmpty()) {
+                size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, merchantOrderNo_);
+            }
+            if (!getAmountBytes().isEmpty()) {
+                size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, amount_);
+            }
+            size += unknownFields.getSerializedSize();
+            memoizedSize = size;
+            return size;
+        }
+
+        @java.lang.Override
+        public boolean equals(final java.lang.Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (!(obj instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto)) {
+                return super.equals(obj);
+            }
+            org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto other = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto) obj;
+
+            boolean result = true;
+            result = result && (getSelfUserId()
+                    == other.getSelfUserId());
+            result = result && (getOppositeUserId()
+                    == other.getOppositeUserId());
+            result = result && getOrderTitle()
+                    .equals(other.getOrderTitle());
+            result = result && getMerchantOrderNo()
+                    .equals(other.getMerchantOrderNo());
+            result = result && getAmount()
+                    .equals(other.getAmount());
+            result = result && unknownFields.equals(other.unknownFields);
+            return result;
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            if (memoizedHashCode != 0) {
+                return memoizedHashCode;
+            }
+            int hash = 41;
+            hash = (19 * hash) + getDescriptor().hashCode();
+            hash = (37 * hash) + SELFUSERID_FIELD_NUMBER;
+            hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+                    getSelfUserId());
+            hash = (37 * hash) + OPPOSITEUSERID_FIELD_NUMBER;
+            hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+                    getOppositeUserId());
+            hash = (37 * hash) + ORDERTITLE_FIELD_NUMBER;
+            hash = (53 * hash) + getOrderTitle().hashCode();
+            hash = (37 * hash) + MERCHANTORDERNO_FIELD_NUMBER;
+            hash = (53 * hash) + getMerchantOrderNo().hashCode();
+            hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
+            hash = (53 * hash) + getAmount().hashCode();
+            hash = (29 * hash) + unknownFields.hashCode();
+            memoizedHashCode = hash;
+            return hash;
+        }
+
+        @java.lang.Override
+        public Builder newBuilderForType() {
+            return newBuilder();
+        }
+
+        @java.lang.Override
+        public Builder toBuilder() {
+            return this == DEFAULT_INSTANCE
+                    ? new Builder() : new Builder().mergeFrom(this);
+        }
+
+        @java.lang.Override
+        protected Builder newBuilderForType(
+                com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+            Builder builder = new Builder(parent);
+            return builder;
+        }
+
+        @java.lang.Override
+        public com.google.protobuf.Parser<RedPacketTradeOrderDto> getParserForType() {
+            return PARSER;
+        }
+
+        @java.lang.Override
+        public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto getDefaultInstanceForType() {
+            return DEFAULT_INSTANCE;
+        }
+
+        /**
+         * Protobuf type {@code RedPacketTradeOrderDto}
+         */
+        public static final class Builder extends
+                com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+                // @@protoc_insertion_point(builder_implements:RedPacketTradeOrderDto)
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDtoOrBuilder {
+            private long selfUserId_;
+            private long oppositeUserId_;
+            private java.lang.Object orderTitle_ = "";
+            private java.lang.Object merchantOrderNo_ = "";
+            private java.lang.Object amount_ = "";
+
+            // Construct using org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.newBuilder()
+            private Builder() {
+                maybeForceBuilderInitialization();
+            }
+
+            private Builder(
+                    com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+                super(parent);
+                maybeForceBuilderInitialization();
+            }
+
+            public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_descriptor;
+            }
+
+            @java.lang.Override
+            protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_fieldAccessorTable
+                        .ensureFieldAccessorsInitialized(
+                                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.class, org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.Builder.class);
+            }
+
+            private void maybeForceBuilderInitialization() {
+                if (com.google.protobuf.GeneratedMessageV3
+                        .alwaysUseFieldBuilders) {
+                }
+            }
+
+            @java.lang.Override
+            public Builder clear() {
+                super.clear();
+                selfUserId_ = 0L;
+
+                oppositeUserId_ = 0L;
+
+                orderTitle_ = "";
+
+                merchantOrderNo_ = "";
+
+                amount_ = "";
+
+                return this;
+            }
+
+            @java.lang.Override
+            public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_descriptor;
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto getDefaultInstanceForType() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.getDefaultInstance();
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto build() {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto result = buildPartial();
+                if (!result.isInitialized()) {
+                    throw newUninitializedMessageException(result);
+                }
+                return result;
+            }
+
+            @java.lang.Override
+            public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto buildPartial() {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto result = new org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto(this);
+                result.selfUserId_ = selfUserId_;
+                result.oppositeUserId_ = oppositeUserId_;
+                result.orderTitle_ = orderTitle_;
+                result.merchantOrderNo_ = merchantOrderNo_;
+                result.amount_ = amount_;
+                onBuilt();
+                return result;
+            }
+
+            @java.lang.Override
+            public Builder clone() {
+                return (Builder) super.clone();
+            }
+
+            @java.lang.Override
+            public Builder setField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    java.lang.Object value) {
+                return (Builder) super.setField(field, value);
+            }
+
+            @java.lang.Override
+            public Builder clearField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field) {
+                return (Builder) super.clearField(field);
+            }
+
+            @java.lang.Override
+            public Builder clearOneof(
+                    com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+                return (Builder) super.clearOneof(oneof);
+            }
+
+            @java.lang.Override
+            public Builder setRepeatedField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    int index, java.lang.Object value) {
+                return (Builder) super.setRepeatedField(field, index, value);
+            }
+
+            @java.lang.Override
+            public Builder addRepeatedField(
+                    com.google.protobuf.Descriptors.FieldDescriptor field,
+                    java.lang.Object value) {
+                return (Builder) super.addRepeatedField(field, value);
+            }
+
+            @java.lang.Override
+            public Builder mergeFrom(com.google.protobuf.Message other) {
+                if (other instanceof org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto) {
+                    return mergeFrom((org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto) other);
+                } else {
+                    super.mergeFrom(other);
+                    return this;
+                }
+            }
+
+            public Builder mergeFrom(org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto other) {
+                if (other == org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto.getDefaultInstance())
+                    return this;
+                if (other.getSelfUserId() != 0L) {
+                    setSelfUserId(other.getSelfUserId());
+                }
+                if (other.getOppositeUserId() != 0L) {
+                    setOppositeUserId(other.getOppositeUserId());
+                }
+                if (!other.getOrderTitle().isEmpty()) {
+                    orderTitle_ = other.orderTitle_;
+                    onChanged();
+                }
+                if (!other.getMerchantOrderNo().isEmpty()) {
+                    merchantOrderNo_ = other.merchantOrderNo_;
+                    onChanged();
+                }
+                if (!other.getAmount().isEmpty()) {
+                    amount_ = other.amount_;
+                    onChanged();
+                }
+                this.mergeUnknownFields(other.unknownFields);
+                onChanged();
+                return this;
+            }
+
+            @java.lang.Override
+            public final boolean isInitialized() {
+                return true;
+            }
+
+            @java.lang.Override
+            public Builder mergeFrom(
+                    com.google.protobuf.CodedInputStream input,
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                    throws java.io.IOException {
+                org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto parsedMessage = null;
+                try {
+                    parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+                } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                    parsedMessage = (org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto) e.getUnfinishedMessage();
+                    throw e.unwrapIOException();
+                } finally {
+                    if (parsedMessage != null) {
+                        mergeFrom(parsedMessage);
+                    }
+                }
+                return this;
+            }
+
+            /**
+             * <code>sint64 selfUserId = 1;</code>
+             */
+            public long getSelfUserId() {
+                return selfUserId_;
+            }
+
+            /**
+             * <code>sint64 selfUserId = 1;</code>
+             */
+            public Builder setSelfUserId(long value) {
+
+                selfUserId_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>sint64 selfUserId = 1;</code>
+             */
+            public Builder clearSelfUserId() {
+
+                selfUserId_ = 0L;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>sint64 oppositeUserId = 2;</code>
+             */
+            public long getOppositeUserId() {
+                return oppositeUserId_;
+            }
+
+            /**
+             * <code>sint64 oppositeUserId = 2;</code>
+             */
+            public Builder setOppositeUserId(long value) {
+
+                oppositeUserId_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>sint64 oppositeUserId = 2;</code>
+             */
+            public Builder clearOppositeUserId() {
+
+                oppositeUserId_ = 0L;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string orderTitle = 3;</code>
+             */
+            public java.lang.String getOrderTitle() {
+                java.lang.Object ref = orderTitle_;
+                if (!(ref instanceof java.lang.String)) {
+                    com.google.protobuf.ByteString bs =
+                            (com.google.protobuf.ByteString) ref;
+                    java.lang.String s = bs.toStringUtf8();
+                    orderTitle_ = s;
+                    return s;
+                } else {
+                    return (java.lang.String) ref;
+                }
+            }
+
+            /**
+             * <code>string orderTitle = 3;</code>
+             */
+            public Builder setOrderTitle(
+                    java.lang.String value) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+
+                orderTitle_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string orderTitle = 3;</code>
+             */
+            public com.google.protobuf.ByteString
+            getOrderTitleBytes() {
+                java.lang.Object ref = orderTitle_;
+                if (ref instanceof String) {
+                    com.google.protobuf.ByteString b =
+                            com.google.protobuf.ByteString.copyFromUtf8(
+                                    (java.lang.String) ref);
+                    orderTitle_ = b;
+                    return b;
+                } else {
+                    return (com.google.protobuf.ByteString) ref;
+                }
+            }
+
+            /**
+             * <code>string orderTitle = 3;</code>
+             */
+            public Builder setOrderTitleBytes(
+                    com.google.protobuf.ByteString value) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                checkByteStringIsUtf8(value);
+
+                orderTitle_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string orderTitle = 3;</code>
+             */
+            public Builder clearOrderTitle() {
+
+                orderTitle_ = getDefaultInstance().getOrderTitle();
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string merchantOrderNo = 4;</code>
+             */
+            public java.lang.String getMerchantOrderNo() {
+                java.lang.Object ref = merchantOrderNo_;
+                if (!(ref instanceof java.lang.String)) {
+                    com.google.protobuf.ByteString bs =
+                            (com.google.protobuf.ByteString) ref;
+                    java.lang.String s = bs.toStringUtf8();
+                    merchantOrderNo_ = s;
+                    return s;
+                } else {
+                    return (java.lang.String) ref;
+                }
+            }
+
+            /**
+             * <code>string merchantOrderNo = 4;</code>
+             */
+            public Builder setMerchantOrderNo(
+                    java.lang.String value) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+
+                merchantOrderNo_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string merchantOrderNo = 4;</code>
+             */
+            public com.google.protobuf.ByteString
+            getMerchantOrderNoBytes() {
+                java.lang.Object ref = merchantOrderNo_;
+                if (ref instanceof String) {
+                    com.google.protobuf.ByteString b =
+                            com.google.protobuf.ByteString.copyFromUtf8(
+                                    (java.lang.String) ref);
+                    merchantOrderNo_ = b;
+                    return b;
+                } else {
+                    return (com.google.protobuf.ByteString) ref;
+                }
+            }
+
+            /**
+             * <code>string merchantOrderNo = 4;</code>
+             */
+            public Builder setMerchantOrderNoBytes(
+                    com.google.protobuf.ByteString value) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                checkByteStringIsUtf8(value);
+
+                merchantOrderNo_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string merchantOrderNo = 4;</code>
+             */
+            public Builder clearMerchantOrderNo() {
+
+                merchantOrderNo_ = getDefaultInstance().getMerchantOrderNo();
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string amount = 5;</code>
+             */
+            public java.lang.String getAmount() {
+                java.lang.Object ref = amount_;
+                if (!(ref instanceof java.lang.String)) {
+                    com.google.protobuf.ByteString bs =
+                            (com.google.protobuf.ByteString) ref;
+                    java.lang.String s = bs.toStringUtf8();
+                    amount_ = s;
+                    return s;
+                } else {
+                    return (java.lang.String) ref;
+                }
+            }
+
+            /**
+             * <code>string amount = 5;</code>
+             */
+            public Builder setAmount(
+                    java.lang.String value) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+
+                amount_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string amount = 5;</code>
+             */
+            public com.google.protobuf.ByteString
+            getAmountBytes() {
+                java.lang.Object ref = amount_;
+                if (ref instanceof String) {
+                    com.google.protobuf.ByteString b =
+                            com.google.protobuf.ByteString.copyFromUtf8(
+                                    (java.lang.String) ref);
+                    amount_ = b;
+                    return b;
+                } else {
+                    return (com.google.protobuf.ByteString) ref;
+                }
+            }
+
+            /**
+             * <code>string amount = 5;</code>
+             */
+            public Builder setAmountBytes(
+                    com.google.protobuf.ByteString value) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                checkByteStringIsUtf8(value);
+
+                amount_ = value;
+                onChanged();
+                return this;
+            }
+
+            /**
+             * <code>string amount = 5;</code>
+             */
+            public Builder clearAmount() {
+
+                amount_ = getDefaultInstance().getAmount();
+                onChanged();
+                return this;
+            }
+
+            @java.lang.Override
+            public final Builder setUnknownFields(
+                    final com.google.protobuf.UnknownFieldSet unknownFields) {
+                return super.setUnknownFieldsProto3(unknownFields);
+            }
+
+            @java.lang.Override
+            public final Builder mergeUnknownFields(
+                    final com.google.protobuf.UnknownFieldSet unknownFields) {
+                return super.mergeUnknownFields(unknownFields);
+            }
+
+
+            // @@protoc_insertion_point(builder_scope:RedPacketTradeOrderDto)
+        }
+
+    }
+
+    // @@protoc_insertion_point(outer_class_scope)
 }

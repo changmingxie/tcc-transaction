@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ImportResource;
         scanBasePackages = {"org.mengyun.tcctransaction.sample.grpc.order", "org.mengyun.tcctransaction.sample"},
         exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
 @ImportResource(locations = "classpath*:config/spring/local/appcontext-*.xml")
-public class GrpcOrderApplication{
+public class GrpcOrderApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(GrpcOrderApplication.class, args);

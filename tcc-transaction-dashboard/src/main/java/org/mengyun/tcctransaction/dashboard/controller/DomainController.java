@@ -56,7 +56,7 @@ public class DomainController {
     @ResponseBody
     public ResponseDto delete(@RequestBody DomainStoreRequestDto requestDto) {
         ResponseDto taskDeleteResponseDto = taskService.delete(requestDto.getDomain());
-        if(!taskDeleteResponseDto.isSuccess()){
+        if (!taskDeleteResponseDto.isSuccess()) {
             return taskDeleteResponseDto;
         }
         return domainService.delete(requestDto);
@@ -65,13 +65,13 @@ public class DomainController {
     @RequestMapping("/alertTest")
     @ResponseBody
     public ResponseDto alertTest(@RequestBody DomainStoreRequestDto requestDto) {
-        AlertUtils.doDingAlert(requestDto.getDingRobotUrl(), requestDto.getPhoneNumbers(), "TCC告警:domain["+requestDto.getDomain()+"]测试");
+        AlertUtils.doDingAlert(requestDto.getDingRobotUrl(), requestDto.getPhoneNumbers(), "TCC告警:domain[" + requestDto.getDomain() + "]测试");
         return ResponseDto.returnSuccess();
     }
 
-    private ResponseDto<List<String>> rebuildAllDomainKeys(ResponseDto<List<String>> allDomainKeysResponseDto){
+    private ResponseDto<List<String>> rebuildAllDomainKeys(ResponseDto<List<String>> allDomainKeysResponseDto) {
         List<String> list = allDomainKeysResponseDto.getData();
-        if(!CollectionUtils.isEmpty(list)){// 去掉dashbaord对应的domainKey
+        if (!CollectionUtils.isEmpty(list)) {// 去掉dashbaord对应的domainKey
             list = list.stream()
                     .filter(domainKey -> !DashboardConstant.APPLICATION_NAME.equals(domainKey))
                     .collect(Collectors.toList());
@@ -79,9 +79,9 @@ public class DomainController {
         return ResponseDto.returnSuccess(list);
     }
 
-    private ResponseDto<List<DomainStoreDto>> rebuildAllDomains(ResponseDto<List<DomainStoreDto>> allDomainsResponseDto){
+    private ResponseDto<List<DomainStoreDto>> rebuildAllDomains(ResponseDto<List<DomainStoreDto>> allDomainsResponseDto) {
         List<DomainStoreDto> list = allDomainsResponseDto.getData();
-        if(!CollectionUtils.isEmpty(list)){// 去掉dashbaord对应的domainKey
+        if (!CollectionUtils.isEmpty(list)) {// 去掉dashbaord对应的domainKey
             list = list.stream()
                     .filter(domainStoreDto -> !DashboardConstant.APPLICATION_NAME.equals(domainStoreDto.getDomain()))
                     .collect(Collectors.toList());

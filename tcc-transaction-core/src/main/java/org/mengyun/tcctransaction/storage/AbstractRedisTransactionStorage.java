@@ -164,7 +164,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
                             transactionStore.getXid())),
                     params);
             return (Long) result;
-        }finally {
+        } finally {
             transactionStore.setLastUpdateTime(lastUpdateTime);
             transactionStore.setVersion(currentVersion);
         }

@@ -270,7 +270,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     public void registerDomain(DomainStore domainStore) {
 
         DomainStore record = findDomain(domainStore.getDomain());
-        if(record != null){
+        if (record != null) {
             return;
         }
 
@@ -285,7 +285,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             PreparedStatement stmt = connection.prepareStatement(builder.toString());
             stmt.setString(1, domainStore.getDomain());
             stmt.setString(2, domainStore.getPhoneNumbers());
-            stmt.setString(3, domainStore.getAlertType() == null?null:domainStore.getAlertType().name());
+            stmt.setString(3, domainStore.getAlertType() == null ? null : domainStore.getAlertType().name());
             stmt.setInt(4, domainStore.getThreshold());
             stmt.setInt(5, domainStore.getIntervalMinutes());
             stmt.setTimestamp(6, domainStore.getLastAlertTime() == null ? null : new Timestamp(domainStore.getLastAlertTime().getTime()));
@@ -394,7 +394,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             connection = this.getConnection();
 
             StringBuilder builder = new StringBuilder();
-            builder.append(SQL_SELECT_PREFIX_FOR_TCC_TRANSACTION+ getTableName() + " WHERE LAST_UPDATE_TIME < ?");
+            builder.append(SQL_SELECT_PREFIX_FOR_TCC_TRANSACTION + getTableName() + " WHERE LAST_UPDATE_TIME < ?");
             builder.append(" AND IS_DELETE = ?");
             builder.append(StringUtils.isNotEmpty(domain) ? " AND DOMAIN = ?" : "");
             builder.append(" ORDER BY TRANSACTION_ID ASC");

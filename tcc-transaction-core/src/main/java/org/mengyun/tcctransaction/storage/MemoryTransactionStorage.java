@@ -80,7 +80,7 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     @Override
     int count(String domain, Map<String, TransactionStore> shard, boolean isMarkDeleted) {
         int count = 0;
-        for(String key: shard.keySet()){
+        for (String key : shard.keySet()) {
             if (!isMarkDeleted && key.startsWith(domain)) {
                 count++;
             }
@@ -186,7 +186,7 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
 
     @Override
     public void updateDomain(DomainStore domainStore) {
-        domainStore.setVersion(domainStore.getVersion()+1);
+        domainStore.setVersion(domainStore.getVersion() + 1);
         domainDb.put(domainStore.getDomain(), domainStore);
     }
 
@@ -222,6 +222,6 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     }
 
     private String buildMarkDeletedMemoryKey(String domain, Xid xid) {
-        return new String(RedisHelper.getDeletedRedisKey(domain,xid));
+        return new String(RedisHelper.getDeletedRedisKey(domain, xid));
     }
 }

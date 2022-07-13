@@ -15,10 +15,10 @@ spring:
       dataFetchType: local
     storage:
       storageType: memory
-#      storageType: jdbc
-#      storage-type: redis
-#      storageType: redis_cluster
-#      storageType: shard_redis
+      #      storageType: jdbc
+      #      storage-type: redis
+      #      storageType: redis_cluster
+      #      storageType: shard_redis
       jdbc: # 测试ok
         password: welcome1
       redis: # 测试ok

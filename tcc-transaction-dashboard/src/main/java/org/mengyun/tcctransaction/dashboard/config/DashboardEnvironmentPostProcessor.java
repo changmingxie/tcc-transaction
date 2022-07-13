@@ -13,7 +13,6 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -65,9 +64,9 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
         }
     }
 
-    private PropertySource selectApplicationConfigPropertySource(MutablePropertySources propertySources){
+    private PropertySource selectApplicationConfigPropertySource(MutablePropertySources propertySources) {
         Optional<PropertySource<?>> propertySourceOptional = propertySources.stream().filter(propertySource -> propertySource.getName().contains("applicationConfig")).findFirst();
-        return propertySourceOptional.isPresent()?propertySourceOptional.get():null;
+        return propertySourceOptional.isPresent() ? propertySourceOptional.get() : null;
     }
 
     private void rebuildDashboardRegistryProperties(ConfigurableEnvironment environment) {

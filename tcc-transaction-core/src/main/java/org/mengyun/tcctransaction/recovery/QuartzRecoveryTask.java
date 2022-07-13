@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 public class QuartzRecoveryTask implements Job {
 
     static final Logger logger = LoggerFactory.getLogger(QuartzRecoveryTask.class.getSimpleName());
+
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         String domain = context.getJobDetail().getJobDataMap().getString(MixAll.DOMAIN);

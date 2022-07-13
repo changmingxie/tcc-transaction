@@ -142,8 +142,8 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
         transactionStoreList.forEach(transactionStore -> {
             transactionStoreDtoList.add(toTransactionStoreDto(transactionStore));
         });
-        transactionStoreDtoList.sort((t1,t2)->{
-            return -1*t1.getCreateTime().compareTo(t2.getCreateTime());
+        transactionStoreDtoList.sort((t1, t2) -> {
+            return -1 * t1.getCreateTime().compareTo(t2.getCreateTime());
         });
         return transactionStoreDtoList;
     }

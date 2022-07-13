@@ -267,7 +267,10 @@ const Page = (props) => {
           <Form.Item
             label="phoneNumbers"
             name="phoneNumbers"
-            rules={[{pattern: "[1-9][0-9]{10}(,[1-9][0-9]{10}){0,20}$", message: '手机号列表格式有误，形如：12345678901,12345678902'}]}>
+            rules={[{
+              pattern: "[1-9][0-9]{10}(,[1-9][0-9]{10}){0,20}$",
+              message: '手机号列表格式有误，形如：12345678901,12345678902'
+            }]}>
             <Input/>
           </Form.Item>
           <Form.Item
@@ -290,7 +293,7 @@ const Page = (props) => {
             label="告警阈值"
             name="threshold"
             rules={[{pattern: "[0-9]+", message: '必须为整数'}]}>
-          <Input/>
+            <Input/>
           </Form.Item>
           <Form.Item
             label="告警间隔(分钟)"
@@ -332,7 +335,10 @@ const Page = (props) => {
             label="phoneNumbers"
             initialValue={waitModifyDomain.phoneNumbers}
             name="phoneNumbers"
-            rules={[{pattern: "[1-9][0-9]{10}(,[1-9][0-9]{10}){0,20}$", message: '手机号列表格式有误，形如：12345678901,12345678902'}]}>
+            rules={[{
+              pattern: "[1-9][0-9]{10}(,[1-9][0-9]{10}){0,20}$",
+              message: '手机号列表格式有误，形如：12345678901,12345678902'
+            }]}>
             <Input/>
           </Form.Item>
           <Form.Item

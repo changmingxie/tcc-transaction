@@ -16,7 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ReusableConnectionProvider implements ConnectionProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(ReusableConnectionProvider.class.getSimpleName());
-
+    private static ComboPooledDataSource instance;
+    private static AtomicInteger inuseCounter = new AtomicInteger(0);
     private String driver;
     private String URL;
     private String user = "";
@@ -30,9 +31,6 @@ public class ReusableConnectionProvider implements ConnectionProvider {
     private int checkoutTimeout = 2000;
     private boolean validateOnCheckout = false;
     private String validationQuery;
-
-    private static ComboPooledDataSource instance;
-    private static AtomicInteger inuseCounter = new AtomicInteger(0);
 
     public ReusableConnectionProvider() {
         logger.debug("one user joined, current inuse counter:{}", inuseCounter.incrementAndGet());

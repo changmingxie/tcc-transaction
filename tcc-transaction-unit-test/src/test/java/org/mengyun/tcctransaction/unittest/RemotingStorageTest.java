@@ -150,7 +150,7 @@ public class RemotingStorageTest {
     }
 
     @TestConfiguration
-    public static class TestConfig{
+    public static class TestConfig {
 
         @Bean("springBeanFactory")
         public SpringBeanFactory getSpringBeanFactory() {

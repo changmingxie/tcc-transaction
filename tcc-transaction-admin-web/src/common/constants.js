@@ -1,4 +1,3 @@
-import React from 'react';
 import {Button, message} from 'antd';
 
 // createTime: "2022-05-18T01:09:22.000+0000"
@@ -15,25 +14,25 @@ const xidRender = (text, record) => {
     newText = String(text).substr(0, 40).concat("...");
   }
   return (
-      <div>
-        {newText}
-        <Button
-            className="button"
-            size="small"
-            type="primary"
-            style={{backgroundColor: '#03cee0', borderColor: '#03cee0'}}
-            onClick={() => {
-              let oInput = document.createElement('input')
-              oInput.value = text;
-              document.body.appendChild(oInput)
-              oInput.select() // 选择对象
-              document.execCommand("Copy") // 执行浏览器复制命令
-              message.success('复制成功');
-              oInput.remove()
-            }}>
-          复制
-        </Button>
-      </div>
+    <div>
+      {newText}
+      <Button
+        className="button"
+        size="small"
+        type="primary"
+        style={{backgroundColor: '#03cee0', borderColor: '#03cee0'}}
+        onClick={() => {
+          let oInput = document.createElement('input')
+          oInput.value = text;
+          document.body.appendChild(oInput)
+          oInput.select() // 选择对象
+          document.execCommand("Copy") // 执行浏览器复制命令
+          message.success('复制成功');
+          oInput.remove()
+        }}>
+        复制
+      </Button>
+    </div>
   );
 };
 export const columns = [

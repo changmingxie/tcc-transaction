@@ -18,8 +18,6 @@ import java.util.Map;
  **/
 public class DomainStoreMapSerializer {
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
     public static final String DOMAIN = "DOMAIN";
     public static final String PHONE_NUMBERS = "PHONE_NUMBERS";
     public static final String ALERT_TYPE = "ALERT_TYPE";
@@ -30,9 +28,7 @@ public class DomainStoreMapSerializer {
     public static final String CREATE_TIME = "CREATE_TIME";
     public static final String LAST_UPDATE_TIME = "LAST_UPDATE_TIME";
     public static final String VERSION = "VERSION";
-
-
-
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public static Map<byte[], byte[]> serialize(DomainStore domainStore) {
 
@@ -61,15 +57,15 @@ public class DomainStoreMapSerializer {
             valueBytes = ByteUtils.intToBytes((Integer) value);
         } else if (value instanceof Long) {
             valueBytes = ByteUtils.longToBytes((Long) value);
-        }  else if (value instanceof Date) {
+        } else if (value instanceof Date) {
             valueBytes = DateFormatUtils.format((Date) value, DATE_FORMAT).getBytes();
-        }   else if (value.getClass().isEnum()) {
+        } else if (value.getClass().isEnum()) {
             valueBytes = value.toString().getBytes();
         } else {
-            throw new SystemException("value class:["+value.getClass().getSimpleName()+"] not support");
+            throw new SystemException("value class:[" + value.getClass().getSimpleName() + "] not support");
         }
 
-        map.put(key.getBytes(),valueBytes);
+        map.put(key.getBytes(), valueBytes);
     }
 
     public static DomainStore deserialize(Map<byte[], byte[]> map) {

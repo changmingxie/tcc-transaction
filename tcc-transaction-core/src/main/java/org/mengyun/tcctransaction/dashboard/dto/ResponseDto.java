@@ -50,9 +50,10 @@ public class ResponseDto<T> {
         return new ResponseDto(responseCode.getCode(), responseCode.getMessage(), data);
     }
 
-    public boolean isSuccess(){
+    public boolean isSuccess() {
         return ResponseCodeEnum.SUCCESS.getCode().equals(this.code);
     }
+
     public String getCode() {
         return code;
     }

@@ -71,11 +71,11 @@ public class TccTransactionAutoConfiguration {
     }
 
     @Configuration
-    @ConditionalOnClass({TransactionContextClientInterceptor.class,GlobalClientInterceptorConfigurerAdapter.class})
-    static class GrpcClientConfiguration{
+    @ConditionalOnClass({TransactionContextClientInterceptor.class, GlobalClientInterceptorConfigurerAdapter.class})
+    static class GrpcClientConfiguration {
 
         @Bean
-        GlobalClientInterceptorConfigurerAdapter globalClientInterceptorConfigurerAdapter(){
+        GlobalClientInterceptorConfigurerAdapter globalClientInterceptorConfigurerAdapter() {
             return new GlobalClientInterceptorConfigurerAdapter() {
                 @Override
                 public void addClientInterceptors(GlobalClientInterceptorRegistry registry) {
@@ -86,8 +86,8 @@ public class TccTransactionAutoConfiguration {
     }
 
     @Configuration
-    @ConditionalOnClass({TransactionContextServerInterceptor.class,GlobalServerInterceptorConfigurerAdapter.class})
-    static class GrpcServerConfiguration{
+    @ConditionalOnClass({TransactionContextServerInterceptor.class, GlobalServerInterceptorConfigurerAdapter.class})
+    static class GrpcServerConfiguration {
 
         @Bean
         GlobalServerInterceptorConfigurerAdapter globalServerInterceptorConfigurerAdapter() {

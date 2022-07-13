@@ -20,7 +20,7 @@ public class CapitalGrpcClient {
     @GrpcClient("capital")
     private Channel capitalChannel;
 
-    public BigDecimal getCapitalAccountByUserId(long userId){
+    public BigDecimal getCapitalAccountByUserId(long userId) {
         CapitalServiceGrpc.CapitalServiceBlockingStub stub = CapitalServiceGrpc.newBlockingStub(capitalChannel);
         CapitalServiceOuterClass.CapitalAccountReply capitalAccountReply = stub.getCapitalAccountByUserId(CapitalServiceOuterClass.CapitalAccountRequest.newBuilder().setUserId(userId).build());
         return new BigDecimal(capitalAccountReply.getAmount());

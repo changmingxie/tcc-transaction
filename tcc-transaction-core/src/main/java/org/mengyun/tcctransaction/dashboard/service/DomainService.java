@@ -11,7 +11,7 @@ import java.util.List;
  * @Author huabao.fang
  * @Date 2022/5/30 10:09
  **/
-public interface DomainService extends TransactionStorageable{
+public interface DomainService extends TransactionStorageable {
 
     public ResponseDto<List<String>> getAllDomainKeys();
 

@@ -50,7 +50,7 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
 
     public NettyRemotingServer(RemotingCommandSerializer serializer, NettyServerConfig nettyServerConfig) {
         this.nettyServerConfig = nettyServerConfig;
-        this.serializer=serializer;
+        this.serializer = serializer;
         this.serverBootstrap = new ServerBootstrap();
 
         if (useEpoll()) {

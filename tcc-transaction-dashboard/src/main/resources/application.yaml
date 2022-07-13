@@ -18,50 +18,50 @@ spring:
         registry-type: direct
         direct:
           server-addresses: http://localhost:12332
-#        nacos:
-#          server-addr: localhost:8848
-#        zookeeper:
-#          connect-string: localhost:2181
-#    storage:
-#      storageType: memory
-#      storageType: rocksdb
-#      storageType: redis
-#      storageType: jdbc
-#      storage-type: redis
-#      storageType: redis_cluster
-#      storageType: shard_redis
-#      jdbc:
-#        password: welcome1
-#      redis:
-#        host: 127.0.0.1
-#        port: 6379
-#        database: 0
-#        pool-config:
-#          max-total: 100
-#          max-idle: 100
-#          min-idle: 10
-#          max-wait-millis: 300
-#      redis-cluster:
-#        max-attempts: 5
-#        so-timeout: 300
-#        connection-timeout: 1000
-#        nodes:
-#          - host: 127.0.0.1
-#            port: 6379
-#          - host: 127.0.0.1
-#            port: 6380
-#          - host: 127.0.0.1
-#            port: 6381
-#      shard-redis:
-#        nodes:
-#          - host: 127.0.0.1
-#            port: 16379
-#          - host: 127.0.0.1
-#            port: 16380
-#          - host: 127.0.0.1
-#            port: 16381
+    #        nacos:
+    #          server-addr: localhost:8848
+    #        zookeeper:
+    #          connect-string: localhost:2181
+    #    storage:
+    #      storageType: memory
+    #      storageType: rocksdb
+    #      storageType: redis
+    #      storageType: jdbc
+    #      storage-type: redis
+    #      storageType: redis_cluster
+    #      storageType: shard_redis
+    #      jdbc:
+    #        password: welcome1
+    #      redis:
+    #        host: 127.0.0.1
+    #        port: 6379
+    #        database: 0
+    #        pool-config:
+    #          max-total: 100
+    #          max-idle: 100
+    #          min-idle: 10
+    #          max-wait-millis: 300
+    #      redis-cluster:
+    #        max-attempts: 5
+    #        so-timeout: 300
+    #        connection-timeout: 1000
+    #        nodes:
+    #          - host: 127.0.0.1
+    #            port: 6379
+    #          - host: 127.0.0.1
+    #            port: 6380
+    #          - host: 127.0.0.1
+    #            port: 6381
+    #      shard-redis:
+    #        nodes:
+    #          - host: 127.0.0.1
+    #            port: 16379
+    #          - host: 127.0.0.1
+    #            port: 16380
+    #          - host: 127.0.0.1
+    #            port: 16381
     recovery:
-#      update-job-forcibly: false
+      #      update-job-forcibly: false
       recovery-enabled: false
       quartz-clustered: true
 #      quartz-data-source-url: jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true

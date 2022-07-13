@@ -7,7 +7,7 @@
     <tcc:annotation-driven client-config="clientConfig"/>
 
     <bean class="org.mengyun.tcctransaction.ClientConfig" id="clientConfig">
-        <property name="recoveryConfig" >
+        <property name="recoveryConfig">
             <bean class="org.mengyun.tcctransaction.properties.RecoveryProperties">
                 <!--服务模式关闭补偿任务-->
                 <property name="recoveryEnabled" value="false"/>
@@ -32,7 +32,6 @@
             </bean>
         </property>
     </bean>
-
 
 
 </beans>
