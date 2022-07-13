@@ -173,7 +173,7 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
 
         sb.append("MemoryStoreTransactionRepository." + action + "\r\n");
         sb.append("transactionStore xid:" + transactionStore.getXid() + "; status:" + transactionStore.getStatusId() + "\r\n");
-        sb.append("content:" + new String(transactionStore.getContent()));
+//        sb.append("content:" + new String(transactionStore.getContent()));
 
         log.debug(sb.toString());
     }
