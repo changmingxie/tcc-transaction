@@ -26,14 +26,4 @@
         <protoc.version>3.6.1</protoc.version>
         <protobuf.plugin.version>0.6.1</protobuf.plugin.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.grpc</groupId>
-                <artifactId>grpc-all</artifactId>
-                <version>${grpc.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>
