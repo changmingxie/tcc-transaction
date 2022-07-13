@@ -13,6 +13,8 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -54,13 +56,18 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         MutablePropertySources propertySources = environment.getPropertySources();
-        PropertySource<?> propertySource = propertySources.get("applicationConfig: [classpath:/application.yml]");
-        if (propertySource != null) {
+        PropertySource<?> propertySource = selectApplicationConfigPropertySource(propertySources);
+        if (propertySource != null) {// 读取application.yml文件内容来动态调整配置
             rebuildDashboardProperties(environment);
             rebuildDashboardRegistryProperties(environment);
             PropertiesPropertySource tccDashboardPropertySource = new PropertiesPropertySource("tccDashboadProperties", tccDashboadProperties);
             propertySources.addLast(tccDashboardPropertySource);
         }
+    }
+
+    private PropertySource selectApplicationConfigPropertySource(MutablePropertySources propertySources){
+        Optional<PropertySource<?>> propertySourceOptional = propertySources.stream().filter(propertySource -> propertySource.getName().contains("applicationConfig")).findFirst();
+        return propertySourceOptional.isPresent()?propertySourceOptional.get():null;
     }
 
     private void rebuildDashboardRegistryProperties(ConfigurableEnvironment environment) {
