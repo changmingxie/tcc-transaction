@@ -18,6 +18,10 @@ import java.util.Date;
  **/
 public class AlertManager {
 
+    private static final String ALERT_CONTENT_TEMPLATE = "【TCC告警】\n" +
+            "Domain: $domain$\n" +
+            "当前TCC事件堆积数：$errorCount$，超过阈值: $threshold$\n" +
+            "告警间隔时间为$intervalMinutes$分钟，请及时处理！";
     private static Logger logger = LoggerFactory.getLogger(AlertManager.class);
 
     /**
@@ -30,7 +34,7 @@ public class AlertManager {
     public static void tryAlert(String domain, int currentErrorTransactionCount, TransactionStorage transactionStorage) {
         DomainStore domainStore = ((StorageRecoverable) transactionStorage).findDomain(domain);
         if (domainStore == null) {
-            logger.warn("domainStore:{} not exist",domain);
+            logger.warn("domainStore:{} not exist", domain);
             return;
         }
 
@@ -47,11 +51,6 @@ public class AlertManager {
         }
 
     }
-
-    private static final String ALERT_CONTENT_TEMPLATE = "【TCC告警】\n" +
-            "Domain: $domain$\n" +
-            "当前TCC事件堆积数：$errorCount$，超过阈值: $threshold$\n" +
-            "告警间隔时间为$intervalMinutes$分钟，请及时处理！";
 
     private static String buildAlertContent(int currentErrorTransactionCount, DomainStore currentDomainStore) {
         return ALERT_CONTENT_TEMPLATE.replace("$domain$", currentDomainStore.getDomain())

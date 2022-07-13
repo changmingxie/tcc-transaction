@@ -18,6 +18,74 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TransactionContextSerializer implements ObjectSerializer<TransactionContext> {
 
+    private static byte[] mapSerialize(Map<String, String> map) {
+        // keySize+key+valSize+val
+        if (null == map || map.isEmpty()) {
+            return null;
+        }
+
+        int totalLength = 0;
+        int kvLength;
+        Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, String> entry = it.next();
+            if (entry.getKey() != null && entry.getValue() != null) {
+                kvLength =
+                        // keySize + Key
+                        2 + entry.getKey().getBytes(StandardCharsets.UTF_8).length
+                                // valSize + val
+                                + 4 + entry.getValue().getBytes(StandardCharsets.UTF_8).length;
+                totalLength += kvLength;
+            }
+        }
+
+        ByteBuffer content = ByteBuffer.allocate(totalLength);
+        byte[] key;
+        byte[] val;
+        it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, String> entry = it.next();
+            if (entry.getKey() != null && entry.getValue() != null) {
+                key = entry.getKey().getBytes(StandardCharsets.UTF_8);
+                val = entry.getValue().getBytes(StandardCharsets.UTF_8);
+
+                content.putShort((short) key.length);
+                content.put(key);
+
+                content.putInt(val.length);
+                content.put(val);
+            }
+        }
+
+        return content.array();
+    }
+
+    private static Map<String, String> mapDeserialize(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
+
+        Map<String, String> map = new ConcurrentHashMap<>();
+        ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+
+        short keySize;
+        byte[] keyContent;
+        int valSize;
+        byte[] valContent;
+        while (byteBuffer.hasRemaining()) {
+            keySize = byteBuffer.getShort();
+            keyContent = new byte[keySize];
+            byteBuffer.get(keyContent);
+
+            valSize = byteBuffer.getInt();
+            valContent = new byte[valSize];
+            byteBuffer.get(valContent);
+
+            map.put(new String(keyContent, StandardCharsets.UTF_8), new String(valContent, StandardCharsets.UTF_8));
+        }
+        return map;
+    }
+
     @Override
     public byte[] serialize(TransactionContext transactionContext) {
         if (transactionContext == null) {
@@ -133,73 +201,5 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
                 + 4
                 // Map<String, String> attachments
                 + 4 + attachmentsLength;
-    }
-
-    private static byte[] mapSerialize(Map<String, String> map) {
-        // keySize+key+valSize+val
-        if (null == map || map.isEmpty()) {
-            return null;
-        }
-
-        int totalLength = 0;
-        int kvLength;
-        Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, String> entry = it.next();
-            if (entry.getKey() != null && entry.getValue() != null) {
-                kvLength =
-                        // keySize + Key
-                        2 + entry.getKey().getBytes(StandardCharsets.UTF_8).length
-                                // valSize + val
-                                + 4 + entry.getValue().getBytes(StandardCharsets.UTF_8).length;
-                totalLength += kvLength;
-            }
-        }
-
-        ByteBuffer content = ByteBuffer.allocate(totalLength);
-        byte[] key;
-        byte[] val;
-        it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, String> entry = it.next();
-            if (entry.getKey() != null && entry.getValue() != null) {
-                key = entry.getKey().getBytes(StandardCharsets.UTF_8);
-                val = entry.getValue().getBytes(StandardCharsets.UTF_8);
-
-                content.putShort((short) key.length);
-                content.put(key);
-
-                content.putInt(val.length);
-                content.put(val);
-            }
-        }
-
-        return content.array();
-    }
-
-    private static Map<String, String> mapDeserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) {
-            return null;
-        }
-
-        Map<String, String> map = new ConcurrentHashMap<>();
-        ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
-
-        short keySize;
-        byte[] keyContent;
-        int valSize;
-        byte[] valContent;
-        while (byteBuffer.hasRemaining()) {
-            keySize = byteBuffer.getShort();
-            keyContent = new byte[keySize];
-            byteBuffer.get(keyContent);
-
-            valSize = byteBuffer.getInt();
-            valContent = new byte[valSize];
-            byteBuffer.get(valContent);
-
-            map.put(new String(keyContent, StandardCharsets.UTF_8), new String(valContent, StandardCharsets.UTF_8));
-        }
-        return map;
     }
 }

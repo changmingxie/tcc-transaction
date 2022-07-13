@@ -58,7 +58,7 @@ public class CapitalService extends CapitalServiceGrpc.CapitalServiceImplBase {
 
     @Transactional
     @Compensable(confirmMethod = "confirmRecord", cancelMethod = "cancelRecord")
-    public void record(CapitalTradeOrderDto tradeOrderDto){
+    public void record(CapitalTradeOrderDto tradeOrderDto) {
         try {
             Thread.sleep(1000L);
         } catch (InterruptedException e) {

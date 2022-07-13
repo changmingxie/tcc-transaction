@@ -15,12 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RecoveryScheduler {
 
-    static final Logger logger = LoggerFactory.getLogger(RecoveryScheduler.class.getSimpleName());
-
     public final static String JOB_NAME = "TCC_JOB_%s";
-
     public final static String TRIGGER_NAME = "TCC_TRIGGER_%s";
-
+    static final Logger logger = LoggerFactory.getLogger(RecoveryScheduler.class.getSimpleName());
     private RecoveryConfig recoveryConfig;
 
     private Map<String, Scheduler> schedulers = new ConcurrentHashMap<>();

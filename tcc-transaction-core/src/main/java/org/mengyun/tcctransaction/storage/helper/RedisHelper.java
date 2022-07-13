@@ -64,7 +64,7 @@ public class RedisHelper {
         return stringBuilder.toString().getBytes();
     }
 
-    public static String getDeletedKeyPreifx(String domain){
+    public static String getDeletedKeyPreifx(String domain) {
         return DELETED_KEY_PREIFX.concat(LEFT_BIG_BRACKET).concat(domain);
     }
 

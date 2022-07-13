@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {getAllTask, taskDelete, taskModifyCron, taskPause, taskResume} from '../../../common/api';
+import {getAllTask, taskModifyCron, taskPause, taskResume} from '../../../common/api';
 import {Button, Col, Form, Input, message, Modal, Popconfirm, Row, Space, Table} from 'antd';
 
 

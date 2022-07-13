@@ -104,7 +104,8 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
             transactionStore.setLastUpdateTime(new Date());
             try {
                 byte[] key = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
-                db.put(key, getSerializer().serialize(transactionStore));            }finally {
+                db.put(key, getSerializer().serialize(transactionStore));
+            } finally {
                 transactionStore.setLastUpdateTime(lastUpdateTime);
                 transactionStore.setVersion(currentVersion);
             }
@@ -329,7 +330,7 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
             iterator.seekToFirst();
             while (iterator.isValid()) {
                 String key = new String(iterator.key());
-                if(key.startsWith(RedisHelper.DOMAIN_KEY_PREIFX)){
+                if (key.startsWith(RedisHelper.DOMAIN_KEY_PREIFX)) {
                     list.add(domainStoreSerializer.deserialize(iterator.value()));
                 }
                 iterator.next();

@@ -17,7 +17,7 @@ public class QuartzDemoTask implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
-        System.out.println("executing..."+context.getScheduler().getSchedulerInstanceId());
+        System.out.println("executing..." + context.getScheduler().getSchedulerInstanceId());
 
     }
 }

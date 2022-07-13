@@ -3,7 +3,7 @@ import {message} from "antd";
 
 // create an axios instance
 const http = axios.create({
-  baseURL: process.env.REACT_APP_ENV==='test'?"http://localhost:22332":"",
+  baseURL: process.env.REACT_APP_ENV === 'test' ? "http://localhost:22332" : "",
   timeout: 20000 // request timeout
 })
 
@@ -46,7 +46,7 @@ http.interceptors.response.use(
     let businessResponse = response.data;
     if (!response.status || response.status !== 200) {
       errorMessage = RESPONSE_DEFAULT_ERROR_MESSAGE;
-    } else if(response.status === 401){
+    } else if (response.status === 401) {
       errorMessage = '请先登录';
     } else if (businessResponse.code && businessResponse.code !== 200 && businessResponse.code !== '200') {
       errorMessage = businessResponse.code + '-' + businessResponse.message || 'Error'

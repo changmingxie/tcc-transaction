@@ -3,16 +3,34 @@
        xmlns:tcc="http://www.tcctransaction.org/schema/tcc" xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.tcctransaction.org/schema/tcc http://www.tcctransaction.org/schema/tcc.xsd">
 
-    <tcc:annotation-driven/>
-    <!--<tcc:annotation-driven client-config="clientConfig"/>-->
+    <!--驱动TccClient-->
+    <tcc:annotation-driven client-config="clientConfig"/>
 
-    <!--<bean class="org.mengyun.tcctransaction.ClientConfig" id="clientConfig">-->
-    <!--    <property name="storeConfig" ref="storeProperties"/>-->
-    <!--</bean>-->
-
-    <!--<bean class="org.mengyun.tcctransaction.properties.store.StoreProperties" id="storeProperties">-->
-    <!--    <property name="domain" value="TCC:DUBBO:CAPITAL"/>-->
-    <!--    <property name="storageType" value="REDIS"/>-->
-    <!--</bean>-->
+    <bean class="org.mengyun.tcctransaction.ClientConfig" id="clientConfig">
+        <property name="recoveryConfig">
+            <bean class="org.mengyun.tcctransaction.properties.RecoveryProperties">
+                <!--服务模式关闭补偿任务-->
+                <property name="recoveryEnabled" value="false"/>
+            </bean>
+        </property>
+        <property name="storeConfig">
+            <bean class="org.mengyun.tcctransaction.properties.store.StoreProperties">
+                <property name="domain" value="TCC:DUBBO:CAPITAL"/>
+                <property name="storageType" value="REMOTING"/>
+            </bean>
+        </property>
+        <!--在storageType=REMOTING需要使用-->
+        <property name="registryConfig">
+            <bean class="org.mengyun.tcctransaction.properties.registry.ClientRegistryProperties">
+                <property name="registryType" value="direct"/>
+                <property name="direct">
+                    <bean class="org.mengyun.tcctransaction.discovery.registry.direct.DirectRegistryProperties">
+                        <!--server ip和port-->
+                        <property name="serverAddresses" value="127.0.0.1:2332"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
 
 </beans>

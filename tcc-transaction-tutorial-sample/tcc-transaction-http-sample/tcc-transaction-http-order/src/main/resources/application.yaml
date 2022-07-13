@@ -20,28 +20,28 @@ spring:
       classic_compatible: true
   tcc:
     recovery:
-#      max-retry-count: 30
-#      recover-duration: 30
-#      cron-expression: 0/15 * * * * ?
-#      fetch-page-size: 200
-#      concurrent-recovery-thread-count: 10
+      #      max-retry-count: 30
+      #      recover-duration: 30
+      #      cron-expression: 0/15 * * * * ?
+      #      fetch-page-size: 200
+      #      concurrent-recovery-thread-count: 10
       recovery-enabled: false
     storage:
       storage-type: remoting
       domain: "TCC:FEIGN:ORDER:"
-#      location: /tmp/${spring.tcc.storage.domain}
-#      serializer-type: customized
-#      transaction-serializer-class-name: org.mengyun.tcctransaction.serializer.json.JacksonTransactionSerializer
-#      max-transaction-size: 100000
-#      storage-mode: central
-#      shard-redis: # 测试ok
-#        nodes:
-#          - host: 127.0.0.1
-#            port: 16379
-#          - host: 127.0.0.1
-#            port: 16380
-#          - host: 127.0.0.1
-#            port: 16381
+    #      location: /tmp/${spring.tcc.storage.domain}
+    #      serializer-type: customized
+    #      transaction-serializer-class-name: org.mengyun.tcctransaction.serializer.json.JacksonTransactionSerializer
+    #      max-transaction-size: 100000
+    #      storage-mode: central
+    #      shard-redis: # 测试ok
+    #        nodes:
+    #          - host: 127.0.0.1
+    #            port: 16379
+    #          - host: 127.0.0.1
+    #            port: 16380
+    #          - host: 127.0.0.1
+    #            port: 16381
     registry:
       registry-type: direct
       cluster-name: default

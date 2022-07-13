@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ImportResource;
  * @date 2022/6/9 14:10
  */
 @SpringBootApplication(
-        scanBasePackages = {"org.mengyun.tcctransaction.sample.grpc.capital","org.mengyun.tcctransaction.sample"},
+        scanBasePackages = {"org.mengyun.tcctransaction.sample.grpc.capital", "org.mengyun.tcctransaction.sample"},
         exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
 @ImportResource(locations = "classpath*:config/spring/local/appcontext-*.xml")
 @EnableAspectJAutoProxy(exposeProxy = true)

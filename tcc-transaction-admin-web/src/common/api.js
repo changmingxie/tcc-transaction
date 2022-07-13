@@ -9,25 +9,25 @@ export function getAllDomains() {
 }
 
 export function domainCreate(params) {
-  return http.post("/tcc-transaction-dashboard/api/domain/create",{
+  return http.post("/tcc-transaction-dashboard/api/domain/create", {
     ...params
   });
 }
 
 export function domainModify(params) {
-  return http.post("/tcc-transaction-dashboard/api/domain/modify",{
+  return http.post("/tcc-transaction-dashboard/api/domain/modify", {
     ...params
   });
 }
 
 export function domainDelete(params) {
-  return http.post("/tcc-transaction-dashboard/api/domain/delete",{
+  return http.post("/tcc-transaction-dashboard/api/domain/delete", {
     ...params
   });
 }
 
 export function domainAlertTest(params) {
-  return http.post("/tcc-transaction-dashboard/api/domain/alertTest",{
+  return http.post("/tcc-transaction-dashboard/api/domain/alertTest", {
     ...params
   });
 }

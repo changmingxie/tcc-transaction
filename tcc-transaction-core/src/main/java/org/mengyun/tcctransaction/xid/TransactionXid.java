@@ -13,6 +13,14 @@ public class TransactionXid implements Xid, Serializable {
 
     private String xid;
 
+    public TransactionXid() {
+
+    }
+
+    public TransactionXid(String xidString) {
+        this.xid = xidString;
+    }
+
     public static TransactionXid withUniqueIdentity(Object uniqueIdentity) {
         String xid = null;
         if (uniqueIdentity == null) {
@@ -25,14 +33,6 @@ public class TransactionXid implements Xid, Serializable {
 
     public static TransactionXid withUuid() {
         return new TransactionXid(FactoryBuilder.factoryOf(UUIDGenerator.class).getInstance().generate());
-    }
-
-    public TransactionXid() {
-
-    }
-
-    public TransactionXid(String xidString) {
-        this.xid = xidString;
     }
 
     @Override

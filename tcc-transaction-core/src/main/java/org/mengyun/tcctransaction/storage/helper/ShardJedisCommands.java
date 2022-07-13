@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.storage.helper;
 
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPipeline;
 
@@ -62,7 +61,7 @@ public class ShardJedisCommands implements RedisCommands {
         Map<byte[], byte[]> valueMap = this.shardedJedis.hgetAll(oldkey);
         ShardedJedisPipeline shardedJedisPipeline = this.shardedJedis.pipelined();
         shardedJedisPipeline.del(oldkey);
-        shardedJedisPipeline.hset(newkey,valueMap);
+        shardedJedisPipeline.hset(newkey, valueMap);
         shardedJedisPipeline.syncAndReturnAll();
         return 1L;
     }

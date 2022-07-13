@@ -3,7 +3,6 @@ package org.tcctransaction.sample.multiple.tier.trade.service;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.mengyun.tcctransaction.api.Compensable;
-import org.mengyun.tcctransaction.api.EnableTcc;
 import org.springframework.stereotype.Service;
 import org.tcctransaction.sample.multiple.tier.pay.api.PayService;
 import org.tcctransaction.sample.multiple.tier.trade.order.api.OrderService;

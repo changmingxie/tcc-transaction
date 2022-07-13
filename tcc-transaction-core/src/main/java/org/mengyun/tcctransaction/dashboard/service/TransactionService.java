@@ -6,7 +6,7 @@ import org.mengyun.tcctransaction.dashboard.dto.*;
  * @Author huabao.fang
  * @Date 2022/5/30 10:08
  **/
-public interface TransactionService extends TransactionStorageable{
+public interface TransactionService extends TransactionStorageable {
 
     /**
      * 事件分页查询

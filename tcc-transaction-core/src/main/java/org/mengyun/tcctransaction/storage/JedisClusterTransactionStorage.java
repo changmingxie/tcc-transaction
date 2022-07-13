@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.storage;
 
 import org.mengyun.tcctransaction.serializer.TransactionStoreSerializer;
-import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.mengyun.tcctransaction.storage.helper.JedisClusterCommands;
 import org.mengyun.tcctransaction.storage.helper.RedisCommands;
 import org.mengyun.tcctransaction.storage.helper.ShardHolder;

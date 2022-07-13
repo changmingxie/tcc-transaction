@@ -27,9 +27,9 @@ public class UserController {
     public ResponseDto login(@RequestBody LoginDto request) {
         String token = userService.login(request.getUsername(), request.getPassword());
         JSONObject loginedResult = new JSONObject();
-        loginedResult.put("token",token);
-        loginedResult.put("username",request.getUsername());
-        loginedResult.put("dataFetchType",dataFetchType);
+        loginedResult.put("token", token);
+        loginedResult.put("username", request.getUsername());
+        loginedResult.put("dataFetchType", dataFetchType);
         return ResponseDto.returnSuccess(loginedResult);
     }
 }

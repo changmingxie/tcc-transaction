@@ -26,10 +26,11 @@ public class AccountServiceStub implements AccountService {
 
         TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
 
-        CompletableFuture future = CompletableFuture.runAsync(() ->{
+        CompletableFuture future = CompletableFuture.runAsync(() -> {
 
             TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
-            accountService.transferTo(transactionContext, accountId, amount);});
+            accountService.transferTo(transactionContext, accountId, amount);
+        });
 
         try {
             future.get();

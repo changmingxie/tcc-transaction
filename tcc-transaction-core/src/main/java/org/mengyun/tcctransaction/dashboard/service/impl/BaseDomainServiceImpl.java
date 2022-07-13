@@ -76,13 +76,13 @@ public abstract class BaseDomainServiceImpl implements DomainService {
     private List<DomainStoreDto> transferToDomainStoreDtoList(List<DomainStore> domainStoreList) {
         List<DomainStoreDto> domainStoreDtoList = new ArrayList<>(domainStoreList.size());
         domainStoreList.sort(((d1, d2) -> {//按更新时间降序
-            return -1*(d1.getLastUpdateTime().compareTo(d2.getLastUpdateTime()));
+            return -1 * (d1.getLastUpdateTime().compareTo(d2.getLastUpdateTime()));
         }));
         for (DomainStore domainStore : domainStoreList) {
             domainStoreDtoList.add(transferToDomainStoreDto(domainStore));
         }
-        domainStoreDtoList.sort((d1,d2)->{
-            return -1*d1.getCreateTime().compareTo(d2.getCreateTime());
+        domainStoreDtoList.sort((d1, d2) -> {
+            return -1 * d1.getCreateTime().compareTo(d2.getCreateTime());
         });
         return domainStoreDtoList;
     }

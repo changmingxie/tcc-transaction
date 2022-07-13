@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Button, Form, Input, Select} from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
 import {Domain} from '../../../store/actions/domain';

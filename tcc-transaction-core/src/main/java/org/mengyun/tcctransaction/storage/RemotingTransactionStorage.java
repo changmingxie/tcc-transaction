@@ -112,13 +112,13 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
         return remotingClient;
     }
 
+    public void setRemotingClient(RemotingClient remotingClient) {
+        this.remotingClient = remotingClient;
+    }
+
     @Override
     public boolean supportStorageRecoverable() {
         return false;
-    }
-
-    public void setRemotingClient(RemotingClient remotingClient) {
-        this.remotingClient = remotingClient;
     }
 
     public void setSerializer(TransactionStoreSerializer serializer) {
