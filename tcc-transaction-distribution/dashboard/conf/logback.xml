@@ -18,9 +18,7 @@
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
         <encoder>
-            <Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [${app.name}] [%thread] [%logger{50}] [%M] [%line] -
-                %msg%n
-            </Pattern>
+            <Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [${app.name}] [%thread] [%logger{50}] [%M] [%line] - %msg%n</Pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
