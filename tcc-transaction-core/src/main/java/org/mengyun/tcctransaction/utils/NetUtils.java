@@ -70,16 +70,18 @@ public class NetUtils {
 
         try {
             NetworkInterface networkInterface = findNetworkInterface();
-            Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
-            while (addresses.hasMoreElements()) {
-                Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
-                if (addressOp.isPresent()) {
-                    try {
-                        if (addressOp.get().isReachable(100)) {
-                            return addressOp.get();
+            if (networkInterface != null) {
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    Optional<InetAddress> addressOp = toValidAddress(addresses.nextElement());
+                    if (addressOp.isPresent()) {
+                        try {
+                            if (addressOp.get().isReachable(100)) {
+                                return addressOp.get();
+                            }
+                        } catch (IOException e) {
+                            // ignore
                         }
-                    } catch (IOException e) {
-                        // ignore
                     }
                 }
             }

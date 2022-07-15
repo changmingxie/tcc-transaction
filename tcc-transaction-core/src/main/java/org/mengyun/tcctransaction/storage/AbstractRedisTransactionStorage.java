@@ -188,13 +188,13 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
         for (Object data : result) {
 
-            if (data != null && data instanceof Map && ((Map<byte[], byte[]>) data).size() > 0) {
+            if (data instanceof Map && ((Map<byte[], byte[]>) data).size() > 0) {
                 list.add(TransactionStoreMapSerializer.deserialize((Map<byte[], byte[]>) data));
             } else if (data instanceof JedisMovedDataException) {
                 // ignore the data, this case may happen under redis cluster.
-                log.warn("ignore the data, this case may happen under redis cluster.", data);
+                log.warn("ignore the data, this case may happen under redis cluster.", (JedisMovedDataException) data);
             } else {
-                log.warn("get transactionStore data failed. result is: " + data == null ? "null" : data.toString());
+                log.warn("get transactionStore data failed. result is: " + (data == null ? "null" : data.toString()));
             }
         }
 
@@ -350,12 +350,12 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
                 }
                 List<Object> result = pipeline.syncAndReturnAll();
                 for (Object data : result) {
-                    if (data != null && data instanceof Map && ((Map<byte[], byte[]>) data).size() > 0) {
+                    if (data instanceof Map && ((Map<byte[], byte[]>) data).size() > 0) {
                         domainStoreList.add(DomainStoreMapSerializer.deserialize((Map<byte[], byte[]>) data));
                     } else if (data instanceof JedisMovedDataException) {
-                        log.warn("ignore the data, this case may happen under redis cluster.", data);
+                        log.warn("ignore the data, this case may happen under redis cluster.", (JedisMovedDataException) data);
                     } else {
-                        log.warn("get transactionStore data failed. result is: " + data == null ? "null" : data.toString());
+                        log.warn("get transactionStore data failed. result is: " + (data == null ? "null" : data.toString()));
                     }
                 }
             }
