@@ -64,7 +64,7 @@ spring:
       #      update-job-forcibly: false
       recovery-enabled: false
       quartz-clustered: true
-#      quartz-data-source-url: jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true
-#      quartz-data-source-driver: com.mysql.jdbc.Driver
-#      quartz-data-source-user: root
-#      quartz-data-source-password: welcome1
+      quartz-data-source-url: jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true
+      quartz-data-source-driver: com.mysql.jdbc.Driver
+      quartz-data-source-user: root
+      quartz-data-source-password: welcome1

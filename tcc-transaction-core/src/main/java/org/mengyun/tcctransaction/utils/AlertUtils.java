@@ -54,7 +54,7 @@ public class AlertUtils {
      * },
      * "at": {
      * "atMobiles": [
-     * "18221876404"
+     * "1234567890"
      * ],
      * "isAtAll": false
      * }
@@ -121,13 +121,4 @@ public class AlertUtils {
         return JSON.parseObject(result.toString());
 
     }
-
-    public static void main(String[] args) {
-        dingAlert(
-                "https://oapi.dingtalk.com/robot/send?access_token=cf7455ec0a3964c87e95961ab21462414189c9f8da121ab33f932f3eabfe8770",
-                "18221876404,18616360975",
-                "错误码测试"
-        );
-    }
-
 }

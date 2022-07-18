@@ -1,4 +1,4 @@
-# dashbaord local模式专项配置
+# dashbaord embedded模式专项配置
 server:
   servlet:
     context-path: /tcc-transaction-dashboard
@@ -14,7 +14,7 @@ spring:
     dashboard:
       connection-mode: embedded
     storage:
-      storageType: memory
+      storage-type: memory
       #      storageType: jdbc
       #      storage-type: redis
       #      storageType: redis_cluster
