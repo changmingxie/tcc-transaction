@@ -1,7 +1,10 @@
 package org.mengyun.tcctransaction.utils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.mengyun.tcctransaction.dashboard.enums.ResponseCodeEnum;
 import org.mengyun.tcctransaction.dashboard.exception.TransactionException;
 import org.slf4j.Logger;
@@ -14,6 +17,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /**
  * @Author huabao.fang
@@ -22,6 +26,8 @@ import java.nio.charset.StandardCharsets;
 public class AlertUtils {
 
     private static Logger logger = LoggerFactory.getLogger(AlertUtils.class);
+
+    private static ObjectMapper jackson = new ObjectMapper();
 
     public static boolean dingAlert(String dingRobotUrl, String phoneNumbers, String content) {
         try {
@@ -33,13 +39,13 @@ public class AlertUtils {
     }
 
     public static void doDingAlert(String dingRobotUrl, String phoneNumbers, String content) {
-        JSONObject params = buildDingRequestParams(phoneNumbers, content);
-        logger.info("ding alert request:{}", params.toJSONString());
-        JSONObject repsonse = doPost(dingRobotUrl, params);
-        logger.info("ding alert response:{}", repsonse.toJSONString());
-        Integer errcode = repsonse.getInteger("errcode");
-        String errmsg = repsonse.getString("errmsg");
-        if (errcode != null && errcode.intValue() != 0) {
+        JsonNode params = buildDingRequestParams(phoneNumbers, content);
+        logger.info("ding alert request:{}", params.toString());
+        JsonNode repsonse = doPost(dingRobotUrl, params);
+        logger.info("ding alert response:{}", repsonse.toString());
+        int errcode = repsonse.get("errcode").asInt(0);
+        String errmsg = repsonse.get("errmsg").asText();
+        if (errcode != 0) {
             logger.error("errcode:{} errmsg:{}", errcode, errmsg);
             throw new TransactionException(ResponseCodeEnum.ALERT_DING_ERROR.getCode(), errmsg);
         }
@@ -67,25 +73,27 @@ public class AlertUtils {
      *
      * @return
      */
-    private static JSONObject buildDingRequestParams(String phoneNumbers, String content) {
-        JSONObject params = new JSONObject();
+    private static JsonNode buildDingRequestParams(String phoneNumbers, String content) {
+        ObjectNode params = jackson.createObjectNode();
 
         params.put("msgtype", "text");
 
-        JSONObject textJSON = new JSONObject();
-        textJSON.put("content", content);
-        params.put("text", textJSON);
+        ObjectNode textField = jackson.createObjectNode();
+        textField.put("content", content);
+        params.set("text", textField);
 
-        JSONObject atJSON = new JSONObject();
-        atJSON.put("atMobiles", phoneNumbers.split(","));
-        atJSON.put("isAtAll", false);
-        params.put("at", atJSON);
+        ObjectNode atField = jackson.createObjectNode();
+        ArrayNode atMobilesField = jackson.createArrayNode();
+        Arrays.stream(phoneNumbers.split(",")).forEach(atMobilesField::add);
+        atField.set("atMobiles", atMobilesField);
+        atField.put("isAtAll", false);
+        params.set("at", atField);
 
         return params;
 
     }
 
-    private static JSONObject doPost(String url, JSONObject params) {
+    private static JsonNode doPost(String url, JsonNode params) {
         PrintWriter out = null;
         BufferedReader in = null;
         StringBuilder result = new StringBuilder();
@@ -96,7 +104,7 @@ public class AlertUtils {
             conn.setDoOutput(true);
             conn.setDoInput(true);
             out = new PrintWriter(conn.getOutputStream());
-            out.print(params.toJSONString());
+            out.print(params.toString());
             out.flush();
             in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
             String line;
@@ -118,16 +126,11 @@ public class AlertUtils {
                 logger.error("doPost url:{} connect close error", url);
             }
         }
-        return JSON.parseObject(result.toString());
+        try {
+            return jackson.readTree(result.toString());
+        } catch (JsonProcessingException e) {
+            throw new TransactionException(ResponseCodeEnum.ALERT_DING_ERROR.getCode(), "failed to deserialize response");
+        }
 
     }
-
-    public static void main(String[] args) {
-        dingAlert(
-                "https://oapi.dingtalk.com/robot/send?access_token=cf7455ec0a3964c87e95961ab21462414189c9f8da121ab33f932f3eabfe8770",
-                "18221876404,18616360975",
-                "错误码测试"
-        );
-    }
-
 }
