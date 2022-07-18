@@ -90,7 +90,7 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
 
         byte[] domainBytes = domain.getBytes(StandardCharsets.UTF_8);
         byte[] xidBytes = xid.getXid().getBytes(StandardCharsets.UTF_8);
-        byte domainByteLength = Integer.valueOf(domainBytes.length).byteValue();
+        byte domainByteLength = (byte) domainBytes.length;
 
         ByteBuffer byteBuffer = ByteBuffer.allocate(1 + domainBytes.length + xidBytes.length);
         byteBuffer.put(domainByteLength);

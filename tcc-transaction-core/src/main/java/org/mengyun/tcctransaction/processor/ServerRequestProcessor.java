@@ -60,7 +60,7 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
         doRegister(domain, channel);
 
         RemotingCommand remotingCommand = RemotingCommand.createServiceResponseCommand(null);
-        remotingCommand.setBody(new byte[]{Integer.valueOf(1).byteValue()});
+        remotingCommand.setBody(new byte[]{(byte) 1});
         return remotingCommand;
     }
 
@@ -109,7 +109,7 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
         }
 
         RemotingCommand remotingCommand = RemotingCommand.createServiceResponseCommand(null);
-        remotingCommand.setBody(new byte[]{Integer.valueOf(result).byteValue()});
+        remotingCommand.setBody(new byte[]{(byte) result});
         return remotingCommand;
     }
 

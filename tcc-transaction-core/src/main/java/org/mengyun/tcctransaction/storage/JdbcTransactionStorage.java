@@ -388,7 +388,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
         Connection connection = null;
         PreparedStatement stmt = null;
 
-        int currentOffset = StringUtils.isEmpty(offset) ? 0 : Integer.valueOf(offset);
+        int currentOffset = StringUtils.isEmpty(offset) ? 0 : Integer.parseInt(offset);
 
         try {
             connection = this.getConnection();
