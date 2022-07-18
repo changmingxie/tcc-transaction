@@ -25,8 +25,7 @@ public class AlertManager {
     private static Logger logger = LoggerFactory.getLogger(AlertManager.class);
 
     /**
-     * 异常事件告警
-     *
+     * 异常事件堆积告警
      * @param domain
      * @param currentErrorTransactionCount
      * @param transactionStorage

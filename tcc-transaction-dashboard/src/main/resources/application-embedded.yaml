@@ -12,7 +12,7 @@ spring:
     name: tcc-transaction-dashboard
   tcc:
     dashboard:
-      dataFetchType: local
+      connection-mode: embedded
     storage:
       storageType: memory
       #      storageType: jdbc

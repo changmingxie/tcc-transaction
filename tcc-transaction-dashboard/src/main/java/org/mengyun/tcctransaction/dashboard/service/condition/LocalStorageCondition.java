@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.dashboard.service.condition;
 
-import org.mengyun.tcctransaction.dashboard.enums.DataFetchType;
+import org.mengyun.tcctransaction.dashboard.enums.ConnectionMode;
 import org.mengyun.tcctransaction.storage.StorageType;
 import org.springframework.util.StringUtils;
 
@@ -12,6 +12,7 @@ public class LocalStorageCondition extends BaseStorageCondition {
 
     private static final StorageType[] SUPPORT_STORAGETYPES = {
             StorageType.MEMORY,
+            StorageType.ROCKSDB,
             StorageType.JDBC,
             StorageType.REDIS,
             StorageType.SHARD_REDIS,
@@ -19,11 +20,11 @@ public class LocalStorageCondition extends BaseStorageCondition {
     };
 
     @Override
-    boolean match(String dataFetchTypeVaule, String storageTypeVaule) {
+    boolean match(String connectionModeValue, String storageTypeVaule) {
 
-        if (dataFetchTypeVaule.toUpperCase().equals(DataFetchType.LOCAL.name())) {
+        if (connectionModeValue.toUpperCase().equals(ConnectionMode.EMBEDDED.name())) {
             if (StringUtils.isEmpty(storageTypeVaule)) {
-                throw new RuntimeException("storageType must not null when dataFetchType is " + DataFetchType.LOCAL.name());
+                throw new RuntimeException("storageType must not null when connectionMode is " + ConnectionMode.EMBEDDED.name());
             }
 
             boolean isSupportedStorage = false;
@@ -34,7 +35,7 @@ public class LocalStorageCondition extends BaseStorageCondition {
                 }
             }
             if (!isSupportedStorage) {
-                throw new RuntimeException("storageType:" + storageTypeVaule + " not supported, when dataFetchType is " + DataFetchType.LOCAL.name());
+                throw new RuntimeException("storageType:" + storageTypeVaule + " not supported, when connectionMode is " + ConnectionMode.EMBEDDED.name());
             }
 
             return true;

@@ -18,7 +18,7 @@ const Page = (props) => {
     userLogin(values).then(res => {
       localStorage.setItem('tcc-token', res.token);
       localStorage.setItem('username', res.username);
-      localStorage.setItem('dataFetchType', res.dataFetchType);
+      localStorage.setItem('connectionMode', res.connectionMode);
       history.push('/welcome');
       setLoginLoading(false);
     }).catch(res => {

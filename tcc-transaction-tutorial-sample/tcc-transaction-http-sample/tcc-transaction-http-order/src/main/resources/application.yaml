@@ -28,7 +28,7 @@ spring:
       recovery-enabled: false
     storage:
       storage-type: remoting
-      domain: "TCC:FEIGN:ORDER:"
+      domain: "TCC:FEIGN:ORDER"
     #      location: /tmp/${spring.tcc.storage.domain}
     #      serializer-type: customized
     #      transaction-serializer-class-name: org.mengyun.tcctransaction.serializer.json.JacksonTransactionSerializer

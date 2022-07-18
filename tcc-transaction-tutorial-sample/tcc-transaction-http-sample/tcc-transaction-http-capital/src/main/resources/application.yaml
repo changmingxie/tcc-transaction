@@ -6,7 +6,7 @@ spring:
   tcc:
     storage:
       storage-type: remoting
-      domain: "TCC:FEIGN:CAPITAL:"
+      domain: "TCC:FEIGN:CAPITAL"
     #      serializer-type: customized
     #      transaction-serializer-class-name: org.mengyun.tcctransaction.serializer.json.JacksonTransactionSerializer
     #      storage-mode: central

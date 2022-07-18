@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.dashboard.service.condition;
 
-import org.mengyun.tcctransaction.dashboard.enums.DataFetchType;
+import org.mengyun.tcctransaction.dashboard.enums.ConnectionMode;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -16,22 +16,22 @@ public abstract class BaseStorageCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
-        String dataFetchTypeVaule = context.getEnvironment().getProperty("spring.tcc.dashboard.data-fetch-type");
+        String connectionModeValue = context.getEnvironment().getProperty("spring.tcc.dashboard.connection-mode");
         String storageTypeVaule = context.getEnvironment().getProperty("spring.tcc.storage.storage-type");
 
-        if (StringUtils.isEmpty(dataFetchTypeVaule)) {
-            throw new RuntimeException("tcc.dashboard.dataFetchType is empty");
+        if (StringUtils.isEmpty(connectionModeValue)) {
+            throw new RuntimeException("tcc.dashboard.connectionMode is empty");
         }
 
-        DataFetchType dataFetchType = DataFetchType.nameOf(dataFetchTypeVaule.toUpperCase());
-        if (dataFetchType == null) {
-            throw new RuntimeException("tcc.dashboard.dataFetchType:" + dataFetchTypeVaule + " not exist");
+        ConnectionMode connectionMode = ConnectionMode.nameOf(connectionModeValue.toUpperCase());
+        if (connectionMode == null) {
+            throw new RuntimeException("tcc.dashboard.connectionMode:" + connectionModeValue + " not exist");
         }
 
-        return match(dataFetchTypeVaule, storageTypeVaule);
+        return match(connectionModeValue, storageTypeVaule);
     }
 
-    abstract boolean match(String dataFetchTypeVaule, String storageTypeVaule);
+    abstract boolean match(String connectionModeValue, String storageTypeValue);
 
 
 }

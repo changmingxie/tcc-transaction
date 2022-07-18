@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.dashboard.service.condition;
 
-import org.mengyun.tcctransaction.dashboard.enums.DataFetchType;
+import org.mengyun.tcctransaction.dashboard.enums.ConnectionMode;
 import org.springframework.util.StringUtils;
 
 /**
@@ -9,11 +9,11 @@ import org.springframework.util.StringUtils;
  **/
 public class TccServerStorageCondition extends BaseStorageCondition {
     @Override
-    boolean match(String dataFetchTypeVaule, String storageTypeVaule) {
+    boolean match(String connectionModeValue, String storageTypeVaule) {
 
-        if (dataFetchTypeVaule.toUpperCase().equals(DataFetchType.TCCSERVER.name())) {
+        if (connectionModeValue.toUpperCase().equals(ConnectionMode.SERVER.name())) {
             if (!StringUtils.isEmpty(storageTypeVaule)) {
-                throw new RuntimeException("storageType must null, when dataFetchType is " + DataFetchType.TCCSERVER.name());
+                throw new RuntimeException("storageType must null, when connectionMode is " + ConnectionMode.SERVER.name());
             }
             return true;
         }

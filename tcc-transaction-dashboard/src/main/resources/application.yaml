@@ -13,8 +13,8 @@ spring:
     dashboard:
       userName: admin
       password: 123456
-      data-fetch-type: tccserver
-      registry: # data-fetch-type为server时使用
+      connection-mode: server
+      registry: # connection-mode为server时使用
         registry-type: direct
         direct:
           server-addresses: http://localhost:12332
@@ -22,25 +22,25 @@ spring:
     #          server-addr: localhost:8848
     #        zookeeper:
     #          connect-string: localhost:2181
-    #    storage:
-    #      storageType: memory
+    storage:
+#      storageType: memory
     #      storageType: rocksdb
     #      storageType: redis
     #      storageType: jdbc
-    #      storage-type: redis
+#      storage-type: redis
     #      storageType: redis_cluster
     #      storageType: shard_redis
     #      jdbc:
     #        password: welcome1
-    #      redis:
-    #        host: 127.0.0.1
-    #        port: 6379
-    #        database: 0
-    #        pool-config:
-    #          max-total: 100
-    #          max-idle: 100
-    #          min-idle: 10
-    #          max-wait-millis: 300
+      redis:
+        host: 127.0.0.1
+        port: 6379
+        database: 0
+        pool-config:
+          max-total: 100
+          max-idle: 100
+          min-idle: 10
+          max-wait-millis: 300
     #      redis-cluster:
     #        max-attempts: 5
     #        so-timeout: 300

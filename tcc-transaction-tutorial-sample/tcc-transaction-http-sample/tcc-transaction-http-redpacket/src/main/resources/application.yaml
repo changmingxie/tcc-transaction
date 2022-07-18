@@ -6,7 +6,7 @@ spring:
   tcc:
     storage:
       storage-type: remoting
-      domain: "TCC:FEIGN:REDPACKET:"
+      domain: "TCC:FEIGN:REDPACKET"
     #      location: /tmp/${spring.tcc.storage.domain}
     #      serializer-type: customized
     #      transaction-serializer-class-name: org.mengyun.tcctransaction.serializer.json.JacksonTransactionSerializer
