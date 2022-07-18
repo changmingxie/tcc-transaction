@@ -11,8 +11,8 @@ const Page = (props) => {
   const {history} = props;
   const {routeList} = props;
   const [current, setCurrent] = useState(null);
-  let dataFetchType = localStorage.getItem('dataFetchType');
-  const isTccServerMode = dataFetchType && dataFetchType.toUpperCase() === 'TCCSERVER';
+  let connectionMode = localStorage.getItem('connectionMode');
+  const isServerMode = connectionMode && connectionMode.toUpperCase() === 'SERVER';
   const onClick = e => {
     setCurrent(e.key);
   };
@@ -49,7 +49,7 @@ const Page = (props) => {
                 <Link to="/transaction">事件管理</Link>
               </Menu.Item>
               {
-                isTccServerMode ?
+                isServerMode ?
                   <Menu.Item key='task'>
                     <Link to="/task">任务管理</Link>
                   </Menu.Item>

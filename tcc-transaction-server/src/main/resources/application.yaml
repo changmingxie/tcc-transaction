@@ -8,17 +8,6 @@ logging:
 spring:
   application:
     name: tcc-transaction-server
-  cloud:
-    #默认不使用注册中心
-    #使用nacos为注册中心
-    nacos:
-      discovery:
-        enabled: false
-        server-addr: 127.0.0.1:8848
-    #使用zookeeper为注册中心
-    zookeeper:
-      enabled: false
-      connect-string: localhost:2181
   tcc:
     #    request-process-thread-queue-capacity: 1024
     storage:
@@ -59,18 +48,17 @@ spring:
       #      recovery-enabled: true
       #      update-job-forcibly: false
       quartz-clustered: true
-    #      quartz-data-source-url: jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true
-    #      quartz-data-source-driver: com.mysql.jdbc.Driver
-    #      quartz-data-source-user: root
-    #      quartz-data-source-password: welcome1
+      quartz-data-source-url: jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true
+      quartz-data-source-driver: com.mysql.jdbc.Driver
+      quartz-data-source-user: root
+      quartz-data-source-password: welcome1
     registry:
-      registry-address: 127.0.0.1:2332
-#      registry-type: direct
-#      cluster-name: default
+      registry-type: direct
+      cluster-name: default
 #      zookeeper:
 #        connect-string: 127.0.0.1:2181
 #        max-retries: 4
 #      nacos:
 #        server-addr: 127.0.0.1:8848
-#    remoting:
-#      listen-port: 2332
+    remoting:
+      listen-port: 2332

@@ -21,8 +21,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Value("${spring.tcc.dashboard.data-fetch-type:local}")
-    private String dataFetchType;
+    @Value("${spring.tcc.dashboard.connection-mode:embedded}")
+    private String connectionMode;
 
     @PostMapping("/login")
     @ResponseBody
@@ -31,7 +31,7 @@ public class UserController {
         Map<String,Object> loginedResult = new HashMap<>();
         loginedResult.put("token", token);
         loginedResult.put("username", request.getUsername());
-        loginedResult.put("dataFetchType", dataFetchType);
+        loginedResult.put("connectionMode", connectionMode);
         return ResponseDto.returnSuccess(loginedResult);
     }
 }

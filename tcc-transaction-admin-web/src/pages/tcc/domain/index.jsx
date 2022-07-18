@@ -265,7 +265,7 @@ const Page = (props) => {
             <Input/>
           </Form.Item>
           <Form.Item
-            label="phoneNumbers"
+            label="手机号列表"
             name="phoneNumbers"
             rules={[{
               pattern: "[1-9][0-9]{10}(,[1-9][0-9]{10}){0,20}$",
@@ -332,7 +332,7 @@ const Page = (props) => {
             <Input disabled/>
           </Form.Item>
           <Form.Item
-            label="phoneNumbers"
+            label="手机号列表"
             initialValue={waitModifyDomain.phoneNumbers}
             name="phoneNumbers"
             rules={[{

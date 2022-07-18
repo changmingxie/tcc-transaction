@@ -1,6 +1,6 @@
 package org.mengyun.tcctransaction.dashboard.config;
 
-import org.mengyun.tcctransaction.dashboard.enums.DataFetchType;
+import org.mengyun.tcctransaction.dashboard.enums.ConnectionMode;
 
 /**
  * @Author huabao.fang
@@ -9,7 +9,7 @@ import org.mengyun.tcctransaction.dashboard.enums.DataFetchType;
 public class DashboardProperties {
     private String userName;
     private String password;
-    private DataFetchType dataFetchType;
+    private ConnectionMode connectionMode;
 
     public String getUserName() {
         return userName;
@@ -27,11 +27,11 @@ public class DashboardProperties {
         this.password = password;
     }
 
-    public DataFetchType getDataFetchType() {
-        return dataFetchType;
+    public ConnectionMode getConnectionMode() {
+        return connectionMode;
     }
 
-    public void setDataFetchType(DataFetchType dataFetchType) {
-        this.dataFetchType = dataFetchType;
+    public void setConnectionMode(ConnectionMode connectionMode) {
+        this.connectionMode = connectionMode;
     }
 }

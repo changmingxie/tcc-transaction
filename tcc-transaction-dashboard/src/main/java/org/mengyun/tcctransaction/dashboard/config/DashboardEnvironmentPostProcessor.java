@@ -1,7 +1,7 @@
 package org.mengyun.tcctransaction.dashboard.config;
 
 import org.mengyun.tcctransaction.dashboard.constants.DashboardConstant;
-import org.mengyun.tcctransaction.dashboard.enums.DataFetchType;
+import org.mengyun.tcctransaction.dashboard.enums.ConnectionMode;
 import org.mengyun.tcctransaction.discovery.registry.RegistryType;
 import org.mengyun.tcctransaction.utils.StringUtils;
 import org.slf4j.Logger;
@@ -31,11 +31,7 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
         put("spring.tcc.recovery.quartz-clustered", "true");
         put("spring.tcc.storage.domain", DashboardConstant.APPLICATION_NAME);
 
-        //默认为本地模式，且存储类型为memory
-//        put("spring.tcc.dashboard.data-fetch-type","local");
-//        put("spring.tcc.storage.storage-type","memory");
-
-        // data-fetch-type为tccserver:
+        // connection-mode为server:
         put("spring.tcc.dashboard.registry.registry-type", "direct");
         put("spring.tcc.dashboard.registry.direct.server-addresses", "http://localhost:9998");
         put("spring.tcc.dashboard.registry.nacos.server-addr", "localhost:8848");
@@ -70,8 +66,8 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
     }
 
     private void rebuildDashboardRegistryProperties(ConfigurableEnvironment environment) {
-        String dataFetchType = environment.getProperty("spring.tcc.dashboard.data-fetch-type");
-        if (StringUtils.isNotEmpty(dataFetchType) && DataFetchType.TCCSERVER.name().equals(dataFetchType.toUpperCase())) {
+        String connectionMode = environment.getProperty("spring.tcc.dashboard.connection-mode");
+        if (StringUtils.isNotEmpty(connectionMode) && ConnectionMode.SERVER.name().equals(connectionMode.toUpperCase())) {
             String registryType = tccDashboadProperties.getProperty("spring.tcc.dashboard.registry.registry-type");
             if (RegistryType.direct.name().equals(registryType)) {
                 tccDashboadProperties.put("spring.cloud.nacos.discovery.enabled", "false");

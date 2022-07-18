@@ -14,7 +14,7 @@ spring:
     dashboard:
       userName: admin
       password: 123456
-      data-fetch-type: tccserver
+      connection-mode: server
       registry:
         registry-type: direct  # 切换tcc-server注册中心
         direct:
