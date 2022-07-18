@@ -8,17 +8,6 @@ logging:
 spring:
   application:
     name: tcc-transaction-server
-  cloud:
-    #默认不使用注册中心
-    #使用nacos为注册中心
-    nacos:
-      discovery:
-        enabled: false
-        server-addr: 127.0.0.1:8848
-    #使用zookeeper为注册中心
-    zookeeper:
-      enabled: false
-      connect-string: localhost:2181
   tcc:
     #    request-process-thread-queue-capacity: 1024
     storage:
