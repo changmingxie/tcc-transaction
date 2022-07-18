@@ -1,5 +1,9 @@
 package org.mengyun.tcctransaction.server.config;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.curator.framework.api.ACLProvider;
+import org.apache.zookeeper.ZooDefs;
+import org.apache.zookeeper.data.ACL;
 import org.mengyun.tcctransaction.ServerConfig;
 import org.mengyun.tcctransaction.TccServer;
 import org.mengyun.tcctransaction.discovery.registry.ServerRegistryConfig;
@@ -15,8 +19,11 @@ import org.mengyun.tcctransaction.storage.StoreConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.zookeeper.CuratorFrameworkCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties
@@ -69,5 +76,25 @@ public class AppConfig {
     @Bean
     public SpringBeanFactory springBeanFactory() {
         return new SpringBeanFactory();
+    }
+
+    @Bean
+    public CuratorFrameworkCustomizer curatorFrameworkCustomizer(@Autowired ServerRegistryConfig registryProperties) {
+        return builder -> {
+            if (StringUtils.isNotEmpty(registryProperties.getZookeeperRegistryProperties().getDigest())) {
+                builder.authorization("digest", registryProperties.getZookeeperRegistryProperties().getDigest().getBytes())
+                        .aclProvider(new ACLProvider() {
+                            @Override
+                            public List<ACL> getDefaultAcl() {
+                                return ZooDefs.Ids.CREATOR_ALL_ACL;
+                            }
+
+                            @Override
+                            public List<ACL> getAclForPath(String path) {
+                                return ZooDefs.Ids.CREATOR_ALL_ACL;
+                            }
+                        });
+            }
+        };
     }
 }

@@ -1,7 +1,8 @@
 package org.mengyun.tcctransaction.recovery;
 
 
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.mengyun.tcctransaction.alert.AlertManager;
 import org.mengyun.tcctransaction.api.TransactionStatus;
@@ -45,6 +46,8 @@ public class TransactionStoreRecovery implements Closeable {
     private ExecutorService recoveryExecutorService = null;
 
     private StorageMode storageMode = StorageMode.ALONE;
+
+    private ObjectMapper jackson = new ObjectMapper();
 
     public TransactionStoreRecovery(TransactionStorage transactionStorage, RecoveryExecutor recoveryExecutor, RecoveryConfig recoveryConfig) {
         this.transactionStorage = transactionStorage;
@@ -238,11 +241,15 @@ public class TransactionStoreRecovery implements Closeable {
                 logSync.lock();
                 try {
                     if (recoveryFailedPrintCount.get() < logMaxPrintCount) {
-                        logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d,transactionStore content:%s",
-                                transactionStore.getXid(),
-                                transactionStore.getStatusId(),
-                                transactionStore.getRetriedCount(),
-                                JSON.toJSONString(transactionStore)), throwable);
+                        try {
+                            logger.error(String.format("recover failed, txid:%s, status:%s,retried count:%d,transactionStore content:%s",
+                                    transactionStore.getXid(),
+                                    transactionStore.getStatusId(),
+                                    transactionStore.getRetriedCount(),
+                                    jackson.writeValueAsString(transactionStore)), throwable);
+                        } catch (JsonProcessingException e) {
+                            logger.error("failed to serialize transactionStore {}", transactionStore.toString(), e);
+                        }
                         recoveryFailedPrintCount.incrementAndGet();
                     } else if (recoveryFailedPrintCount.get() == logMaxPrintCount) {
                         logger.error("Too many transactionStore's recover error during one page transactions recover process , will not print errors again!");

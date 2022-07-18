@@ -1,12 +1,14 @@
 package org.mengyun.tcctransaction.dashboard.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import org.mengyun.tcctransaction.dashboard.dto.ResponseDto;
 import org.mengyun.tcctransaction.dashboard.model.LoginDto;
 import org.mengyun.tcctransaction.dashboard.security.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author huabao.fang
@@ -26,7 +28,7 @@ public class UserController {
     @ResponseBody
     public ResponseDto login(@RequestBody LoginDto request) {
         String token = userService.login(request.getUsername(), request.getPassword());
-        JSONObject loginedResult = new JSONObject();
+        Map<String,Object> loginedResult = new HashMap<>();
         loginedResult.put("token", token);
         loginedResult.put("username", request.getUsername());
         loginedResult.put("connectionMode", connectionMode);
