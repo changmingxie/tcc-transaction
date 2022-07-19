@@ -66,10 +66,11 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
     @Override
     protected int doMarkDeleted(TransactionStore transactionStore) {
-        try (RedisCommands commands = getRedisCommands(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid()))) {
-            byte[] oldRedisKey = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
+        byte[] oldRedisKey = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
+        try (RedisCommands commands = getRedisCommands(oldRedisKey)) {
             byte[] newRedisKey = RedisHelper.getDeletedRedisKey(transactionStore.getDomain(), transactionStore.getXid());
             Long result = commands.renamenx(oldRedisKey, newRedisKey);
+            commands.expire(newRedisKey, RedisHelper.DELETED_KEY_KEEP_TIME);
             return result.intValue();
         } catch (Exception e) {
             throw new TransactionIOException(e);
@@ -206,7 +207,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
         Page<byte[]> page = new Page<>();
 
-        String scanPattern = isMarkDeleted ? RedisHelper.DELETED_KEY_PREIFX + "{" + domain + "*" : domain + "*";
+        String scanPattern = isMarkDeleted ? RedisHelper.getDeletedKeyPrefix(domain) + "*" : RedisHelper.getKeyPrefix(domain) + "*";
 
         ScanParams scanParams = RedisHelper.buildDefaultScanParams(scanPattern, maxFindCount);
 
@@ -221,7 +222,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
     @Override
     public int count(String domain, Jedis shard, boolean isMarkDeleted) {
-        String scanPattern = isMarkDeleted ? RedisHelper.DELETED_KEY_PREIFX + "{" + domain + "*" : domain + "*";
+        String scanPattern = isMarkDeleted ? RedisHelper.getDeletedKeyPrefix(domain) + "*" : RedisHelper.getKeyPrefix(domain) + "*";
         int count = 0;
         String cursor = RedisHelper.REDIS_SCAN_INIT_CURSOR;
         ScanParams scanParams = RedisHelper.scanArgs(scanPattern, RedisHelper.SCAN_MIDDLE_COUNT);
@@ -327,7 +328,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
     @Override
     public List<DomainStore> getAllDomains() {
 
-        String scanPattern = RedisHelper.DOMAIN_KEY_PREIFX + "*";
+        String scanPattern = RedisHelper.DOMAIN_KEY_PREFIX + "*";
         String cursor = RedisHelper.REDIS_SCAN_INIT_CURSOR;
         ScanParams scanParams = RedisHelper.scanArgs(scanPattern, 1000);
 

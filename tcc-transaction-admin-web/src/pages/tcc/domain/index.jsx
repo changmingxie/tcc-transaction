@@ -359,14 +359,14 @@ const Page = (props) => {
           </Form.Item>
           <Form.Item
             label="告警阈值"
-            initialValue={waitModifyDomain.threshold}
+            initialValue={String(waitModifyDomain.threshold)}
             name="threshold"
             rules={[{pattern: "[0-9]+", message: '必须为整数'}]}>
             <Input/>
           </Form.Item>
           <Form.Item
             label="告警间隔(分钟)"
-            initialValue={waitModifyDomain.intervalMinutes}
+            initialValue={String(waitModifyDomain.intervalMinutes)}
             name="intervalMinutes"
             rules={[{pattern: "[0-9]+", message: '必须为整数'}]}>
             <Input/>

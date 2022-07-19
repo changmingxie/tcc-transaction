@@ -181,7 +181,7 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
                     page.getData().add(iterator.key());
                     count++;
                 }
-                if (isMarkDeleted && key.startsWith(RedisHelper.getDeletedKeyPreifx(domain))) {
+                if (isMarkDeleted && key.startsWith(RedisHelper.getDeletedKeyPrefix(domain))) {
                     page.getData().add(iterator.key());
                     count++;
                 }
@@ -208,7 +208,7 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
                 if (!isMarkDeleted && key.startsWith(domain)) {
                     count++;
                 }
-                if (isMarkDeleted && key.startsWith(RedisHelper.getDeletedKeyPreifx(domain))) {
+                if (isMarkDeleted && key.startsWith(RedisHelper.getDeletedKeyPrefix(domain))) {
                     count++;
                 }
                 iterator.next();
@@ -330,7 +330,7 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
             iterator.seekToFirst();
             while (iterator.isValid()) {
                 String key = new String(iterator.key());
-                if (key.startsWith(RedisHelper.DOMAIN_KEY_PREIFX)) {
+                if (key.startsWith(RedisHelper.DOMAIN_KEY_PREFIX)) {
                     list.add(domainStoreSerializer.deserialize(iterator.value()));
                 }
                 iterator.next();

@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b890126fdc4ab1a91d32fe3a806f19ca",
+    "revision": "fd772a25436bf895261de93007121c8a",
     "url": "/tcc-transaction-dashboard/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/tcc-transaction-dashboard/static/css/2.4f57d18e.chunk.css"
   },
   {
-    "revision": "a7341de4748d3c75423f",
+    "revision": "2689c821f1436b971e2a",
     "url": "/tcc-transaction-dashboard/static/css/main.013a3909.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/tcc-transaction-dashboard/static/js/2.6cbb4a27.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "a7341de4748d3c75423f",
-    "url": "/tcc-transaction-dashboard/static/js/main.870a36f9.chunk.js"
+    "revision": "2689c821f1436b971e2a",
+    "url": "/tcc-transaction-dashboard/static/js/main.c7ac8804.chunk.js"
   },
   {
     "revision": "b32d320d12fc271a457b",

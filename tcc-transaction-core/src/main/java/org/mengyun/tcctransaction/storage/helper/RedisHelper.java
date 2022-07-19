@@ -15,8 +15,10 @@ import java.util.Map;
 public class RedisHelper {
 
     public static final String SEPARATOR = ":";
-    public static final String DELETED_KEY_PREIFX = "DELETE:";
-    public static final String DOMAIN_KEY_PREIFX = "_TCCDOMAIN:";
+    // 内置第二分割符，解决查询事件列表时Domain包含关系问题
+    public static final String SECOND_SEPARATOR = "$$:";
+    public static final String DELETED_KEY_PREFIX = "DELETE:";
+    public static final String DOMAIN_KEY_PREFIX = "_TCCDOMAIN:";
     public static final int DELETED_KEY_KEEP_TIME = 3 * 24 * 3600;
     public static final String LEFT_BIG_BRACKET = "{";
     public static final String RIGHT_BIG_BRACKET = "}";
@@ -28,22 +30,27 @@ public class RedisHelper {
 
     public static byte[] getDomainStoreRedisKey(String domain) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(DOMAIN_KEY_PREIFX);
+        stringBuilder.append(DOMAIN_KEY_PREFIX);
+        stringBuilder.append(domain);
         if (!domain.endsWith(SEPARATOR)) {
             stringBuilder.append(SEPARATOR);
         }
-        stringBuilder.append(domain);
         return stringBuilder.toString().getBytes();
     }
 
     public static byte[] getRedisKey(String keyPrefix, Xid xid) {
+        return getRedisKeyString(keyPrefix, xid).getBytes();
+    }
+
+    public static String getRedisKeyString(String keyPrefix, Xid xid) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(keyPrefix);
         if (!keyPrefix.endsWith(SEPARATOR)) {
             stringBuilder.append(SEPARATOR);
         }
+        stringBuilder.append(SECOND_SEPARATOR);
         stringBuilder.append(xid.toString());
-        return stringBuilder.toString().getBytes();
+        return stringBuilder.toString();
     }
 
     /**
@@ -53,28 +60,19 @@ public class RedisHelper {
      */
     public static byte[] getDeletedRedisKey(String keyPrefix, Xid xid) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(DELETED_KEY_PREIFX);
+        stringBuilder.append(DELETED_KEY_PREFIX);
         stringBuilder.append(LEFT_BIG_BRACKET);
-        stringBuilder.append(keyPrefix);
-        if (!keyPrefix.endsWith(SEPARATOR)) {
-            stringBuilder.append(SEPARATOR);
-        }
-        stringBuilder.append(xid.toString());
+        stringBuilder.append(getRedisKeyString(keyPrefix, xid));
         stringBuilder.append(RIGHT_BIG_BRACKET);
         return stringBuilder.toString().getBytes();
     }
 
-    public static String getDeletedKeyPreifx(String domain) {
-        return DELETED_KEY_PREIFX.concat(LEFT_BIG_BRACKET).concat(domain);
+    public static String getDeletedKeyPrefix(String domain) {
+        return DELETED_KEY_PREFIX.concat(LEFT_BIG_BRACKET).concat(domain).concat(SEPARATOR).concat(SECOND_SEPARATOR);
     }
 
-    public static byte[] getRedisKey(String keyPrefix, String globalTransactionId, String branchQualifier) {
-        return new StringBuilder().append(keyPrefix)
-                .append(globalTransactionId)
-                .append(":")
-                .append(branchQualifier)
-                .toString()
-                .getBytes();
+    public static String getKeyPrefix(String domain) {
+        return domain.concat(SEPARATOR).concat(SECOND_SEPARATOR);
     }
 
     public static <T> T execute(JedisPool jedisPool, JedisCallback<T> callback) {
