@@ -26,7 +26,7 @@ public class UserController {
 
     @PostMapping("/login")
     @ResponseBody
-    public ResponseDto login(@RequestBody LoginDto request) {
+    public ResponseDto<Map<String, Object>> login(@RequestBody LoginDto request) {
         String token = userService.login(request.getUsername(), request.getPassword());
         Map<String, Object> loginedResult = new HashMap<>();
         loginedResult.put("token", token);

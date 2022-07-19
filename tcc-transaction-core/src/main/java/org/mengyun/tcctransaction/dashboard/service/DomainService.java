@@ -13,14 +13,14 @@ import java.util.List;
  **/
 public interface DomainService extends TransactionStorageable {
 
-    public ResponseDto<List<String>> getAllDomainKeys();
+    ResponseDto<List<String>> getAllDomainKeys();
 
-    public ResponseDto<List<DomainStoreDto>> getAllDomains();
+    ResponseDto<List<DomainStoreDto>> getAllDomains();
 
-    public ResponseDto create(DomainStoreRequestDto requestDto);
+    ResponseDto<Void> create(DomainStoreRequestDto requestDto);
 
-    public ResponseDto modify(DomainStoreRequestDto requestDto);
+    ResponseDto<Void> modify(DomainStoreRequestDto requestDto);
 
-    public ResponseDto delete(DomainStoreRequestDto requestDto);
+    ResponseDto<Void> delete(DomainStoreRequestDto requestDto);
 
 }

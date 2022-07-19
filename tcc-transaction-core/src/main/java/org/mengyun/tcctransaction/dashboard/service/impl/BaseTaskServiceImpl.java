@@ -22,22 +22,22 @@ public class BaseTaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseDto pause(String domain) {
+    public ResponseDto<Void> pause(String domain) {
         throw new TransactionException(ResponseCodeEnum.TASK_OPERATE_NOT_SUPPORT);
     }
 
     @Override
-    public ResponseDto resume(String domain) {
+    public ResponseDto<Void> resume(String domain) {
         throw new TransactionException(ResponseCodeEnum.TASK_OPERATE_NOT_SUPPORT);
     }
 
     @Override
-    public ResponseDto modifyCron(ModifyCronDto requestDto) {
+    public ResponseDto<Void> modifyCron(ModifyCronDto requestDto) {
         throw new TransactionException(ResponseCodeEnum.TASK_OPERATE_NOT_SUPPORT);
     }
 
     @Override
-    public ResponseDto delete(String domain) {
+    public ResponseDto<Void> delete(String domain) {
         throw new TransactionException(ResponseCodeEnum.TASK_OPERATE_NOT_SUPPORT);
     }
 

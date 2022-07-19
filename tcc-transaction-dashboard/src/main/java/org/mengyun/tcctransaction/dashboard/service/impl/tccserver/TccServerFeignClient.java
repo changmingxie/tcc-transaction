@@ -17,23 +17,23 @@ import java.util.List;
 public interface TccServerFeignClient {
 
     @RequestMapping("/domain/allDomainKeys")
-    public ResponseDto<List<String>> allDomainKeys();
+    ResponseDto<List<String>> allDomainKeys();
 
     @RequestMapping("/domain/all")
     @ResponseBody
-    public ResponseDto<List<DomainStoreDto>> all();
+    ResponseDto<List<DomainStoreDto>> all();
 
     @RequestMapping("/domain/create")
     @ResponseBody
-    public ResponseDto createDomain(@RequestBody DomainStoreRequestDto requestDto);
+    ResponseDto<Void> createDomain(@RequestBody DomainStoreRequestDto requestDto);
 
     @RequestMapping("/domain/modify")
     @ResponseBody
-    public ResponseDto modifyDomain(@RequestBody DomainStoreRequestDto requestDto);
+    ResponseDto<Void> modifyDomain(@RequestBody DomainStoreRequestDto requestDto);
 
     @RequestMapping("/domain/delete")
     @ResponseBody
-    public ResponseDto deleteDomain(@RequestBody DomainStoreRequestDto requestDto);
+    ResponseDto<Void> deleteDomain(@RequestBody DomainStoreRequestDto requestDto);
 
 
     /**
@@ -44,30 +44,30 @@ public interface TccServerFeignClient {
      */
     @RequestMapping("/transaction/list")
     @ResponseBody
-    public ResponseDto transactionList(@RequestBody TransactionPageRequestDto requestDto);
+    ResponseDto<TransactionPageDto> transactionList(@RequestBody TransactionPageRequestDto requestDto);
 
     @RequestMapping("/transaction/confirm")
     @ResponseBody
-    public ResponseDto transactionConfirm(@RequestBody TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> transactionConfirm(@RequestBody TransactionOperateRequestDto requestDto);
 
     @RequestMapping("/transaction/cancel")
     @ResponseBody
-    public ResponseDto transactionCancel(@RequestBody TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> transactionCancel(@RequestBody TransactionOperateRequestDto requestDto);
 
     @RequestMapping("/transaction/reset")
     @ResponseBody
-    public ResponseDto transactionReset(@RequestBody TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> transactionReset(@RequestBody TransactionOperateRequestDto requestDto);
 
     @RequestMapping("/transaction/markDeleted")
     @ResponseBody
-    public ResponseDto transactionMarkDeleted(@RequestBody TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> transactionMarkDeleted(@RequestBody TransactionOperateRequestDto requestDto);
 
     @RequestMapping("/transaction/restore")
     @ResponseBody
-    public ResponseDto transactionRestore(@RequestBody TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> transactionRestore(@RequestBody TransactionOperateRequestDto requestDto);
 
     @RequestMapping("/transaction/delete")
     @ResponseBody
-    public ResponseDto transactionDelete(@RequestBody TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> transactionDelete(@RequestBody TransactionOperateRequestDto requestDto);
 
 }

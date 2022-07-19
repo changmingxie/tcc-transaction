@@ -35,7 +35,7 @@ public class DomainController {
 
     @GetMapping("/allKeys")
     @ResponseBody
-    public ResponseDto allKeys() {
+    public ResponseDto<List<String>> allKeys() {
         return rebuildAllDomainKeys(domainService.getAllDomainKeys());
     }
 
@@ -47,22 +47,22 @@ public class DomainController {
 
     @RequestMapping("/create")
     @ResponseBody
-    public ResponseDto create(@RequestBody DomainStoreRequestDto requestDto) {
+    public ResponseDto<Void> create(@RequestBody DomainStoreRequestDto requestDto) {
         return domainService.create(requestDto);
     }
 
     @RequestMapping("/modify")
     @ResponseBody
-    public ResponseDto modify(@RequestBody DomainStoreRequestDto requestDto) {
+    public ResponseDto<Void> modify(@RequestBody DomainStoreRequestDto requestDto) {
         return domainService.modify(requestDto);
     }
 
     @RequestMapping("/delete")
     @ResponseBody
-    public ResponseDto delete(@RequestBody DomainStoreRequestDto requestDto) {
+    public ResponseDto<Void> delete(@RequestBody DomainStoreRequestDto requestDto) {
         // server模式时，删除domain前先删除任务
         if (ConnectionMode.SERVER.equals(dashboardProperties.getConnectionMode())) {
-            ResponseDto taskDeleteResponseDto = taskService.delete(requestDto.getDomain());
+            ResponseDto<Void> taskDeleteResponseDto = taskService.delete(requestDto.getDomain());
             if (!taskDeleteResponseDto.isSuccess()) {
                 return taskDeleteResponseDto;
             }
@@ -72,7 +72,7 @@ public class DomainController {
 
     @RequestMapping("/alertTest")
     @ResponseBody
-    public ResponseDto alertTest(@RequestBody DomainStoreRequestDto requestDto) {
+    public ResponseDto<Void> alertTest(@RequestBody DomainStoreRequestDto requestDto) {
         AlertUtils.doDingAlert(requestDto.getDingRobotUrl(), requestDto.getPhoneNumbers(), "TCC告警:domain[" + requestDto.getDomain() + "]测试");
         return ResponseDto.returnSuccess();
     }

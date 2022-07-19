@@ -51,7 +51,7 @@ public class TccServerTaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseDto pause(String domain) {
+    public ResponseDto<Void> pause(String domain) {
         try {
             tccClient.getScheduler().getScheduler(domain).pauseJob(selectJobKey(domain));
             logger.info("domain:{} task paused", domain);
@@ -63,7 +63,7 @@ public class TccServerTaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseDto resume(String domain) {
+    public ResponseDto<Void> resume(String domain) {
         try {
             tccClient.getScheduler().getScheduler(domain).resumeJob(selectJobKey(domain));
             logger.info("domain:{} task resumed", domain);
@@ -75,7 +75,7 @@ public class TccServerTaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseDto modifyCron(ModifyCronDto requestDto) {
+    public ResponseDto<Void> modifyCron(ModifyCronDto requestDto) {
         try {
             TriggerKey triggerKey = selectTriggerKey(requestDto.getDomain());
             CronTrigger currentCronTrigger = (CronTrigger) tccClient.getScheduler().getScheduler(requestDto.getDomain()).getTrigger(triggerKey);
@@ -97,7 +97,7 @@ public class TccServerTaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseDto delete(String domain) {
+    public ResponseDto<Void> delete(String domain) {
         try {
             JobKey jobKey = selectJobKey(domain);
             tccClient.getScheduler().getScheduler(domain).deleteJob(jobKey);

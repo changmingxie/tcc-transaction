@@ -29,6 +29,7 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
      * @param requestDto
      * @return
      */
+    @Override
     public ResponseDto<TransactionPageDto> list(TransactionPageRequestDto requestDto) {
         Page<TransactionStore> page = null;
         int total = 0;
@@ -72,8 +73,8 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
 
     private Page<TransactionStore> findPage(TransactionPageRequestDto requestDto) {
         StorageRecoverable transactionStorage = (StorageRecoverable) getTransactionStorage();
-        Integer pageSize = requestDto.getPageSize() <= DEFAULT_PAGE_SIZE ? DEFAULT_PAGE_SIZE : requestDto.getPageSize();
-        Page<TransactionStore> page = null;
+        int pageSize = Math.max(requestDto.getPageSize(), DEFAULT_PAGE_SIZE);
+        Page<TransactionStore> page;
         if (requestDto.isMarkDeleted()) {
             page = transactionStorage.findAllDeletedSince(requestDto.getDomain(), new Date(), requestDto.getOffset(), pageSize);
         } else {
@@ -82,21 +83,24 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
         return page;
     }
 
-    public ResponseDto confirm(TransactionOperateRequestDto requestDto) {
+    @Override
+    public ResponseDto<Void> confirm(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
         transactionStore.setStatusId(TransactionStatus.CONFIRMING.getId());
         getTransactionStorage().update(transactionStore);
         return ResponseDto.returnSuccess();
     }
 
-    public ResponseDto cancel(TransactionOperateRequestDto requestDto) {
+    @Override
+    public ResponseDto<Void> cancel(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
         transactionStore.setStatusId(TransactionStatus.CANCELLING.getId());
         getTransactionStorage().update(transactionStore);
         return ResponseDto.returnSuccess();
     }
 
-    public ResponseDto reset(TransactionOperateRequestDto requestDto) {
+    @Override
+    public ResponseDto<Void> reset(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
         transactionStore.setRetriedCount(0);
         getTransactionStorage().update(transactionStore);
@@ -108,7 +112,8 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
      *
      * @param requestDto
      */
-    public ResponseDto markDeleted(TransactionOperateRequestDto requestDto) {
+    @Override
+    public ResponseDto<Void> markDeleted(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
         getTransactionStorage().markDeleted(transactionStore);
         return ResponseDto.returnSuccess();
@@ -119,7 +124,8 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
      *
      * @param requestDto
      */
-    public ResponseDto restore(TransactionOperateRequestDto requestDto) {
+    @Override
+    public ResponseDto<Void> restore(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findMarkDeletedByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
         getTransactionStorage().restore(transactionStore);
         return ResponseDto.returnSuccess();
@@ -130,7 +136,8 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
      *
      * @param requestDto
      */
-    public ResponseDto delete(TransactionOperateRequestDto requestDto) {
+    @Override
+    public ResponseDto<Void> delete(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
         getTransactionStorage().delete(transactionStore);
         return ResponseDto.returnSuccess();
