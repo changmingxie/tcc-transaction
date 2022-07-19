@@ -56,11 +56,11 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
                 continue;
             }
             String key = iterator.next();
-            if (!isMarkDeleted && key.startsWith(domain)) {
+            if (!isMarkDeleted && key.startsWith(RedisHelper.getKeyPrefix(domain))) {
                 page.getData().add(key);
                 count++;
             }
-            if (isMarkDeleted && key.startsWith(RedisHelper.getDeletedKeyPreifx(domain))) {
+            if (isMarkDeleted && key.startsWith(RedisHelper.getDeletedKeyPrefix(domain))) {
                 page.getData().add(key);
                 count++;
             }
@@ -81,10 +81,10 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     int count(String domain, Map<String, TransactionStore> shard, boolean isMarkDeleted) {
         int count = 0;
         for (String key : shard.keySet()) {
-            if (!isMarkDeleted && key.startsWith(domain)) {
+            if (!isMarkDeleted && key.startsWith(RedisHelper.getKeyPrefix(domain))) {
                 count++;
             }
-            if (isMarkDeleted && key.startsWith(RedisHelper.getDeletedKeyPreifx(domain))) {
+            if (isMarkDeleted && key.startsWith(RedisHelper.getDeletedKeyPrefix(domain))) {
                 count++;
             }
         }
@@ -164,7 +164,7 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
         if (isMarkDeleted) {
             return db.get(buildMarkDeletedMemoryKey(domain, xid));
         }
-        return db.get(buildMemoryKey(domain, xid));
+        return db.get(RedisHelper.getRedisKeyString(domain, xid));
     }
 
     private void trace(String action, TransactionStore transactionStore) {
@@ -206,16 +206,8 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     }
 
     private String buildMemoryKey(TransactionStore transactionStore) {
-        return buildMemoryKey(transactionStore.getDomain(), transactionStore.getXid());
+        return RedisHelper.getRedisKeyString(transactionStore.getDomain(), transactionStore.getXid());
     }
-
-    private String buildMemoryKey(String domain, Xid xid) {
-        if (domain.endsWith(RedisHelper.SEPARATOR)) {
-            return domain + xid.toString();
-        }
-        return domain + RedisHelper.SEPARATOR + xid.toString();
-    }
-
 
     private String buildMarkDeletedMemoryKey(TransactionStore transactionStore) {
         return buildMarkDeletedMemoryKey(transactionStore.getDomain(), transactionStore.getXid());

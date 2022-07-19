@@ -31,12 +31,6 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
         put("spring.tcc.recovery.quartz-clustered", "true");
         put("spring.tcc.storage.domain", DashboardConstant.APPLICATION_NAME);
 
-        // connection-mode为server:
-        put("spring.tcc.dashboard.registry.registry-type", "direct");
-        put("spring.tcc.dashboard.registry.direct.server-addresses", "http://localhost:9998");
-        put("spring.tcc.dashboard.registry.nacos.server-addr", "localhost:8848");
-        put("spring.tcc.dashboard.registry.zookeeper.connect-string", "localhost:2181");
-
         // freemarker
         put("spring.resources.chain.cache", "false");
         put("spring.resources.static-locations", "classpath:templates/");
@@ -68,26 +62,26 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
     private void rebuildDashboardRegistryProperties(ConfigurableEnvironment environment) {
         String connectionMode = environment.getProperty("spring.tcc.dashboard.connection-mode");
         if (StringUtils.isNotEmpty(connectionMode) && ConnectionMode.SERVER.name().equals(connectionMode.toUpperCase())) {
-            String registryType = tccDashboadProperties.getProperty("spring.tcc.dashboard.registry.registry-type");
+            String registryType = environment.getProperty("spring.tcc.dashboard.registry.registry-type");
             if (RegistryType.direct.name().equals(registryType)) {
-                tccDashboadProperties.put("spring.cloud.nacos.discovery.enabled", "false");
-                tccDashboadProperties.put("spring.cloud.zookeeper.enabled", "false");
+                putIntoTccDashboadProperties("spring.cloud.nacos.discovery.enabled", "false");
+                putIntoTccDashboadProperties("spring.cloud.zookeeper.enabled", "false");
 
-                tccDashboadProperties.put("spring.cloud.discovery.client.simple.instances.tcc-transaction-server[0].uri",
-                        tccDashboadProperties.getProperty("spring.tcc.dashboard.registry.direct.server-addresses"));
-                tccDashboadProperties.put("spring.cloud.loadbalancer.ribbon.enabled", "false");
+                putIntoTccDashboadProperties("spring.cloud.discovery.client.simple.instances.tcc-transaction-server[0].uri",
+                        environment.getProperty("spring.tcc.dashboard.registry.direct.server-addresses"));
+                putIntoTccDashboadProperties("spring.cloud.loadbalancer.ribbon.enabled", "false");
             } else if (RegistryType.zookeeper.name().equals(registryType)) {
-                tccDashboadProperties.put("spring.cloud.nacos.discovery.enabled", "false");
-                tccDashboadProperties.put("spring.cloud.zookeeper.enabled", "true");
+                putIntoTccDashboadProperties("spring.cloud.nacos.discovery.enabled", "false");
+                putIntoTccDashboadProperties("spring.cloud.zookeeper.enabled", "true");
 
-                tccDashboadProperties.put("spring.cloud.zookeeper.connect-string",
-                        tccDashboadProperties.getProperty("spring.tcc.dashboard.registry.zookeeper.connect-string"));
+                putIntoTccDashboadProperties("spring.cloud.zookeeper.connect-string", environment.getProperty("spring.tcc.dashboard.registry.zookeeper.connect-string"));
             } else if (RegistryType.nacos.name().equals(registryType)) {
-                tccDashboadProperties.put("spring.cloud.nacos.discovery.enabled", "true");
-                tccDashboadProperties.put("spring.cloud.zookeeper.enabled", "false");
+                putIntoTccDashboadProperties("spring.cloud.nacos.discovery.enabled", "true");
+                putIntoTccDashboadProperties("spring.cloud.zookeeper.enabled", "false");
 
-                tccDashboadProperties.put("spring.cloud.nacos.discovery.server-addr",
-                        tccDashboadProperties.getProperty("spring.tcc.dashboard.registry.nacos.server-addr"));
+                putIntoTccDashboadProperties("spring.cloud.nacos.discovery.server-addr", environment.getProperty("spring.tcc.dashboard.registry.nacos.server-addr"));
+                putIntoTccDashboadProperties("spring.cloud.nacos.discovery.username", environment.getProperty("spring.tcc.dashboard.registry.nacos.username"));
+                putIntoTccDashboadProperties("spring.cloud.nacos.discovery.password", environment.getProperty("spring.tcc.dashboard.registry.nacos.password"));
 
             } else {
                 throw new IllegalArgumentException("illegal registry type for " + registryType);
@@ -107,5 +101,13 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
                 tccDashboadProperties.put(key, value);
             }
         });
+    }
+
+    private void putIntoTccDashboadProperties(String key, String value) {
+        if (StringUtils.isBlank(value)) {
+            return;
+        }
+        this.tccDashboadProperties.put(key, value);
+
     }
 }

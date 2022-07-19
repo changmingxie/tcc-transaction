@@ -1,14 +1,12 @@
 package org.mengyun.tcctransaction.dashboard.security;
 
+import org.mengyun.tcctransaction.dashboard.config.DashboardProperties;
 import org.mengyun.tcctransaction.dashboard.constants.DashboardConstant;
 import org.mengyun.tcctransaction.dashboard.enums.ResponseCodeEnum;
 import org.mengyun.tcctransaction.dashboard.exception.TransactionException;
 import org.mengyun.tcctransaction.dashboard.model.SystemUser;
 import org.mengyun.tcctransaction.dashboard.utils.JwtUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,13 +28,8 @@ import java.util.Map;
 @Service
 public class UserService implements UserDetailsService {
 
-    private Logger logger = LoggerFactory.getLogger(UserService.class);
-
-    @Value("${tcc.dashboard.login.userName:admin}")
-    private String loginUserName;
-
-    @Value("${tcc.dashboard.login.password:123456}")
-    private String loginPassword;
+    @Autowired
+    private DashboardProperties dashboardProperties;
 
     private Map<String, SystemUser> sysUserContainer = new HashMap<>();
 
@@ -48,7 +41,7 @@ public class UserService implements UserDetailsService {
     @PostConstruct
     public void init() {
         //初始化用户列表
-        sysUserContainer.put(loginUserName, new SystemUser(loginUserName, passwordEncoder.encode(loginPassword)));
+        sysUserContainer.put(dashboardProperties.getUserName(), new SystemUser(dashboardProperties.getUserName(), passwordEncoder.encode(dashboardProperties.getPassword())));
     }
 
     public String login(String username, String password) {

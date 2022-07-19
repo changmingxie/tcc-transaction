@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.dashboard.controller;
 
+import org.mengyun.tcctransaction.dashboard.config.DashboardProperties;
 import org.mengyun.tcctransaction.dashboard.constants.DashboardConstant;
 import org.mengyun.tcctransaction.dashboard.dto.DomainStoreDto;
 import org.mengyun.tcctransaction.dashboard.dto.DomainStoreRequestDto;
@@ -10,7 +11,6 @@ import org.mengyun.tcctransaction.dashboard.service.TaskService;
 import org.mengyun.tcctransaction.utils.AlertUtils;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +30,8 @@ public class DomainController {
     @Autowired
     private TaskService taskService;
 
-    @Value("${spring.tcc.dashboard.connection-mode:embedded}")
-    private String connectionMode;
+    @Autowired
+    private DashboardProperties dashboardProperties;
 
     @GetMapping("/allKeys")
     @ResponseBody
@@ -61,7 +61,7 @@ public class DomainController {
     @ResponseBody
     public ResponseDto delete(@RequestBody DomainStoreRequestDto requestDto) {
         // server模式时，删除domain前先删除任务
-        if(ConnectionMode.SERVER.name().equals(connectionMode.toUpperCase())){
+        if (ConnectionMode.SERVER.equals(dashboardProperties.getConnectionMode())) {
             ResponseDto taskDeleteResponseDto = taskService.delete(requestDto.getDomain());
             if (!taskDeleteResponseDto.isSuccess()) {
                 return taskDeleteResponseDto;

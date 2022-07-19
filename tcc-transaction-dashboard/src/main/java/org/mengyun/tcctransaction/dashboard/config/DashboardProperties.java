@@ -7,8 +7,8 @@ import org.mengyun.tcctransaction.dashboard.enums.ConnectionMode;
  * @Date 2022/6/12 00:32
  **/
 public class DashboardProperties {
-    private String userName;
-    private String password;
+    private String userName = "admin";
+    private String password = "123456";
     private ConnectionMode connectionMode;
 
     public String getUserName() {
