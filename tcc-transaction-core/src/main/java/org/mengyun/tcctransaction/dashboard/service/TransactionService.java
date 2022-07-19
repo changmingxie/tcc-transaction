@@ -14,20 +14,20 @@ public interface TransactionService extends TransactionStorageable {
      * @param requestDto
      * @return
      */
-    public ResponseDto<TransactionPageDto> list(TransactionPageRequestDto requestDto);
+    ResponseDto<TransactionPageDto> list(TransactionPageRequestDto requestDto);
 
-    public ResponseDto<TransactionStoreDto> detail(TransactionDetailRequestDto requestDto);
+    ResponseDto<TransactionStoreDto> detail(TransactionDetailRequestDto requestDto);
 
-    public ResponseDto confirm(TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> confirm(TransactionOperateRequestDto requestDto);
 
-    public ResponseDto cancel(TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> cancel(TransactionOperateRequestDto requestDto);
 
-    public ResponseDto reset(TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> reset(TransactionOperateRequestDto requestDto);
 
-    public ResponseDto markDeleted(TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> markDeleted(TransactionOperateRequestDto requestDto);
 
-    public ResponseDto restore(TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> restore(TransactionOperateRequestDto requestDto);
 
-    public ResponseDto delete(TransactionOperateRequestDto requestDto);
+    ResponseDto<Void> delete(TransactionOperateRequestDto requestDto);
 
 }

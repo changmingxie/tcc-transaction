@@ -32,12 +32,14 @@ public abstract class BaseDomainServiceImpl implements DomainService {
         return ResponseDto.returnSuccess(transferToDomainStoreDtoList(getRecoverableTransactionStorage().getAllDomains()));
     }
 
-    public ResponseDto create(DomainStoreRequestDto requestDto) {
+    @Override
+    public ResponseDto<Void> create(DomainStoreRequestDto requestDto) {
         getRecoverableTransactionStorage().registerDomain(transferToNewDomainStore(requestDto, null));
         return ResponseDto.returnSuccess();
     }
 
-    public ResponseDto modify(DomainStoreRequestDto requestDto) {
+    @Override
+    public ResponseDto<Void> modify(DomainStoreRequestDto requestDto) {
         DomainStore record = getRecoverableTransactionStorage().findDomain(requestDto.getDomain());
         if (record == null) {
             throw new TransactionException(ResponseCodeEnum.DOMAIN_NOT_EXIST);
@@ -47,7 +49,7 @@ public abstract class BaseDomainServiceImpl implements DomainService {
     }
 
     @Override
-    public ResponseDto delete(DomainStoreRequestDto requestDto) {
+    public ResponseDto<Void> delete(DomainStoreRequestDto requestDto) {
         DomainStore record = getRecoverableTransactionStorage().findDomain(requestDto.getDomain());
         if (record == null) {
             throw new TransactionException(ResponseCodeEnum.DOMAIN_NOT_EXIST);

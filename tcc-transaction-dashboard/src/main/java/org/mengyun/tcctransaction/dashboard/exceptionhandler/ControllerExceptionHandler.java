@@ -22,13 +22,13 @@ public class ControllerExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(TransactionException.class)
-    public ResponseDto handleTransactionException(TransactionException e) {
+    public ResponseDto<Void> handleTransactionException(TransactionException e) {
         return ResponseDto.returnFail(e.getErrorCode(), e.getErrorMessage());
     }
 
     @ResponseBody
     @ExceptionHandler(Exception.class)
-    public ResponseDto handleException(Exception e) {
+    public ResponseDto<Void> handleException(Exception e) {
         if (e.getCause() != null && e.getCause() instanceof TransactionException) {
             TransactionException transactionException = (TransactionException) e.getCause();
             return ResponseDto.returnFail(transactionException.getErrorCode(), transactionException.getErrorMessage());

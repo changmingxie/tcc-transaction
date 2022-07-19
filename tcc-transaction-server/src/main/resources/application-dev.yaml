@@ -8,14 +8,6 @@ logging:
 spring:
   application:
     name: tcc-transaction-server
-  cloud:
-    nacos:
-      discovery:
-        enabled: false
-        server-addr: 127.0.0.1:8848
-    zookeeper:
-      enabled: false
-      connect-string: localhost:2181
   tcc:
     request-process-thread-queue-capacity: 1024
     storage:

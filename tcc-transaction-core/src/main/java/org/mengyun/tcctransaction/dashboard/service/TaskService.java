@@ -17,7 +17,7 @@ public interface TaskService {
      *
      * @return
      */
-    public ResponseDto<List<TaskDto>> all();
+    ResponseDto<List<TaskDto>> all();
 
     /**
      * 暂停任务
@@ -25,7 +25,7 @@ public interface TaskService {
      * @param domain
      * @return
      */
-    public ResponseDto pause(String domain);
+    ResponseDto<Void> pause(String domain);
 
     /**
      * 恢复任务
@@ -33,7 +33,7 @@ public interface TaskService {
      * @param domain
      * @return
      */
-    public ResponseDto resume(String domain);
+    ResponseDto<Void> resume(String domain);
 
     /**
      * 修改任务cron表达式
@@ -41,7 +41,7 @@ public interface TaskService {
      * @param requestDto
      * @return
      */
-    public ResponseDto modifyCron(ModifyCronDto requestDto);
+    ResponseDto<Void> modifyCron(ModifyCronDto requestDto);
 
     /**
      * 删除任务
@@ -49,6 +49,6 @@ public interface TaskService {
      * @param domain
      * @return
      */
-    public ResponseDto delete(String domain);
+    ResponseDto<Void> delete(String domain);
 
 }

@@ -26,28 +26,28 @@ public class ResponseDto<T> {
         this.data = data;
     }
 
-    public static ResponseDto returnSuccess() {
+    public static ResponseDto<Void> returnSuccess() {
         return returnResponse(ResponseCodeEnum.SUCCESS, null);
     }
 
-    public static ResponseDto returnSuccess(Object data) {
+    public static <T> ResponseDto<T> returnSuccess(T data) {
         return returnResponse(ResponseCodeEnum.SUCCESS, data);
     }
 
-    public static ResponseDto returnFail(ResponseCodeEnum responseCode) {
+    public static <T> ResponseDto<T> returnFail(ResponseCodeEnum responseCode) {
         return returnResponse(responseCode, null);
     }
 
-    public static ResponseDto returnFail(String code, String message) {
-        return new ResponseDto(code, message);
+    public static <T> ResponseDto<T> returnFail(String code, String message) {
+        return new ResponseDto<>(code, message);
     }
 
-    public static ResponseDto returnFail(ResponseCodeEnum responseCode, String customMessage) {
-        return new ResponseDto(responseCode.getCode(), responseCode.getResponseMessage(customMessage), null);
+    public static <T> ResponseDto<T> returnFail(ResponseCodeEnum responseCode, String customMessage) {
+        return new ResponseDto<>(responseCode.getCode(), responseCode.getResponseMessage(customMessage), null);
     }
 
-    public static ResponseDto returnResponse(ResponseCodeEnum responseCode, Object data) {
-        return new ResponseDto(responseCode.getCode(), responseCode.getMessage(), data);
+    public static <T> ResponseDto<T> returnResponse(ResponseCodeEnum responseCode, T data) {
+        return new ResponseDto<>(responseCode.getCode(), responseCode.getMessage(), data);
     }
 
     public boolean isSuccess() {

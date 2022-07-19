@@ -30,32 +30,32 @@ public class TccServerTransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public ResponseDto confirm(TransactionOperateRequestDto requestDto) {
+    public ResponseDto<Void> confirm(TransactionOperateRequestDto requestDto) {
         return tccServerFeignClient.transactionConfirm(requestDto);
     }
 
     @Override
-    public ResponseDto cancel(TransactionOperateRequestDto requestDto) {
+    public ResponseDto<Void> cancel(TransactionOperateRequestDto requestDto) {
         return tccServerFeignClient.transactionCancel(requestDto);
     }
 
     @Override
-    public ResponseDto reset(TransactionOperateRequestDto requestDto) {
+    public ResponseDto<Void> reset(TransactionOperateRequestDto requestDto) {
         return tccServerFeignClient.transactionReset(requestDto);
     }
 
     @Override
-    public ResponseDto markDeleted(TransactionOperateRequestDto requestDto) {
+    public ResponseDto<Void> markDeleted(TransactionOperateRequestDto requestDto) {
         return tccServerFeignClient.transactionMarkDeleted(requestDto);
     }
 
     @Override
-    public ResponseDto restore(TransactionOperateRequestDto requestDto) {
+    public ResponseDto<Void> restore(TransactionOperateRequestDto requestDto) {
         return tccServerFeignClient.transactionRestore(requestDto);
     }
 
     @Override
-    public ResponseDto delete(TransactionOperateRequestDto requestDto) {
+    public ResponseDto<Void> delete(TransactionOperateRequestDto requestDto) {
         return tccServerFeignClient.transactionDelete(requestDto);
     }
 

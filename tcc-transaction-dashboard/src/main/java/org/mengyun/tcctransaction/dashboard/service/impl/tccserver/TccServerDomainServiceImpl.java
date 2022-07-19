@@ -34,17 +34,17 @@ public class TccServerDomainServiceImpl implements DomainService {
     }
 
     @Override
-    public ResponseDto create(DomainStoreRequestDto requestDto) {
+    public ResponseDto<Void> create(DomainStoreRequestDto requestDto) {
         return tccServerFeignClient.createDomain(requestDto);
     }
 
     @Override
-    public ResponseDto modify(DomainStoreRequestDto requestDto) {
+    public ResponseDto<Void> modify(DomainStoreRequestDto requestDto) {
         return tccServerFeignClient.modifyDomain(requestDto);
     }
 
     @Override
-    public ResponseDto delete(DomainStoreRequestDto requestDto) {
+    public ResponseDto<Void> delete(DomainStoreRequestDto requestDto) {
         return tccServerFeignClient.deleteDomain(requestDto);
     }
 
