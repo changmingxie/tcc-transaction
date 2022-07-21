@@ -34,7 +34,22 @@
             </dependency>
             <dependency>
                 <groupId>org.mengyun</groupId>
+                <artifactId>tcc-transaction-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mengyun</groupId>
                 <artifactId>tcc-transaction-dubbo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mengyun</groupId>
+                <artifactId>tcc-transaction-http</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mengyun</groupId>
+                <artifactId>tcc-transaction-grpc</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
