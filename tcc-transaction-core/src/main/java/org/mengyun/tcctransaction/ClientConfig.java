@@ -92,5 +92,6 @@ public class ClientConfig extends AbstractConfig implements RecoveryConfig, Nett
 
     public void setClientRegistryConfig(ClientRegistryConfig clientRegistryConfig) {
         this.clientRegistryConfig = clientRegistryConfig;
+        setRegistryConfig(clientRegistryConfig);
     }
 }

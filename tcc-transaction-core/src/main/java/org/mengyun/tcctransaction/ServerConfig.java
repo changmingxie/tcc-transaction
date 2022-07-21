@@ -52,5 +52,6 @@ public class ServerConfig extends AbstractConfig implements NettyServerConfig, R
 
     public void setServerRegistryConfig(ServerRegistryConfig serverRegistryConfig) {
         this.serverRegistryConfig = serverRegistryConfig;
+        setRegistryConfig(serverRegistryConfig);
     }
 }
