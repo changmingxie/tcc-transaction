@@ -1,7 +1,7 @@
 package org.mengyun.tcctransaction.dashboard.dto;
 
 
-import org.mengyun.tcctransaction.api.Xid;
+import org.mengyun.tcctransaction.xid.TransactionXid;
 
 /**
  * @Author huabao.fang
@@ -10,8 +10,8 @@ import org.mengyun.tcctransaction.api.Xid;
 public class TransactionStoreDto {
 
     private String domain;
-    private Xid xid;
-    private Xid rootXid;
+    private TransactionXid xid;
+    private TransactionXid rootXid;
     private String rootDomain;
     private String content;
     private String createTime;
@@ -33,19 +33,19 @@ public class TransactionStoreDto {
         this.domain = domain;
     }
 
-    public Xid getXid() {
+    public TransactionXid getXid() {
         return xid;
     }
 
-    public void setXid(Xid xid) {
+    public void setXid(TransactionXid xid) {
         this.xid = xid;
     }
 
-    public Xid getRootXid() {
+    public TransactionXid getRootXid() {
         return rootXid;
     }
 
-    public void setRootXid(Xid rootXid) {
+    public void setRootXid(TransactionXid rootXid) {
         this.rootXid = rootXid;
     }
 
