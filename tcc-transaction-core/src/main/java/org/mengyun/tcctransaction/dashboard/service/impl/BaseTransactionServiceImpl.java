@@ -158,8 +158,8 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     private TransactionStoreDto toTransactionStoreDto(TransactionStore transactionStore) {
         TransactionStoreDto transactionStoreDto = new TransactionStoreDto();
         transactionStoreDto.setDomain(transactionStore.getDomain());
-        transactionStoreDto.setXid((TransactionXid)transactionStore.getXid());
-        transactionStoreDto.setRootXid((TransactionXid)transactionStore.getRootXid());
+        transactionStoreDto.setXid(transactionStore.getXid());
+        transactionStoreDto.setRootXid(transactionStore.getRootXid());
         transactionStoreDto.setRootDomain(transactionStore.getRootDomain());
         transactionStoreDto.setContent(new String(transactionStore.getContent()));
         transactionStoreDto.setCreateTime(TccDateFormatUtils.formatDate(transactionStore.getCreateTime()));
