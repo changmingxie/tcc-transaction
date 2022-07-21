@@ -183,6 +183,8 @@ public class TccServer implements TccService {
         }
         this.registryService.start();
         this.registryService.register(inetSocketAddress);
+
+        logger.info("succeeded to register with address {}", inetSocketAddress.toString());
     }
 
     public RecoveryScheduler getScheduler() {
