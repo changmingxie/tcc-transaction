@@ -1,7 +1,8 @@
 package org.mengyun.tcctransaction.dashboard.dto;
 
 
-import org.mengyun.tcctransaction.xid.TransactionXid;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.mengyun.tcctransaction.api.Xid;
 
 /**
  * @Author huabao.fang
@@ -10,8 +11,10 @@ import org.mengyun.tcctransaction.xid.TransactionXid;
 public class TransactionStoreDto {
 
     private String domain;
-    private TransactionXid xid;
-    private TransactionXid rootXid;
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+    private Xid xid;
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+    private Xid rootXid;
     private String rootDomain;
     private String content;
     private String createTime;
@@ -33,19 +36,19 @@ public class TransactionStoreDto {
         this.domain = domain;
     }
 
-    public TransactionXid getXid() {
+    public Xid getXid() {
         return xid;
     }
 
-    public void setXid(TransactionXid xid) {
+    public void setXid(Xid xid) {
         this.xid = xid;
     }
 
-    public TransactionXid getRootXid() {
+    public Xid getRootXid() {
         return rootXid;
     }
 
-    public void setRootXid(TransactionXid rootXid) {
+    public void setRootXid(Xid rootXid) {
         this.rootXid = rootXid;
     }
 
