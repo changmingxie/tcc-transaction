@@ -42,9 +42,6 @@ public class ServerEnvironmentPostProcessor implements EnvironmentPostProcessor 
 
     private void rebuildRegistryProperties(ConfigurableEnvironment environment) {
         String registryType = environment.getProperty("spring.tcc.registry.registry-type");
-        if (StringUtils.isBlank(registryType)) {
-            registryType = environment.getProperty("spring.tcc.registry.registryType");
-        }
         if (StringUtils.isBlank(registryType) || RegistryType.direct.name().equals(registryType)) {
             putIntoTccServerProperties("spring.cloud.nacos.discovery.enabled", "false");
             putIntoTccServerProperties("spring.cloud.zookeeper.enabled", "false");
