@@ -17,6 +17,7 @@
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
