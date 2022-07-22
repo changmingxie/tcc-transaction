@@ -1,9 +1,8 @@
 package org.mengyun.tcctransaction.dashboard.dto;
 
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.mengyun.tcctransaction.api.Xid;
-import org.mengyun.tcctransaction.dashboard.deserialize.XidDeserializer;
 
 /**
  * @Author huabao.fang
@@ -12,9 +11,9 @@ import org.mengyun.tcctransaction.dashboard.deserialize.XidDeserializer;
 public class TransactionStoreDto {
 
     private String domain;
-    @JsonDeserialize(using = XidDeserializer.class)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     private Xid xid;
-    @JsonDeserialize(using = XidDeserializer.class)
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     private Xid rootXid;
     private String rootDomain;
     private String content;
