@@ -41,7 +41,7 @@ public class JedisClusterCommands implements RedisCommands {
 
     @Override
     public void expire(byte[] key, int expireTime) {
-        this.expire(key, expireTime);
+        this.jedisCluster.expire(key, expireTime);
     }
 
     @Override

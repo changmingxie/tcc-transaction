@@ -68,11 +68,21 @@ public class RedisHelper {
     }
 
     public static String getDeletedKeyPrefix(String domain) {
-        return DELETED_KEY_PREFIX.concat(LEFT_BIG_BRACKET).concat(domain).concat(SEPARATOR).concat(SECOND_SEPARATOR);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(DELETED_KEY_PREFIX);
+        stringBuilder.append(LEFT_BIG_BRACKET);
+        stringBuilder.append(getKeyPrefix(domain));
+        return stringBuilder.toString();
     }
 
     public static String getKeyPrefix(String domain) {
-        return domain.concat(SEPARATOR).concat(SECOND_SEPARATOR);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(domain);
+        if (!domain.endsWith(SEPARATOR)) {
+            stringBuilder.append(SEPARATOR);
+        }
+        stringBuilder.append(SECOND_SEPARATOR);
+        return stringBuilder.toString();
     }
 
     public static <T> T execute(JedisPool jedisPool, JedisCallback<T> callback) {
