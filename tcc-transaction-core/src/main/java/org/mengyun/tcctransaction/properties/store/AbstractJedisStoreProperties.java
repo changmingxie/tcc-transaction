@@ -10,7 +10,7 @@ public abstract class AbstractJedisStoreProperties {
 
     private String password;
 
-    private int soTimeout = 300;
+    private int soTimeout = 1000;
 
     private int connectionTimeout = 1000;
 
