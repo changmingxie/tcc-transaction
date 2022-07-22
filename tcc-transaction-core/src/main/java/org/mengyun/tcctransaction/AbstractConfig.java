@@ -315,7 +315,7 @@ public class AbstractConfig implements StoreConfig, RecoveryConfig, NettyConfig,
         this.nettyConfig = nettyConfig;
     }
 
-    public void setRegistryConfig(RegistryConfig registryConfig) {
+    protected void setRegistryConfig(RegistryConfig registryConfig) {
         this.registryConfig = registryConfig;
     }
 }

@@ -1,7 +1,5 @@
 package org.mengyun.tcctransaction.interceptor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mengyun.tcctransaction.api.ParticipantStatus;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.exception.IllegalTransactionStatusException;
@@ -22,8 +20,6 @@ public class CompensableTransactionInterceptor {
     static final Logger logger = LoggerFactory.getLogger(CompensableTransactionInterceptor.class.getSimpleName());
 
     private TransactionManager transactionManager;
-
-    private ObjectMapper jackson = new ObjectMapper();
 
     public void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
@@ -110,11 +106,7 @@ public class CompensableTransactionInterceptor {
                         transactionManager.commit(asyncConfirm);
                     } catch (NoExistedTransactionException excepton) {
                         //the transaction has been commit,ignore it.
-                        try {
-                            logger.warn("no existed transaction found at CONFIRMING stage, will ignore and confirm automatically. transaction:" + jackson.writeValueAsString(transaction));
-                        } catch (JsonProcessingException e) {
-                            logger.error("failed to serialize transaction {}", e);
-                        }
+                        logger.warn("no existed transaction found at CONFIRMING stage, will ignore and confirm automatically. transaction xid:" + transaction.getXid());
                     }
                     break;
                 case CANCELLING:
@@ -142,11 +134,7 @@ public class CompensableTransactionInterceptor {
 
                     } catch (NoExistedTransactionException exception) {
                         //the transaction has been rollback,ignore it.
-                        try {
-                            logger.info("no existed transaction found at CANCELLING stage, will ignore and cancel automatically. transaction:" + jackson.writeValueAsString(transaction));
-                        } catch (JsonProcessingException e) {
-                            logger.error("failed to serialize transaction {}", e);
-                        }
+                        logger.info("no existed transaction found at CANCELLING stage, will ignore and cancel automatically. transaction xid:" + transaction.getXid());
                     }
                     break;
             }
