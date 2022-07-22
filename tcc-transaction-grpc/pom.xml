@@ -34,14 +34,17 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-protobuf</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-stub</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>
