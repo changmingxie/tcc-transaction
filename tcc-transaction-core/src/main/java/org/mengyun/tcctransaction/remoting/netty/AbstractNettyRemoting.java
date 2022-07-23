@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.remoting.netty;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.epoll.Epoll;
 import org.apache.commons.lang3.tuple.Pair;
 import org.mengyun.tcctransaction.remoting.RequestProcessor;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
@@ -83,5 +84,9 @@ public abstract class AbstractNettyRemoting {
             response.setRequestId(cmd.getRequestId());
             ctx.writeAndFlush(response);
         }
+    }
+
+    protected boolean useEpoll() {
+        return Epoll.isAvailable();
     }
 }

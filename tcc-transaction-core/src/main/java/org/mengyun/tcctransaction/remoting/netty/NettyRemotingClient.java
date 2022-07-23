@@ -2,10 +2,7 @@ package org.mengyun.tcctransaction.remoting.netty;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
-import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollChannelOption;
-import io.netty.channel.epoll.EpollMode;
-import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.epoll.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -77,23 +74,36 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
                     }
                 });
 
-        this.workEventLoopGroup = new NioEventLoopGroup(nettyClientConfig.getWorkSelectorThreadSize(),
-                new ThreadFactory() {
-                    private AtomicInteger threadIndex = new AtomicInteger(0);
+        if (useEpoll()) {
+            this.workEventLoopGroup = new EpollEventLoopGroup(nettyClientConfig.getWorkSelectorThreadSize(),
+                    new ThreadFactory() {
+                        private AtomicInteger threadIndex = new AtomicInteger(0);
 
-                    @Override
-                    public Thread newThread(Runnable r) {
-                        return new Thread(r, String.format("NettyClientSelector_%d", this.threadIndex.incrementAndGet()));
+                        @Override
+                        public Thread newThread(Runnable r) {
+                            return new Thread(r, String.format("NettyClientEpollLoopSelector_%d", this.threadIndex.incrementAndGet()));
+                        }
                     }
-                }
-        );
+            );
+        } else {
+            this.workEventLoopGroup = new NioEventLoopGroup(nettyClientConfig.getWorkSelectorThreadSize(),
+                    new ThreadFactory() {
+                        private AtomicInteger threadIndex = new AtomicInteger(0);
+
+                        @Override
+                        public Thread newThread(Runnable r) {
+                            return new Thread(r, String.format("NettyClientNioLoopSelector_%d", this.threadIndex.incrementAndGet()));
+                        }
+                    }
+            );
+        }
     }
 
     @Override
     public void start() {
 
         this.bootstrap.group(this.workEventLoopGroup)
-                .channel(Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class)
+                .channel(useEpoll() ? EpollSocketChannel.class : NioSocketChannel.class)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, Long.valueOf(nettyClientConfig.getConnectTimeoutMillis()).intValue())
