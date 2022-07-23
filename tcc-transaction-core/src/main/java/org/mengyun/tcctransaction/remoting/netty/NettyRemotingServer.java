@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.remoting.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
-import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -81,7 +80,7 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
 
                 @Override
                 public Thread newThread(Runnable r) {
-                    return new Thread(r, String.format("NettyBossNiolLoopSelector_%d", this.threadIndex.incrementAndGet()));
+                    return new Thread(r, String.format("NettyBossNioLoopSelector_%d", this.threadIndex.incrementAndGet()));
                 }
             });
 
@@ -170,10 +169,6 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
     @Override
     public void registerChannelHandlers(ChannelHandler... channelHandlers) {
         this.channelHandlers = channelHandlers;
-    }
-
-    private boolean useEpoll() {
-        return Epoll.isAvailable();
     }
 
     @ChannelHandler.Sharable

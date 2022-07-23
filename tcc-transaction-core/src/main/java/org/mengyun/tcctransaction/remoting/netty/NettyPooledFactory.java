@@ -46,7 +46,7 @@ public class NettyPooledFactory implements KeyedPooledObjectFactory<String, Chan
             if (channelFuture.isSuccess()) {
                 channel = channelFuture.channel();
             } else {
-                throw new RemotingConnectException(NetUtils.parseSocketAddress(socketAddress));
+                throw new RemotingConnectException(NetUtils.parseSocketAddress(socketAddress), channelFuture.cause());
             }
         } catch (Exception e) {
             throw new RemotingConnectException(NetUtils.parseSocketAddress(socketAddress), e);
