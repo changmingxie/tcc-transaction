@@ -15,6 +15,9 @@ public class NettyProperties implements NettyConfig {
     private int frameMaxLength = 1024 * 1024 * 2;
     private int workSelectorThreadSize = Runtime.getRuntime().availableProcessors();
 
+    private int requestProcessThreadSize = Runtime.getRuntime().availableProcessors() * 2 + 1;
+    private int requestProcessThreadQueueCapacity = 1024;
+
     @Override
     public int getWorkSelectorThreadSize() {
         return workSelectorThreadSize;
@@ -67,5 +70,23 @@ public class NettyProperties implements NettyConfig {
 
     public void setFrameMaxLength(int frameMaxLength) {
         this.frameMaxLength = frameMaxLength;
+    }
+
+    @Override
+    public int getRequestProcessThreadSize() {
+        return requestProcessThreadSize;
+    }
+
+    public void setRequestProcessThreadSize(int requestProcessThreadSize) {
+        this.requestProcessThreadSize = requestProcessThreadSize;
+    }
+
+    @Override
+    public int getRequestProcessThreadQueueCapacity() {
+        return requestProcessThreadQueueCapacity;
+    }
+
+    public void setRequestProcessThreadQueueCapacity(int requestProcessThreadQueueCapacity) {
+        this.requestProcessThreadQueueCapacity = requestProcessThreadQueueCapacity;
     }
 }

@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction;
 
 import org.mengyun.tcctransaction.discovery.registry.ServerRegistryConfig;
-import org.mengyun.tcctransaction.properties.CommonProperties;
 import org.mengyun.tcctransaction.properties.registry.ServerRegistryProperties;
 import org.mengyun.tcctransaction.properties.remoting.NettyServerProperties;
 import org.mengyun.tcctransaction.recovery.RecoveryConfig;
@@ -19,8 +18,8 @@ public class ServerConfig extends AbstractConfig implements NettyServerConfig, R
     public ServerConfig() {
     }
 
-    public ServerConfig(CommonProperties commonProperties, StoreConfig storeConfig, RecoveryConfig recoveryConfig, NettyServerConfig nettyServerConfig, ServerRegistryConfig serverRegistryConfig) {
-        super(commonProperties, storeConfig, recoveryConfig, nettyServerConfig, serverRegistryConfig);
+    public ServerConfig(StoreConfig storeConfig, RecoveryConfig recoveryConfig, NettyServerConfig nettyServerConfig, ServerRegistryConfig serverRegistryConfig) {
+        super(storeConfig, recoveryConfig, nettyServerConfig, serverRegistryConfig);
         if (nettyServerConfig != null) {
             this.nettyServerConfig = nettyServerConfig;
         }
