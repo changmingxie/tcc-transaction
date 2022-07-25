@@ -29,7 +29,7 @@ public class FastjsonTransactionSerializer implements TransactionSerializer {
 
     @Override
     public Transaction deserialize(byte[] bytes) {
-        return JSON.parseObject(bytes, Transaction.class, Feature.SupportNonPublicField);
+        return JSON.parseObject(bytes, Transaction.class, Feature.SupportNonPublicField, Feature.SupportAutoType);
     }
 
     @Override
