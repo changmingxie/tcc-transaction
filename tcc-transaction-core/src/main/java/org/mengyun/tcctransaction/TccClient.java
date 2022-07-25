@@ -23,6 +23,7 @@ import org.mengyun.tcctransaction.remoting.protocol.RemotingCommandCode;
 import org.mengyun.tcctransaction.repository.DefaultTransactionRepository;
 import org.mengyun.tcctransaction.repository.TransactionRepository;
 import org.mengyun.tcctransaction.serializer.*;
+import org.mengyun.tcctransaction.serializer.json.FastjsonTransactionSerializer;
 import org.mengyun.tcctransaction.serializer.kryo.RegisterableKryoTransactionSerializer;
 import org.mengyun.tcctransaction.storage.*;
 import org.mengyun.tcctransaction.storage.domain.DomainStore;
@@ -96,6 +97,10 @@ public class TccClient implements TccService {
                 } else {
                     this.transactionSerializer = new RegisterableKryoTransactionSerializer();
                 }
+                break;
+            }
+            case FASTJSON:{
+                this.transactionSerializer = new FastjsonTransactionSerializer();
                 break;
             }
             case CUSTOMIZED: {

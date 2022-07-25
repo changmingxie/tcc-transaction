@@ -199,7 +199,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!--specify the version introduced by dubbo-->
+            <!--specify the version introduced by dubbo & opitional use-->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>

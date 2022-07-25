@@ -6,6 +6,7 @@ package org.mengyun.tcctransaction.serializer;
  */
 public enum SerializerType {
     KRYO,
+    FASTJSON,
     CUSTOMIZED,
     ;
 }
