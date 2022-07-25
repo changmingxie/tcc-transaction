@@ -13,4 +13,8 @@ public interface NettyConfig {
     int getSocketSndBufSize();
 
     int getFrameMaxLength();
+
+    int getRequestProcessThreadSize();
+
+    int getRequestProcessThreadQueueCapacity();
 }

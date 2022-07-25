@@ -7,7 +7,6 @@ import net.devh.springboot.autoconfigure.grpc.server.GlobalServerInterceptorRegi
 import org.mengyun.tcctransaction.ClientConfig;
 import org.mengyun.tcctransaction.grpc.interceptor.TransactionContextClientInterceptor;
 import org.mengyun.tcctransaction.grpc.interceptor.TransactionContextServerInterceptor;
-import org.mengyun.tcctransaction.properties.CommonProperties;
 import org.mengyun.tcctransaction.properties.RecoveryProperties;
 import org.mengyun.tcctransaction.properties.registry.ClientRegistryProperties;
 import org.mengyun.tcctransaction.properties.remoting.NettyClientProperties;
@@ -30,12 +29,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableTccTransaction
 @EnableConfigurationProperties
 public class TccTransactionAutoConfiguration {
-
-    @Bean
-    @ConfigurationProperties("spring.tcc")
-    public CommonProperties commonConfigProperties() {
-        return new CommonProperties();
-    }
 
     @Bean
     @ConfigurationProperties("spring.tcc.remoting")
@@ -62,12 +55,11 @@ public class TccTransactionAutoConfiguration {
     }
 
     @Bean
-    public ClientConfig clientConfig(@Autowired CommonProperties commonProperties,
-                                     @Autowired ClientRegistryProperties clientRegistryProperties,
+    public ClientConfig clientConfig(@Autowired ClientRegistryProperties clientRegistryProperties,
                                      @Autowired StoreConfig storeConfig,
                                      @Autowired RecoveryConfig recoveryConfig,
                                      @Autowired NettyClientConfig nettyClientConfig) {
-        return new ClientConfig(commonProperties, storeConfig, recoveryConfig, nettyClientConfig, clientRegistryProperties);
+        return new ClientConfig(storeConfig, recoveryConfig, nettyClientConfig, clientRegistryProperties);
     }
 
     @Configuration

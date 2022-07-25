@@ -7,7 +7,6 @@ import org.apache.zookeeper.data.ACL;
 import org.mengyun.tcctransaction.ServerConfig;
 import org.mengyun.tcctransaction.TccServer;
 import org.mengyun.tcctransaction.discovery.registry.ServerRegistryConfig;
-import org.mengyun.tcctransaction.properties.CommonProperties;
 import org.mengyun.tcctransaction.properties.RecoveryProperties;
 import org.mengyun.tcctransaction.properties.registry.ServerRegistryProperties;
 import org.mengyun.tcctransaction.properties.remoting.NettyServerProperties;
@@ -28,12 +27,6 @@ import java.util.List;
 @Configuration
 @EnableConfigurationProperties
 public class AppConfig {
-
-    @Bean
-    @ConfigurationProperties("spring.tcc")
-    public CommonProperties commonConfigProperties() {
-        return new CommonProperties();
-    }
 
     @Bean
     @ConfigurationProperties("spring.tcc.remoting")
@@ -60,12 +53,11 @@ public class AppConfig {
     }
 
     @Bean
-    public ServerConfig serverConfig(@Autowired CommonProperties commonProperties,
-                                     @Autowired ServerRegistryConfig serverRegistryConfig,
+    public ServerConfig serverConfig(@Autowired ServerRegistryConfig serverRegistryConfig,
                                      @Autowired StoreConfig storeConfig,
                                      @Autowired RecoveryConfig recoveryConfig,
                                      @Autowired NettyServerConfig nettyServerConfig) {
-        return new ServerConfig(commonProperties, storeConfig, recoveryConfig, nettyServerConfig, serverRegistryConfig);
+        return new ServerConfig(storeConfig, recoveryConfig, nettyServerConfig, serverRegistryConfig);
     }
 
     @Bean

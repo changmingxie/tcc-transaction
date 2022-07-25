@@ -5,7 +5,6 @@ import org.mengyun.tcctransaction.discovery.registry.RegistryType;
 import org.mengyun.tcctransaction.discovery.registry.direct.DirectRegistryProperties;
 import org.mengyun.tcctransaction.discovery.registry.nacos.NacosRegistryProperties;
 import org.mengyun.tcctransaction.discovery.registry.zookeeper.ZookeeperRegistryProperties;
-import org.mengyun.tcctransaction.properties.CommonProperties;
 import org.mengyun.tcctransaction.properties.RecoveryProperties;
 import org.mengyun.tcctransaction.properties.registry.RegistryProperties;
 import org.mengyun.tcctransaction.properties.remoting.NettyProperties;
@@ -24,8 +23,6 @@ import javax.sql.DataSource;
 
 public class AbstractConfig implements StoreConfig, RecoveryConfig, NettyConfig, RegistryConfig {
 
-    //AppCommonConfig
-    private CommonProperties commonProperties = new CommonProperties();
     //StoreConfig
     private StoreConfig storeConfig = new StoreProperties();
     //RecoveryConfig
@@ -38,10 +35,7 @@ public class AbstractConfig implements StoreConfig, RecoveryConfig, NettyConfig,
     public AbstractConfig() {
     }
 
-    public AbstractConfig(CommonProperties commonProperties, StoreConfig storeConfig, RecoveryConfig recoveryConfig, NettyConfig nettyConfig, RegistryConfig registryConfig) {
-        if (commonProperties != null) {
-            this.commonProperties = commonProperties;
-        }
+    public AbstractConfig(StoreConfig storeConfig, RecoveryConfig recoveryConfig, NettyConfig nettyConfig, RegistryConfig registryConfig) {
         if (storeConfig != null) {
             this.storeConfig = storeConfig;
         }
@@ -141,12 +135,14 @@ public class AbstractConfig implements StoreConfig, RecoveryConfig, NettyConfig,
         return storeConfig.getRemoteCluster();
     }
 
+    @Override
     public int getRequestProcessThreadSize() {
-        return commonProperties.getRequestProcessThreadSize();
+        return nettyConfig.getRequestProcessThreadSize();
     }
 
+    @Override
     public int getRequestProcessThreadQueueCapacity() {
-        return commonProperties.getRequestProcessThreadQueueCapacity();
+        return nettyConfig.getRequestProcessThreadQueueCapacity();
     }
 
     @Override
@@ -297,10 +293,6 @@ public class AbstractConfig implements StoreConfig, RecoveryConfig, NettyConfig,
     @Override
     public String getCustomRegistryName() {
         return registryConfig.getCustomRegistryName();
-    }
-
-    public void setCommonProperties(CommonProperties commonProperties) {
-        this.commonProperties = commonProperties;
     }
 
     public void setStoreConfig(StoreConfig storeConfig) {

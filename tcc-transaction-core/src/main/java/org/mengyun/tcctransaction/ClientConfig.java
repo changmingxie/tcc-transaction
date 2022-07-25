@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction;
 
 import org.mengyun.tcctransaction.discovery.registry.ClientRegistryConfig;
-import org.mengyun.tcctransaction.properties.CommonProperties;
 import org.mengyun.tcctransaction.properties.registry.ClientRegistryProperties;
 import org.mengyun.tcctransaction.properties.remoting.NettyClientProperties;
 import org.mengyun.tcctransaction.recovery.RecoveryConfig;
@@ -19,8 +18,8 @@ public class ClientConfig extends AbstractConfig implements RecoveryConfig, Nett
     public ClientConfig() {
     }
 
-    public ClientConfig(CommonProperties commonProperties, StoreConfig storeConfig, RecoveryConfig recoveryConfig, NettyClientConfig nettyClientConfig, ClientRegistryConfig clientRegistryConfig) {
-        super(commonProperties, storeConfig, recoveryConfig, nettyClientConfig, clientRegistryConfig);
+    public ClientConfig(StoreConfig storeConfig, RecoveryConfig recoveryConfig, NettyClientConfig nettyClientConfig, ClientRegistryConfig clientRegistryConfig) {
+        super(storeConfig, recoveryConfig, nettyClientConfig, clientRegistryConfig);
         if (nettyClientConfig != null) {
             this.nettyClientConfig = nettyClientConfig;
         }
