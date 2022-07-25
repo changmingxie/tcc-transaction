@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/tcc-transaction-dashboard/precache-manifest.f585f79c44a41cc75695f48602785e9a.js"
+  "/tcc-transaction-dashboard/precache-manifest.81854d325e9c3696b840024093530578.js"
 );
 
 self.addEventListener('message', (event) => {

@@ -130,7 +130,17 @@ const TableCard = (props) => {
               <Button
                 size="small"
                 type="primary"
-                danger>恢复</Button>
+                style={{backgroundColor: '#faad14', borderColor: '#faad14'}}>恢复</Button>
+            </Popconfirm>
+            <Popconfirm
+              title="是否执行"
+              onConfirm={() => batchHandle(api.transactionDelete)}
+              okText="是"
+              cancelText="否">
+              <Button
+                size="small"
+                type="primary"
+                danger>彻底删除</Button>
             </Popconfirm>
           </Space>
           :

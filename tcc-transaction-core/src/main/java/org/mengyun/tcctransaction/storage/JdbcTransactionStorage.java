@@ -179,6 +179,11 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
         return doMarkDeleted(transactionStore, false);
     }
 
+    @Override
+    protected int doCompletelyDelete(TransactionStore transactionStore) {
+        return doDelete(transactionStore);
+    }
+
     private int doMarkDeleted(TransactionStore transactionStore, boolean isMarkDeleted) {
         Connection connection = null;
         PreparedStatement stmt = null;

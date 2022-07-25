@@ -23,6 +23,9 @@ public interface TransactionStorage extends Closeable {
 
     int restore(TransactionStore transactionStore);
 
+    // completely delete for mark deleted transaction
+    int completelyDelete(TransactionStore transactionStore);
+
     boolean supportStorageRecoverable();
 
     @Override

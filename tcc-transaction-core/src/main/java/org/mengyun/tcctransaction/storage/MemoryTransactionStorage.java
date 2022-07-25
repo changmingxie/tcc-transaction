@@ -160,6 +160,13 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     }
 
     @Override
+    protected int doCompletelyDelete(TransactionStore transactionStore) {
+        trace("completely delete", transactionStore);
+        db.remove(buildMarkDeletedMemoryKey(transactionStore));
+        return 1;
+    }
+
+    @Override
     protected TransactionStore doFindOne(String domain, Xid xid, boolean isMarkDeleted) {
         if (isMarkDeleted) {
             return db.get(buildMarkDeletedMemoryKey(domain, xid));
