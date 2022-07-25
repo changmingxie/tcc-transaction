@@ -21,7 +21,8 @@ public class Transaction {
 
     private final List<Participant> participants = new ArrayList<Participant>();
     private final Map<String, Object> attachments = new ConcurrentHashMap<String, Object>();
-    private final Date createTime = new Date();
+    //do not use final here because some serializers may need to set
+    private Date createTime = new Date();
     private Xid xid;
     private Xid rootXid;
 
@@ -31,7 +32,7 @@ public class Transaction {
     private Date lastUpdateTime = new Date();
 
     private volatile int retriedCount = 0;
-    private long version = 0l;
+    private long version = 0L;
 
     public Transaction() {
     }

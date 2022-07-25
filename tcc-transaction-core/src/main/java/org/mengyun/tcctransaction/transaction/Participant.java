@@ -71,4 +71,11 @@ public class Participant implements Serializable {
         return transactionContextEditorClass;
     }
 
+    public Xid getRootXid() {
+        return rootXid;
+    }
+
+    public String getRootDomain() {
+        return rootDomain;
+    }
 }
