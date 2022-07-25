@@ -90,6 +90,17 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
     }
 
     @Override
+    protected int doCompletelyDelete(TransactionStore transactionStore) {
+        byte[] deletedRedisKey = RedisHelper.getDeletedRedisKey(transactionStore.getDomain(), transactionStore.getXid());
+        try (RedisCommands commands = getRedisCommands(deletedRedisKey)) {
+            commands.del(deletedRedisKey);
+            return 1;
+        } catch (Exception e) {
+            throw new TransactionIOException(e);
+        }
+    }
+
+    @Override
     protected TransactionStore doFindOne(String domain, final Xid xid, boolean isMarkDeleted) {
         return doFind(domain, xid, isMarkDeleted);
     }

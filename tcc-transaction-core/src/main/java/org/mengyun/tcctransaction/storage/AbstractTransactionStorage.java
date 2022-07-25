@@ -66,6 +66,11 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
     }
 
     @Override
+    public int completelyDelete(TransactionStore transactionStore) {
+        return doCompletelyDelete(transactionStore);
+    }
+
+    @Override
     public int restore(TransactionStore transactionStore) {
         return doRestore(transactionStore);
     }
@@ -79,6 +84,8 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
     protected abstract int doMarkDeleted(TransactionStore transactionStore);
 
     protected abstract int doRestore(TransactionStore transactionStore);
+
+    protected abstract int doCompletelyDelete(TransactionStore transactionStore);
 
     protected abstract TransactionStore doFindOne(String domain, Xid xid, boolean isMarkDeleted);
 

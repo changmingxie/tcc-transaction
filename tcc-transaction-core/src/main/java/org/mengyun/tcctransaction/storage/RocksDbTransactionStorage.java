@@ -155,6 +155,17 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
     }
 
     @Override
+    protected int doCompletelyDelete(TransactionStore transactionStore) {
+        try {
+            byte[] key = RedisHelper.getDeletedRedisKey(transactionStore.getDomain(), transactionStore.getXid());
+            db.delete(key);
+        } catch (RocksDBException e) {
+            throw new TransactionIOException(e);
+        }
+        return 1;
+    }
+
+    @Override
     protected TransactionStore doFindOne(String domain, Xid xid, boolean isMarkDeleted) {
         byte[] key = RedisHelper.getRedisKey(domain, xid);
         if (isMarkDeleted) {

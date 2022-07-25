@@ -82,6 +82,13 @@ export function restore(params) {
   });
 }
 
+export function transactionDelete(params) {
+  return http.post("/tcc-transaction-dashboard/api/transaction/delete", {
+    domain: params.domain,
+    xidString: params.xidString
+  });
+}
+
 
 export function getAllTask() {
   return http.get('/tcc-transaction-dashboard/api/task/all');

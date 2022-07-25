@@ -132,14 +132,13 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * 物理删除
-     *
+     * 物理删除，即彻底删除，对标记为删除的事件
      * @param requestDto
      */
     @Override
     public ResponseDto<Void> delete(TransactionOperateRequestDto requestDto) {
-        TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
-        getTransactionStorage().delete(transactionStore);
+        TransactionStore transactionStore = getTransactionStorage().findMarkDeletedByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
+        getTransactionStorage().completelyDelete(transactionStore);
         return ResponseDto.returnSuccess();
     }
 

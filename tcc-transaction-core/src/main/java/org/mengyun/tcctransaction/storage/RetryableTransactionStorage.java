@@ -62,6 +62,11 @@ public class RetryableTransactionStorage implements TransactionStorage, StorageR
     }
 
     @Override
+    public int completelyDelete(TransactionStore transactionStore) {
+        return doWithRetry(() -> transactionStorage.completelyDelete(transactionStore));
+    }
+
+    @Override
     public boolean supportStorageRecoverable() {
         return transactionStorage.supportStorageRecoverable();
     }
