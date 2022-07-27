@@ -141,7 +141,7 @@ public class CompensableTransactionInterceptor {
 
                     } catch (NoExistedTransactionException exception) {
                         //the transaction has been rollback,ignore it.
-                        logger.info("no existed transaction found at CANCELLING stage, will ignore and cancel automatically. transaction xid:" + transaction.getXid());
+                        logger.info("no existed transaction found at CANCELLING stage, will ignore and cancel automatically. transaction xid:" + compensableMethodContext.getTransactionContext().getXid());
                     }
                     break;
             }

@@ -283,6 +283,10 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
         } else {
             //select one available ipAndPort, for invalid ipAndPort, nettyClientPool will invalid it
             selectedAddress = this.serverAddressLoader.selectOneAvailableAddress();
+
+            if (StringUtils.isBlank(selectedAddress)) {
+                throw new SystemException("no available servers found");
+            }
         }
 
         Channel channel;
