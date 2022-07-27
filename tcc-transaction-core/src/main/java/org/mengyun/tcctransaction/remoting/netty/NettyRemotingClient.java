@@ -287,11 +287,13 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
 
         Channel channel;
         try {
-            channel = nettyClientKeyPool.borrowObject(address);
+            channel = nettyClientKeyPool.borrowObject(selectedAddress);
+            //need consider the server side is offline, and cannot connect
+            //
         } catch (Exception e) {
             throw new SystemException("borrow channel from pool failed", e);
         }
-        return new ImmutablePair<>(address, channel);
+        return new ImmutablePair<>(selectedAddress, channel);
     }
 
     private void returenChannelToPool(String address, Channel channel) {
