@@ -43,7 +43,7 @@ public class NetUtils {
             int index = addr.lastIndexOf("/");
             return (index != -1) ? addr.substring(index + 1) : addr;
         }
-        return "";
+        return null;
     }
 
     /**
