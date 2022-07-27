@@ -113,7 +113,7 @@ public class CompensableTransactionInterceptor {
                         transactionManager.commit(asyncConfirm);
                     } catch (NoExistedTransactionException excepton) {
                         //the transaction has been commit,ignore it.
-                        logger.warn("no existed transaction found at CONFIRMING stage, will ignore and confirm automatically. transaction xid:" + transaction.getXid());
+                        logger.warn("no existed transaction found at CONFIRMING stage, will ignore and confirm automatically. transaction xid:" + compensableMethodContext.getTransactionContext().getXid());
                     }
                     break;
                 case CANCELLING:
