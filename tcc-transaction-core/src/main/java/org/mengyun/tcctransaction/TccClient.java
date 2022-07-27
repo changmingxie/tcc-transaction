@@ -306,7 +306,7 @@ public class TccClient implements TccService {
         registerCommand.setServiceCode(RemotingServiceCode.REGISTER);
         registerCommand.setBody(clientConfig.getDomain().getBytes());
         try {
-            remotingClient.invokeSync(registerCommand, clientConfig.getRequestTimeoutMillis());
+            remotingClient.invokeOneway(registerCommand, clientConfig.getRequestTimeoutMillis());
         } catch (Exception e) {
             logger.error("failled to register to server", e);
         }
@@ -317,7 +317,7 @@ public class TccClient implements TccService {
         registerCommand.setServiceCode(RemotingServiceCode.REGISTER);
         registerCommand.setBody(clientConfig.getDomain().getBytes());
         try {
-            remotingClient.invokeSync(address, registerCommand, clientConfig.getRequestTimeoutMillis());
+            remotingClient.invokeOneway(address, registerCommand, clientConfig.getRequestTimeoutMillis());
         } catch (Exception e) {
             logger.error("failled to register to server", e);
         }
@@ -338,22 +338,13 @@ public class TccClient implements TccService {
             super.channelActive(ctx);
             //register to server if connected
             if (!isStarting) {
-                registerToServer(NetUtils.parseSocketAddress(ctx.channel().remoteAddress()));
+                ctx.channel().eventLoop().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        registerToServer(NetUtils.parseSocketAddress(ctx.channel().remoteAddress()));
+                    }
+                });
             }
         }
-
-//        @Override
-//        public void channelUnregistered(ChannelHandlerContext ctx) {
-//
-//            if (!isShutdown) {
-//                //try reconnect to server
-//                ctx.channel().eventLoop().schedule(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        registerToServer();
-//                    }
-//                }, clientConfig.getReconnectIntervalSeconds(), TimeUnit.SECONDS);
-//            }
-//        }
     }
 }
