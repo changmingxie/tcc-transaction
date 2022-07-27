@@ -60,7 +60,11 @@ public class CompensableTransactionInterceptor {
                 returnValue = compensableMethodContext.proceed();
             } catch (Throwable tryingException) {
 
-                transactionManager.rollback(asyncCancel);
+                try {
+                    transactionManager.rollback(asyncCancel);
+                } catch (Exception rollbackException) {
+                    logger.warn("compensable transaction rollback failed, recovery job will try to rollback later", rollbackException);
+                }
 
                 throw tryingException;
             }
@@ -94,7 +98,10 @@ public class CompensableTransactionInterceptor {
                         result = compensableMethodContext.proceed();
                         transactionManager.changeStatus(TransactionStatus.TRY_SUCCESS);
                     } catch (Throwable e) {
-                        transactionManager.changeStatus(TransactionStatus.TRY_FAILED);
+                        try {
+                            transactionManager.changeStatus(TransactionStatus.TRY_FAILED);
+                        }catch (Exception ignore){
+                        }
                         throw e;
                     }
 
