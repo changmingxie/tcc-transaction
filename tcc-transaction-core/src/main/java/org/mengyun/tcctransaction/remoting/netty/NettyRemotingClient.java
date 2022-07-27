@@ -277,7 +277,7 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
 
     private Pair<String, Channel> borrowAvailableChannelFromPool(String address) {
 
-        String selectedAddress = null;
+        String selectedAddress;
         if (StringUtils.isNotEmpty(address)) {
             selectedAddress = address;
         } else {
