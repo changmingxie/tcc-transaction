@@ -77,7 +77,7 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
 
         RemotingCommand responseCommand = null;
 
-        responseCommand = remotingClient.invokeSync(clusterName, requestCommand, this.storeConfig.getRequestTimeoutMillis());
+        responseCommand = remotingClient.invokeSync(null, requestCommand, this.storeConfig.getRequestTimeoutMillis());
 
         if (responseCommand.getCode() == RemotingCommandCode.SERVICE_RESP) {
             return Byte.valueOf(responseCommand.getBody()[0]).intValue();
@@ -101,7 +101,7 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
 
         requestCommand.setBody(byteBuffer.array());
 
-        RemotingCommand responseCommand = remotingClient.invokeSync(clusterName, requestCommand, this.storeConfig.getRequestTimeoutMillis());
+        RemotingCommand responseCommand = remotingClient.invokeSync(null, requestCommand, this.storeConfig.getRequestTimeoutMillis());
 
         if (responseCommand.getCode() == RemotingCommandCode.SERVICE_RESP) {
             return serializer.deserialize(responseCommand.getBody());
