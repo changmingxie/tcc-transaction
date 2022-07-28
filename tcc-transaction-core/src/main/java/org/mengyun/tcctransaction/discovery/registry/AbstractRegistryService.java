@@ -16,7 +16,7 @@ public abstract class AbstractRegistryService implements RegistryService {
 
     private String clusterName;
 
-    private volatile List<InetSocketAddress> serverAddresses = new ArrayList<>();
+    private volatile List<String> serverAddresses = new ArrayList<>();
 
     @Override
     public void start() {
@@ -42,7 +42,7 @@ public abstract class AbstractRegistryService implements RegistryService {
     }
 
     @Override
-    public List<InetSocketAddress> lookup() {
+    public List<String> lookup() {
         return serverAddresses;
     }
 
@@ -55,7 +55,7 @@ public abstract class AbstractRegistryService implements RegistryService {
 
     protected abstract void doSubscribe() throws Exception;
 
-    protected void setServerAddresses(List<InetSocketAddress> serverAddresses) {
+    protected void setServerAddresses(List<String> serverAddresses) {
         Collections.shuffle(serverAddresses, ThreadLocalRandom.current());
         this.serverAddresses = serverAddresses;
     }
