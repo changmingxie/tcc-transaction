@@ -31,9 +31,13 @@ public class ClientRecoveryExecutor implements RecoveryExecutor {
 
         transaction.setRetriedCount(transaction.getRetriedCount() + 1);
         transaction.setStatus(TransactionStatus.CANCELLING);
-        transactionRepository.update(transaction);
-        transaction.rollback();
-        transactionRepository.delete(transaction);
+        int result = transactionRepository.update(transaction);
+        if (result > 0) {
+            transaction.rollback();
+            transactionRepository.delete(transaction);
+        } else if (result == 0) {
+            logger.debug("multiple instances try to recovery<rollback> the same transaction<" + transactionStore.getXid() + ", this instance ignore the recovery.");
+        }
     }
 
     @Override
@@ -43,9 +47,13 @@ public class ClientRecoveryExecutor implements RecoveryExecutor {
 
         transaction.setRetriedCount(transaction.getRetriedCount() + 1);
         transaction.setStatus(TransactionStatus.CONFIRMING);
-        transactionRepository.update(transaction);
-        transaction.commit();
-        transactionRepository.delete(transaction);
+        int result = transactionRepository.update(transaction);
+        if (result > 0) {
+            transaction.commit();
+            transactionRepository.delete(transaction);
+        } else if (result == 0) {
+            logger.debug("multiple instances try to recovery<commit> the same transaction<" + transactionStore.getXid() + ", this instance ignore the recovery.");
+        }
     }
 
     @Override
