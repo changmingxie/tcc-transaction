@@ -14,19 +14,19 @@ public class TransactionContext implements Serializable {
     private Xid rootXid;
     private String rootDomain;
 
-    private int status = TransactionStatus.TRYING.getId();
-    private int participantStatus = ParticipantStatus.TRYING.getId();
+    private TransactionStatus status = TransactionStatus.TRYING;
+    private ParticipantStatus participantStatus = ParticipantStatus.TRYING;
     private Map<String, String> attachments = new ConcurrentHashMap<String, String>();
 
     public TransactionContext() {
 
     }
 
-    public TransactionContext(String rootDomain, Xid rootXid, Xid xid, int status) {
-        this(rootDomain, rootXid, xid, status, ParticipantStatus.TRYING.getId());
+    public TransactionContext(String rootDomain, Xid rootXid, Xid xid, TransactionStatus status) {
+        this(rootDomain, rootXid, xid, status, ParticipantStatus.TRYING);
     }
 
-    public TransactionContext(String rootDomain, Xid rootXid, Xid xid, int status, int participantStatus) {
+    public TransactionContext(String rootDomain, Xid rootXid, Xid xid, TransactionStatus status, ParticipantStatus participantStatus) {
         this.rootDomain = rootDomain;
         this.rootXid = rootXid;
         this.xid = xid;
@@ -60,19 +60,19 @@ public class TransactionContext implements Serializable {
         this.rootDomain = rootDomain;
     }
 
-    public int getStatus() {
+    public TransactionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(TransactionStatus status) {
         this.status = status;
     }
 
-    public int getParticipantStatus() {
+    public ParticipantStatus getParticipantStatus() {
         return participantStatus;
     }
 
-    public void setParticipantStatus(int participantStatus) {
+    public void setParticipantStatus(ParticipantStatus participantStatus) {
         this.participantStatus = participantStatus;
     }
 

@@ -55,14 +55,14 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
         String domain = requestDto.getDomain();
         Xid xid = new TransactionXid(requestDto.getXidString());
         TransactionStore transactionStore = getTransactionStorage().findByXid(domain, xid);
-        if(transactionStore == null){
-            transactionStore = getTransactionStorage().findMarkDeletedByXid(domain,xid);
+        if (transactionStore == null) {
+            transactionStore = getTransactionStorage().findMarkDeletedByXid(domain, xid);
         }
-        if(transactionStore == null){
+        if (transactionStore == null) {
             return ResponseDto.returnFail(ResponseCodeEnum.TRANSACTION_DETAIL_NOT_EXIST);
         }
         TransactionStoreDto transactionStoreDto = toTransactionStoreDto(transactionStore);
-        if(!isJSONString(transactionStoreDto.getContent())){
+        if (!isJSONString(transactionStoreDto.getContent())) {
             String base64Content = Base64.getEncoder().encodeToString(transactionStore.getContent());
             transactionStoreDto.setContent(base64Content);
         }
@@ -150,6 +150,7 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
 
     /**
      * 物理删除，即彻底删除，对标记为删除的事件
+     *
      * @param requestDto
      */
     @Override
@@ -190,7 +191,7 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
         return transactionStoreDto;
     }
 
-    protected boolean isJSONString(String content){
+    protected boolean isJSONString(String content) {
         boolean isJSON = false;
         if (StringUtils.isNotBlank(content)) {
             content = content.trim();

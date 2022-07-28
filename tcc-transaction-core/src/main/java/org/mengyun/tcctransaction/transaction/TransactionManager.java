@@ -93,7 +93,7 @@ public class TransactionManager {
 
         final Transaction transaction = getCurrentTransaction();
 
-        transaction.changeStatus(TransactionStatus.CONFIRMING);
+        transaction.setStatus(TransactionStatus.CONFIRMING);
 
         transactionRepository.update(transaction);
 
@@ -121,7 +121,7 @@ public class TransactionManager {
     public void rollback(boolean asyncRollback) {
 
         final Transaction transaction = getCurrentTransaction();
-        transaction.changeStatus(TransactionStatus.CANCELLING);
+        transaction.setStatus(TransactionStatus.CANCELLING);
 
         transactionRepository.update(transaction);
 

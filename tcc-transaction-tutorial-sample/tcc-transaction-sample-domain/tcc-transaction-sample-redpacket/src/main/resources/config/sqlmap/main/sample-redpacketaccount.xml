@@ -11,8 +11,8 @@
 
     <sql id="sql_select">
         SELECT RED_PACKET_ACCOUNT_ID,
-               BALANCE_AMOUNT,
-               USER_ID
+        BALANCE_AMOUNT,
+        USER_ID
         FROM RED_RED_PACKET_ACCOUNT
     </sql>
 
@@ -29,14 +29,14 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO RED_RED_PACKET_ACCOUNT
         (BALANCE_AMOUNT,
-         USER_ID)
+        USER_ID)
         VALUES (#{balanceAmount},
-                #{userId})
+        #{userId})
     </insert>
 
     <update id="update" parameterType="org.mengyun.tcctransaction.sample.redpacket.domain.entity.RedPacketAccount">
         UPDATE
-            RED_RED_PACKET_ACCOUNT
+        RED_RED_PACKET_ACCOUNT
         SET BALANCE_AMOUNT = #{balanceAmount}
         WHERE RED_PACKET_ACCOUNT_ID = #{id}
     </update>

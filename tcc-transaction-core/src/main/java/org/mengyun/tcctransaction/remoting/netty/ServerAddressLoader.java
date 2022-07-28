@@ -1,12 +1,11 @@
 package org.mengyun.tcctransaction.remoting.netty;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 
 public interface ServerAddressLoader {
-    InetSocketAddress selectOne(String key);
+    String selectOneAvailableAddress();
 
-    List<InetSocketAddress> getAll(String key);
+    List<String> getAllAvailableAddresses();
 
-    boolean isAvailableAddress(InetSocketAddress remoteAddress);
+    boolean isAvailableAddress(String address);
 }

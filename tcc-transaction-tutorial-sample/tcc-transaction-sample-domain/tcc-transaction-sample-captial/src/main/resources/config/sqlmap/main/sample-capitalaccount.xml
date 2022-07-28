@@ -11,8 +11,8 @@
 
     <sql id="sql_select">
         SELECT CAPITAL_ACCOUNT_ID,
-               BALANCE_AMOUNT,
-               USER_ID
+        BALANCE_AMOUNT,
+        USER_ID
         FROM CAP_CAPITAL_ACCOUNT
     </sql>
 
@@ -29,16 +29,16 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO CAP_CAPITAL_ACCOUNT
         (BALANCE_AMOUNT,
-         USER_ID)
+        USER_ID)
         VALUES (#{balanceAmount},
-                #{userId})
+        #{userId})
     </insert>
 
     <update id="update" parameterType="org.mengyun.tcctransaction.sample.capital.domain.entity.CapitalAccount">
         UPDATE
-            CAP_CAPITAL_ACCOUNT
+        CAP_CAPITAL_ACCOUNT
         SET BALANCE_AMOUNT = BALANCE_AMOUNT + #{transferAmount}
         WHERE CAPITAL_ACCOUNT_ID = #{id}
-          AND BALANCE_AMOUNT + #{transferAmount} >= 0
+        AND BALANCE_AMOUNT + #{transferAmount} >= 0
     </update>
 </mapper>

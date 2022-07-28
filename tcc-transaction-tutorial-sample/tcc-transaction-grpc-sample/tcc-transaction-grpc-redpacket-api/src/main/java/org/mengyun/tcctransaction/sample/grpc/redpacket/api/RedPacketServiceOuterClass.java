@@ -98,6 +98,7 @@ public final class RedPacketServiceOuterClass {
     getDescriptor() {
         return descriptor;
     }
+
     public interface RedPacketAccountRequestOrBuilder extends
             // @@protoc_insertion_point(interface_extends:RedPacketAccountRequest)
             com.google.protobuf.MessageOrBuilder {
@@ -107,6 +108,7 @@ public final class RedPacketServiceOuterClass {
          */
         long getUserId();
     }
+
     public interface RedPacketAccountReplyOrBuilder extends
             // @@protoc_insertion_point(interface_extends:RedPacketAccountReply)
             com.google.protobuf.MessageOrBuilder {
@@ -122,6 +124,7 @@ public final class RedPacketServiceOuterClass {
         com.google.protobuf.ByteString
         getAmountBytes();
     }
+
     public interface RecordReplyOrBuilder extends
             // @@protoc_insertion_point(interface_extends:RecordReply)
             com.google.protobuf.MessageOrBuilder {
@@ -137,6 +140,7 @@ public final class RedPacketServiceOuterClass {
         com.google.protobuf.ByteString
         getMessageBytes();
     }
+
     public interface RedPacketTradeOrderDtoOrBuilder extends
             // @@protoc_insertion_point(interface_extends:RedPacketTradeOrderDto)
             com.google.protobuf.MessageOrBuilder {
@@ -218,6 +222,7 @@ public final class RedPacketServiceOuterClass {
         private RedPacketAccountRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private RedPacketAccountRequest() {
             userId_ = 0L;
         }
@@ -719,6 +724,7 @@ public final class RedPacketServiceOuterClass {
         private RedPacketAccountReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private RedPacketAccountReply() {
             amount_ = "";
         }
@@ -1291,6 +1297,7 @@ public final class RedPacketServiceOuterClass {
         private RecordReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private RecordReply() {
             message_ = "";
         }

@@ -18,22 +18,22 @@
                 <property name="domain" value="TCC:DUBBO:REDPACKET"/>
                 <!--embedded存储模式(MEMORY)-->
                 <property name="storageType" value="MEMORY"/>
-<!--                <property name="storageType" value="REDIS"/>-->
-<!--                <property name="redis">-->
-<!--                    <bean class="org.mengyun.tcctransaction.properties.store.RedisStoreProperties">-->
-<!--                        <property name="host" value="127.0.0.1"/>-->
-<!--                        <property name="port" value="6379"/>-->
-<!--                        <property name="database" value="0"/>-->
-<!--                        <property name="poolConfig">-->
-<!--                            <bean class="redis.clients.jedis.JedisPoolConfig">-->
-<!--                                <property name="maxTotal" value="100"/>-->
-<!--                                <property name="maxIdle" value="100"/>-->
-<!--                                <property name="maxWaitMillis" value="300"/>-->
-<!--                                <property name="minIdle" value="10"/>-->
-<!--                            </bean>-->
-<!--                        </property>-->
-<!--                    </bean>-->
-<!--                </property>-->
+                <!--                <property name="storageType" value="REDIS"/>-->
+                <!--                <property name="redis">-->
+                <!--                    <bean class="org.mengyun.tcctransaction.properties.store.RedisStoreProperties">-->
+                <!--                        <property name="host" value="127.0.0.1"/>-->
+                <!--                        <property name="port" value="6379"/>-->
+                <!--                        <property name="database" value="0"/>-->
+                <!--                        <property name="poolConfig">-->
+                <!--                            <bean class="redis.clients.jedis.JedisPoolConfig">-->
+                <!--                                <property name="maxTotal" value="100"/>-->
+                <!--                                <property name="maxIdle" value="100"/>-->
+                <!--                                <property name="maxWaitMillis" value="300"/>-->
+                <!--                                <property name="minIdle" value="10"/>-->
+                <!--                            </bean>-->
+                <!--                        </property>-->
+                <!--                    </bean>-->
+                <!--                </property>-->
             </bean>
         </property>
     </bean>

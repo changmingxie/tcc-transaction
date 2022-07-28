@@ -33,7 +33,7 @@ public class ResourceCoordinatorInterceptor {
             if (participant != null) {
 
                 Object result = null;
-                TransactionContext transactionContext = new TransactionContext(transaction.getRootDomain(), transaction.getRootXid(), participant.getXid(), TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId());
+                TransactionContext transactionContext = new TransactionContext(transaction.getRootDomain(), transaction.getRootXid(), participant.getXid(), TransactionStatus.TRYING, ParticipantStatus.TRYING);
                 FactoryBuilder.factoryOf(participant.getTransactionContextEditorClass()).getInstance().set(transactionContext, pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
                 try {
                     result = pjp.proceed(pjp.getArgs());
@@ -70,11 +70,8 @@ public class ResourceCoordinatorInterceptor {
 
         Class targetClass = compensableMethodContext.getDeclaredClass();
 
-        InvocationContext confirmInvocation = new InvocationContext(targetClass,
+        InvocationContext invocationContext = new InvocationContext(targetClass,
                 confirmMethodName,
-                compensableMethodContext.getMethod().getParameterTypes(), compensableMethodContext.getArgs());
-
-        InvocationContext cancelInvocation = new InvocationContext(targetClass,
                 cancelMethodName,
                 compensableMethodContext.getMethod().getParameterTypes(), compensableMethodContext.getArgs());
 
@@ -83,8 +80,7 @@ public class ResourceCoordinatorInterceptor {
                         transaction.getRootDomain(),
                         transaction.getRootXid(),
                         xid,
-                        confirmInvocation,
-                        cancelInvocation,
+                        invocationContext,
                         transactionContextEditorClass);
 
         transactionManager.enlistParticipant(participant);

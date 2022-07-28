@@ -22,7 +22,6 @@ import org.mengyun.tcctransaction.spring.xid.SimpleWorkerIdAssigner;
 import org.mengyun.tcctransaction.storage.RemotingTransactionStorage;
 import org.mengyun.tcctransaction.storage.TransactionStore;
 import org.mengyun.tcctransaction.transaction.Transaction;
-import org.mengyun.tcctransaction.utils.NetUtils;
 import org.mengyun.tcctransaction.xid.UUIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -75,18 +73,18 @@ public class RemotingStorageTest {
 
         NettyRemotingClient remotingClient = new NettyRemotingClient(remotingCommandSerializer, clientConfig, new ServerAddressLoader() {
             @Override
-            public InetSocketAddress selectOne(String key) {
-                return NetUtils.toInetSocketAddress(clientConfig.getDirectRegistryProperties().getServerAddresses());
+            public String selectOneAvailableAddress() {
+                return clientConfig.getDirectRegistryProperties().getServerAddresses();
             }
 
             @Override
-            public List<InetSocketAddress> getAll(String key) {
-                return Lists.newArrayList(NetUtils.toInetSocketAddress(clientConfig.getDirectRegistryProperties().getServerAddresses()));
+            public List<String> getAllAvailableAddresses() {
+                return Lists.newArrayList(clientConfig.getDirectRegistryProperties().getServerAddresses());
             }
 
             @Override
-            public boolean isAvailableAddress(InetSocketAddress remoteAddress) {
-                return NetUtils.toInetSocketAddress(clientConfig.getDirectRegistryProperties().getServerAddresses()).equals(remoteAddress);
+            public boolean isAvailableAddress(String address) {
+                return clientConfig.getDirectRegistryProperties().getServerAddresses().equals(address);
             }
         });
 

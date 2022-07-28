@@ -184,8 +184,8 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
 
         Channel channel = FactoryBuilder.factoryOf(ChannelGroupMap.class).getInstance().getChannel(key);
 
-        if(channel == null){
-            throw new RemotingException("channel not exist for key:"+key);
+        if (channel == null) {
+            throw new RemotingException("channel not exist for key:" + key);
         }
 
         SocketAddress socketAddress = channel.remoteAddress();

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
+
 /**
  * Created by changmingxie on 10/30/15.
  */
@@ -88,7 +89,7 @@ public class CompensableTransactionInterceptor {
 
         try {
 
-            switch (TransactionStatus.valueOf(compensableMethodContext.getTransactionContext().getStatus())) {
+            switch (compensableMethodContext.getTransactionContext().getStatus()) {
                 case TRYING:
                     transaction = transactionManager.propagationNewBegin(compensableMethodContext.getTransactionContext());
 
@@ -100,7 +101,7 @@ public class CompensableTransactionInterceptor {
                     } catch (Throwable e) {
                         try {
                             transactionManager.changeStatus(TransactionStatus.TRY_FAILED);
-                        }catch (Exception ignore){
+                        } catch (Exception ignore) {
                         }
                         throw e;
                     }
@@ -113,7 +114,7 @@ public class CompensableTransactionInterceptor {
                         transactionManager.commit(asyncConfirm);
                     } catch (NoExistedTransactionException excepton) {
                         //the transaction has been commit,ignore it.
-                        logger.warn("no existed transaction found at CONFIRMING stage, will ignore and confirm automatically. transaction xid:" + transaction.getXid());
+                        logger.warn("no existed transaction found at CONFIRMING stage, will ignore and confirm automatically. transaction xid:" + compensableMethodContext.getTransactionContext().getXid());
                     }
                     break;
                 case CANCELLING:
@@ -121,7 +122,7 @@ public class CompensableTransactionInterceptor {
                     try {
 
                         //The transaction' status of this branch transaction, passed from consumer side.
-                        int transactionStatusFromConsumer = compensableMethodContext.getTransactionContext().getParticipantStatus();
+                        ParticipantStatus transactionStatusFromConsumer = compensableMethodContext.getTransactionContext().getParticipantStatus();
 
                         transaction = transactionManager.propagationExistBegin(compensableMethodContext.getTransactionContext());
 
@@ -131,7 +132,7 @@ public class CompensableTransactionInterceptor {
                         if (transaction.getStatus().equals(TransactionStatus.TRY_SUCCESS)
                                 || transaction.getStatus().equals(TransactionStatus.TRY_FAILED)
                                 || transaction.getStatus().equals(TransactionStatus.CANCELLING)
-                                || transactionStatusFromConsumer == ParticipantStatus.TRY_SUCCESS.getId()) {
+                                || ParticipantStatus.TRY_SUCCESS.equals(transactionStatusFromConsumer)) {
                             transactionManager.rollback(asyncCancel);
                         } else {
                             //in this case, transaction's Status is TRYING and transactionStatusFromConsumer is TRY_FAILED
@@ -141,7 +142,7 @@ public class CompensableTransactionInterceptor {
 
                     } catch (NoExistedTransactionException exception) {
                         //the transaction has been rollback,ignore it.
-                        logger.info("no existed transaction found at CANCELLING stage, will ignore and cancel automatically. transaction xid:" + transaction.getXid());
+                        logger.info("no existed transaction found at CANCELLING stage, will ignore and cancel automatically. transaction xid:" + compensableMethodContext.getTransactionContext().getXid());
                     }
                     break;
             }

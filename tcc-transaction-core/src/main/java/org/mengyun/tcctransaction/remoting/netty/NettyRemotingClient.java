@@ -13,6 +13,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.mengyun.tcctransaction.exception.SystemException;
@@ -25,10 +26,10 @@ import org.mengyun.tcctransaction.remoting.exception.RemotingTimeoutException;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
 import org.mengyun.tcctransaction.serializer.RemotingCommandSerializer;
 import org.mengyun.tcctransaction.utils.NetUtils;
+import org.mengyun.tcctransaction.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -172,18 +173,25 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
     }
 
     @Override
-    public RemotingCommand invokeSync(String key, RemotingCommand request, long timeoutMillis) {
+    public RemotingCommand invokeSync(RemotingCommand request, long timeoutMillis) {
+        return invokeSync(null, request, timeoutMillis);
+    }
+
+    @Override
+    public RemotingCommand invokeSync(final String address, final RemotingCommand request, final long timeoutMillis) {
 
         int requestId = request.getRequestId();
 
-        Channel channel = null;
         long beginStartTime = System.currentTimeMillis();
 
-        channel = borrowAvailableChannelFromPool(key);
-        SocketAddress socketAddress = channel.remoteAddress();
+        Pair<String, Channel> pair = borrowAvailableChannelFromPool(address);
+
+        String selectedAddress = pair.getKey();
+        Channel selectedChannel = pair.getValue();
+        SocketAddress socketAddress = selectedChannel.remoteAddress();
         try {
 
-            ResponseFuture responseFuture = new ResponseFuture(channel, requestId, timeoutMillis);
+            ResponseFuture responseFuture = new ResponseFuture(selectedChannel, requestId, timeoutMillis);
             this.responseTable.put(requestId, responseFuture);
 
             try {
@@ -193,7 +201,7 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
                     throw new RemotingTimeoutException(NetUtils.parseSocketAddress(socketAddress));
                 }
 
-                channel.writeAndFlush(request).addListener(new ChannelFutureListener() {
+                selectedChannel.writeAndFlush(request).addListener(new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture channelFuture) throws Exception {
                         if (channelFuture.isSuccess()) {
@@ -207,7 +215,7 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
                 });
 
             } finally {
-                returenChannelToPool(key, channel);
+                returenChannelToPool(selectedAddress, selectedChannel);
             }
 
             RemotingCommand responseCommand = null;
@@ -232,13 +240,20 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
     }
 
     @Override
-    public void invokeOneway(String key, RemotingCommand request, long timeoutMillis) {
+    public void invokeOneway(RemotingCommand request, long timeoutMillis) {
+        invokeOneway(null, request, timeoutMillis);
+    }
 
+    @Override
+    public void invokeOneway(String address, RemotingCommand request, long timeoutMillis) {
 
         long beginStartTime = System.currentTimeMillis();
 
-        Channel channel = borrowAvailableChannelFromPool(key);
-        SocketAddress socketAddress = channel.remoteAddress();
+        Pair<String, Channel> pair = borrowAvailableChannelFromPool(address);
+        String selectedAddress = pair.getKey();
+        Channel selectedChannel = pair.getValue();
+
+        SocketAddress socketAddress = selectedChannel.remoteAddress();
         try {
             long costTime = System.currentTimeMillis() - beginStartTime;
 
@@ -246,7 +261,7 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
                 throw new RemotingTimeoutException(NetUtils.parseSocketAddress(socketAddress));
             }
 
-            channel.writeAndFlush(request).addListener(new ChannelFutureListener() {
+            selectedChannel.writeAndFlush(request).addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture channelFuture) throws Exception {
                     if (!channelFuture.isSuccess()) {
@@ -256,37 +271,38 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
             });
 
         } finally {
-            returenChannelToPool(key, channel);
+            returenChannelToPool(selectedAddress, selectedChannel);
         }
     }
 
-    private Channel borrowAvailableChannelFromPool(String key) {
+    private Pair<String, Channel> borrowAvailableChannelFromPool(String address) {
+
+        String selectedAddress;
+        if (StringUtils.isNotEmpty(address)) {
+            selectedAddress = address;
+        } else {
+            //select one available ipAndPort, for invalid ipAndPort, nettyClientPool will invalid it
+            selectedAddress = this.serverAddressLoader.selectOneAvailableAddress();
+
+            if (StringUtils.isBlank(selectedAddress)) {
+                throw new SystemException("no available servers found");
+            }
+        }
+
         Channel channel;
         try {
-            do {
-                channel = nettyClientKeyPool.borrowObject(key);
-
-                boolean isAvailableAddress = this.serverAddressLoader.isAvailableAddress((InetSocketAddress) channel.remoteAddress());
-                if (isAvailableAddress) {
-                    break;
-                } else {
-                    try {
-                        nettyClientKeyPool.invalidateObject(key, channel);
-                    } catch (Exception e) {
-                        nettyClientKeyPool.returnObject(key, channel);
-                    }
-                }
-            } while (true);
-
+            channel = nettyClientKeyPool.borrowObject(selectedAddress);
+            //need consider the server side is offline, and cannot connect
+            //
         } catch (Exception e) {
             throw new SystemException("borrow channel from pool failed", e);
         }
-        return channel;
+        return new ImmutablePair<>(selectedAddress, channel);
     }
 
-    private void returenChannelToPool(String key, Channel channel) {
+    private void returenChannelToPool(String address, Channel channel) {
         if (channel != null) {
-            nettyClientKeyPool.returnObject(key, channel);
+            nettyClientKeyPool.returnObject(address, channel);
         }
     }
 

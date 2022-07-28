@@ -97,6 +97,7 @@ public final class CapitalServiceOuterClass {
     getDescriptor() {
         return descriptor;
     }
+
     public interface CapitalAccountRequestOrBuilder extends
             // @@protoc_insertion_point(interface_extends:CapitalAccountRequest)
             com.google.protobuf.MessageOrBuilder {
@@ -106,6 +107,7 @@ public final class CapitalServiceOuterClass {
          */
         long getUserId();
     }
+
     public interface CapitalAccountReplyOrBuilder extends
             // @@protoc_insertion_point(interface_extends:CapitalAccountReply)
             com.google.protobuf.MessageOrBuilder {
@@ -121,6 +123,7 @@ public final class CapitalServiceOuterClass {
         com.google.protobuf.ByteString
         getAmountBytes();
     }
+
     public interface RecordReplyOrBuilder extends
             // @@protoc_insertion_point(interface_extends:RecordReply)
             com.google.protobuf.MessageOrBuilder {
@@ -136,6 +139,7 @@ public final class CapitalServiceOuterClass {
         com.google.protobuf.ByteString
         getMessageBytes();
     }
+
     public interface CapitalTradeOrderDtoOrBuilder extends
             // @@protoc_insertion_point(interface_extends:CapitalTradeOrderDto)
             com.google.protobuf.MessageOrBuilder {
@@ -217,6 +221,7 @@ public final class CapitalServiceOuterClass {
         private CapitalAccountRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private CapitalAccountRequest() {
             userId_ = 0L;
         }
@@ -718,6 +723,7 @@ public final class CapitalServiceOuterClass {
         private CapitalAccountReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private CapitalAccountReply() {
             amount_ = "";
         }
@@ -1290,6 +1296,7 @@ public final class CapitalServiceOuterClass {
         private RecordReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private RecordReply() {
             message_ = "";
         }
