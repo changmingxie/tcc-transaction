@@ -18,30 +18,29 @@ public final class Terminator {
 
     }
 
-    public static Object invoke(TransactionContext transactionContext, InvocationContext invocationContext, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
+    public static Object invoke(TransactionContext transactionContext, Invocation invocation, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
 
+        if (StringUtils.isNotEmpty(invocation.getMethodName())) {
 
-        if (StringUtils.isNotEmpty(invocationContext.getMethodName())) {
-
-            Object target = FactoryBuilder.factoryOf(invocationContext.getTargetClass()).getInstance();
+            Object target = FactoryBuilder.factoryOf(invocation.getTargetClass()).getInstance();
 
             Method method = null;
 
             try {
-                method = target.getClass().getMethod(invocationContext.getMethodName(), invocationContext.getParameterTypes());
+                method = target.getClass().getMethod(invocation.getMethodName(), invocation.getParameterTypes());
             } catch (NoSuchMethodException e) {
                 throw new SystemException(e);
             }
 
-            FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(transactionContext, target, method, invocationContext.getArgs());
+            FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(transactionContext, target, method, invocation.getArgs());
             try {
-                return method.invoke(target, invocationContext.getArgs());
+                return method.invoke(target, invocation.getArgs());
             } catch (IllegalAccessException e) {
                 throw new SystemException(e);
             } catch (InvocationTargetException e) {
                 throw new SystemException(e);
             } finally {
-                FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().clear(transactionContext, target, method, invocationContext.getArgs());
+                FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().clear(transactionContext, target, method, invocation.getArgs());
             }
         }
         return null;

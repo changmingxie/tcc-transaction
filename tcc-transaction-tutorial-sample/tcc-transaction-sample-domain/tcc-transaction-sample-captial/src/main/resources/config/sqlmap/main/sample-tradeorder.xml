@@ -15,12 +15,12 @@
 
     <sql id="sql_select">
         SELECT ID,
-               SELF_USER_ID,
-               OPPOSITE_USER_ID,
-               MERCHANT_ORDER_NO,
-               AMOUNT,
-               STATUS,
-               VERSION
+        SELF_USER_ID,
+        OPPOSITE_USER_ID,
+        MERCHANT_ORDER_NO,
+        AMOUNT,
+        STATUS,
+        VERSION
         FROM CAP_TRADE_ORDER
     </sql>
 
@@ -33,25 +33,25 @@
             parameterType="org.mengyun.tcctransaction.sample.capital.domain.entity.TradeOrder">
         INSERT INTO CAP_TRADE_ORDER
         (SELF_USER_ID,
-         OPPOSITE_USER_ID,
-         MERCHANT_ORDER_NO,
-         AMOUNT,
-         STATUS,
-         VERSION)
+        OPPOSITE_USER_ID,
+        MERCHANT_ORDER_NO,
+        AMOUNT,
+        STATUS,
+        VERSION)
         VALUES (#{selfUserId},
-                #{oppositeUserId},
-                #{merchantOrderNo},
-                #{amount},
-                #{status},
-                #{version})
+        #{oppositeUserId},
+        #{merchantOrderNo},
+        #{amount},
+        #{status},
+        #{version})
     </insert>
 
     <update id="update" parameterType="org.mengyun.tcctransaction.sample.capital.domain.entity.TradeOrder">
         UPDATE
-            CAP_TRADE_ORDER
-        SET STATUS  = #{status},
-            VERSION = #{version}
+        CAP_TRADE_ORDER
+        SET STATUS = #{status},
+        VERSION = #{version}
         WHERE ID = #{id}
-          AND VERSION = #{version} - 1
+        AND VERSION = #{version} - 1
     </update>
 </mapper>

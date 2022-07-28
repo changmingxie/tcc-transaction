@@ -12,9 +12,9 @@
 
     <sql id="sql_select">
         SELECT PRODUCT_ID,
-               SHOP_ID,
-               PRODUCT_NAME,
-               PRICE
+        SHOP_ID,
+        PRODUCT_NAME,
+        PRICE
         FROM ORD_PRODUCT
     </sql>
 

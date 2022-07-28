@@ -55,10 +55,10 @@ spring:
     registry:
       registry-type: direct
       cluster-name: default
-#      zookeeper:
-#        connect-string: 127.0.0.1:2181
-#        max-retries: 4
-#      nacos:
-#        server-addr: 127.0.0.1:8848
+    #      zookeeper:
+    #        connect-string: 127.0.0.1:2181
+    #        max-retries: 4
+    #      nacos:
+    #        server-addr: 127.0.0.1:8848
     remoting:
       listen-port: 2332

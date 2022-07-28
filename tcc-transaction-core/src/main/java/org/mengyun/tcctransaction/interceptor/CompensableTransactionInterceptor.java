@@ -100,7 +100,7 @@ public class CompensableTransactionInterceptor {
                     } catch (Throwable e) {
                         try {
                             transactionManager.changeStatus(TransactionStatus.TRY_FAILED);
-                        }catch (Exception ignore){
+                        } catch (Exception ignore) {
                         }
                         throw e;
                     }

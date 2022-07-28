@@ -19,12 +19,8 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
 
     private RemotingClient remotingClient;
 
-    private String clusterName;
-
-
     public RemotingTransactionStorage(TransactionStoreSerializer serializer, StoreConfig storeConfig) {
         super(serializer, storeConfig);
-        this.clusterName = storeConfig.getRemoteCluster();
     }
 
     @Override

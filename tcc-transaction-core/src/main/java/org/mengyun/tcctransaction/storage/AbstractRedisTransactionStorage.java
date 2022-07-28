@@ -169,8 +169,8 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
             }
 
             Object result = commands.eval(String.format(
-                    "if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
-                    transactionStore.getVersion() - 1).getBytes(),
+                            "if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
+                            transactionStore.getVersion() - 1).getBytes(),
                     Arrays.asList(RedisHelper.getRedisKey(
                             transactionStore.getDomain(),
                             transactionStore.getXid())),
@@ -293,8 +293,8 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
             }
 
             Object result = commands.eval(String.format(
-                    "if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
-                    domainStore.getVersion() - 1).getBytes(),
+                            "if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
+                            domainStore.getVersion() - 1).getBytes(),
                     Arrays.asList(domainStoreRedisKey),
                     params);
 

@@ -26,6 +26,7 @@ public class AlertManager {
 
     /**
      * 异常事件堆积告警
+     *
      * @param domain
      * @param currentErrorTransactionCount
      * @param transactionStorage

@@ -10,7 +10,7 @@
 
     <sql id="sql_select">
         SELECT SHOP_ID,
-               OWNER_USER_ID
+        OWNER_USER_ID
         FROM ORD_SHOP
     </sql>
 

@@ -22,8 +22,11 @@ import java.util.Properties;
  **/
 public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
+    private static final String REGISTRY_DEFAULT_REGISTRY_TYPE = "direct";
+    private static final String REGISTRY_DEFAULT_DIRECT_SERVER_ADDRESSES = "http://localhost:12332";
+    private static final String REGISTRY_DEFAULT_ZOOKEEPER_CONNECT_STRING = "localhost:2181";
+    private static final String REGISTRY_DEFAULT_NACOS_SERVER_ADDR = "localhost:8848";
     private Logger logger = LoggerFactory.getLogger(DashboardEnvironmentPostProcessor.class);
-
     private Properties tccDashboadProperties = new Properties() {{
         put("spring.tcc.storage.domain", DashboardConstant.APPLICATION_NAME);
         // dashbaord不需要执行recover task
@@ -43,12 +46,6 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
         put("spring.freemarker.template-loader-path", "classpath:/templates/");
 
     }};
-
-    private static final String REGISTRY_DEFAULT_REGISTRY_TYPE = "direct";
-    private static final String REGISTRY_DEFAULT_DIRECT_SERVER_ADDRESSES = "http://localhost:12332";
-    private static final String REGISTRY_DEFAULT_ZOOKEEPER_CONNECT_STRING = "localhost:2181";
-    private static final String REGISTRY_DEFAULT_NACOS_SERVER_ADDR = "localhost:8848";
-
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
@@ -75,10 +72,10 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
                 putIntoTccDashboadProperties("spring.cloud.nacos.discovery.enabled", "false");
                 putIntoTccDashboadProperties("spring.cloud.zookeeper.enabled", "false");
 
-                String serverAddresses = environment.getProperty("spring.tcc.dashboard.registry.direct.server-addresses",REGISTRY_DEFAULT_DIRECT_SERVER_ADDRESSES);
+                String serverAddresses = environment.getProperty("spring.tcc.dashboard.registry.direct.server-addresses", REGISTRY_DEFAULT_DIRECT_SERVER_ADDRESSES);
                 String[] serverAddresseArr = serverAddresses.split(",");
-                for(int i = 0;i<serverAddresseArr.length;i++){
-                    putIntoTccDashboadProperties("spring.cloud.discovery.client.simple.instances.tcc-transaction-server["+i+"].uri",
+                for (int i = 0; i < serverAddresseArr.length; i++) {
+                    putIntoTccDashboadProperties("spring.cloud.discovery.client.simple.instances.tcc-transaction-server[" + i + "].uri",
                             serverAddresseArr[i]);
                 }
                 putIntoTccDashboadProperties("spring.cloud.loadbalancer.ribbon.enabled", "false");
@@ -86,12 +83,12 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
                 putIntoTccDashboadProperties("spring.cloud.nacos.discovery.enabled", "false");
                 putIntoTccDashboadProperties("spring.cloud.zookeeper.enabled", "true");
 
-                putIntoTccDashboadProperties("spring.cloud.zookeeper.connect-string", environment.getProperty("spring.tcc.dashboard.registry.zookeeper.connect-string",REGISTRY_DEFAULT_ZOOKEEPER_CONNECT_STRING));
+                putIntoTccDashboadProperties("spring.cloud.zookeeper.connect-string", environment.getProperty("spring.tcc.dashboard.registry.zookeeper.connect-string", REGISTRY_DEFAULT_ZOOKEEPER_CONNECT_STRING));
             } else if (RegistryType.nacos.name().equals(registryType)) {
                 putIntoTccDashboadProperties("spring.cloud.nacos.discovery.enabled", "true");
                 putIntoTccDashboadProperties("spring.cloud.zookeeper.enabled", "false");
 
-                putIntoTccDashboadProperties("spring.cloud.nacos.discovery.server-addr", environment.getProperty("spring.tcc.dashboard.registry.nacos.server-addr",REGISTRY_DEFAULT_NACOS_SERVER_ADDR));
+                putIntoTccDashboadProperties("spring.cloud.nacos.discovery.server-addr", environment.getProperty("spring.tcc.dashboard.registry.nacos.server-addr", REGISTRY_DEFAULT_NACOS_SERVER_ADDR));
                 putIntoTccDashboadProperties("spring.cloud.nacos.discovery.username", environment.getProperty("spring.tcc.dashboard.registry.nacos.username"));
                 putIntoTccDashboadProperties("spring.cloud.nacos.discovery.password", environment.getProperty("spring.tcc.dashboard.registry.nacos.password"));
 

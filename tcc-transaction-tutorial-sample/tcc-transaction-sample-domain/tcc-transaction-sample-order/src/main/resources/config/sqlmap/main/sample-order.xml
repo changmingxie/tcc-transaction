@@ -16,13 +16,13 @@
 
     <sql id="sql_select">
         SELECT ORDER_ID,
-               PAYER_USER_ID,
-               PAYEE_USER_ID,
-               RED_PACKET_PAY_AMOUNT,
-               CAPITAL_PAY_AMOUNT,
-               STATUS,
-               MERCHANT_ORDER_NO,
-               VERSION
+        PAYER_USER_ID,
+        PAYEE_USER_ID,
+        RED_PACKET_PAY_AMOUNT,
+        CAPITAL_PAY_AMOUNT,
+        STATUS,
+        MERCHANT_ORDER_NO,
+        VERSION
         FROM ORD_ORDER
     </sql>
 
@@ -44,29 +44,29 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO ORD_ORDER
         (PAYER_USER_ID,
-         PAYEE_USER_ID,
-         RED_PACKET_PAY_AMOUNT,
-         CAPITAL_PAY_AMOUNT,
-         STATUS,
-         MERCHANT_ORDER_NO,
-         VERSION)
+        PAYEE_USER_ID,
+        RED_PACKET_PAY_AMOUNT,
+        CAPITAL_PAY_AMOUNT,
+        STATUS,
+        MERCHANT_ORDER_NO,
+        VERSION)
         VALUES (#{payerUserId},
-                #{payeeUserId},
-                #{redPacketPayAmount},
-                #{capitalPayAmount},
-                #{status},
-                #{merchantOrderNo},
-                #{version})
+        #{payeeUserId},
+        #{redPacketPayAmount},
+        #{capitalPayAmount},
+        #{status},
+        #{merchantOrderNo},
+        #{version})
     </insert>
 
     <update id="update" parameterType="org.mengyun.tcctransaction.sample.order.domain.entity.Order">
         UPDATE
-            ORD_ORDER
-        SET STATUS                = #{status},
-            RED_PACKET_PAY_AMOUNT = #{redPacketPayAmount},
-            CAPITAL_PAY_AMOUNT    = #{capitalPayAmount},
-            VERSION               = #{version}
+        ORD_ORDER
+        SET STATUS = #{status},
+        RED_PACKET_PAY_AMOUNT = #{redPacketPayAmount},
+        CAPITAL_PAY_AMOUNT = #{capitalPayAmount},
+        VERSION = #{version}
         WHERE ORDER_ID = #{id}
-          AND VERSION = #{version} - 1
+        AND VERSION = #{version} - 1
     </update>
 </mapper>

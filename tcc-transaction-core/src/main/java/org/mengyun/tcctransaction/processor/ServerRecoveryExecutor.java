@@ -19,12 +19,10 @@ import org.slf4j.LoggerFactory;
 public class ServerRecoveryExecutor implements RecoveryExecutor {
 
     static final Logger logger = LoggerFactory.getLogger(ServerRecoveryExecutor.class.getSimpleName());
-    private TransactionStoreSerializer serializer;
-    private RecoveryScheduler scheduler;
-
     // the timeout for tcc-server reqeust tcc-client
     private static final long REQUEST_TIMEOUT_MILLIS = 2000L;
-
+    private TransactionStoreSerializer serializer;
+    private RecoveryScheduler scheduler;
     private RemotingServer remotingServer;
 
     public ServerRecoveryExecutor(RecoveryScheduler scheduler, TransactionStoreSerializer transactionStoreSerializer, RemotingServer remotingServer) {
