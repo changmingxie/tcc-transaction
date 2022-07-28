@@ -30,6 +30,7 @@ import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.transaction.TransactionManager;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
+import org.mengyun.tcctransaction.utils.NetUtils;
 import org.mengyun.tcctransaction.utils.StopUtils;
 import org.mengyun.tcctransaction.utils.StringUtils;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Created by changming.xie on 11/25/17.
@@ -80,7 +82,7 @@ public class TccClient implements TccService {
 
     private LoadBalanceServcie loadBalanceServcie;
 
-    private volatile boolean isShutdown = false;
+    private volatile boolean isStarting = false;
 
     public TccClient(ClientConfig clientConfig) {
         if (clientConfig != null) {
@@ -99,7 +101,7 @@ public class TccClient implements TccService {
                 }
                 break;
             }
-            case FASTJSON:{
+            case FASTJSON: {
                 this.transactionSerializer = new FastjsonTransactionSerializer();
                 break;
             }
@@ -127,18 +129,26 @@ public class TccClient implements TccService {
             this.loadBalanceServcie = LoadBalanceFactory.getInstance(this.clientConfig);
             remotingClient = new NettyRemotingClient(this.remotingCommandSerializer, this.clientConfig,
                     new ServerAddressLoader() {
+
+                        private String addressGroup = clientConfig.getClusterName();
+
                         @Override
-                        public InetSocketAddress selectOne(String key) {
-                            return loadBalanceServcie.select(registryService.lookup());
+                        public String selectOneAvailableAddress() {
+                            InetSocketAddress inetSocketAddress = loadBalanceServcie.select(registryService.lookup());
+                            return NetUtils.parseSocketAddress(inetSocketAddress);
                         }
 
                         @Override
-                        public List<InetSocketAddress> getAll(String key) {
-                            return registryService.lookup();
+                        public List<String> getAllAvailableAddresses() {
+                            List<InetSocketAddress> inetSocketAddresses = registryService.lookup();
+                            return inetSocketAddresses.stream()
+                                    .map(inetSocketAddress -> NetUtils.parseSocketAddress(inetSocketAddress))
+                                    .collect(Collectors.toList());
                         }
 
                         @Override
-                        public boolean isAvailableAddress(InetSocketAddress remoteAddress) {
+                        public boolean isAvailableAddress(String address) {
+
                             List<InetSocketAddress> inetSocketAddresses = registryService.lookup();
 
                             if (CollectionUtils.isEmpty(inetSocketAddresses)) {
@@ -146,7 +156,7 @@ public class TccClient implements TccService {
                             }
 
                             for (InetSocketAddress inetSocketAddress : inetSocketAddresses) {
-                                if (inetSocketAddress.equals(remoteAddress)) {
+                                if (NetUtils.parseSocketAddress(inetSocketAddress).equals(address)) {
                                     return true;
                                 }
                             }
@@ -176,7 +186,8 @@ public class TccClient implements TccService {
     @Override
     @PostConstruct
     public void start() throws Exception {
-        this.isShutdown = false;
+        this.isStarting = true;
+
         if (this.clientConfig.getStorageType() == StorageType.REMOTING) {
             try {
                 this.registryService.start();
@@ -193,13 +204,13 @@ public class TccClient implements TccService {
                 scheduler.registerScheduleAndStartIfNotPresent(this.clientConfig.getDomain());
             }
         }
+
+        this.isStarting = false;
     }
 
     @Override
     @PreDestroy
     public void shutdown() throws Exception {
-
-        this.isShutdown = true;
 
         if (this.clientConfig.getStorageType() == StorageType.REMOTING) {
             this.remotingClient.shutdown();
@@ -283,7 +294,7 @@ public class TccClient implements TccService {
 
         this.remotingClient.registerDefaultProcessor(requestProcessor, this.requestProcessExecutor);
 
-        this.remotingClient.registerChannelHandlers(new ReConnectToServerHandler());
+        this.remotingClient.registerChannelHandlers(new RegisterToServerHandler());
 
         this.remotingClient.start();
 
@@ -295,7 +306,18 @@ public class TccClient implements TccService {
         registerCommand.setServiceCode(RemotingServiceCode.REGISTER);
         registerCommand.setBody(clientConfig.getDomain().getBytes());
         try {
-            remotingClient.invokeSync(clientConfig.getClusterName(), registerCommand, clientConfig.getRequestTimeoutMillis());
+            remotingClient.invokeOneway(registerCommand, clientConfig.getRequestTimeoutMillis());
+        } catch (Exception e) {
+            logger.error("failled to register to server", e);
+        }
+    }
+
+    private void registerToServer(String address) {
+        RemotingCommand registerCommand = RemotingCommand.createCommand(RemotingCommandCode.SERVICE_REQ, null);
+        registerCommand.setServiceCode(RemotingServiceCode.REGISTER);
+        registerCommand.setBody(clientConfig.getDomain().getBytes());
+        try {
+            remotingClient.invokeOneway(address, registerCommand, clientConfig.getRequestTimeoutMillis());
         } catch (Exception e) {
             logger.error("failled to register to server", e);
         }
@@ -310,18 +332,18 @@ public class TccClient implements TccService {
     }
 
     @ChannelHandler.Sharable
-    class ReConnectToServerHandler extends ChannelInboundHandlerAdapter {
-        @Override
-        public void channelUnregistered(ChannelHandlerContext ctx) {
+    class RegisterToServerHandler extends ChannelInboundHandlerAdapter {
 
-            if (!isShutdown) {
-                //try reconnect to server
-                ctx.channel().eventLoop().schedule(new Runnable() {
+        public void channelActive(ChannelHandlerContext ctx) throws Exception {
+            super.channelActive(ctx);
+            //register to server if connected
+            if (!isStarting) {
+                ctx.channel().eventLoop().execute(new Runnable() {
                     @Override
                     public void run() {
-                        registerToServer();
+                        registerToServer(NetUtils.parseSocketAddress(ctx.channel().remoteAddress()));
                     }
-                }, clientConfig.getReconnectIntervalSeconds(), TimeUnit.SECONDS);
+                });
             }
         }
     }

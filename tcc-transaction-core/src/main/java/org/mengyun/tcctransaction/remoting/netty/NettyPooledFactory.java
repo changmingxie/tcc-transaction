@@ -6,7 +6,6 @@ import io.netty.channel.ChannelFuture;
 import org.apache.commons.pool2.KeyedPooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.mengyun.tcctransaction.exception.RegistryException;
 import org.mengyun.tcctransaction.remoting.exception.RemotingConnectException;
 import org.mengyun.tcctransaction.utils.NetUtils;
 
@@ -29,12 +28,9 @@ public class NettyPooledFactory implements KeyedPooledObjectFactory<String, Chan
 
     @Override
     public PooledObject<Channel> makeObject(String key) throws Exception {
-        InetSocketAddress socketAddress = serverAddressLoader.selectOne(key);
-        if (socketAddress == null) {
-            throw new RegistryException("no available servers found");
-        }
-        Channel channel = null;
+        InetSocketAddress socketAddress = NetUtils.toInetSocketAddress(key);
 
+        Channel channel = null;
         ChannelFuture channelFuture = this.bootstrap.connect(socketAddress);
 
         try {
@@ -65,7 +61,7 @@ public class NettyPooledFactory implements KeyedPooledObjectFactory<String, Chan
 
     @Override
     public boolean validateObject(String key, PooledObject<Channel> p) {
-        return p.getObject() != null && p.getObject().isActive();
+        return this.serverAddressLoader.isAvailableAddress(key) && p.getObject() != null && p.getObject().isActive();
     }
 
     @Override

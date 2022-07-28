@@ -113,7 +113,7 @@ public class CompensableTransactionInterceptor {
                         transactionManager.commit(asyncConfirm);
                     } catch (NoExistedTransactionException excepton) {
                         //the transaction has been commit,ignore it.
-                        logger.warn("no existed transaction found at CONFIRMING stage, will ignore and confirm automatically. transaction xid:" + transaction.getXid());
+                        logger.warn("no existed transaction found at CONFIRMING stage, will ignore and confirm automatically. transaction xid:" + compensableMethodContext.getTransactionContext().getXid());
                     }
                     break;
                 case CANCELLING:
@@ -141,7 +141,7 @@ public class CompensableTransactionInterceptor {
 
                     } catch (NoExistedTransactionException exception) {
                         //the transaction has been rollback,ignore it.
-                        logger.info("no existed transaction found at CANCELLING stage, will ignore and cancel automatically. transaction xid:" + transaction.getXid());
+                        logger.info("no existed transaction found at CANCELLING stage, will ignore and cancel automatically. transaction xid:" + compensableMethodContext.getTransactionContext().getXid());
                     }
                     break;
             }
