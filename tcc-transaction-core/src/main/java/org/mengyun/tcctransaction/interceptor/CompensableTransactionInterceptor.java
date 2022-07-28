@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
+
 /**
  * Created by changmingxie on 10/30/15.
  */
@@ -88,7 +89,7 @@ public class CompensableTransactionInterceptor {
 
         try {
 
-            switch (TransactionStatus.valueOf(compensableMethodContext.getTransactionContext().getStatus())) {
+            switch (compensableMethodContext.getTransactionContext().getStatus()) {
                 case TRYING:
                     transaction = transactionManager.propagationNewBegin(compensableMethodContext.getTransactionContext());
 
@@ -121,7 +122,7 @@ public class CompensableTransactionInterceptor {
                     try {
 
                         //The transaction' status of this branch transaction, passed from consumer side.
-                        int transactionStatusFromConsumer = compensableMethodContext.getTransactionContext().getParticipantStatus();
+                        ParticipantStatus transactionStatusFromConsumer = compensableMethodContext.getTransactionContext().getParticipantStatus();
 
                         transaction = transactionManager.propagationExistBegin(compensableMethodContext.getTransactionContext());
 
@@ -131,7 +132,7 @@ public class CompensableTransactionInterceptor {
                         if (transaction.getStatus().equals(TransactionStatus.TRY_SUCCESS)
                                 || transaction.getStatus().equals(TransactionStatus.TRY_FAILED)
                                 || transaction.getStatus().equals(TransactionStatus.CANCELLING)
-                                || transactionStatusFromConsumer == ParticipantStatus.TRY_SUCCESS.getId()) {
+                                || ParticipantStatus.TRY_SUCCESS.equals(transactionStatusFromConsumer)) {
                             transactionManager.rollback(asyncCancel);
                         } else {
                             //in this case, transaction's Status is TRYING and transactionStatusFromConsumer is TRY_FAILED

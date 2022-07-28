@@ -70,7 +70,7 @@ public class AccountServiceStub implements AccountService {
 
                 TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
 
-                if (transactionContext1.getStatus() == TransactionStatus.TRYING.getId()) {
+                if (transactionContext1.getStatus().equals(TransactionStatus.TRYING)) {
                     try {
                         Thread.sleep(3000l);
                     } catch (InterruptedException e) {

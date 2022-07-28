@@ -60,10 +60,6 @@ public class Transaction implements Serializable {
         participants.add(participant);
     }
 
-    public void changeStatus(TransactionStatus status) {
-        this.status = status;
-    }
-
     public void commit() {
         for (Participant participant : participants) {
             if (!participant.getStatus().equals(ParticipantStatus.CONFIRM_SUCCESS)) {

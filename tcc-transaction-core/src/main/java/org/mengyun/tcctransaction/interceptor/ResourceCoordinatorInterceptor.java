@@ -33,7 +33,7 @@ public class ResourceCoordinatorInterceptor {
             if (participant != null) {
 
                 Object result = null;
-                TransactionContext transactionContext = new TransactionContext(transaction.getRootDomain(), transaction.getRootXid(), participant.getXid(), TransactionStatus.TRYING.getId(), ParticipantStatus.TRYING.getId());
+                TransactionContext transactionContext = new TransactionContext(transaction.getRootDomain(), transaction.getRootXid(), participant.getXid(), TransactionStatus.TRYING, ParticipantStatus.TRYING);
                 FactoryBuilder.factoryOf(participant.getTransactionContextEditorClass()).getInstance().set(transactionContext, pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
                 try {
                     result = pjp.proceed(pjp.getArgs());

@@ -22,7 +22,7 @@ public class Participant implements Serializable {
 
     private Xid xid;
     private InvocationContext invocationContext;
-    private int status = ParticipantStatus.TRYING.getId();
+    private ParticipantStatus status = ParticipantStatus.TRYING;
 
     public Participant() {
 
@@ -37,22 +37,18 @@ public class Participant implements Serializable {
     }
 
     public void rollback() {
-        Terminator.invoke(new TransactionContext(rootDomain, rootXid, xid, TransactionStatus.CANCELLING.getId(), status), new Invocation(invocationContext.getCancelMethodName(), invocationContext), transactionContextEditorClass);
+        Terminator.invoke(new TransactionContext(rootDomain, rootXid, xid, TransactionStatus.CANCELLING, status), new Invocation(invocationContext.getCancelMethodName(), invocationContext), transactionContextEditorClass);
     }
 
     public void commit() {
-        Terminator.invoke(new TransactionContext(rootDomain, rootXid, xid, TransactionStatus.CONFIRMING.getId(), status), new Invocation(invocationContext.getConfirmMethodName(), invocationContext), transactionContextEditorClass);
+        Terminator.invoke(new TransactionContext(rootDomain, rootXid, xid, TransactionStatus.CONFIRMING, status), new Invocation(invocationContext.getConfirmMethodName(), invocationContext), transactionContextEditorClass);
     }
 
     public ParticipantStatus getStatus() {
-        return ParticipantStatus.valueOf(this.status);
+        return this.status;
     }
 
     public void setStatus(ParticipantStatus status) {
-        this.status = status.getId();
-    }
-
-    public void setStatus(int status) {
         this.status = status;
     }
 

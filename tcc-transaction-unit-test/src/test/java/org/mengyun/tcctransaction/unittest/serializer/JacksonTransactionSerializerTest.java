@@ -25,7 +25,7 @@ public class JacksonTransactionSerializerTest {
                 "TCC:TEST",
                 new TransactionXid("xxxxxxxxxxxxxx"),
                 new TransactionXid("yyyyyyyyyyyyyy"),
-                TransactionStatus.TRYING.getId()
+                TransactionStatus.TRYING
         ));
         byte[] bytes = serializer.serialize(transaction);
         Transaction newTransaction = serializer.deserialize(bytes);

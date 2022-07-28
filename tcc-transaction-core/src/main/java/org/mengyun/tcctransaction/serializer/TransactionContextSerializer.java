@@ -1,6 +1,8 @@
 package org.mengyun.tcctransaction.serializer;
 
+import org.mengyun.tcctransaction.api.ParticipantStatus;
 import org.mengyun.tcctransaction.api.TransactionContext;
+import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.xid.TransactionXid;
 
@@ -118,9 +120,9 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
         byteBuffer.putInt(rootDomainLength);
         byteBuffer.put(rootDomain.getBytes());
         // int status
-        byteBuffer.putInt(transactionContext.getStatus());
+        byteBuffer.putInt(transactionContext.getStatus().getId());
         // int participantStatus
-        byteBuffer.putInt(transactionContext.getParticipantStatus());
+        byteBuffer.putInt(transactionContext.getParticipantStatus().getId());
         // Map<String, String> attachments
         if (attachmentsBytes != null) {
             byteBuffer.putInt(attachmentsLength);
@@ -160,9 +162,9 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
         transactionContext.setRootDomain(new String(rootDomainContent, StandardCharsets.UTF_8));
 
         // int status
-        transactionContext.setStatus(byteBuffer.getInt());
+        transactionContext.setStatus(TransactionStatus.valueOf(byteBuffer.getInt()));
         // int participantStatus
-        transactionContext.setParticipantStatus(byteBuffer.getInt());
+        transactionContext.setParticipantStatus(ParticipantStatus.valueOf(byteBuffer.getInt()));
         // Map<String, String> attachments
         int attachmentsLength = byteBuffer.getInt();
         if (attachmentsLength > 0) {
