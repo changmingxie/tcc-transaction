@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.discovery.registry.direct;
 
 import org.mengyun.tcctransaction.discovery.registry.AbstractRegistryService;
 import org.mengyun.tcctransaction.discovery.registry.RegistryConfig;
-import org.mengyun.tcctransaction.utils.NetUtils;
 import org.mengyun.tcctransaction.utils.StringUtils;
 
 import java.net.InetSocketAddress;
@@ -35,7 +34,6 @@ public class DirectRegistryServiceImpl extends AbstractRegistryService {
         try {
             setServerAddresses(Arrays
                     .stream(serverAddresses.split(","))
-                    .map(NetUtils::toInetSocketAddress)
                     .collect(Collectors.toList()));
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to parse serverAddresses:" + serverAddresses);
