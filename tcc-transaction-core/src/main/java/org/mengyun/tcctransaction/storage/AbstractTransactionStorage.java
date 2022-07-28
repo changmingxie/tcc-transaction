@@ -21,7 +21,7 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
     @Override
     public int create(TransactionStore transactionStore) {
         if (transactionStore.getContent().length > this.storeConfig.getMaxTransactionSize()) {
-            throw new TransactionIOException("the size of transaction is more bigger than " + this.storeConfig.getMaxTransactionSize());
+            throw new TransactionIOException(String.format("cur transaction size(%dB) is bigger than maxTransactionSize(%dB), consider to reduce parameter size or adjust maxTransactionSize", transactionStore.getContent().length, this.storeConfig.getMaxTransactionSize()));
         }
         transactionStore.setVersion(1l);
         int result = doCreate(transactionStore);
