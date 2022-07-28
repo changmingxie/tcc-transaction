@@ -75,8 +75,12 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
                 putIntoTccDashboadProperties("spring.cloud.nacos.discovery.enabled", "false");
                 putIntoTccDashboadProperties("spring.cloud.zookeeper.enabled", "false");
 
-                putIntoTccDashboadProperties("spring.cloud.discovery.client.simple.instances.tcc-transaction-server[0].uri",
-                        environment.getProperty("spring.tcc.dashboard.registry.direct.server-addresses",REGISTRY_DEFAULT_DIRECT_SERVER_ADDRESSES));
+                String serverAddresses = environment.getProperty("spring.tcc.dashboard.registry.direct.server-addresses",REGISTRY_DEFAULT_DIRECT_SERVER_ADDRESSES);
+                String[] serverAddresseArr = serverAddresses.split(",");
+                for(int i = 0;i<serverAddresseArr.length;i++){
+                    putIntoTccDashboadProperties("spring.cloud.discovery.client.simple.instances.tcc-transaction-server["+i+"].uri",
+                            serverAddresseArr[i]);
+                }
                 putIntoTccDashboadProperties("spring.cloud.loadbalancer.ribbon.enabled", "false");
             } else if (RegistryType.zookeeper.name().equals(registryType)) {
                 putIntoTccDashboadProperties("spring.cloud.nacos.discovery.enabled", "false");

@@ -8,4 +8,5 @@ public class RemotingServiceCode {
     public static final int RECOVER_COMMIT = 5;
     public static final int RECOVER_ROLLBACK = 6;
     public static final int REGISTER = 7;
+    public static final int DESERIALIZE_TRANSACTION = 8;
 }

@@ -4,6 +4,7 @@ import {columns} from '../../../common/constants';
 import {useSelector} from 'react-redux';
 import * as api from '../../../common/api';
 import ReactJson from "react-json-view";
+import {InfoCircleOutlined} from '@ant-design/icons';
 
 
 const TableCard = (props) => {
@@ -67,7 +68,6 @@ const TableCard = (props) => {
       })
       .catch((res) => {
         setloadingStatus(false);
-        message.error('服务异常，请稍后再试');
       });
   };
 
@@ -109,12 +109,33 @@ const TableCard = (props) => {
     reloadHandler(Promise.all(resultPromiseList));
   };
 
-  const contentFormat = (content) => {
-    try {
-      return JSON.parse(content)
-    } catch (e) {
-      return {'content': content};
-    }
+  const openTransactionDetail = (record) => {
+    api.detail(record).then(res => {
+      let detailContent;
+      let isJsonParseSuccess = true;
+      try {
+        console.log("contentFormat", res);
+        detailContent = JSON.parse(res.content)
+      } catch (e) {
+        detailContent = [res.content];
+        isJsonParseSuccess = false;
+      }
+
+      Modal.info({
+        icon: isJsonParseSuccess === true ? <InfoCircleOutlined/> :
+          <InfoCircleOutlined style={{color: 'red'}}/>,
+        content:
+          <>
+            {
+              isJsonParseSuccess === true ? <p></p> : <p style={{color: 'red'}}>事件详情解析异常，降级为base64展示，可复制内容去源服务进行人工解析</p>
+            }
+            <ReactJson collapseStringsAfterLength={100} src={detailContent}/>
+          </>
+        ,
+        width: '90%',
+      });
+    })
+
   }
 
   return (
@@ -206,10 +227,7 @@ const TableCard = (props) => {
                 size="small"
                 type="primary"
                 onClick={() => {
-                  Modal.info({
-                    content: <ReactJson collapseStringsAfterLength={100} src={contentFormat(record.content)}/>,
-                    width: '90%',
-                  });
+                  openTransactionDetail(record)
                 }}
               >
                 详情

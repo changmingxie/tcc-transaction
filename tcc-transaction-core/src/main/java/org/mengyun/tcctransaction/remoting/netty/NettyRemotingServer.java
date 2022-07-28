@@ -19,12 +19,18 @@ import org.mengyun.tcctransaction.remoting.RemotingServer;
 import org.mengyun.tcctransaction.remoting.RequestProcessor;
 import org.mengyun.tcctransaction.remoting.codec.NettyDecoder;
 import org.mengyun.tcctransaction.remoting.codec.NettyEncoder;
+import org.mengyun.tcctransaction.remoting.exception.RemotingException;
+import org.mengyun.tcctransaction.remoting.exception.RemotingSendRequestException;
+import org.mengyun.tcctransaction.remoting.exception.RemotingTimeoutException;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
 import org.mengyun.tcctransaction.serializer.RemotingCommandSerializer;
+import org.mengyun.tcctransaction.support.FactoryBuilder;
+import org.mengyun.tcctransaction.utils.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -169,6 +175,59 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
     @Override
     public void registerChannelHandlers(ChannelHandler... channelHandlers) {
         this.channelHandlers = channelHandlers;
+    }
+
+    @Override
+    public RemotingCommand invokeSync(String key, RemotingCommand request, long timeoutMillis) {
+
+        int requestId = request.getRequestId();
+
+        Channel channel = FactoryBuilder.factoryOf(ChannelGroupMap.class).getInstance().getChannel(key);
+
+        if(channel == null){
+            throw new RemotingException("channel not exist for key:"+key);
+        }
+
+        SocketAddress socketAddress = channel.remoteAddress();
+
+        try {
+
+            ResponseFuture responseFuture = new ResponseFuture(channel, requestId, timeoutMillis);
+
+            this.responseTable.put(requestId, responseFuture);
+
+            channel.writeAndFlush(request).addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                    if (channelFuture.isSuccess()) {
+                        responseFuture.setSendRequestSuccess(true);
+                        return;
+                    } else {
+                        responseFuture.setCause(channelFuture.cause());
+                        responseFuture.setResponse(null);
+                    }
+                }
+            });
+
+            RemotingCommand responseCommand = null;
+            try {
+                responseCommand = responseFuture.get(timeoutMillis);
+            } catch (InterruptedException e) {
+                throw new RemotingTimeoutException(NetUtils.parseSocketAddress(socketAddress), timeoutMillis, e);
+            }
+
+            if (null == responseCommand) {
+                if (responseFuture.isSendRequestSuccess()) {
+                    throw new RemotingTimeoutException(NetUtils.parseSocketAddress(socketAddress), timeoutMillis, responseFuture.getCause());
+                } else {
+                    throw new RemotingSendRequestException(NetUtils.parseSocketAddress(socketAddress), responseFuture.getCause());
+                }
+            }
+
+            return responseCommand;
+        } finally {
+            this.responseTable.remove(requestId);
+        }
     }
 
     @ChannelHandler.Sharable

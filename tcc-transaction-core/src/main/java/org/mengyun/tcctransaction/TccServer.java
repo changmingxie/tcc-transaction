@@ -88,7 +88,7 @@ public class TccServer implements TccService {
 
         this.scheduler = new RecoveryScheduler(this.serverConfig);
 
-        this.recoveryExecutor = new ServerRecoveryExecutor(this.scheduler, this.transactionStoreSerializer);
+        this.recoveryExecutor = new ServerRecoveryExecutor(this.scheduler, this.transactionStoreSerializer, this.remotingServer);
 
         this.requestProcessor = new ServerRequestProcessor(this.scheduler, this.transactionStoreSerializer, this.transactionStorage);
 
@@ -193,6 +193,10 @@ public class TccServer implements TccService {
 
     public TransactionStorage getTransactionStorage() {
         return transactionStorage;
+    }
+
+    public RecoveryExecutor getRecoveryExecutor() {
+        return recoveryExecutor;
     }
 
     @ChannelHandler.Sharable

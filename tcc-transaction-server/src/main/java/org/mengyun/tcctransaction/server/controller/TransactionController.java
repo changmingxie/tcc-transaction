@@ -1,9 +1,6 @@
 package org.mengyun.tcctransaction.server.controller;
 
-import org.mengyun.tcctransaction.dashboard.dto.ResponseDto;
-import org.mengyun.tcctransaction.dashboard.dto.TransactionOperateRequestDto;
-import org.mengyun.tcctransaction.dashboard.dto.TransactionPageDto;
-import org.mengyun.tcctransaction.dashboard.dto.TransactionPageRequestDto;
+import org.mengyun.tcctransaction.dashboard.dto.*;
 import org.mengyun.tcctransaction.server.service.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +30,18 @@ public class TransactionController {
     @ResponseBody
     public ResponseDto<TransactionPageDto> list(@RequestBody TransactionPageRequestDto requestDto) {
         return transactionService.list(requestDto);
+    }
+
+    /**
+     * 事件详情
+     *
+     * @param requestDto
+     * @return
+     */
+    @RequestMapping("/detail")
+    @ResponseBody
+    public ResponseDto<TransactionStoreDto> detail(@RequestBody TransactionDetailRequestDto requestDto) {
+        return transactionService.detail(requestDto);
     }
 
     @RequestMapping("/confirm")

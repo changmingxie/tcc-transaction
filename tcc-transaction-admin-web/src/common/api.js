@@ -47,6 +47,16 @@ export function getManageList({
   })
 }
 
+export function detail({
+                        domain,
+                        xidString
+                              }) {
+  return http.post("/tcc-transaction-dashboard/api/transaction/detail", {
+    domain,
+    xidString
+  })
+}
+
 export function confirm(params) {
   return http.post("/tcc-transaction-dashboard/api/transaction/confirm", {
     domain: params.domain,

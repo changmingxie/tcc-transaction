@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.dashboard.service.impl.tccserver;
 
+import org.mengyun.tcctransaction.dashboard.constants.DashboardConstant;
 import org.mengyun.tcctransaction.dashboard.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +14,7 @@ import java.util.List;
  * @Date 2022/5/30 10:10
  * ,url = "http://localhost:9998"
  **/
-@FeignClient(value = "tcc-transaction-server")
+@FeignClient(value = DashboardConstant.TCC_SERVER_GROUP)
 public interface TccServerFeignClient {
 
     @RequestMapping("/domain/allDomainKeys")
