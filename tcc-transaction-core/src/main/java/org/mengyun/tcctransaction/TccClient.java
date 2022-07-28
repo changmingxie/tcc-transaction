@@ -3,6 +3,7 @@ package org.mengyun.tcctransaction;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.constants.RemotingServiceCode;
 import org.mengyun.tcctransaction.discovery.loadbalance.LoadBalanceFactory;
 import org.mengyun.tcctransaction.discovery.loadbalance.LoadBalanceServcie;
@@ -32,7 +33,6 @@ import org.mengyun.tcctransaction.transaction.TransactionManager;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.mengyun.tcctransaction.utils.NetUtils;
 import org.mengyun.tcctransaction.utils.StopUtils;
-import org.mengyun.tcctransaction.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

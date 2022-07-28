@@ -1,9 +1,9 @@
 package org.mengyun.tcctransaction.discovery.registry.direct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.discovery.registry.AbstractRegistryService;
 import org.mengyun.tcctransaction.discovery.registry.RegistryConfig;
 import org.mengyun.tcctransaction.utils.NetUtils;
-import org.mengyun.tcctransaction.utils.StringUtils;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;

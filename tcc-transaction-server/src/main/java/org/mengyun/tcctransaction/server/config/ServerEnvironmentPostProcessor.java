@@ -1,7 +1,7 @@
 package org.mengyun.tcctransaction.server.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.discovery.registry.RegistryType;
-import org.mengyun.tcctransaction.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;

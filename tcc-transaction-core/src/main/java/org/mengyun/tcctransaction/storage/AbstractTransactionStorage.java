@@ -23,24 +23,40 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
         if (transactionStore.getContent().length > this.storeConfig.getMaxTransactionSize()) {
             throw new TransactionIOException(String.format("cur transaction size(%dB) is bigger than maxTransactionSize(%dB), consider to reduce parameter size or adjust maxTransactionSize", transactionStore.getContent().length, this.storeConfig.getMaxTransactionSize()));
         }
-        transactionStore.setVersion(1l);
+
         int result = doCreate(transactionStore);
-        if (result < 0) {
+
+        if (result > 0) {
+            return result;
+        } else {
+            TransactionStore foundTransactionStore = findByXid(transactionStore.getDomain(), transactionStore.getXid());
+
+            if (foundTransactionStore != null) {
+                return 0;
+            }
+
             throw new TransactionIOException(transactionStore.simpleDetail());
         }
-        return result;
     }
 
     @Override
     public int update(TransactionStore transactionStore) {
-        int result = 0;
+        int result = doUpdate(transactionStore);
 
-        result = doUpdate(transactionStore);
-        if (result <= 0) {
+        if (result > 0) {
+            return result;
+        } else {
+            //compare the content except the version
+            TransactionStore foundTransactionStore = findByXid(transactionStore.getDomain(), transactionStore.getXid());
+
+            foundTransactionStore.setVersion(transactionStore.getVersion());
+
+            if (foundTransactionStore != null && transactionStore.equals(foundTransactionStore)) {
+                return 0;
+            }
+
             throw new TransactionOptimisticLockException(transactionStore.simpleDetail());
         }
-
-        return result;
     }
 
     @Override
