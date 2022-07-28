@@ -7,4 +7,6 @@ public interface RecoveryExecutor {
     void rollback(TransactionStore transactionStore);
 
     void commit(TransactionStore transactionStore);
+
+    byte[] transactionVisualize(String domain, byte[] content);
 }

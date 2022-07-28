@@ -5,7 +5,9 @@ import org.mengyun.tcctransaction.recovery.RecoveryExecutor;
 import org.mengyun.tcctransaction.repository.TransactionConvertor;
 import org.mengyun.tcctransaction.repository.TransactionRepository;
 import org.mengyun.tcctransaction.serializer.TransactionSerializer;
+import org.mengyun.tcctransaction.serializer.json.FastjsonTransactionSerializer;
 import org.mengyun.tcctransaction.storage.TransactionStore;
+import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.transaction.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,5 +46,12 @@ public class ClientRecoveryExecutor implements RecoveryExecutor {
         transactionRepository.update(transaction);
         transaction.commit();
         transactionRepository.delete(transaction);
+    }
+
+    @Override
+    public byte[] transactionVisualize(String domain, byte[] content) {
+        Transaction transaction = transactionSerializer.deserialize(content);
+        FastjsonTransactionSerializer fastjsonTransactionSerializer = FactoryBuilder.factoryOf(FastjsonTransactionSerializer.class).getInstance();
+        return fastjsonTransactionSerializer.serialize(transaction);
     }
 }

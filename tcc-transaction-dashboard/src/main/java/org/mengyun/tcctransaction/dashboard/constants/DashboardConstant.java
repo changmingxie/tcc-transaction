@@ -13,4 +13,7 @@ public interface DashboardConstant {
     public static final String APPLICATION_NAME = "tcc-transaction-dashboard";
 
 
+    public static final String TCC_SERVER_GROUP = "tcc-transaction-server";
+
+
 }

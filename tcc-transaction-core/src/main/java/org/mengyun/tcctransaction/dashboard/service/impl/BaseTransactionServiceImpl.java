@@ -2,7 +2,9 @@ package org.mengyun.tcctransaction.dashboard.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.api.TransactionStatus;
+import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.dashboard.dto.*;
+import org.mengyun.tcctransaction.dashboard.enums.ResponseCodeEnum;
 import org.mengyun.tcctransaction.dashboard.service.TransactionService;
 import org.mengyun.tcctransaction.storage.Page;
 import org.mengyun.tcctransaction.storage.StorageRecoverable;
@@ -12,6 +14,7 @@ import org.mengyun.tcctransaction.utils.TccDateFormatUtils;
 import org.mengyun.tcctransaction.xid.TransactionXid;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -49,7 +52,21 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
 
     @Override
     public ResponseDto<TransactionStoreDto> detail(TransactionDetailRequestDto requestDto) {
-        return null;
+        String domain = requestDto.getDomain();
+        Xid xid = new TransactionXid(requestDto.getXidString());
+        TransactionStore transactionStore = getTransactionStorage().findByXid(domain, xid);
+        if(transactionStore == null){
+            transactionStore = getTransactionStorage().findMarkDeletedByXid(domain,xid);
+        }
+        if(transactionStore == null){
+            return ResponseDto.returnFail(ResponseCodeEnum.TRANSACTION_DETAIL_NOT_EXIST);
+        }
+        TransactionStoreDto transactionStoreDto = toTransactionStoreDto(transactionStore);
+        if(!isJSONString(transactionStoreDto.getContent())){
+            String base64Content = Base64.getEncoder().encodeToString(transactionStore.getContent());
+            transactionStoreDto.setContent(base64Content);
+        }
+        return ResponseDto.returnSuccess(transactionStoreDto);
     }
 
     private int findTotal(TransactionPageRequestDto requestDto) {
@@ -154,7 +171,7 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
         return transactionStoreDtoList;
     }
 
-    private TransactionStoreDto toTransactionStoreDto(TransactionStore transactionStore) {
+    protected TransactionStoreDto toTransactionStoreDto(TransactionStore transactionStore) {
         TransactionStoreDto transactionStoreDto = new TransactionStoreDto();
         transactionStoreDto.setDomain(transactionStore.getDomain());
         transactionStoreDto.setXid(transactionStore.getXid());
@@ -173,4 +190,16 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
         return transactionStoreDto;
     }
 
+    protected boolean isJSONString(String content){
+        boolean isJSON = false;
+        if (StringUtils.isNotBlank(content)) {
+            content = content.trim();
+            if (content.startsWith("{") && content.endsWith("}")) {
+                isJSON = true;
+            } else if (content.startsWith("[") && content.endsWith("]")) {
+                isJSON = true;
+            }
+        }
+        return isJSON;
+    }
 }

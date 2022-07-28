@@ -24,7 +24,6 @@ const Page = () => {
       setTaskList(data);
     }).catch((res) => {
       setloadingStatus(false);
-      message.error('服务异常，请稍后再试');
     });
   }
   const columns = [
@@ -141,7 +140,6 @@ const Page = () => {
       setModifyModalVisible(false);
       reLoadAllTaskList();
     }).catch((res) => {
-      message.error('服务异常，请稍后再试');
     });
   };
   return (

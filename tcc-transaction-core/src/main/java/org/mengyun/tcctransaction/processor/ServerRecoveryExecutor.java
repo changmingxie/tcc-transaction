@@ -6,6 +6,7 @@ import io.netty.channel.ChannelFutureListener;
 import org.mengyun.tcctransaction.constants.RemotingServiceCode;
 import org.mengyun.tcctransaction.recovery.RecoveryExecutor;
 import org.mengyun.tcctransaction.recovery.RecoveryScheduler;
+import org.mengyun.tcctransaction.remoting.RemotingServer;
 import org.mengyun.tcctransaction.remoting.netty.ChannelGroupMap;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommandCode;
@@ -21,9 +22,15 @@ public class ServerRecoveryExecutor implements RecoveryExecutor {
     private TransactionStoreSerializer serializer;
     private RecoveryScheduler scheduler;
 
-    public ServerRecoveryExecutor(RecoveryScheduler scheduler, TransactionStoreSerializer transactionStoreSerializer) {
+    // the timeout for tcc-server reqeust tcc-client
+    private static final long REQUEST_TIMEOUT_MILLIS = 2000L;
+
+    private RemotingServer remotingServer;
+
+    public ServerRecoveryExecutor(RecoveryScheduler scheduler, TransactionStoreSerializer transactionStoreSerializer, RemotingServer remotingServer) {
         this.serializer = transactionStoreSerializer;
         this.scheduler = scheduler;
+        this.remotingServer = remotingServer;
     }
 
     @Override
@@ -34,6 +41,19 @@ public class ServerRecoveryExecutor implements RecoveryExecutor {
     @Override
     public void commit(TransactionStore transactionStore) {
         doRecover(RemotingServiceCode.RECOVER_COMMIT, transactionStore);
+    }
+
+    @Override
+    public byte[] transactionVisualize(String domain, byte[] content) {
+
+        RemotingCommand requestCommand = RemotingCommand.createCommand(RemotingCommandCode.SERVICE_REQ, null);
+        requestCommand.setServiceCode(RemotingServiceCode.DESERIALIZE_TRANSACTION);
+        requestCommand.setBody(content);
+
+        RemotingCommand remotingCommand = this.remotingServer.invokeSync(domain, requestCommand, REQUEST_TIMEOUT_MILLIS);
+
+        return remotingCommand.getBody();
+
     }
 
     private void doRecover(int serviceCode, TransactionStore transactionStore) {

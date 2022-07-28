@@ -6,7 +6,6 @@ import org.mengyun.tcctransaction.recovery.RecoveryExecutor;
 import org.mengyun.tcctransaction.remoting.RequestProcessor;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
 import org.mengyun.tcctransaction.serializer.TransactionStoreSerializer;
-import org.mengyun.tcctransaction.storage.TransactionStore;
 
 public class ClientRecoveryProcessor implements RequestProcessor<ChannelHandlerContext> {
 
@@ -21,19 +20,23 @@ public class ClientRecoveryProcessor implements RequestProcessor<ChannelHandlerC
     @Override
     public RemotingCommand processRequest(ChannelHandlerContext ctx, RemotingCommand request) {
 
-        TransactionStore transactionStore = serializer.deserialize(request.getBody());
 
         switch (request.getServiceCode()) {
             case RemotingServiceCode.RECOVER_COMMIT:
-                recoveryExecutor.commit(transactionStore);
-                break;
+                recoveryExecutor.commit(serializer.deserialize(request.getBody()));
+                return RemotingCommand.createServiceResponseCommand(null);
             case RemotingServiceCode.RECOVER_ROLLBACK:
-                recoveryExecutor.rollback(transactionStore);
-                break;
+                recoveryExecutor.rollback(serializer.deserialize(request.getBody()));
+                return RemotingCommand.createServiceResponseCommand(null);
+            case RemotingServiceCode.DESERIALIZE_TRANSACTION:
+                return processRequestForFindDeserializedTransactionstore(ctx, request);
         }
+        return RemotingCommand.createServiceResponseCommand(null);
+    }
 
-
-        RemotingCommand remotingCommand = RemotingCommand.createServiceResponseCommand(null);
-        return remotingCommand;
+    private RemotingCommand processRequestForFindDeserializedTransactionstore(ChannelHandlerContext ctx, RemotingCommand request) {
+        RemotingCommand responseCommand = RemotingCommand.createServiceResponseCommand(null);
+        responseCommand.setBody(recoveryExecutor.transactionVisualize(null, request.getBody()));
+        return responseCommand;
     }
 }

@@ -1,12 +1,22 @@
 package org.mengyun.tcctransaction.dashboard.service.impl.tccserver;
 
+import org.mengyun.tcctransaction.dashboard.constants.DashboardConstant;
 import org.mengyun.tcctransaction.dashboard.dto.*;
+import org.mengyun.tcctransaction.dashboard.enums.ResponseCodeEnum;
 import org.mengyun.tcctransaction.dashboard.service.TransactionService;
 import org.mengyun.tcctransaction.dashboard.service.condition.TccServerStorageCondition;
 import org.mengyun.tcctransaction.storage.TransactionStorage;
+import org.mengyun.tcctransaction.utils.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 /**
  * @Author huabao.fang
@@ -16,8 +26,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class TccServerTransactionServiceImpl implements TransactionService {
 
+    private Logger logger = LoggerFactory.getLogger(TccServerTransactionServiceImpl.class);
+
     @Autowired
     private TccServerFeignClient tccServerFeignClient;
+
+    //可以获取注册中心上的服务列表
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     public ResponseDto<TransactionPageDto> list(TransactionPageRequestDto requestDto) {
@@ -26,7 +45,23 @@ public class TccServerTransactionServiceImpl implements TransactionService {
 
     @Override
     public ResponseDto<TransactionStoreDto> detail(TransactionDetailRequestDto requestDto) {
-        throw new RuntimeException("not support");
+        List<ServiceInstance> instances = discoveryClient.getInstances(DashboardConstant.TCC_SERVER_GROUP);
+        if (CollectionUtils.isEmpty(instances)) {
+            return ResponseDto.returnFail(ResponseCodeEnum.TRANSACTION_DETAIL_NO_INSTANCES);
+        }
+        for (ServiceInstance instance : instances) {
+            String uri = instance.getUri().toString();
+            try {
+                ResponseDto<TransactionStoreDto> responseDto = restTemplate.postForObject(uri + "/transaction/detail", requestDto, ResponseDto.class);
+                if (responseDto.isSuccess()) {
+                    return responseDto;
+                }
+            } catch (Exception e) {
+                logger.warn("request uri:{} failed!", uri, e);
+            }
+
+        }
+        return ResponseDto.returnFail(ResponseCodeEnum.TRANSACTION_CONTENT_VISUALIZE_ERROR);
     }
 
     @Override

@@ -32,7 +32,11 @@ public enum ResponseCodeEnum {
     // 告警相关
     ALERT_DING_ERROR(10400, "钉钉告警异常"),
 
-
+    // 事件相关
+    TRANSACTION_DETAIL_NO_INSTANCES(10500, "server实例列表为空"),
+    TRANSACTION_DETAIL_NOT_EXIST(10501, "事件详情不存在"),
+    TRANSACTION_CONTENT_VISUALIZE_ERROR(10502, "事件详情解析异常"),
+    TRANSACTION_CONTENT_VISUALIZE_ERROR_WITH_MESSAGE(10502, "事件详情解析异常:%s"),
     ;
 
     private int responseCode;
