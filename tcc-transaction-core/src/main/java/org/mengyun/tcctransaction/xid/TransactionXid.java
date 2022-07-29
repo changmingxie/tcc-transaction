@@ -68,6 +68,11 @@ public class TransactionXid implements Xid, Serializable {
     }
 
     @Override
+    public int getFormatId() {
+        return this.formatId;
+    }
+
+    @Override
     public String getXid() {
         return xid;
     }
