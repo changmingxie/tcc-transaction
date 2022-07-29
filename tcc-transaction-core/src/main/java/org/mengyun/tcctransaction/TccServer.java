@@ -10,6 +10,7 @@ import org.mengyun.tcctransaction.constants.MixAll;
 import org.mengyun.tcctransaction.discovery.registry.RegistryFactory;
 import org.mengyun.tcctransaction.discovery.registry.RegistryService;
 import org.mengyun.tcctransaction.exception.SystemException;
+import org.mengyun.tcctransaction.monitor.ServerFlowMonitor;
 import org.mengyun.tcctransaction.processor.ServerRecoveryExecutor;
 import org.mengyun.tcctransaction.processor.ServerRequestProcessor;
 import org.mengyun.tcctransaction.recovery.RecoveryExecutor;
@@ -108,6 +109,8 @@ public class TccServer implements TccService {
             logger.error("failed to initialize registryService, stop the application!", e);
             StopUtils.stop();
         }
+
+        ServerFlowMonitor.startMonitorScheduler(this.serverConfig.getFlowMonitorPrintIntervalMinutes());
     }
 
     @Override

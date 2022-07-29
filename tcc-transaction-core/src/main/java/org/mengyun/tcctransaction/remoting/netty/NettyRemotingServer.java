@@ -236,9 +236,7 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, RemotingCommand cmd) throws Exception {
-
             ServerFlowMonitor.count();
-
             processMessageReceived(ctx, cmd);
         }
     }
