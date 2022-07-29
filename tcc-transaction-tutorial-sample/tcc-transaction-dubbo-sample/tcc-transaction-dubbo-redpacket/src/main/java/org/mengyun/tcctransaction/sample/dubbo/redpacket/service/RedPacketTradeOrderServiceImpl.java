@@ -33,7 +33,7 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     public String record(RedPacketTradeOrderDto tradeOrderDto) {
 
         try {
-            Thread.sleep(1000l);
+            Thread.sleep(1000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -73,7 +73,7 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     public void confirmRecord(RedPacketTradeOrderDto tradeOrderDto) {
 
         try {
-            Thread.sleep(1000l);
+            Thread.sleep(1000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -99,7 +99,7 @@ public class RedPacketTradeOrderServiceImpl implements RedPacketTradeOrderServic
     public void cancelRecord(RedPacketTradeOrderDto tradeOrderDto) {
 
         try {
-            Thread.sleep(1000l);
+            Thread.sleep(1000L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

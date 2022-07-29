@@ -143,7 +143,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
         }
 
         Object result = commands.eval(
-                "if redis.call('exists', KEYS[1]) == 0 then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 1;"
+                "if redis.call('exists', KEYS[1]) == 0 then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;"
                         .getBytes(),
                 Arrays.asList(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid())),
                 params);
@@ -153,7 +153,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
     protected Long updateByScriptCommand(RedisCommands commands, TransactionStore transactionStore) {
 
-            List<byte[]> params = new ArrayList<byte[]>();
+            List<byte[]> params = new ArrayList<>();
 
             for (Map.Entry<byte[], byte[]> entry : TransactionStoreMapSerializer.serialize(transactionStore)
                     .entrySet()) {
@@ -238,7 +238,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
     public void registerDomain(DomainStore domainStore) {
 
         byte[] domainStoreRedisKey = RedisHelper.getDomainStoreRedisKey(domainStore.getDomain());
-        domainStore.setVersion(1l);
+        domainStore.setVersion(1L);
         try (RedisCommands commands = getRedisCommands(domainStoreRedisKey)) {
 
             List<byte[]> params = new ArrayList<byte[]>();

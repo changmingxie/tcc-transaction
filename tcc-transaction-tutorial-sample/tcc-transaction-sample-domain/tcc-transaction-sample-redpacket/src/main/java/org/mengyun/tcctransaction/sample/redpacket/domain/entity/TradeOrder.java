@@ -16,7 +16,7 @@ public class TradeOrder {
 
     private String status = "DRAFT";
 
-    private long version = 1l;
+    private long version = 1L;
 
     public TradeOrder() {
     }

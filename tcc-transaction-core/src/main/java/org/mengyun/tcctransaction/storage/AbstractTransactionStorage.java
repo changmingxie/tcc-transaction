@@ -33,7 +33,8 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
             TransactionStore foundTransactionStore = findByXid(transactionStore.getDomain(), transactionStore.getXid());
 
             if (foundTransactionStore != null && transactionStore.getRequestId() != null
-                    && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId())) {
+                    && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId())
+                    && transactionStore.getVersion() == foundTransactionStore.getVersion()) {
                 return 1;
             }
 
@@ -52,7 +53,8 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
             TransactionStore foundTransactionStore = findByXid(transactionStore.getDomain(), transactionStore.getXid());
 
             if (foundTransactionStore != null && transactionStore.getRequestId() != null
-                    && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId())) {
+                    && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId())
+                    && transactionStore.getVersion() == foundTransactionStore.getVersion()) {
                 return 1;
             }
 

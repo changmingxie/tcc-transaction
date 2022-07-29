@@ -27,10 +27,11 @@ public class TransactionStoreMapSerializer {
     public static final String VERSION = "VERSION";
     public static final String CONTENT = "CONTENT";
     public static final String DOMAIN = "DOMAIN";
+    public static final String REQUEST_ID = "REQUEST_ID";
 
     public static Map<byte[], byte[]> serialize(TransactionStore transactionStore) {
 
-        Map<byte[], byte[]> map = new HashMap<byte[], byte[]>();
+        Map<byte[], byte[]> map = new HashMap<>();
 
         map.put(DOMAIN.getBytes(), transactionStore.getDomain().getBytes());
         map.put(XID.getBytes(), transactionStore.getXid().toString().getBytes());
@@ -45,12 +46,15 @@ public class TransactionStoreMapSerializer {
         map.put(LAST_UPDATE_TIME.getBytes(), DateFormatUtils.format(transactionStore.getLastUpdateTime(), "yyyy-MM-dd HH:mm:ss").getBytes());
         map.put(VERSION.getBytes(), ByteUtils.longToBytes(transactionStore.getVersion()));
         map.put(CONTENT.getBytes(), transactionStore.getContent());
+        if (transactionStore.getRequestId() != null) {
+            map.put(REQUEST_ID.getBytes(), ByteUtils.intToBytes(transactionStore.getRequestId()));
+        }
         return map;
     }
 
     public static TransactionStore deserialize(Map<byte[], byte[]> map) {
 
-        Map<String, byte[]> propertyMap = new HashMap<String, byte[]>();
+        Map<String, byte[]> propertyMap = new HashMap<>();
 
         for (Map.Entry<byte[], byte[]> entry : map.entrySet()) {
             propertyMap.put(new String(entry.getKey()), entry.getValue());
@@ -67,6 +71,10 @@ public class TransactionStoreMapSerializer {
 
         if (propertyMap.containsKey(ROOT_DOMAIN)) {
             transactionStore.setRootDomain(new String(propertyMap.get(ROOT_DOMAIN)));
+        }
+
+        if (propertyMap.containsKey(REQUEST_ID)) {
+            transactionStore.setRequestId(ByteUtils.bytesToInt(propertyMap.get(REQUEST_ID)));
         }
 
         transactionStore.setStatusId(ByteUtils.bytesToInt(propertyMap.get(STATUS)));

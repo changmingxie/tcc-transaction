@@ -85,7 +85,7 @@ public abstract class TransferServiceTest extends AbstractTestCase {
         Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CANCEL_CALLED, messages.get(4));
 
         try {
-            Thread.sleep(tccClient.getClientConfig().getRecoverDuration() * 2 * 1000l);
+            Thread.sleep(tccClient.getClientConfig().getRecoverDuration() * 2 * 1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -126,7 +126,7 @@ public abstract class TransferServiceTest extends AbstractTestCase {
         Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CANCEL_CALLED, messages.get(3));
 
         try {
-            Thread.sleep(tccClient.getClientConfig().getRecoverDuration() * 2 * 1000l);
+            Thread.sleep(tccClient.getClientConfig().getRecoverDuration() * 2 * 1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -3,7 +3,6 @@ package org.mengyun.tcctransaction.storage;
 import org.mengyun.tcctransaction.api.Xid;
 
 import java.util.Date;
-import java.util.Objects;
 
 public class TransactionStore {
     private String domain;
@@ -13,11 +12,10 @@ public class TransactionStore {
     private byte[] content;
     private Date createTime = new Date();
     private Date lastUpdateTime = new Date();
-    private long version = 0l;
+    private long version = 0L;
     private int retriedCount = 0;
     private int statusId;
     private int transactionTypeId;
-
     private Integer requestId;
 
     public long getVersion() {
@@ -108,6 +106,14 @@ public class TransactionStore {
         this.rootDomain = rootDomain;
     }
 
+    public Integer getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Integer requestId) {
+        this.requestId = requestId;
+    }
+
     public String simpleDetail() {
         return "{" +
                 "domain='" + domain + '\'' +
@@ -121,43 +127,5 @@ public class TransactionStore {
                 ", statusId=" + statusId +
                 ", transactionTypeId=" + transactionTypeId +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (!(obj instanceof TransactionStore)) {
-            return false;
-        }
-
-        TransactionStore other = (TransactionStore) obj;
-
-        if (Objects.equals(this.domain, other.domain)
-                && Objects.equals(this.rootDomain, other.rootDomain)
-                && (Objects.equals(this.xid, other.xid))
-                && (Objects.equals(this.rootXid, other.rootXid))
-                && (Objects.deepEquals(this.content, other.content))
-                && (Objects.equals(this.createTime, other.createTime))
-                && (Objects.equals(this.lastUpdateTime, other.lastUpdateTime))
-                && this.version == other.version
-                && this.retriedCount == other.retriedCount
-                && this.statusId == other.statusId
-                && this.transactionTypeId == other.transactionTypeId
-        ) {
-            return true;
-        }
-        return false;
-    }
-
-    public Integer getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(Integer requestId) {
-        this.requestId = requestId;
     }
 }

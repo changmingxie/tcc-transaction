@@ -27,7 +27,7 @@ public class Order implements Serializable {
 
     private String merchantOrderNo;
 
-    private long version = 1l;
+    private long version = 1L;
 
     private List<OrderLine> orderLines = new ArrayList<OrderLine>();
 

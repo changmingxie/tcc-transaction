@@ -108,30 +108,25 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     @Override
     protected int doCreate(TransactionStore transactionStore) {
         trace("create", transactionStore);
-        db.put(buildMemoryKey(transactionStore), transactionStore);
-        return 1;
+        if (db.putIfAbsent(buildMemoryKey(transactionStore), transactionStore) == null) {
+            return 1;
+        }
+        return 0;
     }
 
     @Override
     protected int doUpdate(TransactionStore transactionStore) {
         trace("update", transactionStore);
-        TransactionStore foundTransaction = doFindOne(transactionStore.getDomain(), transactionStore.getXid(), false);
-        if (foundTransaction.getVersion() != transactionStore.getVersion()) {
-            return 0;
+        if (db.compute(buildMemoryKey(transactionStore), (key, oldValue) -> {
+            if (oldValue == null || oldValue.getVersion() != transactionStore.getVersion() - 1) {
+                return oldValue;
+            } else {
+                return transactionStore;
+            }
+        }) == transactionStore) {
+            return 1;
         }
-
-        Date lastUpdateTime = transactionStore.getLastUpdateTime();
-        long currentVersion = transactionStore.getVersion();
-        transactionStore.setVersion(transactionStore.getVersion() + 1);
-        transactionStore.setLastUpdateTime(new Date());
-        try {
-            //because only the reference is stored here, the parameters are not restored if successful
-            db.put(buildMemoryKey(transactionStore), transactionStore);
-        } catch (Exception e) {
-            transactionStore.setLastUpdateTime(lastUpdateTime);
-            transactionStore.setVersion(currentVersion);
-        }
-        return 1;
+        return 0;
     }
 
     @Override

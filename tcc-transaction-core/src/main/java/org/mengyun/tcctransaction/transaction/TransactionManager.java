@@ -32,13 +32,13 @@ public class TransactionManager {
 
     private ExecutorService asyncTerminatorExecutorService = new ThreadPoolExecutor(threadPoolSize,
             threadPoolSize,
-            0l,
+            0L,
             TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(threadQueueSize), new ThreadPoolExecutor.AbortPolicy());
 
     private ExecutorService asyncSaveExecutorService = new ThreadPoolExecutor(threadPoolSize,
             threadPoolSize,
-            0l,
+            0L,
             TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(threadQueueSize * 2), new ThreadPoolExecutor.CallerRunsPolicy());
 
@@ -85,7 +85,7 @@ public class TransactionManager {
         Transaction transaction = this.getCurrentTransaction();
         transaction.enlistParticipant(participant);
 
-        if (transaction.getVersion() == 0l) {
+        if (transaction.getVersion() == 0L) {
             // transaction.getVersion() is zero which means never persistent before, need call create to persistent.
             int result = transactionRepository.create(transaction);
         } else {
