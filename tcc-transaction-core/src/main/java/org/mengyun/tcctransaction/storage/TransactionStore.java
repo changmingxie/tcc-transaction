@@ -13,11 +13,10 @@ public class TransactionStore {
     private byte[] content;
     private Date createTime = new Date();
     private Date lastUpdateTime = new Date();
-    private long version = 0l;
+    private long version = 0L;
     private int retriedCount = 0;
     private int statusId;
     private int transactionTypeId;
-
     private Integer requestId;
 
     public long getVersion() {
@@ -108,6 +107,14 @@ public class TransactionStore {
         this.rootDomain = rootDomain;
     }
 
+    public Integer getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Integer requestId) {
+        this.requestId = requestId;
+    }
+
     public String simpleDetail() {
         return "{" +
                 "domain='" + domain + '\'' +
@@ -126,6 +133,7 @@ public class TransactionStore {
     @Override
     public boolean equals(Object obj) {
 
+        // TODO: 2022/7/29 Nervose.Wu 考虑去掉
         if (obj == null) {
             return false;
         }
@@ -151,13 +159,5 @@ public class TransactionStore {
             return true;
         }
         return false;
-    }
-
-    public Integer getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(Integer requestId) {
-        this.requestId = requestId;
     }
 }

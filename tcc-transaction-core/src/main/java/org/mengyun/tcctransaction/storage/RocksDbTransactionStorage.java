@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -61,7 +60,7 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
                     if (options == null)
                         // the Options class contains a set of configurable DB options
                         // that determines the behaviour of the database.
-                        options = new Options().setCreateIfMissing(true).setKeepLogFileNum(1l);
+                        options = new Options().setCreateIfMissing(true).setKeepLogFileNum(1L);
                     String filePath = this.location;
 
                     try {
@@ -81,6 +80,9 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
 
         try {
             byte[] key = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
+            if (db.get(key) != null) {
+                return 0;
+            }
             db.put(key, getSerializer().serialize(transactionStore));
             return 1;
         } catch (RocksDBException e) {
@@ -93,23 +95,12 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
 
         try {
             TransactionStore foundTransaction = doFindOne(transactionStore.getDomain(), transactionStore.getXid(), false);
-            if (foundTransaction.getVersion() != transactionStore.getVersion()) {
+            if (foundTransaction == null || foundTransaction.getVersion() != transactionStore.getVersion() - 1) {
                 return 0;
             }
 
-            Date lastUpdateTime = transactionStore.getLastUpdateTime();
-            long currentVersion = transactionStore.getVersion();
-
-            transactionStore.setVersion(transactionStore.getVersion() + 1);
-            transactionStore.setLastUpdateTime(new Date());
-            try {
-                byte[] key = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
-                db.put(key, getSerializer().serialize(transactionStore));
-            } finally {
-                transactionStore.setLastUpdateTime(lastUpdateTime);
-                transactionStore.setVersion(currentVersion);
-            }
-
+            byte[] key = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
+            db.put(key, getSerializer().serialize(transactionStore));
             return 1;
         } catch (RocksDBException e) {
             throw new TransactionIOException(e);

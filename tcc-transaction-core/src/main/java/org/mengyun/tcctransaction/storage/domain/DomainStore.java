@@ -28,7 +28,7 @@ public class DomainStore implements Serializable {
 
     private Date createTime = new Date();
     private Date lastUpdateTime = new Date();
-    private long version = 0l;
+    private long version = 0L;
 
     public DomainStore() {
     }

@@ -14,10 +14,17 @@ import java.util.Date;
  */
 public class TccTransactionStoreSerializer implements TransactionStoreSerializer {
 
+    private static final int REQUEST_ID_EXIST_FLAG_POS = 1 << 0;
+
     @Override
     public byte[] serialize(TransactionStore transactionStore) {
         if (transactionStore == null) {
             return new byte[0];
+        }
+
+        byte existFlag = 0;
+        if (transactionStore.getRequestId() != null) {
+            existFlag |= REQUEST_ID_EXIST_FLAG_POS;
         }
 
         Xid xid = transactionStore.getXid();
@@ -45,9 +52,10 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
             contentLength = transactionStore.getContent().length;
         }
 
-        int totalLen = calTotalLength(domainLength, rootDomainLength, xidLength, rootXidLength, contentLength);
+        int totalLen = calTotalLength(domainLength, rootDomainLength, xidLength, rootXidLength, contentLength, transactionStore.getRequestId() != null);
 
         ByteBuffer byteBuffer = ByteBuffer.allocate(totalLen);
+        byteBuffer.put(existFlag);
         //domain
         byteBuffer.putInt(domainLength);
         if (domainLength > 0) {
@@ -75,6 +83,9 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         byteBuffer.putInt(transactionStore.getRetriedCount());
         byteBuffer.putInt(transactionStore.getStatusId());
         byteBuffer.putInt(transactionStore.getTransactionTypeId());
+        if (transactionStore.getRequestId() != null) {
+            byteBuffer.putInt(transactionStore.getRequestId());
+        }
         return byteBuffer.array();
     }
 
@@ -86,6 +97,7 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
 
         TransactionStore transactionStore = new TransactionStore();
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+        byte existFlag = byteBuffer.get();
         //domain
         int domainLength = byteBuffer.getInt();
         if (domainLength > 0) {
@@ -125,6 +137,9 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         transactionStore.setRetriedCount(byteBuffer.getInt());
         transactionStore.setStatusId(byteBuffer.getInt());
         transactionStore.setTransactionTypeId(byteBuffer.getInt());
+        if ((existFlag & REQUEST_ID_EXIST_FLAG_POS) != 0) {
+            transactionStore.setRequestId(byteBuffer.getInt());
+        }
         return transactionStore;
     }
 
@@ -148,9 +163,11 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         return cloned;
     }
 
-    private int calTotalLength(int domainLength, int rootDomainLength, int xidLength, int rootXidLength, int contentLength) {
-        //String domain
-        return 4 + domainLength
+    private int calTotalLength(int domainLength, int rootDomainLength, int xidLength, int rootXidLength, int contentLength, boolean existRequestId) {
+        // existFlag to distinguish whether optional params existed
+        int totalLength = 1
+                //String domain
+                + 4 + domainLength
                 //String rootDomainLength
                 + 4 + rootDomainLength
                 //TransactionXid xid
@@ -171,5 +188,11 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
                 + 4
                 //int transactionTypeId
                 + 4;
+        if (existRequestId) {
+            totalLength = totalLength
+                    //Integer requestId
+                    + 4;
+        }
+        return totalLength;
     }
 }

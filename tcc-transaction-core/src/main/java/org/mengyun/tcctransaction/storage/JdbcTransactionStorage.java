@@ -23,7 +23,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     private static final int MARK_DELETED_YES = 1;
     private static final int MARK_DELETED_NO = 0;
 
-    private static final String SQL_SELECT_PREFIX_FOR_TCC_TRANSACTION = "SELECT DOMAIN,ROOT_XID,XID,CONTENT,STATUS,TRANSACTION_TYPE,CREATE_TIME,LAST_UPDATE_TIME,RETRIED_COUNT,VERSION,IS_DELETE,ROOT_DOMAIN FROM ";
+    private static final String SQL_SELECT_PREFIX_FOR_TCC_TRANSACTION = "SELECT DOMAIN,ROOT_XID,XID,CONTENT,STATUS,TRANSACTION_TYPE,CREATE_TIME,LAST_UPDATE_TIME,RETRIED_COUNT,VERSION,IS_DELETE,ROOT_DOMAIN,REQUEST_ID FROM ";
     private static final String SQL_SELECT_PREFIX_FOR_TCC_DOMAIN = "SELECT DOMAIN, PHONE_NUMBERS, ALERT_TYPE, THRESHOLD, INTERVAL_MINUTES,LAST_ALERT_TIME,DING_ROBOT_URL,CREATE_TIME,LAST_UPDATE_TIME,VERSION FROM ";
 
     private String tbSuffix;
@@ -47,7 +47,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     protected int doCreate(TransactionStore transactionStore) {
 
         if (doFindOne(transactionStore.getDomain(), transactionStore.getXid(), false) != null) {
-            return 1;
+            return 0;
         }
 
         Connection connection = null;
@@ -57,9 +57,10 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             connection = this.getConnection();
 
             StringBuilder builder = new StringBuilder();
-            builder.append("INSERT INTO " + getTableName() +
-                    "(ROOT_XID,XID,TRANSACTION_TYPE,CONTENT,STATUS,RETRIED_COUNT,CREATE_TIME,LAST_UPDATE_TIME,VERSION,ROOT_DOMAIN");
-            builder.append(StringUtils.isNotEmpty(transactionStore.getDomain()) ? ",DOMAIN) VALUES (?,?,?,?,?,?,?,?,?,?,?)" : ") VALUES (?,?,?,?,?,?,?,?,?,?)");
+            builder
+                    .append("INSERT INTO ")
+                    .append(getTableName())
+                    .append("(ROOT_XID,XID,TRANSACTION_TYPE,CONTENT,STATUS,RETRIED_COUNT,CREATE_TIME,LAST_UPDATE_TIME,VERSION,ROOT_DOMAIN,DOMAIN,REQUEST_ID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
 
             stmt = connection.prepareStatement(builder.toString());
 
@@ -73,11 +74,12 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             stmt.setTimestamp(8, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
             stmt.setLong(9, transactionStore.getVersion());
             stmt.setString(10, transactionStore.getRootDomain());
-
-            if (StringUtils.isNotEmpty(transactionStore.getDomain())) {
-                stmt.setString(11, transactionStore.getDomain());
+            stmt.setString(11, transactionStore.getDomain());
+            if (transactionStore.getRequestId() != null) {
+                stmt.setInt(12, transactionStore.getRequestId());
+            } else {
+                stmt.setNull(12, Types.INTEGER);
             }
-
             return stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -93,18 +95,13 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
         Connection connection = null;
         PreparedStatement stmt = null;
 
-        Date lastUpdateTime = transactionStore.getLastUpdateTime();
-        long currentVersion = transactionStore.getVersion();
-
-        transactionStore.setLastUpdateTime(new Date());
-        transactionStore.setVersion(transactionStore.getVersion() + 1);
 
         try {
             connection = this.getConnection();
 
             StringBuilder builder = new StringBuilder();
             builder.append("UPDATE " + getTableName() + " SET " +
-                    "CONTENT = ?,STATUS = ?,LAST_UPDATE_TIME = ?, RETRIED_COUNT = ?,VERSION = VERSION+1 WHERE XID = ? AND VERSION = ?");
+                    "CONTENT = ?,STATUS = ?,REQUEST_ID = ?,LAST_UPDATE_TIME = ?, RETRIED_COUNT = ?,VERSION = VERSION+1 WHERE XID = ? AND VERSION = ?");
 
             builder.append(StringUtils.isNotEmpty(transactionStore.getDomain()) ? " AND DOMAIN = ?" : "");
 
@@ -112,14 +109,19 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
 
             stmt.setBytes(1, transactionStore.getContent());
             stmt.setInt(2, transactionStore.getStatusId());
-            stmt.setTimestamp(3, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
+            if (transactionStore.getRequestId() != null) {
+                stmt.setInt(3, transactionStore.getRequestId());
+            } else {
+                stmt.setNull(3, Types.INTEGER);
+            }
+            stmt.setTimestamp(4, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
 
-            stmt.setInt(4, transactionStore.getRetriedCount());
-            stmt.setString(5, transactionStore.getXid().toString());
-            stmt.setLong(6, currentVersion);
+            stmt.setInt(5, transactionStore.getRetriedCount());
+            stmt.setString(6, transactionStore.getXid().toString());
+            stmt.setLong(7, transactionStore.getVersion()-1);
 
             if (StringUtils.isNotEmpty(transactionStore.getDomain())) {
-                stmt.setString(7, transactionStore.getDomain());
+                stmt.setString(8, transactionStore.getDomain());
             }
 
             int result = stmt.executeUpdate();
@@ -128,11 +130,6 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
 
         } catch (Throwable e) {
             throw new TransactionIOException(e);
-        } finally {
-            transactionStore.setLastUpdateTime(lastUpdateTime);
-            transactionStore.setVersion(currentVersion);
-            closeStatement(stmt);
-            this.releaseConnection(connection);
         }
     }
 
@@ -504,6 +501,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             transactionStore.setRetriedCount(resultSet.getInt(9));
             transactionStore.setVersion(resultSet.getLong(10));
             transactionStore.setRootDomain(resultSet.getString("ROOT_DOMAIN"));
+            transactionStore.setRequestId((Integer) resultSet.getObject("REQUEST_ID"));
             transactions.add(transactionStore);
         }
     }

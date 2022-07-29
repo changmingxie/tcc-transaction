@@ -52,7 +52,7 @@ public class AccountServiceStub implements AccountService {
         });
 
         try {
-            future.get(1000l, TimeUnit.MILLISECONDS);
+            future.get(1000L, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             throw new RuntimeException(e);
         } catch (Throwable e) {
@@ -72,7 +72,7 @@ public class AccountServiceStub implements AccountService {
 
                 if (transactionContext1.getStatus().equals(TransactionStatus.TRYING)) {
                     try {
-                        Thread.sleep(3000l);
+                        Thread.sleep(3000L);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -82,7 +82,7 @@ public class AccountServiceStub implements AccountService {
         });
 
         try {
-            future.get(1000l, TimeUnit.MILLISECONDS);
+            future.get(1000L, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             throw new RuntimeException(e);
         } catch (Throwable e) {

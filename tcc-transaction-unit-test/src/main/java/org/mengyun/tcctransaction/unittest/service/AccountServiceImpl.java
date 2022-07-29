@@ -43,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
     public void transferToWithTimeout(TransactionContext transactionContext, long accountId, int amount) {
         TraceLog.debug(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CALLED);
         try {
-            Thread.sleep(2000l);
+            Thread.sleep(2000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -33,7 +33,7 @@ public class DefaultTransactionRepository implements TransactionRepository {
 
     @Override
     public int create(Transaction transaction) {
-        transaction.setVersion(1l);
+        transaction.setVersion(1L);
         TransactionStore transactionStore = getTransactionStore(transaction);
         int result = this.transactionStorage.create(transactionStore);
         return result;

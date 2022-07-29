@@ -28,7 +28,7 @@ public class DomainStoreDto {
 
     private String createTime;
     private String lastUpdateTime;
-    private long version = 0l;
+    private long version = 0L;
 
     public String getDomain() {
         return domain;
