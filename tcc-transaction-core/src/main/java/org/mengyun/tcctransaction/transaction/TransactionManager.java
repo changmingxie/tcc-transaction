@@ -2,11 +2,13 @@ package org.mengyun.tcctransaction.transaction;
 
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
+import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.exception.CancellingException;
 import org.mengyun.tcctransaction.exception.ConfirmingException;
 import org.mengyun.tcctransaction.exception.NoExistedTransactionException;
 import org.mengyun.tcctransaction.exception.SystemException;
 import org.mengyun.tcctransaction.repository.TransactionRepository;
+import org.mengyun.tcctransaction.storage.TransactionOptimisticLockException;
 import org.slf4j.LoggerFactory;
 
 import java.util.Deque;
@@ -83,7 +85,10 @@ public class TransactionManager {
 
         if (transaction.getVersion() == 0l) {
             // transaction.getVersion() is zero which means never persistent before, need call create to persistent.
-            transactionRepository.create(transaction);
+            int result = transactionRepository.create(transaction);
+            if (result == 0 && transaction.getXid().getFormatId() == Xid.CUSTOMIZED) {
+                throw new TransactionOptimisticLockException("concurrent create transaction<" + transaction.getXid() + "> happened");
+            }
         } else {
             transactionRepository.update(transaction);
         }
