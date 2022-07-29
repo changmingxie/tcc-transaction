@@ -11,6 +11,7 @@ import java.io.Serializable;
  */
 public class TransactionXid implements Xid, Serializable {
 
+    private int formatId = Xid.AUTO;
     private String xid;
 
     public TransactionXid() {
@@ -21,14 +22,21 @@ public class TransactionXid implements Xid, Serializable {
         this.xid = xidString;
     }
 
+    public TransactionXid(int formatId, String xidString) {
+        this.formatId = formatId;
+        this.xid = xidString;
+    }
+
     public static TransactionXid withUniqueIdentity(Object uniqueIdentity) {
+        int formatId = Xid.AUTO;
         String xid = null;
         if (uniqueIdentity == null) {
             xid = FactoryBuilder.factoryOf(UUIDGenerator.class).getInstance().generate();
         } else {
             xid = uniqueIdentity.toString();
+            formatId = Xid.CUSTOMIZED;
         }
-        return new TransactionXid(xid);
+        return new TransactionXid(formatId, xid);
     }
 
     public static TransactionXid withUuid() {

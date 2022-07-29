@@ -30,7 +30,6 @@ import org.mengyun.tcctransaction.storage.*;
 import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.transaction.TransactionManager;
-import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.mengyun.tcctransaction.utils.NetUtils;
 import org.mengyun.tcctransaction.utils.StopUtils;
 import org.slf4j.Logger;
@@ -38,11 +37,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * Created by changming.xie on 11/25/17.
@@ -129,38 +126,20 @@ public class TccClient implements TccService {
             this.loadBalanceServcie = LoadBalanceFactory.getInstance(this.clientConfig);
             remotingClient = new NettyRemotingClient(this.remotingCommandSerializer, this.clientConfig,
                     new ServerAddressLoader() {
-
-                        private String addressGroup = clientConfig.getClusterName();
-
                         @Override
                         public String selectOneAvailableAddress() {
-                            InetSocketAddress inetSocketAddress = loadBalanceServcie.select(registryService.lookup());
-                            return NetUtils.parseSocketAddress(inetSocketAddress);
+                            return loadBalanceServcie.select(registryService.lookup());
                         }
 
                         @Override
                         public List<String> getAllAvailableAddresses() {
-                            List<InetSocketAddress> inetSocketAddresses = registryService.lookup();
-                            return inetSocketAddresses.stream()
-                                    .map(inetSocketAddress -> NetUtils.parseSocketAddress(inetSocketAddress))
-                                    .collect(Collectors.toList());
+                            return registryService.lookup();
                         }
 
                         @Override
                         public boolean isAvailableAddress(String address) {
-
-                            List<InetSocketAddress> inetSocketAddresses = registryService.lookup();
-
-                            if (CollectionUtils.isEmpty(inetSocketAddresses)) {
-                                return false;
-                            }
-
-                            for (InetSocketAddress inetSocketAddress : inetSocketAddresses) {
-                                if (NetUtils.parseSocketAddress(inetSocketAddress).equals(address)) {
-                                    return true;
-                                }
-                            }
-                            return false;
+                            List<String> serverAddresses = registryService.lookup();
+                            return serverAddresses.contains(address);
                         }
                     });
         }

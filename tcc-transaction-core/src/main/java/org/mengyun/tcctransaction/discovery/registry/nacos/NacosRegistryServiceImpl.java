@@ -64,7 +64,7 @@ public class NacosRegistryServiceImpl extends AbstractRegistryService {
     protected void doSubscribe() throws Exception {
         setServerAddresses(namingService.selectInstances(properties.getServiceName(), properties.getGroup(), Collections.singletonList(getClusterName()), true)
                 .stream()
-                .map(each -> new InetSocketAddress(each.getIp(), each.getPort()))
+                .map(each -> each.getIp() + ":" + each.getPort())
                 .collect(Collectors.toList())
         );
         namingService.subscribe(properties.getServiceName(), properties.getGroup(), Collections.singletonList(getClusterName()), event -> {
@@ -72,7 +72,7 @@ public class NacosRegistryServiceImpl extends AbstractRegistryService {
                 setServerAddresses(((NamingEvent) event).getInstances()
                         .stream()
                         .filter(each -> each.isEnabled() && each.isHealthy())
-                        .map(each -> new InetSocketAddress(each.getIp(), each.getPort()))
+                        .map(each -> each.getIp() + ":" + each.getPort())
                         .collect(Collectors.toList())
                 );
             } catch (Exception e) {
