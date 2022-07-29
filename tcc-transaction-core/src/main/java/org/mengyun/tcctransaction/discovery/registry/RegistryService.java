@@ -15,7 +15,7 @@ public interface RegistryService {
 
     void subscribe();
 
-    List<InetSocketAddress> lookup();
+    List<String> lookup();
 
     void close();
 }

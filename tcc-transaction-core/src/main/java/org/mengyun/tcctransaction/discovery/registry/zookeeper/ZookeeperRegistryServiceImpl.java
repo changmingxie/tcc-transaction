@@ -143,10 +143,9 @@ public class ZookeeperRegistryServiceImpl extends AbstractRegistryService {
 
     private void updateServiceList() throws Exception {
         List<String> nodePaths = curator.getChildren().forPath(targetPath);
-        List<InetSocketAddress> newServerAddresses = new ArrayList<>();
+        List<String> newServerAddresses = new ArrayList<>();
         for (String nodePath : nodePaths) {
-            InetSocketAddress inetSocketAddress = NetUtils.toInetSocketAddress(new String(curator.getData().forPath(targetPath + "/" + nodePath), StandardCharsets.UTF_8));
-            newServerAddresses.add(inetSocketAddress);
+            newServerAddresses.add(new String(curator.getData().forPath(targetPath + "/" + nodePath), StandardCharsets.UTF_8));
         }
         setServerAddresses(newServerAddresses);
     }
