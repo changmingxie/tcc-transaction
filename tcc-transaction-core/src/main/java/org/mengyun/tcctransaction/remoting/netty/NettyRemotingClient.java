@@ -12,6 +12,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
@@ -26,7 +27,6 @@ import org.mengyun.tcctransaction.remoting.exception.RemotingTimeoutException;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
 import org.mengyun.tcctransaction.serializer.RemotingCommandSerializer;
 import org.mengyun.tcctransaction.utils.NetUtils;
-import org.mengyun.tcctransaction.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

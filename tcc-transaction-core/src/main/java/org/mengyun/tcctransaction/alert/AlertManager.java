@@ -1,12 +1,12 @@
 package org.mengyun.tcctransaction.alert;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.mengyun.tcctransaction.storage.StorageRecoverable;
 import org.mengyun.tcctransaction.storage.TransactionStorage;
 import org.mengyun.tcctransaction.storage.domain.AlertType;
 import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.mengyun.tcctransaction.utils.AlertUtils;
-import org.mengyun.tcctransaction.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

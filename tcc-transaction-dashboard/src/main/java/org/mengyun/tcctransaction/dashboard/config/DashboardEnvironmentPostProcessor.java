@@ -1,9 +1,9 @@
 package org.mengyun.tcctransaction.dashboard.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.dashboard.constants.DashboardConstant;
 import org.mengyun.tcctransaction.dashboard.enums.ConnectionMode;
 import org.mengyun.tcctransaction.discovery.registry.RegistryType;
-import org.mengyun.tcctransaction.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;

@@ -1,9 +1,9 @@
 package org.mengyun.tcctransaction.http.springmvc.interceptor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.context.TransactionContextHolder;
 import org.mengyun.tcctransaction.http.constants.TransactionContextConstants;
 import org.mengyun.tcctransaction.serializer.TransactionContextSerializer;
-import org.mengyun.tcctransaction.utils.StringUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
 

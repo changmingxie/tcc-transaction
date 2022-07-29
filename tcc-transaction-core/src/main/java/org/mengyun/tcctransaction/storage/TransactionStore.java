@@ -3,6 +3,7 @@ package org.mengyun.tcctransaction.storage;
 import org.mengyun.tcctransaction.api.Xid;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class TransactionStore {
     private String domain;
@@ -120,4 +121,33 @@ public class TransactionStore {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof TransactionStore)) {
+            return false;
+        }
+
+        TransactionStore other = (TransactionStore) obj;
+
+        if (Objects.equals(this.domain, other.domain)
+                && Objects.equals(this.rootDomain, other.rootDomain)
+                && (Objects.equals(this.xid, other.xid))
+                && (Objects.equals(this.rootXid, other.rootXid))
+                && (Objects.deepEquals(this.content, other.content))
+                && (Objects.equals(this.createTime, other.createTime))
+                && (Objects.equals(this.lastUpdateTime, other.lastUpdateTime))
+                && this.version == other.version
+                && this.retriedCount == other.retriedCount
+                && this.statusId == other.statusId
+                && this.transactionTypeId == other.transactionTypeId
+        ) {
+            return true;
+        }
+        return false;
+    }
 }
