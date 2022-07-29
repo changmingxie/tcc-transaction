@@ -49,9 +49,13 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
             //compare the content except the version
             TransactionStore foundTransactionStore = findByXid(transactionStore.getDomain(), transactionStore.getXid());
 
+            if(foundTransactionStore == null){
+                throw new TransactionOptimisticLockException(transactionStore.simpleDetail());
+            }
+
             foundTransactionStore.setVersion(transactionStore.getVersion());
 
-            if (foundTransactionStore != null && transactionStore.equals(foundTransactionStore)) {
+            if (transactionStore.equals(foundTransactionStore)) {
                 return 0;
             }
 
