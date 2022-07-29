@@ -1,5 +1,5 @@
 server:
-  port: 12332
+  port: 14332
 
 logging:
   level:
@@ -9,53 +9,56 @@ spring:
   application:
     name: tcc-transaction-server
   tcc:
-    request-process-thread-queue-capacity: 1024
+    #    request-process-thread-queue-capacity: 1024
     storage:
-      kryo-pool-size: 512
-      storage-type: redis
+      #      kryo-pool-size: 512
+      storage-type: memory
       max-attempts: 1
-      redis:
-        host: 127.0.0.1
-        port: 6379
-        database: 0
-        pool-config:
-          max-total: 100
-          max-idle: 100
-          min-idle: 10
-          max-wait-millis: 300
-      redis-cluster:
-        max-attempts: 5
-        so-timeout: 300
-        connection-timeout: 1000
-        nodes:
-          - host: 127.0.0.1
-            port: 6379
-          - host: 127.0.0.1
-            port: 6380
-          - host: 127.0.0.1
-            port: 6381
-      shard-redis:
-        nodes:
-          - host: 127.0.0.1
-            port: 6379
-          - host: 127.0.0.1
-            port: 6380
-          - host: 127.0.0.1
-            port: 6381
+    #      jdbc:
+    #        password: welcome1
+    #      redis:
+    #        host: 127.0.0.1
+    #        port: 6379
+    #        database: 0
+    #        pool-config:
+    #          max-total: 100
+    #          max-idle: 100
+    #          min-idle: 10
+    #          max-wait-millis: 300
+    #      redis-cluster:
+    #        max-attempts: 5
+    #        so-timeout: 300
+    #        connection-timeout: 1000
+    #        nodes:
+    #          - host: 127.0.0.1
+    #            port: 6379
+    #          - host: 127.0.0.1
+    #            port: 6380
+    #          - host: 127.0.0.1
+    #            port: 6381
+    #      shard-redis:
+    #        nodes:
+    #          - host: 127.0.0.1
+    #            port: 6379
+    #          - host: 127.0.0.1
+    #            port: 6380
+    #          - host: 127.0.0.1
+    #            port: 6381
     recovery:
-      recovery-enabled: true
-      update-job-forcibly: true
-      quartz-data-source-password: 123456
+      #      recovery-enabled: true
+      #      update-job-forcibly: false
       quartz-clustered: true
-      cron-expression: "0/10 * * * * ? "
+      quartz-data-source-url: jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true
+      quartz-data-source-driver: com.mysql.jdbc.Driver
+      quartz-data-source-user: root
+      quartz-data-source-password: welcome1
     registry:
-      registry-address: 127.0.0.1:2332
-      registry-type: nacos
+      registry-type: direct
       cluster-name: default
-      zookeeper:
-        connect-string: 127.0.0.1:2181
-        max-retries: 4
-      nacos:
-        server-addr: 127.0.0.1:8848
+    #      zookeeper:
+    #        connect-string: 127.0.0.1:2181
+    #        max-retries: 4
+    #      nacos:
+    #        server-addr: 127.0.0.1:8848
     remoting:
-      listen-port: 2332
+      listen-port: 4332

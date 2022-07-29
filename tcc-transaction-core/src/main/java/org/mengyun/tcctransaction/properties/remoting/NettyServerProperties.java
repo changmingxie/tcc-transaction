@@ -12,6 +12,8 @@ public class NettyServerProperties extends NettyProperties implements NettyServe
     //max idle time for client channel,then exceed the idle time, close the client channel
     private int channelIdleTimeoutSeconds = 60;
 
+    private int flowMonitorPrintIntervalMinutes = 5;
+
     @Override
     public int getListenPort() {
         return listenPort;
@@ -28,5 +30,14 @@ public class NettyServerProperties extends NettyProperties implements NettyServe
 
     public void setChannelIdleTimeoutSeconds(int channelIdleTimeoutSeconds) {
         this.channelIdleTimeoutSeconds = channelIdleTimeoutSeconds;
+    }
+
+    @Override
+    public int getFlowMonitorPrintIntervalMinutes() {
+        return flowMonitorPrintIntervalMinutes;
+    }
+
+    public void setFlowMonitorPrintIntervalMinutes(int flowMonitorPrintIntervalMinutes) {
+        this.flowMonitorPrintIntervalMinutes = flowMonitorPrintIntervalMinutes;
     }
 }

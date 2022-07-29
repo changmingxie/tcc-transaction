@@ -15,6 +15,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.mengyun.tcctransaction.exception.SystemException;
+import org.mengyun.tcctransaction.monitor.ServerFlowMonitor;
 import org.mengyun.tcctransaction.remoting.RemotingServer;
 import org.mengyun.tcctransaction.remoting.RequestProcessor;
 import org.mengyun.tcctransaction.remoting.codec.NettyDecoder;
@@ -235,6 +236,7 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, RemotingCommand cmd) throws Exception {
+            ServerFlowMonitor.count();
             processMessageReceived(ctx, cmd);
         }
     }

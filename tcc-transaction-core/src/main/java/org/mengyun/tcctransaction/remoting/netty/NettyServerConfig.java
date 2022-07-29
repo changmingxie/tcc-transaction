@@ -5,4 +5,6 @@ public interface NettyServerConfig extends NettyConfig {
     int getListenPort();
 
     int getChannelIdleTimeoutSeconds();
+
+    int getFlowMonitorPrintIntervalMinutes();
 }

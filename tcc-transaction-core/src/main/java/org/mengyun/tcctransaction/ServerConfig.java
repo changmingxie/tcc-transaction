@@ -38,6 +38,11 @@ public class ServerConfig extends AbstractConfig implements NettyServerConfig, R
         return nettyServerConfig.getChannelIdleTimeoutSeconds();
     }
 
+    @Override
+    public int getFlowMonitorPrintIntervalMinutes() {
+        return nettyServerConfig.getFlowMonitorPrintIntervalMinutes();
+    }
+
 
     @Override
     public String getRegistryAddress() {

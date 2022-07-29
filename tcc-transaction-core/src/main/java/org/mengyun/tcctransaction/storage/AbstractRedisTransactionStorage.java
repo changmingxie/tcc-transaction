@@ -153,13 +153,6 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
     protected Long updateByScriptCommand(RedisCommands commands, TransactionStore transactionStore) {
 
-        Date lastUpdateTime = transactionStore.getLastUpdateTime();
-        long currentVersion = transactionStore.getVersion();
-
-        transactionStore.setLastUpdateTime(new Date());
-        transactionStore.setVersion(transactionStore.getVersion() + 1);
-
-        try {
             List<byte[]> params = new ArrayList<byte[]>();
 
             for (Map.Entry<byte[], byte[]> entry : TransactionStoreMapSerializer.serialize(transactionStore)
@@ -176,10 +169,6 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
                             transactionStore.getXid())),
                     params);
             return (Long) result;
-        } finally {
-            transactionStore.setLastUpdateTime(lastUpdateTime);
-            transactionStore.setVersion(currentVersion);
-        }
 
     }
 
