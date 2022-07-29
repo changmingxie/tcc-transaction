@@ -29,10 +29,12 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
         if (result > 0) {
             return result;
         } else {
+
             TransactionStore foundTransactionStore = findByXid(transactionStore.getDomain(), transactionStore.getXid());
 
-            if (foundTransactionStore != null) {
-                return 0;
+            if (foundTransactionStore != null && transactionStore.getRequestId() != null
+                    && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId())) {
+                return 1;
             }
 
             throw new TransactionIOException(transactionStore.simpleDetail());
@@ -49,14 +51,9 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
             //compare the content except the version
             TransactionStore foundTransactionStore = findByXid(transactionStore.getDomain(), transactionStore.getXid());
 
-            if(foundTransactionStore == null){
-                throw new TransactionOptimisticLockException(transactionStore.simpleDetail());
-            }
-
-            foundTransactionStore.setVersion(transactionStore.getVersion());
-
-            if (transactionStore.equals(foundTransactionStore)) {
-                return 0;
+            if (foundTransactionStore != null && transactionStore.getRequestId() != null
+                    && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId())) {
+                return 1;
             }
 
             throw new TransactionOptimisticLockException(transactionStore.simpleDetail());

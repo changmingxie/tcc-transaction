@@ -18,6 +18,8 @@ public class TransactionStore {
     private int statusId;
     private int transactionTypeId;
 
+    private Integer requestId;
+
     public long getVersion() {
         return version;
     }
@@ -149,5 +151,13 @@ public class TransactionStore {
             return true;
         }
         return false;
+    }
+
+    public Integer getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Integer requestId) {
+        this.requestId = requestId;
     }
 }

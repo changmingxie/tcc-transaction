@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
@@ -28,17 +29,40 @@ public class RetryableTransactionStorage implements TransactionStorage, StorageR
 
     @Override
     public int create(TransactionStore transactionStore) {
-        return doWithRetry(() -> transactionStorage.create(transactionStore));
+        int requestId = ThreadLocalRandom.current().nextInt();
+
+        transactionStore.setRequestId(requestId);
+        try {
+            return doWithRetry(() -> transactionStorage.create(transactionStore));
+        } finally {
+            transactionStore.setRequestId(null);
+        }
     }
 
     @Override
     public int update(TransactionStore transactionStore) {
-        return doWithRetry(() -> transactionStorage.update(transactionStore));
+
+        int requestId = ThreadLocalRandom.current().nextInt();
+
+        transactionStore.setRequestId(requestId);
+        try {
+            return doWithRetry(() -> transactionStorage.update(transactionStore));
+        } finally {
+            transactionStore.setRequestId(null);
+        }
     }
 
     @Override
     public int delete(TransactionStore transactionStore) {
-        return doWithRetry(() -> transactionStorage.delete(transactionStore));
+
+        int requestId = ThreadLocalRandom.current().nextInt();
+
+        transactionStore.setRequestId(requestId);
+        try {
+            return doWithRetry(() -> transactionStorage.delete(transactionStore));
+        } finally {
+            transactionStore.setRequestId(null);
+        }
     }
 
     @Override
