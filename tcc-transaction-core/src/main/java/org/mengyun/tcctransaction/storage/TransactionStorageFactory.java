@@ -5,9 +5,9 @@ import org.mengyun.tcctransaction.serializer.TransactionStoreSerializer;
 
 public class TransactionStorageFactory {
 
-    public static TransactionStorage create(TransactionStoreSerializer storeSerializer, StoreConfig storeConfig) {
+    public static TransactionStorage create(TransactionStoreSerializer storeSerializer, StoreConfig storeConfig, boolean useRetryable) {
 
-        String storageClassName = null;
+        String storageClassName;
 
         if (storeConfig.getStorageType().equals(StorageType.CUSTOMIZED)) {
             storageClassName = storeConfig.getTransactionStorageClass();
@@ -20,8 +20,8 @@ public class TransactionStorageFactory {
 
             TransactionStorage transactionStorage = (TransactionStorage) klass.getConstructor(TransactionStoreSerializer.class, StoreConfig.class).newInstance(storeSerializer, storeConfig);
 
-            if (storeConfig.getMaxAttempts() > 1) {
-                return new RetryableTransactionStorage(storeConfig.getMaxAttempts(), transactionStorage);
+            if (useRetryable) {
+                return new RetryableTransactionStorage(Math.max(1, storeConfig.getMaxAttempts()), transactionStorage);
             } else {
                 return transactionStorage;
             }

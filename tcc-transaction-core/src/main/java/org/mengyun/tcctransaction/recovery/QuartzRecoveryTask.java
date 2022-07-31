@@ -18,6 +18,7 @@ public class QuartzRecoveryTask implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         String domain = context.getJobDetail().getJobDataMap().getString(MixAll.DOMAIN);
+        logger.info("start recovery {}", domain);
         FactoryBuilder.factoryOf(TccService.class).getInstance().getTransactionStoreRecovery().startRecover(domain);
     }
 }

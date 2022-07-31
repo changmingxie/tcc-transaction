@@ -6,6 +6,7 @@ import org.mengyun.tcctransaction.repository.TransactionConvertor;
 import org.mengyun.tcctransaction.repository.TransactionRepository;
 import org.mengyun.tcctransaction.serializer.TransactionSerializer;
 import org.mengyun.tcctransaction.serializer.json.FastjsonTransactionSerializer;
+import org.mengyun.tcctransaction.storage.TransactionOptimisticLockException;
 import org.mengyun.tcctransaction.storage.TransactionStore;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.transaction.Transaction;
@@ -31,13 +32,14 @@ public class ClientRecoveryExecutor implements RecoveryExecutor {
 
         transaction.setRetriedCount(transaction.getRetriedCount() + 1);
         transaction.setStatus(TransactionStatus.CANCELLING);
-        int result = transactionRepository.update(transaction);
-        if (result > 0) {
-            transaction.rollback();
-            transactionRepository.delete(transaction);
-        } else if (result == 0) {
+        try {
+            transactionRepository.update(transaction);
+        } catch (TransactionOptimisticLockException e) {
             logger.debug("multiple instances try to recovery<rollback> the same transaction<" + transactionStore.getXid() + ", this instance ignore the recovery.");
+            return;
         }
+        transaction.rollback();
+        transactionRepository.delete(transaction);
     }
 
     @Override
@@ -47,13 +49,14 @@ public class ClientRecoveryExecutor implements RecoveryExecutor {
 
         transaction.setRetriedCount(transaction.getRetriedCount() + 1);
         transaction.setStatus(TransactionStatus.CONFIRMING);
-        int result = transactionRepository.update(transaction);
-        if (result > 0) {
-            transaction.commit();
-            transactionRepository.delete(transaction);
-        } else if (result == 0) {
+        try {
+            transactionRepository.update(transaction);
+        } catch (TransactionOptimisticLockException e) {
             logger.debug("multiple instances try to recovery<commit> the same transaction<" + transactionStore.getXid() + ", this instance ignore the recovery.");
+            return;
         }
+        transaction.commit();
+        transactionRepository.delete(transaction);
     }
 
     @Override

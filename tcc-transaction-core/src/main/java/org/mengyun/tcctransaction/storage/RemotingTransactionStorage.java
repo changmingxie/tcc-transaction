@@ -24,6 +24,34 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
     }
 
     @Override
+    public int create(TransactionStore transactionStore) {
+        if (transactionStore.getContent().length > this.storeConfig.getMaxTransactionSize()) {
+            throw new TransactionIOException(String.format("cur transaction size(%dB) is bigger than maxTransactionSize(%dB), consider to reduce parameter size or adjust maxTransactionSize", transactionStore.getContent().length, this.storeConfig.getMaxTransactionSize()));
+        }
+
+        int result = doCreate(transactionStore);
+
+        if (result > 0) {
+            return result;
+        } else {
+            //no need to check again since the actual transactionStorage has already do that
+            throw new TransactionIOException(transactionStore.simpleDetail());
+        }
+    }
+
+    @Override
+    public int update(TransactionStore transactionStore) {
+        int result = doUpdate(transactionStore);
+
+        if (result > 0) {
+            return result;
+        } else {
+            //no need to check again since the actual transactionStorage has already do that
+            throw new TransactionOptimisticLockException(transactionStore.simpleDetail());
+        }
+    }
+
+    @Override
     protected int doCreate(TransactionStore transactionStore) {
         return doWrite(RemotingServiceCode.CREATE, transactionStore);
     }

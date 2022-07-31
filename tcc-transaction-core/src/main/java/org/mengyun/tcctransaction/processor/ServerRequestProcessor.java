@@ -11,9 +11,7 @@ import org.mengyun.tcctransaction.remoting.RequestProcessor;
 import org.mengyun.tcctransaction.remoting.netty.ChannelGroupMap;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
 import org.mengyun.tcctransaction.serializer.TransactionStoreSerializer;
-import org.mengyun.tcctransaction.storage.StorageRecoverable;
-import org.mengyun.tcctransaction.storage.TransactionStorage;
-import org.mengyun.tcctransaction.storage.TransactionStore;
+import org.mengyun.tcctransaction.storage.*;
 import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.xid.TransactionXid;
@@ -91,10 +89,18 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
         int result = -1;
         switch (request.getServiceCode()) {
             case RemotingServiceCode.CREATE:
-                result = transactionStorage.create(transaction);
+                try {
+                    result = transactionStorage.create(transaction);
+                } catch (TransactionIOException e) {
+                    result = 0;
+                }
                 break;
             case RemotingServiceCode.UPDATE:
-                result = transactionStorage.update(transaction);
+                try {
+                    result = transactionStorage.update(transaction);
+                } catch (TransactionOptimisticLockException e) {
+                    result = 0;
+                }
                 break;
             case RemotingServiceCode.DELETE:
                 result = transactionStorage.delete(transaction);

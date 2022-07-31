@@ -25,6 +25,7 @@ public class StoreProperties implements StoreConfig {
     private String transactionSerializerClassName;
     private int kryoPoolSize = 512;
     private int maxTransactionSize = 1 * 1024 * 1024; // 1M
+    //only used by client
     private int maxAttempts = 2;
     private String domain = "TCC";
     private String transactionStorageClass;
