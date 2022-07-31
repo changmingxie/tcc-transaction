@@ -13,7 +13,6 @@ spring:
     storage:
       #      kryo-pool-size: 512
       storage-type: memory
-      max-attempts: 1
     #      jdbc:
     #        password: welcome1
     #      redis:

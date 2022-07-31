@@ -87,7 +87,7 @@ public class TransactionManager {
 
         if (transaction.getVersion() == 0L) {
             // transaction.getVersion() is zero which means never persistent before, need call create to persistent.
-            int result = transactionRepository.create(transaction);
+            transactionRepository.create(transaction);
         } else {
             transactionRepository.update(transaction);
         }

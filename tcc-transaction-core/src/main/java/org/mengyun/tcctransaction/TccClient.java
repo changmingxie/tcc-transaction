@@ -144,7 +144,7 @@ public class TccClient implements TccService {
                     });
         }
 
-        this.transactionStorage = TransactionStorageFactory.create(transactionStoreSerializer, this.clientConfig);
+        this.transactionStorage = TransactionStorageFactory.create(transactionStoreSerializer, this.clientConfig, true);
 
         this.transactionRepository = new DefaultTransactionRepository(this.clientConfig.getDomain(), transactionSerializer, this.transactionStorage);
 

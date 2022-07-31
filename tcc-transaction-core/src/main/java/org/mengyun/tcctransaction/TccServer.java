@@ -85,7 +85,7 @@ public class TccServer implements TccService {
 
         this.registryService = RegistryFactory.getInstance(this.serverConfig);
 
-        this.transactionStorage = TransactionStorageFactory.create(transactionStoreSerializer, this.serverConfig);
+        this.transactionStorage = TransactionStorageFactory.create(transactionStoreSerializer, this.serverConfig,false);
 
         this.scheduler = new RecoveryScheduler(this.serverConfig);
 
