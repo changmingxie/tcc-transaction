@@ -121,8 +121,8 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
 
     private void doRegister(String domain, Channel channel) {
         registerDomain(domain);
-        registerRecoveryTask(domain);
         registerChannel(domain, channel);
+        registerRecoveryTask(domain);
     }
 
     public void registerDomain(String domain) {
