@@ -54,6 +54,7 @@ confirm 和 cancel 操作具有幂等性。
 
 [官网](https://changmingxie.github.io)    
 [快速开始](https://changmingxie.github.io/zh-cn/docs/tutorial/quickstart.html)
+[最新可用版本2.x](/zh-cn/blog/tcc-transaction-2.x-release.html)  
 
 ## 常见问题
 
