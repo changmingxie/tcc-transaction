@@ -9,7 +9,7 @@
         <relativePath>../tcc-transaction-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>tcc-transaction-api</artifactId>
 
+    <name>tcc-transaction-api ${project.version}</name>
 </project>

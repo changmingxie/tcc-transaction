@@ -14,6 +14,8 @@
     <artifactId>tcc-transaction-dependencies</artifactId>
     <packaging>pom</packaging>
 
+    <name>tcc-transaction-dependencies ${project.version}</name>
+
     <properties>
         <ignite.version>2.9.1</ignite.version>
         <grpc.version>1.17.1</grpc.version>

@@ -11,9 +11,10 @@
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <artifactId>tcc-transaction-bom</artifactId>
     <packaging>pom</packaging>
+
+    <name>tcc-transaction-bom ${project.version}</name>
 
     <dependencyManagement>
         <dependencies>
