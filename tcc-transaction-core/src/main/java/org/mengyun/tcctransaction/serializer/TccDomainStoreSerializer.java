@@ -40,7 +40,7 @@ public class TccDomainStoreSerializer implements ObjectSerializer<DomainStore> {
         try {
             return objectMapper.readValue(bytes, DomainStore.class);
         } catch (IOException e) {
-            throw new SystemException(String.format("deserialize object failed."), e);
+            throw new SystemException("deserialize object failed.", e);
         }
     }
 

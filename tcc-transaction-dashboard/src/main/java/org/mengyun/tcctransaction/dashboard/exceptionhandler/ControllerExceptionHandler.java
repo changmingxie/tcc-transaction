@@ -29,7 +29,7 @@ public class ControllerExceptionHandler {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public ResponseDto<Void> handleException(Exception e) {
-        if (e.getCause() != null && e.getCause() instanceof TransactionException) {
+        if (e.getCause() instanceof TransactionException) {
             TransactionException transactionException = (TransactionException) e.getCause();
             return ResponseDto.returnFail(transactionException.getErrorCode(), transactionException.getErrorMessage());
         }

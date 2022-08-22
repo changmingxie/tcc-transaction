@@ -10,8 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class FactoryBuilder {
 
 
-    private static List<BeanFactory> beanFactories = new ArrayList<BeanFactory>();
-    private static ConcurrentHashMap<Class, SingeltonFactory> classFactoryMap = new ConcurrentHashMap<Class, SingeltonFactory>();
+    private static List<BeanFactory> beanFactories = new ArrayList<>();
+    private static ConcurrentHashMap<Class, SingeltonFactory> classFactoryMap = new ConcurrentHashMap<>();
 
     private FactoryBuilder() {
 
@@ -77,14 +77,16 @@ public final class FactoryBuilder {
 
         @Override
         public boolean equals(Object other) {
-            if (this == other) return true;
-            if (other == null || getClass() != other.getClass()) return false;
+            if (this == other) {
+                return true;
+            }
+            if (other == null || getClass() != other.getClass()) {
+                return false;
+            }
 
             SingeltonFactory that = (SingeltonFactory) other;
 
-            if (!className.equals(that.className)) return false;
-
-            return true;
+            return className.equals(that.className);
         }
 
         @Override

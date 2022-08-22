@@ -5,11 +5,11 @@ import org.mengyun.tcctransaction.exception.SystemException;
 
 public class ShardOffset {
 
-    public static String SCAN_INIT_CURSOR = "0";
+    public static final String SCAN_INIT_CURSOR = "0";
 
-    public static String OFFSET_DELIMITER = "::";
+    public static final String OFFSET_DELIMITER = "::";
 
-    public static String SHARD_OFFSET_FORMAT = "%d" + OFFSET_DELIMITER + "%s";
+    public static final String SHARD_OFFSET_FORMAT = "%d" + OFFSET_DELIMITER + "%s";
 
 
     private int nodeIndex = 0;
@@ -30,7 +30,7 @@ public class ShardOffset {
                 throw new SystemException("offset invalid. the value is:" + offset);
             }
 
-            this.nodeIndex = Integer.valueOf(offsetArray[0]);
+            this.nodeIndex = Integer.parseInt(offsetArray[0]);
             this.cursor = offsetArray[1];
         }
     }

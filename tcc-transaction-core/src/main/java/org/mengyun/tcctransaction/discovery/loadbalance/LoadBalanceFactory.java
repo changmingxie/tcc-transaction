@@ -15,10 +15,12 @@ public class LoadBalanceFactory {
 
     private static final Map<String, LoadBalanceProvider> CANDIDATE_LOAD_BALANCES = new HashMap<>();
 
+    private LoadBalanceFactory(){
+    }
+
     static {
-        ServiceLoader.load(LoadBalanceProvider.class).forEach(each -> {
-            CANDIDATE_LOAD_BALANCES.put(LoadUtils.getServiceName(each.getClass()), each);
-        });
+        ServiceLoader.load(LoadBalanceProvider.class)
+                .forEach(each -> CANDIDATE_LOAD_BALANCES.put(LoadUtils.getServiceName(each.getClass()), each));
     }
 
     public static LoadBalanceServcie getInstance(ClientRegistryConfig clientRegistryConfig) {

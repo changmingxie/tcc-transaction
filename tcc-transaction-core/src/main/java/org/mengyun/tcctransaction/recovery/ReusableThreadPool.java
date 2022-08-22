@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ReusableThreadPool implements ThreadPool {
 
     private static final Logger logger = LoggerFactory.getLogger(ReusableThreadPool.class.getSimpleName());
-    private static SimpleThreadPool instance;
+    private static volatile SimpleThreadPool instance;
     private static AtomicInteger inuseCounter = new AtomicInteger(0);
     private int threadCount = -1;
     private int threadPriority = Thread.NORM_PRIORITY;
@@ -59,6 +59,7 @@ public class ReusableThreadPool implements ThreadPool {
                             try {
                                 simpleThreadPool.shutdown(false);
                             } catch (Exception ignore) {
+                                //ignore
                             }
                         }
                         instance = null;

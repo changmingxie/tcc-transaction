@@ -1,4 +1,4 @@
-package org.mengyun.tcctransaction.dubbo.Interceptor;
+package org.mengyun.tcctransaction.dubbo.interceptor;
 
 import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.extension.Activate;

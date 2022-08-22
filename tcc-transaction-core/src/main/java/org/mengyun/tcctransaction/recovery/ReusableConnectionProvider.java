@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ReusableConnectionProvider implements ConnectionProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(ReusableConnectionProvider.class.getSimpleName());
-    private static ComboPooledDataSource instance;
+    private static volatile ComboPooledDataSource instance;
     private static AtomicInteger inuseCounter = new AtomicInteger(0);
     private String driver;
     private String URL;

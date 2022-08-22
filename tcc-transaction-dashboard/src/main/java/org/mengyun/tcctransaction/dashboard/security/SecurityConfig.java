@@ -49,7 +49,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 ).permitAll().and()
                 .authorizeRequests().anyRequest().authenticated().and().exceptionHandling() //鉴权不需要
                 .authenticationEntryPoint(new TccAuthenticationEntryPoint()).accessDeniedHandler(new TccAccessDeniedHandler());
-        ;
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

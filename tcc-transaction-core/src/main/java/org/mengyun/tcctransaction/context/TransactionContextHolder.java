@@ -4,7 +4,10 @@ import org.mengyun.tcctransaction.api.TransactionContext;
 
 public class TransactionContextHolder {
 
-    private static ThreadLocal<TransactionContext> transactionContextThreadLocal = new ThreadLocal<TransactionContext>();
+    private static ThreadLocal<TransactionContext> transactionContextThreadLocal = new ThreadLocal<>();
+
+    private TransactionContextHolder() {
+    }
 
     public static TransactionContext getCurrentTransactionContext() {
         return transactionContextThreadLocal.get();

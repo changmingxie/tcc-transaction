@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  */
 public final class Terminator {
 
-    public Terminator() {
+    private Terminator() {
 
     }
 
@@ -35,9 +35,7 @@ public final class Terminator {
             FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().set(transactionContext, target, method, invocation.getArgs());
             try {
                 return method.invoke(target, invocation.getArgs());
-            } catch (IllegalAccessException e) {
-                throw new SystemException(e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new SystemException(e);
             } finally {
                 FactoryBuilder.factoryOf(transactionContextEditorClass).getInstance().clear(transactionContext, target, method, invocation.getArgs());

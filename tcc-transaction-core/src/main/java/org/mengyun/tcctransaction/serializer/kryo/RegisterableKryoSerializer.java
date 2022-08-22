@@ -36,7 +36,7 @@ public class RegisterableKryoSerializer<T> extends KryoPoolSerializer<T> {
         this.init();
     }
 
-
+    @Override
     protected void initHook(Kryo kryo) {
         kryo.setWarnUnregisteredClasses(this.warnUnregisteredClasses);
 

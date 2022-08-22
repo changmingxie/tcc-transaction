@@ -62,7 +62,7 @@ public class ServerRecoveryExecutor implements RecoveryExecutor {
         Channel channel = FactoryBuilder.factoryOf(ChannelGroupMap.class).getInstance().getChannel(transactionStore.getDomain());
 
         if (channel == null) {
-            logger.debug(String.format("no available client channels for domain<%s> to recovery", transactionStore.getDomain()));
+            logger.debug("no available client channels for domain<{}> to recovery", transactionStore.getDomain());
             scheduler.unregisterSchedule(transactionStore.getDomain());
             return;
         }
@@ -72,7 +72,7 @@ public class ServerRecoveryExecutor implements RecoveryExecutor {
                 @Override
                 public void operationComplete(ChannelFuture channelFuture) throws Exception {
                     if (!channelFuture.isSuccess()) {
-                        logger.warn("send recovery command with service code " + serviceCode + " to channel <" + channel.remoteAddress() + "> failed.");
+                        logger.warn("send recovery command with service code {} to channel <{}> failed.", serviceCode, channel.remoteAddress());
                     }
                 }
             });

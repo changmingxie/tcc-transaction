@@ -37,7 +37,7 @@ public class ServerEnvironmentPostProcessor implements EnvironmentPostProcessor 
 
     private PropertySource selectApplicationConfigPropertySource(MutablePropertySources propertySources) {
         Optional<PropertySource<?>> propertySourceOptional = propertySources.stream().filter(propertySource -> propertySource.getName().contains("applicationConfig")).findFirst();
-        return propertySourceOptional.isPresent() ? propertySourceOptional.get() : null;
+        return propertySourceOptional.orElse(null);
     }
 
     private void rebuildRegistryProperties(ConfigurableEnvironment environment) {

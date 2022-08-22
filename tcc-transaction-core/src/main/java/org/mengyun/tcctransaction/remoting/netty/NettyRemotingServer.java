@@ -100,19 +100,19 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
                     return new Thread(r, String.format("NettyWorkNioLoopSelector_%d_%d", totalThreads, threadIndex.incrementAndGet()));
                 }
             });
-
-            this.eventExecutorGroup = new DefaultEventExecutorGroup(
-                    nettyServerConfig.getWorkerThreadSize(),
-                    new ThreadFactory() {
-                        private AtomicInteger threadIndex = new AtomicInteger(0);
-
-                        @Override
-                        public Thread newThread(Runnable r) {
-                            return new Thread(r, String.format("NettyServerWorkThread_%d", this.threadIndex.incrementAndGet()));
-                        }
-                    }
-            );
         }
+
+        this.eventExecutorGroup = new DefaultEventExecutorGroup(
+                nettyServerConfig.getWorkerThreadSize(),
+                new ThreadFactory() {
+                    private AtomicInteger threadIndex = new AtomicInteger(0);
+
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        return new Thread(r, String.format("NettyServerWorkThread_%d", this.threadIndex.incrementAndGet()));
+                    }
+                }
+        );
     }
 
     @Override
@@ -193,7 +193,7 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
 
         try {
 
-            ResponseFuture responseFuture = new ResponseFuture(channel, requestId, timeoutMillis);
+            ResponseFuture responseFuture = new ResponseFuture();
 
             this.responseTable.put(requestId, responseFuture);
 
@@ -202,7 +202,6 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
                 public void operationComplete(ChannelFuture channelFuture) throws Exception {
                     if (channelFuture.isSuccess()) {
                         responseFuture.setSendRequestSuccess(true);
-                        return;
                     } else {
                         responseFuture.setCause(channelFuture.cause());
                         responseFuture.setResponse(null);

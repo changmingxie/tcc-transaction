@@ -68,23 +68,23 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
 
     @Override
     protected int doMarkDeleted(TransactionStore transactionStore) {
-        throw new RuntimeException("doMarkDeleted not support at remoting");
+        throw new UnsupportedOperationException("doMarkDeleted not support at remoting");
     }
 
     @Override
     protected int doRestore(TransactionStore transactionStore) {
-        throw new RuntimeException("doRestore not support at remoting");
+        throw new UnsupportedOperationException("doRestore not support at remoting");
     }
 
     @Override
     protected int doCompletelyDelete(TransactionStore transactionStore) {
-        throw new RuntimeException("doCompletelyDelete not support at remoting");
+        throw new UnsupportedOperationException("doCompletelyDelete not support at remoting");
     }
 
     @Override
     protected TransactionStore doFindOne(String domain, Xid xid, boolean isMarkDeleted) {
         if (isMarkDeleted) {
-            throw new RuntimeException("doFindOne for markDeleted not support at remoting");
+            throw new UnsupportedOperationException("doFindOne for markDeleted not support at remoting");
         }
         return doRead(RemotingServiceCode.FIND, domain, xid);
     }

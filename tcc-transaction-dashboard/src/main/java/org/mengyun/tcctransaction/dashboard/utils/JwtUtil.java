@@ -21,6 +21,8 @@ public class JwtUtil {
     // tocken存活时长 单位为秒
     private static final Long JWT_LIVE_DURATION = 2592000L;// 30 天
 
+    private JwtUtil() {
+    }
 
     public static String generateToken(UserDetails userDetails) {
         return generateToken(userDetails.getUsername());
@@ -42,6 +44,9 @@ public class JwtUtil {
         String username;
         try {
             Claims claims = getClaimsFromToken(token);
+            if (claims == null) {
+                return null;
+            }
             username = claims.getSubject();
         } catch (Exception e) {
             username = null;
@@ -66,10 +71,10 @@ public class JwtUtil {
      * @param userDetails
      * @return
      */
-    public static Boolean validateToken(String token, UserDetails userDetails) {
+    public static boolean validateToken(String token, UserDetails userDetails) {
         SystemUser user = (SystemUser) userDetails;
         String username = getUsernameFromToken(token);
-        return (username.equals(user.getUsername()) && !isTokenExpired(token));
+        return username != null && username.equals(user.getUsername()) && !isTokenExpired(token);
     }
 
     /**
@@ -78,9 +83,12 @@ public class JwtUtil {
      * @param token
      * @return
      */
-    public static Boolean isTokenExpired(String token) {
+    public static boolean isTokenExpired(String token) {
         try {
             Claims claims = getClaimsFromToken(token);
+            if(claims == null){
+                return false;
+            }
             Date expiration = claims.getExpiration();
             return expiration.before(new Date());
         } catch (Exception e) {

@@ -15,13 +15,16 @@ public class ByteUtils {
         FALSE = bool2bytes(false);
     }
 
+    private ByteUtils() {
+    }
+
 
     public static byte[] longToBytes(long num) {
         return String.valueOf(num).getBytes();
     }
 
     public static long bytesToLong(byte[] bytes) {
-        return Long.valueOf(new String(bytes));
+        return Long.parseLong(new String(bytes));
     }
 
     public static byte[] intToBytes(int num) {
@@ -29,7 +32,7 @@ public class ByteUtils {
     }
 
     public static int bytesToInt(byte[] bytes) {
-        return Integer.valueOf(new String(bytes));
+        return Integer.parseInt(new String(bytes));
     }
 
     /**

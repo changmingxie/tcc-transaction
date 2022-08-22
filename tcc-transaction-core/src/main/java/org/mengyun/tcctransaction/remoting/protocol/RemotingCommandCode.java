@@ -34,7 +34,7 @@ public enum RemotingCommandCode {
             return SYSTEM_EXCEPTION_RESP;
         }
 
-        throw new RuntimeException(String.format("unknown RemotingCommand Type of value :%d", value));
+        throw new IllegalArgumentException(String.format("unknown RemotingCommand Type of value :%d", value));
     }
 
     public byte value() {

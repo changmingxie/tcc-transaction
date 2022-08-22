@@ -30,29 +30,25 @@ public class ResourceCoordinatorInterceptor {
 
             Participant participant = enlistParticipant(pjp);
 
-            if (participant != null) {
+            Object result = null;
+            TransactionContext transactionContext = new TransactionContext(transaction.getRootDomain(), transaction.getRootXid(), participant.getXid(), TransactionStatus.TRYING, ParticipantStatus.TRYING);
+            FactoryBuilder.factoryOf(participant.getTransactionContextEditorClass()).getInstance().set(transactionContext, pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
+            try {
+                result = pjp.proceed(pjp.getArgs());
+                participant.setStatus(ParticipantStatus.TRY_SUCCESS);
+            } catch (Throwable e) {
+                participant.setStatus(ParticipantStatus.TRY_FAILED);
 
-                Object result = null;
-                TransactionContext transactionContext = new TransactionContext(transaction.getRootDomain(), transaction.getRootXid(), participant.getXid(), TransactionStatus.TRYING, ParticipantStatus.TRYING);
-                FactoryBuilder.factoryOf(participant.getTransactionContextEditorClass()).getInstance().set(transactionContext, pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
-                try {
-                    result = pjp.proceed(pjp.getArgs());
-                    participant.setStatus(ParticipantStatus.TRY_SUCCESS);
-                } catch (Throwable e) {
-                    participant.setStatus(ParticipantStatus.TRY_FAILED);
-
-                    //if root transaction, here no need persistent transaction
-                    // because following stage is rollback, transaction's status is changed to CANCELING and save
+                //if root transaction, here no need persistent transaction
+                // because following stage is rollback, transaction's status is changed to CANCELING and save
 //                    transactionManager.update(participant);
-//
-                    throw e;
-                } finally {
-                    FactoryBuilder.factoryOf(participant.getTransactionContextEditorClass()).getInstance().clear(transactionContext, pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
-                }
-
-
-                return result;
+                throw e;
+            } finally {
+                FactoryBuilder.factoryOf(participant.getTransactionContextEditorClass()).getInstance().clear(transactionContext, pjp.getTarget(), pjp.getMethod(), pjp.getArgs());
             }
+
+
+            return result;
         }
 
         return pjp.proceed(pjp.getArgs());

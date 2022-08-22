@@ -30,9 +30,12 @@ public class DomainStoreMapSerializer {
     public static final String VERSION = "VERSION";
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    private DomainStoreMapSerializer() {
+    }
+
     public static Map<byte[], byte[]> serialize(DomainStore domainStore) {
 
-        Map<byte[], byte[]> map = new HashMap<byte[], byte[]>();
+        Map<byte[], byte[]> map = new HashMap<>();
         putBytesIfValueExist(map, DOMAIN, domainStore.getDomain());
         putBytesIfValueExist(map, PHONE_NUMBERS, domainStore.getPhoneNumbers());
         putBytesIfValueExist(map, ALERT_TYPE, domainStore.getAlertType());
@@ -70,7 +73,7 @@ public class DomainStoreMapSerializer {
 
     public static DomainStore deserialize(Map<byte[], byte[]> map) {
 
-        Map<String, byte[]> propertyMap = new HashMap<String, byte[]>();
+        Map<String, byte[]> propertyMap = new HashMap<>();
 
         for (Map.Entry<byte[], byte[]> entry : map.entrySet()) {
             propertyMap.put(new String(entry.getKey()), entry.getValue());

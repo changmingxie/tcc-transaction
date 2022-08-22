@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.remoting.netty;
 
-import io.netty.channel.Channel;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
 
 import java.util.concurrent.CountDownLatch;
@@ -13,10 +12,6 @@ public class ResponseFuture {
     private RemotingCommand responseCommand;
 
     private CountDownLatch countDownLatch = new CountDownLatch(1);
-
-    public ResponseFuture(Channel channel, int requestId, long timeoutMillis) {
-
-    }
 
     public boolean isSendRequestSuccess() {
         return sendRequestSuccess;

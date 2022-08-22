@@ -12,4 +12,7 @@ public class TransactionContextConstants {
     private static final String TRANSACTION_CONTEXT = "TRANSACTION_CONTEXT";
 
     public static final Metadata.Key<byte[]> TRANSACTION_CONTEXT_HEADER_KEY = Metadata.Key.of((TRANSACTION_CONTEXT + BINARY_HEADER_SUFFIX).toLowerCase(), Metadata.BINARY_BYTE_MARSHALLER);
+
+    private TransactionContextConstants() {
+    }
 }

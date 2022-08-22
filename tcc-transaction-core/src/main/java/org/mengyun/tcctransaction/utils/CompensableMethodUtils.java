@@ -14,6 +14,9 @@ import java.lang.reflect.Method;
  */
 public class CompensableMethodUtils {
 
+    private CompensableMethodUtils() {
+    }
+
     public static Method getCompensableMethod(ProceedingJoinPoint pjp) {
         Method method = ((MethodSignature) (pjp.getSignature())).getMethod();
 

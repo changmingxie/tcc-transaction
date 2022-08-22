@@ -6,7 +6,7 @@ import org.apache.dubbo.rpc.*;
 import org.mengyun.tcctransaction.api.EnableTcc;
 import org.mengyun.tcctransaction.context.ThreadLocalTransactionContextEditor;
 import org.mengyun.tcctransaction.dubbo.DubboInvokeProceedingJoinPoint;
-import org.mengyun.tcctransaction.dubbo.Interceptor.CompensableTransactionInterceptor;
+import org.mengyun.tcctransaction.dubbo.interceptor.CompensableTransactionInterceptor;
 import org.mengyun.tcctransaction.dubbo.constants.TransactionContextConstants;
 import org.mengyun.tcctransaction.exception.SystemException;
 import org.mengyun.tcctransaction.interceptor.ResourceCoordinatorAspect;

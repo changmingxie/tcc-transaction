@@ -222,9 +222,8 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
 
     @Override
     protected List<TransactionStore> findTransactionsFromOneShard(String domain, RocksDB shard, Set keys) {
-        List<TransactionStore> list = null;
 
-        List<byte[]> allValues = null;
+        List<byte[]> allValues = new ArrayList<>();
 
         try {
             allValues = shard.multiGetAsList(Lists.newLinkedList(keys));
@@ -232,7 +231,7 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
             log.error("get transactionStore data from RocksDb failed.");
         }
 
-        list = new ArrayList<TransactionStore>();
+        List<TransactionStore> list = new ArrayList<>();
 
         for (byte[] value : allValues) {
 
@@ -260,6 +259,7 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
         };
     }
 
+    @Override
     public void close() {
 
         if (db != null) {

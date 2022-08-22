@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.serializer.kryo;
 
-import com.esotericsoftware.kryo.Kryo;
 import com.google.common.collect.Lists;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.common.TransactionType;
@@ -44,9 +43,5 @@ public class RegisterableKryoTransactionSerializer extends RegisterableKryoSeria
 
     public RegisterableKryoTransactionSerializer(int initPoolSize, List<Class> registerClasses, boolean warnUnregisteredClasses) {
         super(initPoolSize, CollectionUtils.merge(transactionClasses, registerClasses), warnUnregisteredClasses);
-    }
-
-    protected void initHook(Kryo kryo) {
-        super.initHook(kryo);
     }
 }

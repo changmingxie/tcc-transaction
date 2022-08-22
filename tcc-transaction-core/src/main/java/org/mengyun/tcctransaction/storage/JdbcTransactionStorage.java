@@ -124,12 +124,13 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
                 stmt.setString(8, transactionStore.getDomain());
             }
 
-            int result = stmt.executeUpdate();
-
-            return result;
+            return stmt.executeUpdate();
 
         } catch (Throwable e) {
             throw new TransactionIOException(e);
+        }finally {
+            closeStatement(stmt);
+            this.releaseConnection(connection);
         }
     }
 
@@ -228,7 +229,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
 
     @Override
     protected TransactionStore doFindOne(String domain, Xid xid, boolean isMarkDeleted) {
-        return doFind(domain, getTableName(), xid, isMarkDeleted);
+        return doFind(domain, xid, isMarkDeleted);
     }
 
     @Override
@@ -245,7 +246,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     public int count(String domain, boolean isMarkDeleted) {
         Connection connection = null;
         PreparedStatement stmt = null;
-
+        ResultSet resultSet = null;
         try {
             connection = this.getConnection();
             StringBuilder builder = new StringBuilder();
@@ -255,7 +256,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             stmt.setString(1, domain);
             stmt.setInt(2, isMarkDeleted ? MARK_DELETED_YES : MARK_DELETED_NO);
 
-            ResultSet resultSet = stmt.executeQuery();
+            resultSet = stmt.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getInt(1);
             }
@@ -263,6 +264,13 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
         } catch (Throwable e) {
             throw new TransactionIOException(e);
         } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (Exception ignore) {
+                //ignore
+            }
             closeStatement(stmt);
             this.releaseConnection(connection);
         }
@@ -378,14 +386,12 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     }
 
     private List<DomainStore> executeDomainQuery(StatementBuilder builder) {
-        return executeQuery(builder, resultSet -> {
-            return this.constructDomains(resultSet);
-        });
+        return executeQuery(builder, this::constructDomains);
     }
 
     private Page<TransactionStore> pageList(String domain, Date date, String offset, int pageSize, boolean isMarkDeleted) {
 
-        List<TransactionStore> transactions = new ArrayList<TransactionStore>();
+        List<TransactionStore> transactions = new ArrayList<>();
 
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -421,12 +427,12 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             this.releaseConnection(connection);
         }
 
-        return new Page<TransactionStore>(String.valueOf(currentOffset + transactions.size()), transactions);
+        return new Page<>(String.valueOf(currentOffset + transactions.size()), transactions);
     }
 
-    private TransactionStore doFind(String domain, String tableName, Xid xid, boolean isMarkDeleted) {
+    private TransactionStore doFind(String domain, Xid xid, boolean isMarkDeleted) {
 
-        List<TransactionStore> transactions = doFinds(domain, tableName, Arrays.asList(xid), isMarkDeleted);
+        List<TransactionStore> transactions = doFinds(domain, Arrays.asList(xid), isMarkDeleted);
 
         if (!CollectionUtils.isEmpty(transactions)) {
             return transactions.get(0);
@@ -434,9 +440,9 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
         return null;
     }
 
-    private List<TransactionStore> doFinds(String domain, String tableName, List<Xid> xids, boolean isMarkDeleted) {
+    private List<TransactionStore> doFinds(String domain, List<Xid> xids, boolean isMarkDeleted) {
 
-        List<TransactionStore> transactions = new ArrayList<TransactionStore>();
+        List<TransactionStore> transactions = new ArrayList<>();
 
         if (CollectionUtils.isEmpty(xids)) {
             return transactions;

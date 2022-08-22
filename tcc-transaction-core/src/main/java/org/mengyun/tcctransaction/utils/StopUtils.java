@@ -6,6 +6,9 @@ package org.mengyun.tcctransaction.utils;
  */
 public class StopUtils {
 
+    private StopUtils() {
+    }
+
     /**
      * call exit in a new thread to avoid potential dead lock
      */

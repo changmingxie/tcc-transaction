@@ -50,7 +50,7 @@ public class NacosRegistryServiceImpl extends AbstractRegistryService {
     @Override
     protected void doRegister(InetSocketAddress address) throws Exception {
         String addressString = NetUtils.parseSocketAddress(address);
-        int index = addressString.indexOf(":");
+        int index = addressString.indexOf(':');
         if (index == -1) {
             throw new IllegalArgumentException("invalid address：" + address.toString());
         }

@@ -159,7 +159,7 @@ public class TccServer implements TccService {
 
         this.requestProcessExecutor = new ThreadPoolExecutor(serverConfig.getRequestProcessThreadSize(),
                 serverConfig.getRequestProcessThreadSize(),
-                1000 * 60, TimeUnit.MILLISECONDS,
+                1000L * 60, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(this.serverConfig.getRequestProcessThreadQueueCapacity()),
                 new ThreadFactory() {
                     private AtomicInteger threadIndex = new AtomicInteger(0);
@@ -187,7 +187,7 @@ public class TccServer implements TccService {
         this.registryService.start();
         this.registryService.register(inetSocketAddress);
 
-        logger.info("succeeded to register with address {}", inetSocketAddress.toString());
+        logger.info("succeeded to register with address {}", inetSocketAddress);
     }
 
     public RecoveryScheduler getScheduler() {

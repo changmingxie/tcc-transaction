@@ -22,7 +22,7 @@ public class ShardRedisStoreProperties extends AbstractJedisStoreProperties {
             DB = JedisShardInfo.class.getDeclaredField("db");
             DB.setAccessible(true);
         } catch (NoSuchFieldException e) {
-            throw new Error(e);
+            throw new RuntimeException(e);
         }
     }
 

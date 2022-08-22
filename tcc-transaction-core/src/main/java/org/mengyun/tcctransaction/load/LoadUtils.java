@@ -6,6 +6,9 @@ package org.mengyun.tcctransaction.load;
  */
 public class LoadUtils {
 
+    private LoadUtils() {
+    }
+
     public static String getServiceName(Class<?> clazz) {
         LoadInfo loadInfo = clazz.getAnnotation(LoadInfo.class);
         if (loadInfo == null) {

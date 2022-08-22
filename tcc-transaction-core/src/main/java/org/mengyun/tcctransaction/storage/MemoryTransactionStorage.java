@@ -30,7 +30,7 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     @Override
     protected List<TransactionStore> findTransactionsFromOneShard(String domain, Map<String, TransactionStore> shard, Set keys) {
 
-        List<TransactionStore> list = new ArrayList<TransactionStore>();
+        List<TransactionStore> list = new ArrayList<>();
 
         for (Object key : keys) {
             list.add(shard.get(key));
@@ -45,7 +45,7 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
         Page<String> page = new Page<>();
         Iterator<String> iterator = shard.keySet().iterator();
         int iteratorIndex = 0;
-        int currentIndex = Integer.valueOf(currentCursor);
+        int currentIndex = Integer.parseInt(currentCursor);
 
         int count = 0;
 
@@ -177,7 +177,9 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
         sb.append("transactionStore xid:" + transactionStore.getXid() + "; status:" + transactionStore.getStatusId() + "\r\n");
 //        sb.append("content:" + new String(transactionStore.getContent()));
 
-        log.debug(sb.toString());
+        if (log.isDebugEnabled()) {
+            log.debug(sb.toString());
+        }
     }
 
     @Override
@@ -204,7 +206,7 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
 
     @Override
     public List<DomainStore> getAllDomains() {
-        return domainDb.values().stream().collect(Collectors.toList());
+        return new ArrayList<>(domainDb.values());
     }
 
     private String buildMemoryKey(TransactionStore transactionStore) {

@@ -23,10 +23,8 @@ public class ChannelGroupMap {
 
     public Channel getChannel(String key) {
         Set<Channel> channels = channelGroup.get(key);
-        if (channels != null && channels.size() > 0) {
-            for (Channel channel : channels) {
-                return channel;
-            }
+        if (channels != null && !channels.isEmpty()) {
+            return channels.iterator().next();
         }
         return null;
     }

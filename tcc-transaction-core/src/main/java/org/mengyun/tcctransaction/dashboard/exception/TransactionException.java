@@ -9,12 +9,8 @@ import org.mengyun.tcctransaction.dashboard.enums.ResponseCodeEnum;
  **/
 public class TransactionException extends RuntimeException {
 
-    private String errorCode;
-    private String errorMessage;
-
-    public TransactionException() {
-        super();
-    }
+    private final String errorCode;
+    private final String errorMessage;
 
     public TransactionException(String errorCode, String errorMessage) {
         super(errorMessage);
