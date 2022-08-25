@@ -66,7 +66,7 @@ public class DashboardEnvironmentPostProcessor implements EnvironmentPostProcess
 
     private void rebuildDashboardRegistryProperties(ConfigurableEnvironment environment) {
         String connectionMode = environment.getProperty("spring.tcc.dashboard.connection-mode");
-        if (StringUtils.isNotEmpty(connectionMode) && ConnectionMode.SERVER.name().equals(connectionMode.toUpperCase())) {
+        if (StringUtils.isNotEmpty(connectionMode) && ConnectionMode.SERVER.name().equalsIgnoreCase(connectionMode)) {
             String registryType = environment.getProperty("spring.tcc.dashboard.registry.registry-type", REGISTRY_DEFAULT_REGISTRY_TYPE);
             if (RegistryType.direct.name().equals(registryType)) {
                 putIntoTccDashboadProperties("spring.cloud.nacos.discovery.enabled", "false");

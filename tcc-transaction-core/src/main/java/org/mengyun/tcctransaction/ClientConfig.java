@@ -9,7 +9,7 @@ import org.mengyun.tcctransaction.storage.StoreConfig;
 
 public class ClientConfig extends AbstractConfig implements RecoveryConfig, NettyClientConfig, StoreConfig, ClientRegistryConfig {
 
-    public final static ClientConfig DEFAULT = new ClientConfig();
+    public static final ClientConfig DEFAULT = new ClientConfig();
 
     private NettyClientConfig nettyClientConfig = new NettyClientProperties();
 

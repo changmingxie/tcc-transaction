@@ -19,10 +19,15 @@ public class HeartBeatRespHandler extends ChannelInboundHandlerAdapter {
         RemotingCommand remotingCommand = (RemotingCommand) msg;
         if (remotingCommand.getCode() == RemotingCommandCode.HEARTBEAT_REQ) {
 
-            logger.debug("received heartbeat request from addr：%s, the request id:%d", NetUtils.parseSocketAddress(ctx.channel().remoteAddress()), remotingCommand.getRequestId());
+            if(logger.isDebugEnabled()) {
+                logger.debug("received heartbeat request from addr：{}, the request id:{}", NetUtils.parseSocketAddress(ctx.channel().remoteAddress()), remotingCommand.getRequestId());
+            }
 
             RemotingCommand responseCommand = RemotingCommand.createCommand(RemotingCommandCode.HEARTBEAT_RESP, null);
-            logger.debug("send the heartbeat response to addr:%s, the request id:%d", NetUtils.parseSocketAddress(ctx.channel().remoteAddress()), responseCommand.getRequestId());
+
+            if(logger.isDebugEnabled()) {
+                logger.debug("send the heartbeat response to addr:{}, the request id:{}", NetUtils.parseSocketAddress(ctx.channel().remoteAddress()), responseCommand.getRequestId());
+            }
             ctx.writeAndFlush(responseCommand);
             ReferenceCountUtil.release(msg);
         } else {

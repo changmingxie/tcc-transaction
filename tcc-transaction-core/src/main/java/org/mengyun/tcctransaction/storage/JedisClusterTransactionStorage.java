@@ -5,10 +5,9 @@ import org.mengyun.tcctransaction.storage.helper.JedisClusterCommands;
 import org.mengyun.tcctransaction.storage.helper.RedisCommands;
 import org.mengyun.tcctransaction.storage.helper.ShardHolder;
 import redis.clients.jedis.*;
-import redis.clients.jedis.exceptions.JedisException;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class JedisClusterTransactionStorage extends AbstractRedisTransactionStorage {
@@ -122,11 +121,7 @@ public class JedisClusterTransactionStorage extends AbstractRedisTransactionStor
 
 
         private String encode(final byte[] data) {
-            try {
-                return new String(data, Protocol.CHARSET);
-            } catch (UnsupportedEncodingException e) {
-                throw new JedisException(e);
-            }
+            return new String(data, StandardCharsets.UTF_8);
         }
     }
 

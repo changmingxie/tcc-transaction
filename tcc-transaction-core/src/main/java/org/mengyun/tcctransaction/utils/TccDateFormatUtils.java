@@ -12,6 +12,9 @@ public class TccDateFormatUtils {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    private TccDateFormatUtils(){
+    }
+
     public static String formatDate(Date date) {
         if (date == null) {
             return null;

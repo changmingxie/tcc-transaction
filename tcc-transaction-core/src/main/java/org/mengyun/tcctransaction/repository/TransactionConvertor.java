@@ -7,6 +7,9 @@ import org.mengyun.tcctransaction.transaction.Transaction;
 
 public final class TransactionConvertor {
 
+    private TransactionConvertor() {
+    }
+
     public static Transaction getTransaction(TransactionSerializer serializer, TransactionStore transactionStore) {
 
         Transaction transaction = serializer.deserialize(transactionStore.getContent());

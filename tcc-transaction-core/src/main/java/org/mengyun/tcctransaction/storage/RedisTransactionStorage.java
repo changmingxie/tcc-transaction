@@ -37,7 +37,7 @@ public class RedisTransactionStorage extends AbstractRedisTransactionStorage {
         this.jedisPool = jedisPool;
         isSupportScan = RedisHelper.isSupportScanCommand(jedisPool);
         if (!isSupportScan) {
-            throw new RuntimeException("Redis not support 'scan' command, " +
+            throw new UnsupportedOperationException("Redis not support 'scan' command, " +
                     "try update redis version higher than 2.8.0 ");
         }
     }

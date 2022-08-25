@@ -17,6 +17,9 @@ public class ReflectionUtils {
 
     private static ConcurrentHashMap<Class, Class> cachedDeclaredClasses = new ConcurrentHashMap<>();
 
+    private ReflectionUtils() {
+    }
+
 
     public static void makeAccessible(Method method) {
         if ((!Modifier.isPublic(method.getModifiers()) || !Modifier.isPublic(method.getDeclaringClass().getModifiers())) && !method.isAccessible()) {

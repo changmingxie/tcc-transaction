@@ -23,7 +23,7 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
     private static byte[] mapSerialize(Map<String, String> map) {
         // keySize+key+valSize+val
         if (null == map || map.isEmpty()) {
-            return null;
+            return new byte[0];
         }
 
         int totalLength = 0;
@@ -124,7 +124,7 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
         // int participantStatus
         byteBuffer.putInt(transactionContext.getParticipantStatus().getId());
         // Map<String, String> attachments
-        if (attachmentsBytes != null) {
+        if (attachmentsLength > 0) {
             byteBuffer.putInt(attachmentsLength);
             byteBuffer.put(attachmentsBytes);
         } else {

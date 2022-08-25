@@ -25,7 +25,7 @@ public class HeartBeatReqHandler extends ChannelInboundHandlerAdapter {
 
                 RemotingCommand requestCommand = RemotingCommand.createCommand(RemotingCommandCode.HEARTBEAT_REQ, null);
 
-                logger.debug("heartbeat request triggered, the request id：%d", requestCommand.getRequestId());
+                logger.debug("heartbeat request triggered, the request id：{}", requestCommand.getRequestId());
                 ctx.writeAndFlush(requestCommand);
             }
         }
@@ -33,12 +33,12 @@ public class HeartBeatReqHandler extends ChannelInboundHandlerAdapter {
         super.userEventTriggered(ctx, evt);
     }
 
-
+    @Override
     public void channelRead(ChannelHandlerContext ctx, Object cmd) throws Exception {
         RemotingCommand remotingCommand = (RemotingCommand) cmd;
 
         if (remotingCommand.getCode() == RemotingCommandCode.HEARTBEAT_RESP) {
-            logger.debug("received heartbeat response, the request id：%d", remotingCommand.getRequestId());
+            logger.debug("received heartbeat response, the request id：{}", remotingCommand.getRequestId());
             ReferenceCountUtil.release(cmd);
         } else {
             ctx.fireChannelRead(cmd);

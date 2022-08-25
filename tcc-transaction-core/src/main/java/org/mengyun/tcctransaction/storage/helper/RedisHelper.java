@@ -22,11 +22,14 @@ public class RedisHelper {
     public static final int DELETED_KEY_KEEP_TIME = 3 * 24 * 3600;
     public static final String LEFT_BIG_BRACKET = "{";
     public static final String RIGHT_BIG_BRACKET = "}";
-    static final Logger log = LoggerFactory.getLogger(RedisHelper.class.getSimpleName());
-    public static int SCAN_COUNT = 30;
-    public static int SCAN_MIDDLE_COUNT = 1000;
-    public static String SCAN_TEST_PATTERN = "*";
-    public static String REDIS_SCAN_INIT_CURSOR = ShardOffset.SCAN_INIT_CURSOR;
+    private static final Logger log = LoggerFactory.getLogger(RedisHelper.class.getSimpleName());
+    public static final int SCAN_COUNT = 30;
+    public static final int SCAN_MIDDLE_COUNT = 1000;
+    public static final String SCAN_TEST_PATTERN = "*";
+    public static final String REDIS_SCAN_INIT_CURSOR = ShardOffset.SCAN_INIT_CURSOR;
+
+    private RedisHelper() {
+    }
 
     public static byte[] getDomainStoreRedisKey(String domain) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -115,11 +118,11 @@ public class RedisHelper {
         return true;
     }
 
-    static public boolean isSupportScanCommand(JedisPool pool) {
-        return execute(pool, jedis -> isSupportScanCommand(jedis));
+    public static boolean isSupportScanCommand(JedisPool pool) {
+        return execute(pool, RedisHelper::isSupportScanCommand);
     }
 
-    static public boolean isSupportScanCommand(ShardedJedisPool shardedJedisPool) {
+    public static boolean isSupportScanCommand(ShardedJedisPool shardedJedisPool) {
         Collection<Jedis> allShards = shardedJedisPool.getResource().getAllShards();
 
         for (Jedis jedis : allShards) {
@@ -138,7 +141,7 @@ public class RedisHelper {
         return true;
     }
 
-    static public boolean isSupportScanCommand(JedisCluster jedisCluster) {
+    public static boolean isSupportScanCommand(JedisCluster jedisCluster) {
         Map<String, JedisPool> jedisPoolMap = jedisCluster.getClusterNodes();
 
         for (Map.Entry<String, JedisPool> entry : jedisPoolMap.entrySet()) {

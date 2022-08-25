@@ -56,12 +56,12 @@ public abstract class AbstractKVTransactionStorage<T> extends AbstractTransactio
 
             haveFetchedCount += page.getData().size();
 
-            if (page.getData().size() <= 0 || haveFetchedCount >= pageSize) {
+            if (page.getData().isEmpty() || haveFetchedCount >= pageSize) {
                 break;
             }
         } while (true);
 
-        return new Page<TransactionStore>(tryFetchOffset, fetchedTransactions);
+        return new Page<>(tryFetchOffset, fetchedTransactions);
     }
 
     /*
@@ -73,7 +73,7 @@ public abstract class AbstractKVTransactionStorage<T> extends AbstractTransactio
 
         ShardOffset nextShardOffset = new ShardOffset();
 
-        Page<TransactionStore> page = new Page<TransactionStore>();
+        Page<TransactionStore> page = new Page<>();
 
         try (ShardHolder shardHolder = getShardHolder()) {
 
@@ -110,13 +110,13 @@ public abstract class AbstractKVTransactionStorage<T> extends AbstractTransactio
             Page<byte[]> keyPage = findKeysFromOneShard(domain, currentShard, currentCursor, maxFindCount, isMarkDeleted);
             List<byte[]> keys = keyPage.getData();
 
-            if (keys.size() > 0) {
+            if (!keys.isEmpty()) {
 
                 List<TransactionStore> currentTransactions = findTransactionsFromOneShard(domain, currentShard, new HashSet<>(keys));
 
                 if (CollectionUtils.isEmpty(currentTransactions)) {
                     // ignore, maybe the keys are recovered by other threads!
-                    log.info("no transactionStore found while key size:" + keys.size());
+                    log.info("no transactionStore found while key size:{}", keys.size());
                 }
 
                 transactions.addAll(currentTransactions);
@@ -161,17 +161,13 @@ public abstract class AbstractKVTransactionStorage<T> extends AbstractTransactio
     @Override
     public Page<TransactionStore> findAllUnmodifiedSince(String domain, Date date, String offset, int pageSize) {
 
-        Page<TransactionStore> page = doFindAllUnmodifiedSince(domain, date, offset, pageSize, false);
-
-        return page;
+        return doFindAllUnmodifiedSince(domain, date, offset, pageSize, false);
     }
 
     @Override
     public Page<TransactionStore> findAllDeletedSince(String domain, Date date, String offset, int pageSize) {
 
-        Page<TransactionStore> page = doFindAllUnmodifiedSince(domain, date, offset, pageSize, true);
-
-        return page;
+        return doFindAllUnmodifiedSince(domain, date, offset, pageSize, true);
     }
 
     @Override
@@ -196,7 +192,7 @@ public abstract class AbstractKVTransactionStorage<T> extends AbstractTransactio
         return serializer;
     }
 
-    public void setSerializer(TransactionStoreSerializer serializserializerer) {
+    public void setSerializer(TransactionStoreSerializer serializer) {
         this.serializer = serializer;
     }
 }

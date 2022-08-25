@@ -30,11 +30,11 @@ public abstract class AbstractNettyRemoting {
         if (cmd.isRequestCommand()) {
             processRequestCommand(ctx, cmd);
         } else {
-            processResponseCommand(ctx, cmd);
+            processResponseCommand(cmd);
         }
     }
 
-    private void processResponseCommand(ChannelHandlerContext ctx, RemotingCommand cmd) {
+    private void processResponseCommand(RemotingCommand cmd) {
 
         final int opaqueId = cmd.getRequestId();
         final ResponseFuture responseFuture = responseTable.get(opaqueId);
@@ -48,25 +48,22 @@ public abstract class AbstractNettyRemoting {
 
         Pair<RequestProcessor<ChannelHandlerContext>, ExecutorService> pair = this.defaultRequestProcessor;
 
-        Runnable run = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    RemotingCommand responseCommand = pair.getLeft().processRequest(ctx, cmd);
+        Runnable run = () -> {
+            try {
+                RemotingCommand responseCommand = pair.getLeft().processRequest(ctx, cmd);
 
-                    responseCommand.setCode(RemotingCommandCode.SERVICE_RESP);
-                    responseCommand.setRequestId(cmd.getRequestId());
-                    ctx.writeAndFlush(responseCommand);
+                responseCommand.setCode(RemotingCommandCode.SERVICE_RESP);
+                responseCommand.setRequestId(cmd.getRequestId());
+                ctx.writeAndFlush(responseCommand);
 
-                } catch (Exception e) {
-                    logger.error(String.format("processRequest failed, command code:%s, service code:%d ", cmd.getCode(), cmd.getServiceCode()), e);
+            } catch (Exception e) {
+                logger.error("processRequest failed, command code:{}, service code:{}", cmd.getCode(), cmd.getServiceCode(), e);
 
-                    StringWriter errors = new StringWriter();
-                    e.printStackTrace(new PrintWriter(errors));
-                    RemotingCommand responseCommand = RemotingCommand.createCommand(RemotingCommandCode.SYSTEM_EXCEPTION_RESP, errors.toString());
-                    responseCommand.setRequestId(cmd.getRequestId());
-                    ctx.writeAndFlush(responseCommand);
-                }
+                StringWriter errors = new StringWriter();
+                e.printStackTrace(new PrintWriter(errors));
+                RemotingCommand responseCommand = RemotingCommand.createCommand(RemotingCommandCode.SYSTEM_EXCEPTION_RESP, errors.toString());
+                responseCommand.setRequestId(cmd.getRequestId());
+                ctx.writeAndFlush(responseCommand);
             }
         };
 
@@ -74,9 +71,8 @@ public abstract class AbstractNettyRemoting {
             pair.getRight().submit(run);
         } catch (RejectedExecutionException e) {
             if ((System.currentTimeMillis() % 10000) == 0) {
-                logger.error(NetUtils.parseSocketAddress(ctx.channel().remoteAddress())
-                        + ", too many requests and system thread pool busy, RejectedExecutionException "
-                        + " request code: " + cmd.getCode());
+                logger.error("{},too many requests and system thread pool busy, RejectedExecutionException request code:{}",
+                        NetUtils.parseSocketAddress(ctx.channel().remoteAddress()), cmd.getCode());
             }
 
             final RemotingCommand response = RemotingCommand.createCommand(RemotingCommandCode.SYSTEM_BUSY_RESP,

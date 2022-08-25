@@ -29,6 +29,9 @@ public class AlertUtils {
 
     private static ObjectMapper jackson = new ObjectMapper();
 
+    private AlertUtils() {
+    }
+
     public static boolean dingAlert(String dingRobotUrl, String phoneNumbers, String content) {
         try {
             doDingAlert(dingRobotUrl, phoneNumbers, content);
@@ -40,9 +43,9 @@ public class AlertUtils {
 
     public static void doDingAlert(String dingRobotUrl, String phoneNumbers, String content) {
         JsonNode params = buildDingRequestParams(phoneNumbers, content);
-        logger.info("ding alert request:{}", params.toString());
+        logger.info("ding alert request:{}", params);
         JsonNode repsonse = doPost(dingRobotUrl, params);
-        logger.info("ding alert response:{}", repsonse.toString());
+        logger.info("ding alert response:{}", repsonse);
         int errcode = repsonse.get("errcode").asInt(0);
         String errmsg = repsonse.get("errmsg").asText();
         if (errcode != 0) {

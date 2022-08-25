@@ -30,21 +30,18 @@ public class AnnotationTccTransactionConfiguration {
 
     @Bean("configurableTransactionAspect")
     public ConfigurableTransactionAspect getConfigurableTransactionAspect() {
-        ConfigurableTransactionAspect aspect = new ConfigurableTransactionAspect();
-        return aspect;
+        return new ConfigurableTransactionAspect();
     }
 
     @Bean("configurableCoordinatorAspect")
     public ConfigurableCoordinatorAspect getConfigurableCoordinatorAspect() {
-        ConfigurableCoordinatorAspect aspect = new ConfigurableCoordinatorAspect();
-        return aspect;
+        return new ConfigurableCoordinatorAspect();
     }
 
     @Bean
     @DependsOn({"springBeanFactory"})
     public SpringTccClient getTccClient() {
-        SpringTccClient tccClient = new SpringTccClient(clientConfig);
-        return tccClient;
+        return new SpringTccClient(clientConfig);
     }
 
     @Bean

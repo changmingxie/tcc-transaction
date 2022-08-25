@@ -22,20 +22,20 @@ public class LocalStorageCondition extends BaseStorageCondition {
     @Override
     boolean match(String connectionModeValue, String storageTypeVaule) {
 
-        if (connectionModeValue.toUpperCase().equals(ConnectionMode.EMBEDDED.name())) {
+        if (connectionModeValue.equalsIgnoreCase(ConnectionMode.EMBEDDED.name())) {
             if (StringUtils.isEmpty(storageTypeVaule)) {
-                throw new RuntimeException("storageType must not null when connectionMode is " + ConnectionMode.EMBEDDED.name());
+                throw new IllegalArgumentException("storageType must not null when connectionMode is " + ConnectionMode.EMBEDDED.name());
             }
 
             boolean isSupportedStorage = false;
             for (StorageType storageType : SUPPORT_STORAGETYPES) {
-                if (storageType.name().equals(storageTypeVaule.toUpperCase())) {
+                if (storageType.name().equalsIgnoreCase(storageTypeVaule)) {
                     isSupportedStorage = true;
                     break;
                 }
             }
             if (!isSupportedStorage) {
-                throw new RuntimeException("storageType:" + storageTypeVaule + " not supported, when connectionMode is " + ConnectionMode.EMBEDDED.name());
+                throw new UnsupportedOperationException("storageType:" + storageTypeVaule + " not supported, when connectionMode is " + ConnectionMode.EMBEDDED.name());
             }
 
             return true;

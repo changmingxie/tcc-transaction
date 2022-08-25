@@ -16,7 +16,7 @@ public class TransactionContext implements Serializable {
 
     private TransactionStatus status = TransactionStatus.TRYING;
     private ParticipantStatus participantStatus = ParticipantStatus.TRYING;
-    private Map<String, String> attachments = new ConcurrentHashMap<String, String>();
+    private Map<String, String> attachments = new ConcurrentHashMap<>();
 
     public TransactionContext() {
 

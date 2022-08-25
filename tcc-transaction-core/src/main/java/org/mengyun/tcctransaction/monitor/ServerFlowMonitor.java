@@ -19,6 +19,9 @@ public class ServerFlowMonitor {
 
     private static AtomicLong totalCounter = new AtomicLong(0);
 
+    private ServerFlowMonitor() {
+    }
+
     public static void count(){
         totalCounter.incrementAndGet();
     }
@@ -50,9 +53,9 @@ public class ServerFlowMonitor {
                         logger.info("monitor print error", e);
                     }finally {
                         try {
-                            Thread.sleep(flowMonitorPrintIntervalMinutes*60*1000);
+                            Thread.sleep(flowMonitorPrintIntervalMinutes * 60L * 1000);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            logger.error("", e);
                         }
                     }
                 }

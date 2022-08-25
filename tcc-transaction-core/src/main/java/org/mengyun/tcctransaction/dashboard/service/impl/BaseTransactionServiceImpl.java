@@ -163,12 +163,8 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
 
     private List<TransactionStoreDto> toTransactionStoreDtoList(List<TransactionStore> transactionStoreList) {
         List<TransactionStoreDto> transactionStoreDtoList = new ArrayList<>(transactionStoreList.size());
-        transactionStoreList.forEach(transactionStore -> {
-            transactionStoreDtoList.add(toTransactionStoreDto(transactionStore));
-        });
-        transactionStoreDtoList.sort((t1, t2) -> {
-            return -1 * t1.getCreateTime().compareTo(t2.getCreateTime());
-        });
+        transactionStoreList.forEach(transactionStore -> transactionStoreDtoList.add(toTransactionStoreDto(transactionStore)));
+        transactionStoreDtoList.sort((t1, t2) -> t2.getCreateTime().compareTo(t1.getCreateTime()));
         return transactionStoreDtoList;
     }
 
@@ -192,15 +188,10 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     }
 
     protected boolean isJSONString(String content) {
-        boolean isJSON = false;
-        if (StringUtils.isNotBlank(content)) {
-            content = content.trim();
-            if (content.startsWith("{") && content.endsWith("}")) {
-                isJSON = true;
-            } else if (content.startsWith("[") && content.endsWith("]")) {
-                isJSON = true;
-            }
+        if (StringUtils.isBlank(content)) {
+            return false;
         }
-        return isJSON;
+        content = content.trim();
+        return (content.startsWith("{") && content.endsWith("}")) || (content.startsWith("[") && content.endsWith("]"));
     }
 }

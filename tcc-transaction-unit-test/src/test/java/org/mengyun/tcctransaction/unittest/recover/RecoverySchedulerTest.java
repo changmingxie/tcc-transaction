@@ -14,8 +14,8 @@ import java.util.Properties;
  **/
 public class RecoverySchedulerTest {
 
-    public final static String JOB_NAME = "TccServerRecoverJob_%s";
-    public final static String TRIGGER_NAME = "TccServerRecoveryTrigger_%s";
+    public static final String JOB_NAME = "TccServerRecoverJob_%s";
+    public static final String TRIGGER_NAME = "TccServerRecoveryTrigger_%s";
     private static final String DOMAIN = "TTTTTT";
     private static String quartzDataSourceDriver = "com.mysql.jdbc.Driver";
     private static String quartzDataSourceUrl = "jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true";

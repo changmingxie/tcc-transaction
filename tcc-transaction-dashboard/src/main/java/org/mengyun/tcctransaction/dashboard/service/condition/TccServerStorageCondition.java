@@ -11,9 +11,9 @@ public class TccServerStorageCondition extends BaseStorageCondition {
     @Override
     boolean match(String connectionModeValue, String storageTypeVaule) {
 
-        if (connectionModeValue.toUpperCase().equals(ConnectionMode.SERVER.name())) {
+        if (connectionModeValue.equalsIgnoreCase(ConnectionMode.SERVER.name())) {
             if (!StringUtils.isEmpty(storageTypeVaule)) {
-                throw new RuntimeException("storageType must null, when connectionMode is " + ConnectionMode.SERVER.name());
+                throw new IllegalArgumentException("storageType must null, when connectionMode is " + ConnectionMode.SERVER.name());
             }
             return true;
         }

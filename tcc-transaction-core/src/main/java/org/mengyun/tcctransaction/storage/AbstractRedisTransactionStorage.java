@@ -14,6 +14,7 @@ import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
 import redis.clients.jedis.exceptions.JedisMovedDataException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -121,7 +122,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
             Map<byte[], byte[]> content = commands.hgetAll(redisKey);
 
             if (log.isDebugEnabled()) {
-                log.debug("redis find cost time :" + (System.currentTimeMillis() - startTime));
+                log.debug("redis find cost time :{}", System.currentTimeMillis() - startTime);
             }
 
             if (content != null && content.size() > 0) {
@@ -134,7 +135,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
     }
 
     protected Long createByScriptCommand(RedisCommands commands, TransactionStore transactionStore) {
-        List<byte[]> params = new ArrayList<byte[]>();
+        List<byte[]> params = new ArrayList<>();
 
         for (Map.Entry<byte[], byte[]> entry : TransactionStoreMapSerializer.serialize(transactionStore)
                 .entrySet()) {
@@ -185,7 +186,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
         List<Object> result = pipeline.syncAndReturnAll();
 
-        list = new ArrayList<TransactionStore>();
+        list = new ArrayList<>();
 
         for (Object data : result) {
 
@@ -195,7 +196,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
                 // ignore the data, this case may happen under redis cluster.
                 log.warn("ignore the data, this case may happen under redis cluster.", (JedisMovedDataException) data);
             } else {
-                log.warn("get transactionStore data failed. result is: " + (data == null ? "null" : data.toString()));
+                log.warn("get transactionStore data failed. result is: {}", data);
             }
         }
 
@@ -213,7 +214,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
         ScanResult<String> scanResult = shard.scan(currentCursor, scanParams);
 
-        page.setData(scanResult.getResult().stream().map(v -> v.getBytes()).collect(Collectors.toList()));
+        page.setData(scanResult.getResult().stream().map(v -> v.getBytes(StandardCharsets.UTF_8)).collect(Collectors.toList()));
 
         page.setAttachment(scanResult.getCursor());
 
@@ -241,7 +242,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
         domainStore.setVersion(1L);
         try (RedisCommands commands = getRedisCommands(domainStoreRedisKey)) {
 
-            List<byte[]> params = new ArrayList<byte[]>();
+            List<byte[]> params = new ArrayList<>();
             for (Map.Entry<byte[], byte[]> entry : DomainStoreMapSerializer.serialize(domainStore)
                     .entrySet()) {
                 params.add(entry.getKey());
@@ -275,7 +276,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
         try (RedisCommands commands = getRedisCommands(domainStoreRedisKey)) {
 
-            List<byte[]> params = new ArrayList<byte[]>();
+            List<byte[]> params = new ArrayList<>();
             for (Map.Entry<byte[], byte[]> entry : DomainStoreMapSerializer.serialize(domainStore).entrySet()) {
                 params.add(entry.getKey());
                 params.add(entry.getValue());
@@ -340,14 +341,14 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
                 // get all key at current jedis
                 do {
                     ScanResult<String> scanResult = jedis.scan(cursor, scanParams);
-                    keyList.addAll(scanResult.getResult().stream().map(v -> v.getBytes()).collect(Collectors.toList()));
+                    keyList.addAll(scanResult.getResult().stream().map(v -> v.getBytes(StandardCharsets.UTF_8)).collect(Collectors.toList()));
                     cursor = scanResult.getCursor();
                 } while (!cursor.equals(RedisHelper.REDIS_SCAN_INIT_CURSOR));
 
                 // get all domainStore by keyList
                 Pipeline pipeline = jedis.pipelined();
-                for (final Object key : keyList) {
-                    pipeline.hgetAll((byte[]) key);
+                for (final byte[] key : keyList) {
+                    pipeline.hgetAll(key);
                 }
                 List<Object> result = pipeline.syncAndReturnAll();
                 for (Object data : result) {
@@ -356,7 +357,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
                     } else if (data instanceof JedisMovedDataException) {
                         log.warn("ignore the data, this case may happen under redis cluster.", (JedisMovedDataException) data);
                     } else {
-                        log.warn("get transactionStore data failed. result is: " + (data == null ? "null" : data.toString()));
+                        log.warn("get transactionStore data failed. result is: {}", data);
                     }
                 }
             }

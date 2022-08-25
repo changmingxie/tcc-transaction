@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @Service
 public class AccountServiceStub implements AccountService {
@@ -34,14 +33,13 @@ public class AccountServiceStub implements AccountService {
 
         try {
             future.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
 
     @EnableTcc
+    @Override
     public void transferToWithTimeout(TransactionContext transactionContext, long accountId, int amount) {
 
         TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
@@ -53,14 +51,13 @@ public class AccountServiceStub implements AccountService {
 
         try {
             future.get(1000L, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
-            throw new RuntimeException(e);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }
 
     @EnableTcc
+    @Override
     public void transferToWithTimeoutBeforeBranchTransactionStart(TransactionContext transactionContext, long accountId, int amount) {
 
         TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
@@ -83,8 +80,6 @@ public class AccountServiceStub implements AccountService {
 
         try {
             future.get(1000L, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
-            throw new RuntimeException(e);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -120,9 +115,7 @@ public class AccountServiceStub implements AccountService {
 
         try {
             future.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }

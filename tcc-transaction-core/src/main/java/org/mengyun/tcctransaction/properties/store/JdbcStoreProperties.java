@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.properties.store;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.mengyun.tcctransaction.exception.SystemException;
 
 import javax.sql.DataSource;
 
@@ -34,7 +35,7 @@ public class JdbcStoreProperties {
                 dataSource.setCheckoutTimeout(checkoutTimeout);
                 instance = dataSource;
             } catch (Exception e) {
-                throw new RuntimeException("failed to create dataSource", e);
+                throw new SystemException("failed to create dataSource", e);
             }
         }
         return instance;

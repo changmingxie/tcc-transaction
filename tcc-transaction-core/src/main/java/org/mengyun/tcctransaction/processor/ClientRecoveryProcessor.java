@@ -29,12 +29,12 @@ public class ClientRecoveryProcessor implements RequestProcessor<ChannelHandlerC
                 recoveryExecutor.rollback(serializer.deserialize(request.getBody()));
                 return RemotingCommand.createServiceResponseCommand(null);
             case RemotingServiceCode.DESERIALIZE_TRANSACTION:
-                return processRequestForFindDeserializedTransactionstore(ctx, request);
+                return processRequestForFindDeserializedTransactionStore(request);
         }
         return RemotingCommand.createServiceResponseCommand(null);
     }
 
-    private RemotingCommand processRequestForFindDeserializedTransactionstore(ChannelHandlerContext ctx, RemotingCommand request) {
+    private RemotingCommand processRequestForFindDeserializedTransactionStore(RemotingCommand request) {
         RemotingCommand responseCommand = RemotingCommand.createServiceResponseCommand(null);
         responseCommand.setBody(recoveryExecutor.transactionVisualize(null, request.getBody()));
         return responseCommand;

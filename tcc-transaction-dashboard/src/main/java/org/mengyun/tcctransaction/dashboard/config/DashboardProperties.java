@@ -14,9 +14,9 @@ public class DashboardProperties {
     private RegistryProperties registry;
 
     public DashboardProperties() {
-        RegistryProperties registry = new RegistryProperties();
-        registry.getDirectRegistryProperties().setServerAddresses("http://localhost:12332");
-        this.registry = registry;
+        RegistryProperties registryProperties = new RegistryProperties();
+        registryProperties.getDirectRegistryProperties().setServerAddresses("http://localhost:12332");
+        this.registry = registryProperties;
     }
 
     public String getUserName() {

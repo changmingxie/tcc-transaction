@@ -191,7 +191,7 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
         SocketAddress socketAddress = selectedChannel.remoteAddress();
         try {
 
-            ResponseFuture responseFuture = new ResponseFuture(selectedChannel, requestId, timeoutMillis);
+            ResponseFuture responseFuture = new ResponseFuture();
             this.responseTable.put(requestId, responseFuture);
 
             try {
@@ -206,7 +206,6 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
                     public void operationComplete(ChannelFuture channelFuture) throws Exception {
                         if (channelFuture.isSuccess()) {
                             responseFuture.setSendRequestSuccess(true);
-                            return;
                         } else {
                             responseFuture.setCause(channelFuture.cause());
                             responseFuture.setResponse(null);
@@ -265,7 +264,7 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
                 @Override
                 public void operationComplete(ChannelFuture channelFuture) throws Exception {
                     if (!channelFuture.isSuccess()) {
-                        logger.warn("send a request command to channel <" + NetUtils.parseSocketAddress(socketAddress) + "> failed.");
+                        logger.warn("send a request command to channel <{}> failed.",NetUtils.parseSocketAddress(socketAddress));
                     }
                 }
             });
@@ -308,7 +307,7 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
 
     private GenericKeyedObjectPoolConfig<Channel> getChannelPoolConfig(NettyClientConfig nettyClientConfig) {
 
-        GenericKeyedObjectPoolConfig<Channel> config = new GenericKeyedObjectPoolConfig<Channel>();
+        GenericKeyedObjectPoolConfig<Channel> config = new GenericKeyedObjectPoolConfig<>();
         config.setTestOnReturn(true);
         config.setTestOnBorrow(true);
         config.setTestWhileIdle(true);

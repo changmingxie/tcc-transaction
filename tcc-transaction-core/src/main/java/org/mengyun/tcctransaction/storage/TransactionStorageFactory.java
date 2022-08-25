@@ -5,6 +5,9 @@ import org.mengyun.tcctransaction.serializer.TransactionStoreSerializer;
 
 public class TransactionStorageFactory {
 
+    private TransactionStorageFactory() {
+    }
+
     public static TransactionStorage create(TransactionStoreSerializer storeSerializer, StoreConfig storeConfig, boolean useRetryable) {
 
         String storageClassName;

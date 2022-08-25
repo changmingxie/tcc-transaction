@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.serializer.kryo;
 
-import com.esotericsoftware.kryo.Kryo;
 import com.google.common.collect.Lists;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommandCode;
@@ -34,9 +33,5 @@ public class RegisterableKryoRemotingCommandSerializer extends RegisterableKryoS
 
     public RegisterableKryoRemotingCommandSerializer(int initPoolSize, List<Class> registerClasses, boolean warnUnregisteredClasses) {
         super(initPoolSize, CollectionUtils.merge(remotingCommandClasses, registerClasses), warnUnregisteredClasses);
-    }
-
-    protected void initHook(Kryo kryo) {
-        super.initHook(kryo);
     }
 }

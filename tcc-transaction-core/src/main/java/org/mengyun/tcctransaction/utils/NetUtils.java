@@ -21,7 +21,10 @@ public class NetUtils {
     private static final String ANYHOST_VALUE = "0.0.0.0";
     private static final String LOCALHOST_VALUE = "127.0.0.1";
 
-    private static volatile InetAddress LOCAL_ADDRESS = null;
+    private static volatile InetAddress localAddress = null;
+
+    private NetUtils(){
+    }
 
     public static InetSocketAddress toInetSocketAddress(String address) {
         int i = address.indexOf(':');
@@ -40,7 +43,7 @@ public class NetUtils {
     public static String parseSocketAddress(SocketAddress socketAddress) {
         if (socketAddress != null) {
             String addr = socketAddress.toString();
-            int index = addr.lastIndexOf("/");
+            int index = addr.lastIndexOf('/');
             return (index != -1) ? addr.substring(index + 1) : addr;
         }
         return null;
@@ -50,11 +53,11 @@ public class NetUtils {
      * Find first valid IP from local network card
      */
     public static InetAddress getLocalAddress() {
-        if (LOCAL_ADDRESS != null) {
-            return LOCAL_ADDRESS;
+        if (localAddress != null) {
+            return localAddress;
         }
         InetAddress localAddress = getLocalAddress0();
-        LOCAL_ADDRESS = localAddress;
+        NetUtils.localAddress = localAddress;
         return localAddress;
     }
 

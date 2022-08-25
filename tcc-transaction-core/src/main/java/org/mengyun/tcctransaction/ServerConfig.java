@@ -9,7 +9,7 @@ import org.mengyun.tcctransaction.storage.StoreConfig;
 
 public class ServerConfig extends AbstractConfig implements NettyServerConfig, RecoveryConfig, StoreConfig, ServerRegistryConfig {
 
-    public final static ServerConfig DEFAULT = new ServerConfig();
+    public static final ServerConfig DEFAULT = new ServerConfig();
 
     private NettyServerConfig nettyServerConfig = new NettyServerProperties();
 

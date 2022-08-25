@@ -24,6 +24,9 @@ public class AlertManager {
             "告警间隔时间为$intervalMinutes$分钟，请及时处理！";
     private static Logger logger = LoggerFactory.getLogger(AlertManager.class);
 
+    private AlertManager() {
+    }
+
     /**
      * 异常事件堆积告警
      *
@@ -124,10 +127,7 @@ public class AlertManager {
         }
         Date nextAlertTime = DateUtils.addMinutes(currentDomainStore.getLastAlertTime(), currentDomainStore.getIntervalMinutes());
         Date currentTime = new Date();
-        if (currentTime.getTime() > nextAlertTime.getTime()) {
-            return true;
-        }
-        return false;
+        return currentTime.getTime() > nextAlertTime.getTime();
     }
 
     /**
@@ -138,9 +138,6 @@ public class AlertManager {
      * @return
      */
     private static boolean isPermitAtThreshold(int currentErrorTransactionCount, DomainStore currentDomainStore) {
-        if (currentErrorTransactionCount > currentDomainStore.getThreshold()) {
-            return true;
-        }
-        return false;
+        return currentErrorTransactionCount > currentDomainStore.getThreshold();
     }
 }

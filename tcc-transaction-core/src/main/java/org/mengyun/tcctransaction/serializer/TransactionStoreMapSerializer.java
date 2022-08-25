@@ -29,6 +29,9 @@ public class TransactionStoreMapSerializer {
     public static final String DOMAIN = "DOMAIN";
     public static final String REQUEST_ID = "REQUEST_ID";
 
+    private TransactionStoreMapSerializer() {
+    }
+
     public static Map<byte[], byte[]> serialize(TransactionStore transactionStore) {
 
         Map<byte[], byte[]> map = new HashMap<>();

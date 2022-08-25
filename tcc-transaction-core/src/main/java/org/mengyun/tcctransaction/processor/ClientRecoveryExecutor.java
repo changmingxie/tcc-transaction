@@ -35,7 +35,7 @@ public class ClientRecoveryExecutor implements RecoveryExecutor {
         try {
             transactionRepository.update(transaction);
         } catch (TransactionOptimisticLockException e) {
-            logger.debug("multiple instances try to recovery<rollback> the same transaction<" + transactionStore.getXid() + ", this instance ignore the recovery.");
+            logger.debug("multiple instances try to recovery<rollback> the same transaction<{}>, this instance ignore the recovery.",transactionStore.getXid());
             return;
         }
         transaction.rollback();
@@ -52,7 +52,7 @@ public class ClientRecoveryExecutor implements RecoveryExecutor {
         try {
             transactionRepository.update(transaction);
         } catch (TransactionOptimisticLockException e) {
-            logger.debug("multiple instances try to recovery<commit> the same transaction<" + transactionStore.getXid() + ", this instance ignore the recovery.");
+            logger.debug("multiple instances try to recovery<commit> the same transaction<{}>, this instance ignore the recovery.", transactionStore.getXid());
             return;
         }
         transaction.commit();

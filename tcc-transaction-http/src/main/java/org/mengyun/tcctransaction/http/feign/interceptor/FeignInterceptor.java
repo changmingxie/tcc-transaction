@@ -22,7 +22,5 @@ public class FeignInterceptor implements RequestInterceptor {
             requestTemplate.header(TransactionContextConstants.TRANSACTION_CONTEXT,
                     Base64.getEncoder().encodeToString(transactionContextSerializer.serialize(TransactionContextHolder.getCurrentTransactionContext())));
         }
-
-        return;
     }
 }

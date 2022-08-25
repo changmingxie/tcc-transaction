@@ -260,7 +260,7 @@ public class TccClient implements TccService {
 
         this.requestProcessExecutor = new ThreadPoolExecutor(this.clientConfig.getRequestProcessThreadSize(),
                 clientConfig.getRequestProcessThreadSize(),
-                1000 * 60, TimeUnit.MILLISECONDS,
+                1000L * 60, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(this.clientConfig.getRequestProcessThreadQueueCapacity()),
                 new ThreadFactory() {
                     private final AtomicInteger threadIndex = new AtomicInteger(0);
@@ -291,17 +291,6 @@ public class TccClient implements TccService {
         }
     }
 
-    private void registerToServer(String address) {
-        RemotingCommand registerCommand = RemotingCommand.createCommand(RemotingCommandCode.SERVICE_REQ, null);
-        registerCommand.setServiceCode(RemotingServiceCode.REGISTER);
-        registerCommand.setBody(clientConfig.getDomain().getBytes());
-        try {
-            remotingClient.invokeOneway(address, registerCommand, clientConfig.getRequestTimeoutMillis());
-        } catch (Exception e) {
-            logger.error("failled to register to server", e);
-        }
-    }
-
     private void registerDomain(String domain) {
         if (transactionStorage.supportStorageRecoverable()) {
             ((StorageRecoverable) transactionStorage).registerDomain(new DomainStore(domain));
@@ -313,16 +302,23 @@ public class TccClient implements TccService {
     @ChannelHandler.Sharable
     class RegisterToServerHandler extends ChannelInboundHandlerAdapter {
 
+        @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
             super.channelActive(ctx);
             //register to server if connected
             if (!isStarting) {
-                ctx.channel().eventLoop().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        registerToServer(NetUtils.parseSocketAddress(ctx.channel().remoteAddress()));
-                    }
-                });
+                ctx.channel().eventLoop().execute(() -> registerToServer(NetUtils.parseSocketAddress(ctx.channel().remoteAddress())));
+            }
+        }
+
+        private void registerToServer(String address) {
+            RemotingCommand registerCommand = RemotingCommand.createCommand(RemotingCommandCode.SERVICE_REQ, null);
+            registerCommand.setServiceCode(RemotingServiceCode.REGISTER);
+            registerCommand.setBody(clientConfig.getDomain().getBytes());
+            try {
+                remotingClient.invokeOneway(address, registerCommand, clientConfig.getRequestTimeoutMillis());
+            } catch (Exception e) {
+                logger.error("failled to register to server", e);
             }
         }
     }

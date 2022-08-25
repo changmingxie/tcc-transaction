@@ -40,7 +40,7 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
     public RemotingCommand processRequest(ChannelHandlerContext ctx, RemotingCommand request) {
 
         if (request.getServiceCode() == RemotingServiceCode.FIND) {
-            return readProcess(ctx, request);
+            return readProcess(request);
         } else if (request.getServiceCode() == RemotingServiceCode.REGISTER) {
             return register(ctx, request);
         } else {
@@ -62,7 +62,7 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
         return remotingCommand;
     }
 
-    private RemotingCommand readProcess(ChannelHandlerContext ctx, RemotingCommand request) {
+    private RemotingCommand readProcess(RemotingCommand request) {
 
         byte[] content = request.getBody();
         byte domainBytesLength = content[0];

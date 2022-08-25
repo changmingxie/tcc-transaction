@@ -6,10 +6,11 @@ import org.mengyun.tcctransaction.remoting.protocol.RemotingCommandCode;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class TccRemotingCommandSerializer implements RemotingCommandSerializer {
 
-    private static final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
+    private static final Charset CHARSET_UTF8 = StandardCharsets.UTF_8;
 
     @Override
     public byte[] serialize(RemotingCommand remotingCommand) {

@@ -84,7 +84,7 @@ public class DefaultTransactionRepository implements TransactionRepository {
     }
 
     private Page<Transaction> getTransactionPage(Page<TransactionStore> transactionStorePage) {
-        Page<Transaction> page = new Page<Transaction>();
+        Page<Transaction> page = new Page<>();
         page.setNextOffset(transactionStorePage.getNextOffset());
         page.setAttachment(transactionStorePage.getAttachment());
         page.setData(getTransactions(transactionStorePage.getData()));

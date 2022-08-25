@@ -23,7 +23,7 @@ public abstract class BaseDomainServiceImpl implements DomainService {
 
     @Override
     public ResponseDto<List<String>> getAllDomainKeys() {
-        List<String> list = getRecoverableTransactionStorage().getAllDomains().stream().map(domainStoreDto -> domainStoreDto.getDomain()).collect(Collectors.toList());
+        List<String> list = getRecoverableTransactionStorage().getAllDomains().stream().map(DomainStore::getDomain).collect(Collectors.toList());
         return ResponseDto.returnSuccess(list);
     }
 
@@ -77,15 +77,12 @@ public abstract class BaseDomainServiceImpl implements DomainService {
 
     private List<DomainStoreDto> transferToDomainStoreDtoList(List<DomainStore> domainStoreList) {
         List<DomainStoreDto> domainStoreDtoList = new ArrayList<>(domainStoreList.size());
-        domainStoreList.sort(((d1, d2) -> {//按更新时间降序
-            return -1 * (d1.getLastUpdateTime().compareTo(d2.getLastUpdateTime()));
-        }));
+        //按更新时间降序
+        domainStoreList.sort(((d1, d2) -> d2.getLastUpdateTime().compareTo(d1.getLastUpdateTime())));
         for (DomainStore domainStore : domainStoreList) {
             domainStoreDtoList.add(transferToDomainStoreDto(domainStore));
         }
-        domainStoreDtoList.sort((d1, d2) -> {
-            return -1 * d1.getCreateTime().compareTo(d2.getCreateTime());
-        });
+        domainStoreDtoList.sort((d1, d2) -> d2.getCreateTime().compareTo(d1.getCreateTime()));
         return domainStoreDtoList;
     }
 

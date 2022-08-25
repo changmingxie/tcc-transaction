@@ -8,6 +8,7 @@ import org.mengyun.tcctransaction.exception.ConfirmingException;
 import org.mengyun.tcctransaction.exception.NoExistedTransactionException;
 import org.mengyun.tcctransaction.exception.SystemException;
 import org.mengyun.tcctransaction.repository.TransactionRepository;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Deque;
@@ -22,8 +23,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class TransactionManager {
 
-    static final org.slf4j.Logger logger = LoggerFactory.getLogger(TransactionManager.class.getSimpleName());
-    private static final ThreadLocal<Deque<Transaction>> CURRENT = new ThreadLocal<Deque<Transaction>>();
+    private static final Logger logger = LoggerFactory.getLogger(TransactionManager.class.getSimpleName());
+    private static final ThreadLocal<Deque<Transaction>> CURRENT = new ThreadLocal<>();
 
 
     private int threadPoolSize = Runtime.getRuntime().availableProcessors() * 2 + 1;
@@ -103,15 +104,10 @@ public class TransactionManager {
 
         if (asyncCommit) {
             try {
-                Long statTime = System.currentTimeMillis();
+                long statTime = System.currentTimeMillis();
 
-                asyncTerminatorExecutorService.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        commitTransaction(transaction);
-                    }
-                });
-                logger.debug("async submit cost time:" + (System.currentTimeMillis() - statTime));
+                asyncTerminatorExecutorService.submit(() -> commitTransaction(transaction));
+                logger.debug("async submit cost time:{}", System.currentTimeMillis() - statTime);
             } catch (Throwable commitException) {
                 logger.warn("compensable transaction async submit confirm failed, recovery job will try to confirm later.", commitException.getCause());
                 //throw new ConfirmingException(commitException);
@@ -132,12 +128,7 @@ public class TransactionManager {
         if (asyncRollback) {
 
             try {
-                asyncTerminatorExecutorService.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        rollbackTransaction(transaction);
-                    }
-                });
+                asyncTerminatorExecutorService.submit(() -> rollbackTransaction(transaction));
             } catch (Throwable rollbackException) {
                 logger.warn("compensable transaction async rollback failed, recovery job will try to rollback later.", rollbackException);
                 throw new CancellingException(rollbackException);
@@ -212,7 +203,7 @@ public class TransactionManager {
             Transaction currentTransaction = getCurrentTransaction();
             if (currentTransaction == transaction) {
                 CURRENT.get().pop();
-                if (CURRENT.get().size() == 0) {
+                if (CURRENT.get().isEmpty()) {
                     CURRENT.remove();
                 }
             } else {

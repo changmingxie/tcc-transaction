@@ -20,8 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Transaction implements Serializable {
 
-    private List<Participant> participants = new ArrayList<Participant>();
-    private Map<String, Object> attachments = new ConcurrentHashMap<String, Object>();
+    private List<Participant> participants = new ArrayList<>();
+    private Map<String, Object> attachments = new ConcurrentHashMap<>();
     private Date createTime = new Date();
     private Xid xid;
     private Xid rootXid;
