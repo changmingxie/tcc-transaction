@@ -104,6 +104,8 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     public ResponseDto<Void> confirm(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
         transactionStore.setStatusId(TransactionStatus.CONFIRMING.getId());
+        transactionStore.setVersion(transactionStore.getVersion() + 1);
+        transactionStore.setLastUpdateTime(new Date());
         getTransactionStorage().update(transactionStore);
         return ResponseDto.returnSuccess();
     }
@@ -112,6 +114,8 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     public ResponseDto<Void> cancel(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
         transactionStore.setStatusId(TransactionStatus.CANCELLING.getId());
+        transactionStore.setVersion(transactionStore.getVersion() + 1);
+        transactionStore.setLastUpdateTime(new Date());
         getTransactionStorage().update(transactionStore);
         return ResponseDto.returnSuccess();
     }
@@ -120,6 +124,8 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     public ResponseDto<Void> reset(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
         transactionStore.setRetriedCount(0);
+        transactionStore.setVersion(transactionStore.getVersion() + 1);
+        transactionStore.setLastUpdateTime(new Date());
         getTransactionStorage().update(transactionStore);
         return ResponseDto.returnSuccess();
     }
