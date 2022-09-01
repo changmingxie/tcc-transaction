@@ -66,4 +66,8 @@ public class ResponseDto<T> {
         return data;
     }
 
+    public String getCodeAndMessage() {
+        return this.code + "-" + this.message;
+    }
+
 }

@@ -14,6 +14,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -27,6 +28,8 @@ import java.util.List;
 public class TccServerTransactionServiceImpl implements TransactionService {
 
     private Logger logger = LoggerFactory.getLogger(TccServerTransactionServiceImpl.class);
+
+    private static final String REQUEST_METHOD_TRANSACTION_DETAIL = "transaction/detail";
 
     @Autowired
     private TccServerFeignClient tccServerFeignClient;
@@ -49,19 +52,30 @@ public class TccServerTransactionServiceImpl implements TransactionService {
         if (CollectionUtils.isEmpty(instances)) {
             return ResponseDto.returnFail(ResponseCodeEnum.TRANSACTION_DETAIL_NO_INSTANCES);
         }
+
+        String errorMessage = "";
+        String errorCode = "";
         for (ServiceInstance instance : instances) {
             String uri = instance.getUri().toString();
+            String detailRequestUrl = uri.concat("/").concat(REQUEST_METHOD_TRANSACTION_DETAIL);
             try {
-                ResponseDto<TransactionStoreDto> responseDto = restTemplate.postForObject(uri + "/transaction/detail", requestDto, ResponseDto.class);
+                ResponseDto<TransactionStoreDto> responseDto = restTemplate.postForObject(detailRequestUrl, requestDto, ResponseDto.class);
                 if (responseDto.isSuccess()) {
                     return responseDto;
                 }
+                errorMessage = responseDto.getMessage();
+                errorCode = responseDto.getCode();
             } catch (Exception e) {
-                logger.warn("request uri:{} failed!", uri, e);
+                logger.warn("request detailRequestUrl:{} failed!", detailRequestUrl, e);
             }
 
         }
-        return ResponseDto.returnFail(ResponseCodeEnum.TRANSACTION_CONTENT_VISUALIZE_ERROR);
+        if (StringUtils.isEmpty(errorMessage)) {
+            return ResponseDto.returnFail(ResponseCodeEnum.TRANSACTION_CONTENT_VISUALIZE_ERROR);
+        } else {
+            return ResponseDto.returnFail(errorCode, errorMessage);
+        }
+
     }
 
     @Override
