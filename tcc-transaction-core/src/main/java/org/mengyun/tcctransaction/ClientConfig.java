@@ -64,6 +64,11 @@ public class ClientConfig extends AbstractConfig implements RecoveryConfig, Nett
     }
 
     @Override
+    public long getChannelPoolSoftMinEvictableIdleTimeMillis() {
+        return nettyClientConfig.getChannelPoolSoftMinEvictableIdleTimeMillis();
+    }
+
+    @Override
     public int getNumTestsPerEvictionRun() {
         return nettyClientConfig.getNumTestsPerEvictionRun();
     }

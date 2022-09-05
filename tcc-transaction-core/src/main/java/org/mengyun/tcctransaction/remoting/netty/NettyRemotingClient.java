@@ -264,7 +264,7 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
                 @Override
                 public void operationComplete(ChannelFuture channelFuture) throws Exception {
                     if (!channelFuture.isSuccess()) {
-                        logger.warn("send a request command to channel <{}> failed.",NetUtils.parseSocketAddress(socketAddress));
+                        logger.warn("send a request command to channel <{}> failed.", NetUtils.parseSocketAddress(socketAddress));
                     }
                 }
             });
@@ -322,6 +322,8 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
         config.setMaxWaitMillis(nettyClientConfig.getChannelPoolMaxWaitMillis());
         config.setBlockWhenExhausted(true);
 
+        config.setMinEvictableIdleTimeMillis(-1);
+        config.setSoftMinEvictableIdleTimeMillis(nettyClientConfig.getChannelPoolSoftMinEvictableIdleTimeMillis());
 
         return config;
     }
