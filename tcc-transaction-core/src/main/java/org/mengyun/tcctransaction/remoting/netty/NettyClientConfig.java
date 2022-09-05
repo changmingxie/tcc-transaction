@@ -16,6 +16,8 @@ public interface NettyClientConfig extends NettyConfig {
 
     long getChannelPoolTimeBetweenEvictionRunsMillis();
 
+    long getChannelPoolSoftMinEvictableIdleTimeMillis();
+
     int getNumTestsPerEvictionRun();
 
     int getChannelMaxIdleTimeSeconds();

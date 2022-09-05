@@ -15,6 +15,7 @@ public class NettyClientProperties extends NettyProperties implements NettyClien
     private int channelPoolMinIdlePerKey = 1;
     private long channelPoolMaxWaitMillis = 300L;
     private long channelPoolTimeBetweenEvictionRunsMillis = 10 * 1000L;
+    private long channelPoolSoftMinEvictableIdleTimeMillis = 30 * 60 * 1000L;
     private int numTestsPerEvictionRun = 2;
     //check the max idle time of client channel, if exceed, then send heartbeat message to keepalive the channel,
     //need < channelIdleTimeoutSeconds(60) in ServerConfig
@@ -110,5 +111,14 @@ public class NettyClientProperties extends NettyProperties implements NettyClien
 
     public void setReconnectIntervalSeconds(int reconnectIntervalSeconds) {
         this.reconnectIntervalSeconds = reconnectIntervalSeconds;
+    }
+
+    @Override
+    public long getChannelPoolSoftMinEvictableIdleTimeMillis() {
+        return channelPoolSoftMinEvictableIdleTimeMillis;
+    }
+
+    public void setChannelPoolSoftMinEvictableIdleTimeMillis(long channelPoolSoftMinEvictableIdleTimeMillis) {
+        this.channelPoolSoftMinEvictableIdleTimeMillis = channelPoolSoftMinEvictableIdleTimeMillis;
     }
 }
