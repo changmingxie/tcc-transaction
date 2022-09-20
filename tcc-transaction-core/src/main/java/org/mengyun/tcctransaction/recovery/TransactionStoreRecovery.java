@@ -269,7 +269,7 @@ public class TransactionStoreRecovery implements Closeable {
         int maxTimeTreatTryingAsFailed = recoveryConfig.getMaxTimeTreatTryingAsFailed();
         if (maxTimeTreatTryingAsFailed > 0
                 && (currentTime.getTime() - lastUpdateTime.getTime()) > maxTimeTreatTryingAsFailed * 1000) {
-            //update the status to cancel, waiting for the recovery task to recover
+            //update the status to cancel or try failed, waiting for the recovery task to recover
             transactionStore.setVersion(transactionStore.getVersion() + 1);
             transactionStore.setStatusId(transactionStatus.getId());
             transactionStorage.update(transactionStore);
