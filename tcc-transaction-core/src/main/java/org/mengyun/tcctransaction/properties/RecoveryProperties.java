@@ -10,6 +10,10 @@ public class RecoveryProperties implements RecoveryConfig {
 
     private int maxRetryCount = 30;
     private int recoverDuration = 30;
+
+    // max time in seconds, if zero, do not allow trying be treated as failed, should be less then maxRetryCount * retryInterval(from cronExpression)
+    private int maxTimeTreatTryingAsFailed = 0;
+
     private String cronExpression = "0/30 * * * * ? ";
     private int fetchPageSize = 200;
     private int concurrentRecoveryThreadCount = Runtime.getRuntime().availableProcessors() * 2;
@@ -188,5 +192,13 @@ public class RecoveryProperties implements RecoveryConfig {
 
     public void setQuartzDataSourceMaxPoolSize(int quartzDataSourceMaxPoolSize) {
         this.quartzDataSourceMaxPoolSize = quartzDataSourceMaxPoolSize;
+    }
+
+    public int getMaxTimeTreatTryingAsFailed() {
+        return maxTimeTreatTryingAsFailed;
+    }
+
+    public void setMaxTimeTreatTryingAsFailed(int maxTimeTreatTryingAsFailed) {
+        this.maxTimeTreatTryingAsFailed = maxTimeTreatTryingAsFailed;
     }
 }

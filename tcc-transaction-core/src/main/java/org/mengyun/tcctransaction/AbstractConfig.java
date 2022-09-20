@@ -231,6 +231,11 @@ public class AbstractConfig implements StoreConfig, RecoveryConfig, NettyConfig,
     }
 
     @Override
+    public int getMaxTimeTreatTryingAsFailed() {
+        return recoveryConfig.getMaxTimeTreatTryingAsFailed();
+    }
+
+    @Override
     public boolean isUpdateJobForcibly() {
         return recoveryConfig.isUpdateJobForcibly();
     }
