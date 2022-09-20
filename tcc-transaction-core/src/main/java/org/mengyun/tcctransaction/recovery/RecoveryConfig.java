@@ -41,4 +41,6 @@ public interface RecoveryConfig {
     int getQuartzThreadPoolThreadCount();
 
     boolean isQuartzClustered();
+
+    int getMaxTimeTreatTryingAsFailed();
 }

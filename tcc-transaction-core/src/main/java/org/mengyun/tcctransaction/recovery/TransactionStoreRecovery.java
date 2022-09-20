@@ -173,8 +173,11 @@ public class TransactionStoreRecovery implements Closeable {
                     case CANCELLING:
                         rollbackTransaction(transactionStore);
                         break;
+                    case TRYING:
+                        tryTreatAsFailed(transactionStore, TransactionStatus.CANCELLING);
+                        break;
                     default:
-                        //the transactionStore status is TRYING, ignore it.
+                        //ignore it.
                         break;
 
                 }
@@ -215,8 +218,11 @@ public class TransactionStoreRecovery implements Closeable {
                             }
                         }
                         break;
+                    case TRYING:
+                        tryTreatAsFailed(transactionStore, TransactionStatus.TRY_FAILED);
+                        break;
                     default:
-                        // the transactionStore status is TRYING, ignore it.
+                        //ignore it.
                         break;
                 }
 
@@ -254,6 +260,19 @@ public class TransactionStoreRecovery implements Closeable {
                     logSync.unlock();
                 }
             }
+        }
+    }
+
+    private void tryTreatAsFailed(TransactionStore transactionStore, TransactionStatus transactionStatus) {
+        Date lastUpdateTime = transactionStore.getLastUpdateTime();
+        Date currentTime = new Date();
+        int maxTimeTreatTryingAsFailed = recoveryConfig.getMaxTimeTreatTryingAsFailed();
+        if (maxTimeTreatTryingAsFailed > 0
+                && (currentTime.getTime() - lastUpdateTime.getTime()) > maxTimeTreatTryingAsFailed * 1000) {
+            //update the status to cancel, waiting for the recovery task to recover
+            transactionStore.setVersion(transactionStore.getVersion() + 1);
+            transactionStore.setStatusId(transactionStatus.getId());
+            transactionStorage.update(transactionStore);
         }
     }
 
