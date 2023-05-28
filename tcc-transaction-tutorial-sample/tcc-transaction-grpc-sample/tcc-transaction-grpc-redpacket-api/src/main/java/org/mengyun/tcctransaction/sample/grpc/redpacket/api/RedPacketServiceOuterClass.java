@@ -275,11 +275,11 @@ public final class RedPacketServiceOuterClass {
         }
 
         public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest getDefaultInstance() {
-            return DEFAULT_INSTANCE;
+            return getInstance();
         }
 
         public static com.google.protobuf.Parser<RedPacketAccountRequest> parser() {
-            return PARSER;
+            return getParserInstance();
         }
 
         @java.lang.Override
@@ -379,12 +379,12 @@ public final class RedPacketServiceOuterClass {
 
         @java.lang.Override
         public com.google.protobuf.Parser<RedPacketAccountRequest> getParserForType() {
-            return PARSER;
+            return getParserInstance();
         }
 
         @java.lang.Override
         public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+            return getInstance();
         }
 
         /**
@@ -406,7 +406,7 @@ public final class RedPacketServiceOuterClass {
             }
 
             public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_descriptor;
+                return One();
             }
 
             @java.lang.Override
@@ -428,7 +428,7 @@ public final class RedPacketServiceOuterClass {
 
             @java.lang.Override
             public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_descriptor;
+                return One();
             }
 
             @java.lang.Override
@@ -559,7 +559,19 @@ public final class RedPacketServiceOuterClass {
             public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
                 return super.mergeUnknownFields(unknownFields);
             }
+
+            static final private com.google.protobuf.Descriptors.Descriptor One() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountRequest_descriptor;
+            }
             // @@protoc_insertion_point(builder_scope:RedPacketAccountRequest)
+        }
+
+        static private org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountRequest getInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        static private com.google.protobuf.Parser<RedPacketAccountRequest> getParserInstance() {
+            return PARSER;
         }
     }
 
@@ -702,11 +714,11 @@ public final class RedPacketServiceOuterClass {
         }
 
         public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply getDefaultInstance() {
-            return DEFAULT_INSTANCE;
+            return getOption();
         }
 
         public static com.google.protobuf.Parser<RedPacketAccountReply> parser() {
-            return PARSER;
+            return generateParserMethodName();
         }
 
         @java.lang.Override
@@ -828,12 +840,12 @@ public final class RedPacketServiceOuterClass {
 
         @java.lang.Override
         public com.google.protobuf.Parser<RedPacketAccountReply> getParserForType() {
-            return PARSER;
+            return generateParserMethodName();
         }
 
         @java.lang.Override
         public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+            return getOption();
         }
 
         /**
@@ -855,7 +867,7 @@ public final class RedPacketServiceOuterClass {
             }
 
             public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_descriptor;
+                return generateDescriptorMethod();
             }
 
             @java.lang.Override
@@ -877,7 +889,7 @@ public final class RedPacketServiceOuterClass {
 
             @java.lang.Override
             public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_descriptor;
+                return generateDescriptorMethod();
             }
 
             @java.lang.Override
@@ -1047,7 +1059,19 @@ public final class RedPacketServiceOuterClass {
             public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
                 return super.mergeUnknownFields(unknownFields);
             }
+
+            static final private com.google.protobuf.Descriptors.Descriptor generateDescriptorMethod() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketAccountReply_descriptor;
+            }
             // @@protoc_insertion_point(builder_scope:RedPacketAccountReply)
+        }
+
+        static private org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketAccountReply getOption() {
+            return DEFAULT_INSTANCE;
+        }
+
+        static private com.google.protobuf.Parser<RedPacketAccountReply> generateParserMethodName() {
+            return PARSER;
         }
     }
 
@@ -1190,11 +1214,11 @@ public final class RedPacketServiceOuterClass {
         }
 
         public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply getDefaultInstance() {
-            return DEFAULT_INSTANCE;
+            return getDefaultValue();
         }
 
         public static com.google.protobuf.Parser<RecordReply> parser() {
-            return PARSER;
+            return createParserObject();
         }
 
         @java.lang.Override
@@ -1316,12 +1340,12 @@ public final class RedPacketServiceOuterClass {
 
         @java.lang.Override
         public com.google.protobuf.Parser<RecordReply> getParserForType() {
-            return PARSER;
+            return createParserObject();
         }
 
         @java.lang.Override
         public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+            return getDefaultValue();
         }
 
         /**
@@ -1343,7 +1367,7 @@ public final class RedPacketServiceOuterClass {
             }
 
             public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_descriptor;
+                return getRecordDescriptor();
             }
 
             @java.lang.Override
@@ -1365,7 +1389,7 @@ public final class RedPacketServiceOuterClass {
 
             @java.lang.Override
             public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_descriptor;
+                return getRecordDescriptor();
             }
 
             @java.lang.Override
@@ -1535,7 +1559,19 @@ public final class RedPacketServiceOuterClass {
             public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
                 return super.mergeUnknownFields(unknownFields);
             }
+
+            static final private com.google.protobuf.Descriptors.Descriptor getRecordDescriptor() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RecordReply_descriptor;
+            }
             // @@protoc_insertion_point(builder_scope:RecordReply)
+        }
+
+        static private org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RecordReply getDefaultValue() {
+            return DEFAULT_INSTANCE;
+        }
+
+        static private com.google.protobuf.Parser<RecordReply> createParserObject() {
+            return PARSER;
         }
     }
 
@@ -1720,11 +1756,11 @@ public final class RedPacketServiceOuterClass {
         }
 
         public static org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto getDefaultInstance() {
-            return DEFAULT_INSTANCE;
+            return fetchDefaultInstance();
         }
 
         public static com.google.protobuf.Parser<RedPacketTradeOrderDto> parser() {
-            return PARSER;
+            return initializeParser();
         }
 
         @java.lang.Override
@@ -1954,12 +1990,12 @@ public final class RedPacketServiceOuterClass {
 
         @java.lang.Override
         public com.google.protobuf.Parser<RedPacketTradeOrderDto> getParserForType() {
-            return PARSER;
+            return initializeParser();
         }
 
         @java.lang.Override
         public org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+            return fetchDefaultInstance();
         }
 
         /**
@@ -1989,7 +2025,7 @@ public final class RedPacketServiceOuterClass {
             }
 
             public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_descriptor;
+                return generateMethodNamesFromClassDescriptor();
             }
 
             @java.lang.Override
@@ -2015,7 +2051,7 @@ public final class RedPacketServiceOuterClass {
 
             @java.lang.Override
             public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_descriptor;
+                return generateMethodNamesFromClassDescriptor();
             }
 
             @java.lang.Override
@@ -2379,7 +2415,19 @@ public final class RedPacketServiceOuterClass {
             public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
                 return super.mergeUnknownFields(unknownFields);
             }
+
+            static final private com.google.protobuf.Descriptors.Descriptor generateMethodNamesFromClassDescriptor() {
+                return org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.internal_static_RedPacketTradeOrderDto_descriptor;
+            }
             // @@protoc_insertion_point(builder_scope:RedPacketTradeOrderDto)
+        }
+
+        static private org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass.RedPacketTradeOrderDto fetchDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        static private com.google.protobuf.Parser<RedPacketTradeOrderDto> initializeParser() {
+            return PARSER;
         }
     }
     // @@protoc_insertion_point(outer_class_scope)

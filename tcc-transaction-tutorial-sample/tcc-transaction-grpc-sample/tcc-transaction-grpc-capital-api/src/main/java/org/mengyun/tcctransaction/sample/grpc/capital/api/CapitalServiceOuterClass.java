@@ -275,11 +275,11 @@ public final class CapitalServiceOuterClass {
         }
 
         public static org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.CapitalAccountRequest getDefaultInstance() {
-            return DEFAULT_INSTANCE;
+            return getInstanceByDefault();
         }
 
         public static com.google.protobuf.Parser<CapitalAccountRequest> parser() {
-            return PARSER;
+            return getParser();
         }
 
         @java.lang.Override
@@ -379,12 +379,12 @@ public final class CapitalServiceOuterClass {
 
         @java.lang.Override
         public com.google.protobuf.Parser<CapitalAccountRequest> getParserForType() {
-            return PARSER;
+            return getParser();
         }
 
         @java.lang.Override
         public org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.CapitalAccountRequest getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+            return getInstanceByDefault();
         }
 
         /**
@@ -406,7 +406,7 @@ public final class CapitalServiceOuterClass {
             }
 
             public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_CapitalAccountRequest_descriptor;
+                return descriptor();
             }
 
             @java.lang.Override
@@ -428,7 +428,7 @@ public final class CapitalServiceOuterClass {
 
             @java.lang.Override
             public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_CapitalAccountRequest_descriptor;
+                return descriptor();
             }
 
             @java.lang.Override
@@ -559,7 +559,19 @@ public final class CapitalServiceOuterClass {
             public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
                 return super.mergeUnknownFields(unknownFields);
             }
+
+            static final private com.google.protobuf.Descriptors.Descriptor descriptor() {
+                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_CapitalAccountRequest_descriptor;
+            }
             // @@protoc_insertion_point(builder_scope:CapitalAccountRequest)
+        }
+
+        static private org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.CapitalAccountRequest getInstanceByDefault() {
+            return DEFAULT_INSTANCE;
+        }
+
+        static private com.google.protobuf.Parser<CapitalAccountRequest> getParser() {
+            return PARSER;
         }
     }
 
@@ -702,11 +714,11 @@ public final class CapitalServiceOuterClass {
         }
 
         public static org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.CapitalAccountReply getDefaultInstance() {
-            return DEFAULT_INSTANCE;
+            return generateMethodNames();
         }
 
         public static com.google.protobuf.Parser<CapitalAccountReply> parser() {
-            return PARSER;
+            return generateParserFactory();
         }
 
         @java.lang.Override
@@ -828,12 +840,12 @@ public final class CapitalServiceOuterClass {
 
         @java.lang.Override
         public com.google.protobuf.Parser<CapitalAccountReply> getParserForType() {
-            return PARSER;
+            return generateParserFactory();
         }
 
         @java.lang.Override
         public org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.CapitalAccountReply getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+            return generateMethodNames();
         }
 
         /**
@@ -855,7 +867,7 @@ public final class CapitalServiceOuterClass {
             }
 
             public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_CapitalAccountReply_descriptor;
+                return getDescriptorProto();
             }
 
             @java.lang.Override
@@ -877,7 +889,7 @@ public final class CapitalServiceOuterClass {
 
             @java.lang.Override
             public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_CapitalAccountReply_descriptor;
+                return getDescriptorProto();
             }
 
             @java.lang.Override
@@ -1047,7 +1059,19 @@ public final class CapitalServiceOuterClass {
             public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
                 return super.mergeUnknownFields(unknownFields);
             }
+
+            static final private com.google.protobuf.Descriptors.Descriptor getDescriptorProto() {
+                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_CapitalAccountReply_descriptor;
+            }
             // @@protoc_insertion_point(builder_scope:CapitalAccountReply)
+        }
+
+        static private org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.CapitalAccountReply generateMethodNames() {
+            return DEFAULT_INSTANCE;
+        }
+
+        static private com.google.protobuf.Parser<CapitalAccountReply> generateParserFactory() {
+            return PARSER;
         }
     }
 
@@ -1190,11 +1214,11 @@ public final class CapitalServiceOuterClass {
         }
 
         public static org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.RecordReply getDefaultInstance() {
-            return DEFAULT_INSTANCE;
+            return getInstance();
         }
 
         public static com.google.protobuf.Parser<RecordReply> parser() {
-            return PARSER;
+            return generateParserMethod();
         }
 
         @java.lang.Override
@@ -1316,12 +1340,12 @@ public final class CapitalServiceOuterClass {
 
         @java.lang.Override
         public com.google.protobuf.Parser<RecordReply> getParserForType() {
-            return PARSER;
+            return generateParserMethod();
         }
 
         @java.lang.Override
         public org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.RecordReply getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+            return getInstance();
         }
 
         /**
@@ -1343,7 +1367,7 @@ public final class CapitalServiceOuterClass {
             }
 
             public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_RecordReply_descriptor;
+                return static();
             }
 
             @java.lang.Override
@@ -1365,7 +1389,7 @@ public final class CapitalServiceOuterClass {
 
             @java.lang.Override
             public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_RecordReply_descriptor;
+                return static();
             }
 
             @java.lang.Override
@@ -1535,7 +1559,19 @@ public final class CapitalServiceOuterClass {
             public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
                 return super.mergeUnknownFields(unknownFields);
             }
+
+            static final private com.google.protobuf.Descriptors.Descriptor static() {
+                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_RecordReply_descriptor;
+            }
             // @@protoc_insertion_point(builder_scope:RecordReply)
+        }
+
+        static private org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.RecordReply getInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        static private com.google.protobuf.Parser<RecordReply> generateParserMethod() {
+            return PARSER;
         }
     }
 
@@ -1720,11 +1756,11 @@ public final class CapitalServiceOuterClass {
         }
 
         public static org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.CapitalTradeOrderDto getDefaultInstance() {
-            return DEFAULT_INSTANCE;
+            return singleton();
         }
 
         public static com.google.protobuf.Parser<CapitalTradeOrderDto> parser() {
-            return PARSER;
+            return generateParserInstance();
         }
 
         @java.lang.Override
@@ -1954,12 +1990,12 @@ public final class CapitalServiceOuterClass {
 
         @java.lang.Override
         public com.google.protobuf.Parser<CapitalTradeOrderDto> getParserForType() {
-            return PARSER;
+            return generateParserInstance();
         }
 
         @java.lang.Override
         public org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.CapitalTradeOrderDto getDefaultInstanceForType() {
-            return DEFAULT_INSTANCE;
+            return singleton();
         }
 
         /**
@@ -1989,7 +2025,7 @@ public final class CapitalServiceOuterClass {
             }
 
             public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_CapitalTradeOrderDto_descriptor;
+                return tradeOrderDto();
             }
 
             @java.lang.Override
@@ -2015,7 +2051,7 @@ public final class CapitalServiceOuterClass {
 
             @java.lang.Override
             public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_CapitalTradeOrderDto_descriptor;
+                return tradeOrderDto();
             }
 
             @java.lang.Override
@@ -2379,7 +2415,19 @@ public final class CapitalServiceOuterClass {
             public final Builder mergeUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
                 return super.mergeUnknownFields(unknownFields);
             }
+
+            static final private com.google.protobuf.Descriptors.Descriptor tradeOrderDto() {
+                return org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.internal_static_CapitalTradeOrderDto_descriptor;
+            }
             // @@protoc_insertion_point(builder_scope:CapitalTradeOrderDto)
+        }
+
+        static private org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass.CapitalTradeOrderDto singleton() {
+            return DEFAULT_INSTANCE;
+        }
+
+        static private com.google.protobuf.Parser<CapitalTradeOrderDto> generateParserInstance() {
+            return PARSER;
         }
     }
     // @@protoc_insertion_point(outer_class_scope)

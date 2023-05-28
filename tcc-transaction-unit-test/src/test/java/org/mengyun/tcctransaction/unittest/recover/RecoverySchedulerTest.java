@@ -91,26 +91,22 @@ public class RecoverySchedulerTest {
 
     @Test
     public void test1() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
+        startDomainScheduler();
     }
 
     @Test
     public void test2() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
+        startDomainScheduler();
     }
 
     @Test
     public void test3() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
+        startDomainScheduler();
     }
 
     @Test
     public void test4() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
+        startDomainScheduler();
     }
 
     @Test
@@ -142,5 +138,10 @@ public class RecoverySchedulerTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void startDomainScheduler() throws IOException {
+        startSchedulerAndJob(DOMAIN);
+        System.in.read();
     }
 }

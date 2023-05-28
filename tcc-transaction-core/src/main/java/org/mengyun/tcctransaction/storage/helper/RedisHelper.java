@@ -111,7 +111,7 @@ public class RedisHelper {
     }
 
     public static ScanParams buildDefaultScanParams(String pattern, int count) {
-        return new ScanParams().match(pattern).count(count);
+        return scanParamsMatchCount(pattern, count);
     }
 
     public static boolean isSupportScanCommand(Jedis jedis) {
@@ -159,6 +159,10 @@ public class RedisHelper {
     }
 
     public static ScanParams scanArgs(String pattern, int count) {
+        return scanParamsMatchCount(pattern, count);
+    }
+
+    static private ScanParams scanParamsMatchCount(String pattern, int count) {
         return new ScanParams().match(pattern).count(count);
     }
 }

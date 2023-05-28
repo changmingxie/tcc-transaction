@@ -21,12 +21,12 @@ public class BaseTaskServiceImpl implements TaskService {
 
     @Override
     public ResponseDto<Void> pause(String domain) {
-        throw new TransactionException(ResponseCodeEnum.TASK_OPERATE_NOT_SUPPORT);
+        return executeTaskOperation(domain);
     }
 
     @Override
     public ResponseDto<Void> resume(String domain) {
-        throw new TransactionException(ResponseCodeEnum.TASK_OPERATE_NOT_SUPPORT);
+        return executeTaskOperation(domain);
     }
 
     @Override
@@ -36,6 +36,10 @@ public class BaseTaskServiceImpl implements TaskService {
 
     @Override
     public ResponseDto<Void> delete(String domain) {
+        return executeTaskOperation(domain);
+    }
+
+    private ResponseDto<Void> executeTaskOperation(String domain) {
         throw new TransactionException(ResponseCodeEnum.TASK_OPERATE_NOT_SUPPORT);
     }
 }
