@@ -14,8 +14,7 @@ public enum TransactionStatus {
     }
 
     public static TransactionStatus valueOf(int id) {
-
-        switch (id) {
+        switch(id) {
             case 1:
                 return TRYING;
             case 2:
@@ -37,7 +36,7 @@ public enum TransactionStatus {
 
     @Override
     public String toString() {
-        switch (id) {
+        switch(id) {
             case 1:
                 return "TRYING";
             case 2:
@@ -52,5 +51,4 @@ public enum TransactionStatus {
                 throw new IllegalArgumentException("the id " + id + " of TransactionStatus is illegal.");
         }
     }
-
 }

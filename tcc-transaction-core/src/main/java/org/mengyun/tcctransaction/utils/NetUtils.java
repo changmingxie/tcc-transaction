@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.*;
 import java.util.Enumeration;
@@ -10,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
-
 import static java.util.Collections.emptyList;
 
 public class NetUtils {
@@ -18,12 +16,14 @@ public class NetUtils {
     private static final Logger logger = LoggerFactory.getLogger(NetUtils.class.getSimpleName());
 
     private static final Pattern IP_PATTERN = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3,5}$");
+
     private static final String ANYHOST_VALUE = "0.0.0.0";
+
     private static final String LOCALHOST_VALUE = "127.0.0.1";
 
     private static volatile InetAddress localAddress = null;
 
-    private NetUtils(){
+    private NetUtils() {
     }
 
     public static InetSocketAddress toInetSocketAddress(String address) {
@@ -70,7 +70,6 @@ public class NetUtils {
 
     private static InetAddress getLocalAddress0() {
         InetAddress localAddress = null;
-
         try {
             NetworkInterface networkInterface = findNetworkInterface();
             if (networkInterface != null) {
@@ -91,7 +90,6 @@ public class NetUtils {
         } catch (Throwable e) {
             logger.warn("", e);
         }
-
         try {
             localAddress = InetAddress.getLocalHost();
             Optional<InetAddress> addressOp = toValidAddress(localAddress);
@@ -101,22 +99,17 @@ public class NetUtils {
         } catch (Throwable e) {
             logger.warn("", e);
         }
-
-
         return localAddress;
     }
 
     public static NetworkInterface findNetworkInterface() {
-
         List<NetworkInterface> validNetworkInterfaces = emptyList();
         try {
             validNetworkInterfaces = getValidNetworkInterfaces();
         } catch (Throwable e) {
             logger.warn("", e);
         }
-
         NetworkInterface result = null;
-
         for (NetworkInterface networkInterface : validNetworkInterfaces) {
             Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
             while (addresses.hasMoreElements()) {
@@ -133,14 +126,12 @@ public class NetUtils {
                 }
             }
         }
-
         if (result == null) {
             if ((validNetworkInterfaces.isEmpty())) {
                 return null;
             }
             return validNetworkInterfaces.get(0);
         }
-
         return result;
     }
 
@@ -149,7 +140,8 @@ public class NetUtils {
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
             NetworkInterface networkInterface = interfaces.nextElement();
-            if (ignoreNetworkInterface(networkInterface)) { // ignore
+            if (ignoreNetworkInterface(networkInterface)) {
+                // ignore
                 continue;
             }
             validNetworkInterfaces.add(networkInterface);
@@ -158,21 +150,14 @@ public class NetUtils {
     }
 
     private static boolean ignoreNetworkInterface(NetworkInterface networkInterface) throws SocketException {
-        return networkInterface == null
-                || networkInterface.isLoopback()
-                || networkInterface.isVirtual()
-                || !networkInterface.isUp();
+        return networkInterface == null || networkInterface.isLoopback() || networkInterface.isVirtual() || !networkInterface.isUp();
     }
 
     private static boolean isValidV4Address(InetAddress address) {
         if (address == null || address.isLoopbackAddress()) {
             return false;
         }
-
         String name = address.getHostAddress();
-        return (name != null
-                && IP_PATTERN.matcher(name).matches()
-                && !ANYHOST_VALUE.equals(name)
-                && !LOCALHOST_VALUE.equals(name));
+        return (name != null && IP_PATTERN.matcher(name).matches() && !ANYHOST_VALUE.equals(name) && !LOCALHOST_VALUE.equals(name));
     }
 }

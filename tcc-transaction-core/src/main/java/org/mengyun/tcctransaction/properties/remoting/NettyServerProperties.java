@@ -9,6 +9,7 @@ import org.mengyun.tcctransaction.remoting.netty.NettyServerConfig;
 public class NettyServerProperties extends NettyProperties implements NettyServerConfig {
 
     private int listenPort = 2332;
+
     //max idle time for client channel,then exceed the idle time, close the client channel
     private int channelIdleTimeoutSeconds = 60;
 

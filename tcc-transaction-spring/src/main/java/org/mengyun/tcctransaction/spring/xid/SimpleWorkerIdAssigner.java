@@ -1,12 +1,12 @@
 package org.mengyun.tcctransaction.spring.xid;
 
 import com.xfvape.uid.worker.WorkerIdAssigner;
-
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.Random;
 
 public class SimpleWorkerIdAssigner implements WorkerIdAssigner {
+
     private int maxWorkerId;
 
     public SimpleWorkerIdAssigner(int workerIdBits) {

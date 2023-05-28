@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.storage.helper;
 
 import redis.clients.jedis.ShardedJedisPipeline;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +58,5 @@ public class ShardedPipelineCommand implements RedisCommands {
 
     @Override
     public void close() throws IOException {
-
     }
 }

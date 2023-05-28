@@ -1,9 +1,7 @@
 package org.mengyun.tcctransaction.xid;
 
-
 import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
-
 import java.io.Serializable;
 
 /**
@@ -12,10 +10,10 @@ import java.io.Serializable;
 public class TransactionXid implements Xid, Serializable {
 
     private int formatId = Xid.AUTO;
+
     private String xid;
 
     public TransactionXid() {
-
     }
 
     public TransactionXid(String xidString) {
@@ -76,7 +74,4 @@ public class TransactionXid implements Xid, Serializable {
     public String getXid() {
         return xid;
     }
-
 }
-
-

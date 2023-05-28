@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
-
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -14,7 +13,6 @@ public class ChannelGroupMap {
     private ConcurrentMap<String, ChannelGroup> channelGroup = new ConcurrentHashMap<>();
 
     public ChannelGroupMap() {
-
     }
 
     public void registerChannel(String key, Channel channel) {

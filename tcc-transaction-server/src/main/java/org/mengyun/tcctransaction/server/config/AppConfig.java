@@ -21,7 +21,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.zookeeper.CuratorFrameworkCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.List;
 
 @Configuration
@@ -53,10 +52,7 @@ public class AppConfig {
     }
 
     @Bean
-    public ServerConfig serverConfig(@Autowired ServerRegistryConfig serverRegistryConfig,
-                                     @Autowired StoreConfig storeConfig,
-                                     @Autowired RecoveryConfig recoveryConfig,
-                                     @Autowired NettyServerConfig nettyServerConfig) {
+    public ServerConfig serverConfig(@Autowired ServerRegistryConfig serverRegistryConfig, @Autowired StoreConfig storeConfig, @Autowired RecoveryConfig recoveryConfig, @Autowired NettyServerConfig nettyServerConfig) {
         return new ServerConfig(storeConfig, recoveryConfig, nettyServerConfig, serverRegistryConfig);
     }
 
@@ -74,18 +70,18 @@ public class AppConfig {
     public CuratorFrameworkCustomizer curatorFrameworkCustomizer(@Autowired ServerRegistryConfig registryProperties) {
         return builder -> {
             if (StringUtils.isNotEmpty(registryProperties.getZookeeperRegistryProperties().getDigest())) {
-                builder.authorization("digest", registryProperties.getZookeeperRegistryProperties().getDigest().getBytes())
-                        .aclProvider(new ACLProvider() {
-                            @Override
-                            public List<ACL> getDefaultAcl() {
-                                return ZooDefs.Ids.CREATOR_ALL_ACL;
-                            }
+                builder.authorization("digest", registryProperties.getZookeeperRegistryProperties().getDigest().getBytes()).aclProvider(new ACLProvider() {
 
-                            @Override
-                            public List<ACL> getAclForPath(String path) {
-                                return ZooDefs.Ids.CREATOR_ALL_ACL;
-                            }
-                        });
+                    @Override
+                    public List<ACL> getDefaultAcl() {
+                        return ZooDefs.Ids.CREATOR_ALL_ACL;
+                    }
+
+                    @Override
+                    public List<ACL> getAclForPath(String path) {
+                        return ZooDefs.Ids.CREATOR_ALL_ACL;
+                    }
+                });
             }
         };
     }

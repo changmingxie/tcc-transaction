@@ -3,9 +3,11 @@ package org.mengyun.tcctransaction.dashboard.dto;
 /**
  * @Author huabao.fang
  * @Date 2022/5/19 20:30
- **/
+ */
 public class TransactionOperateRequestDto {
+
     private String domain;
+
     private String xidString;
 
     public String getDomain() {

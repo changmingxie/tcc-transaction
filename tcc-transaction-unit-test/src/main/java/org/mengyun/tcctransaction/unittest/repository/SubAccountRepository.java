@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.unittest.repository;
 
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
 import org.springframework.stereotype.Repository;
-
 import java.util.HashMap;
 import java.util.Map;
 

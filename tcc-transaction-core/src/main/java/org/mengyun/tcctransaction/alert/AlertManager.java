@@ -9,19 +9,16 @@ import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.mengyun.tcctransaction.utils.AlertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Date;
 
 /**
  * @Author huabao.fang
  * @Date 2022/6/15 10:17
- **/
+ */
 public class AlertManager {
 
-    private static final String ALERT_CONTENT_TEMPLATE = "【TCC告警】\n" +
-            "Domain: $domain$\n" +
-            "当前TCC事件堆积数：$errorCount$，超过阈值: $threshold$\n" +
-            "告警间隔时间为$intervalMinutes$分钟，请及时处理！";
+    private static final String ALERT_CONTENT_TEMPLATE = "【TCC告警】\n" + "Domain: $domain$\n" + "当前TCC事件堆积数：$errorCount$，超过阈值: $threshold$\n" + "告警间隔时间为$intervalMinutes$分钟，请及时处理！";
+
     private static Logger logger = LoggerFactory.getLogger(AlertManager.class);
 
     private AlertManager() {
@@ -40,11 +37,8 @@ public class AlertManager {
             logger.warn("domainStore:{} not exist", domain);
             return;
         }
-
         if (isPermitAlert(currentErrorTransactionCount, domainStore)) {
-            boolean success = AlertUtils.dingAlert(domainStore.getDingRobotUrl(),
-                    domainStore.getPhoneNumbers(),
-                    buildAlertContent(currentErrorTransactionCount, domainStore));
+            boolean success = AlertUtils.dingAlert(domainStore.getDingRobotUrl(), domainStore.getPhoneNumbers(), buildAlertContent(currentErrorTransactionCount, domainStore));
             if (success) {
                 domainStore.setLastAlertTime(new Date());
                 ((StorageRecoverable) transactionStorage).updateDomain(domainStore);
@@ -52,20 +46,14 @@ public class AlertManager {
                 logger.warn("domain:{} alert failed, currentErrorTransactionCount:{}", domain, currentErrorTransactionCount);
             }
         }
-
     }
 
     private static String buildAlertContent(int currentErrorTransactionCount, DomainStore currentDomainStore) {
-        return ALERT_CONTENT_TEMPLATE.replace("$domain$", currentDomainStore.getDomain())
-                .replace("$errorCount$", String.valueOf(currentErrorTransactionCount))
-                .replace("$threshold$", String.valueOf(currentDomainStore.getThreshold()))
-                .replace("$intervalMinutes$", String.valueOf(currentDomainStore.getIntervalMinutes()));
+        return ALERT_CONTENT_TEMPLATE.replace("$domain$", currentDomainStore.getDomain()).replace("$errorCount$", String.valueOf(currentErrorTransactionCount)).replace("$threshold$", String.valueOf(currentDomainStore.getThreshold())).replace("$intervalMinutes$", String.valueOf(currentDomainStore.getIntervalMinutes()));
     }
 
     private static boolean isPermitAlert(int currentErrorTransactionCount, DomainStore currentDomainStore) {
-        return isLegalAlertConfig(currentDomainStore)
-                && isPermitAtAlertTime(currentDomainStore)
-                && isPermitAtThreshold(currentErrorTransactionCount, currentDomainStore);
+        return isLegalAlertConfig(currentDomainStore) && isPermitAtAlertTime(currentDomainStore) && isPermitAtThreshold(currentErrorTransactionCount, currentDomainStore);
     }
 
     /**
@@ -80,7 +68,6 @@ public class AlertManager {
         int intervalMinutes = currentDomainStore.getIntervalMinutes();
         int threshold = currentDomainStore.getThreshold();
         String dingRobotUrl = currentDomainStore.getDingRobotUrl();
-
         if (alertType == null || !AlertType.DING.equals(alertType)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("alertType is {}, skip alert", alertType);
@@ -105,13 +92,13 @@ public class AlertManager {
             }
             return false;
         }
-        if (StringUtils.isBlank(dingRobotUrl)) {// 当前仅支持钉钉告警
+        if (StringUtils.isBlank(dingRobotUrl)) {
+            // 当前仅支持钉钉告警
             if (logger.isDebugEnabled()) {
                 logger.debug("dingRobotUrl is blank, skip alert");
             }
             return false;
         }
-
         return true;
     }
 

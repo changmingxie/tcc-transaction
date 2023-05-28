@@ -5,8 +5,7 @@ package org.mengyun.tcctransaction.common;
  */
 public enum TransactionType {
 
-    ROOT(1),
-    BRANCH(2);
+    ROOT(1), BRANCH(2);
 
     int id;
 
@@ -15,7 +14,7 @@ public enum TransactionType {
     }
 
     public static TransactionType valueOf(int id) {
-        switch (id) {
+        switch(id) {
             case 1:
                 return ROOT;
             case 2:
@@ -28,5 +27,4 @@ public enum TransactionType {
     public int getId() {
         return id;
     }
-
 }

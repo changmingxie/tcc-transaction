@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.storage.helper;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -52,11 +51,8 @@ public class JedisCommands implements RedisCommands {
 
     @Override
     public List<Object> executePipelined(CommandCallback commandCallback) {
-
         Pipeline pipeline = jedis.pipelined();
-
         commandCallback.execute(new PipelineCommands(pipeline));
-
         return pipeline.syncAndReturnAll();
     }
 

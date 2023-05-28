@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceGrpc;
 import org.mengyun.tcctransaction.sample.grpc.capital.api.CapitalServiceOuterClass;
 import org.mengyun.tcctransaction.sample.grpc.capital.api.dto.CapitalTradeOrderDto;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 
 /**
@@ -28,14 +27,7 @@ public class CapitalGrpcClient {
 
     @EnableTcc
     public String record(CapitalTradeOrderDto tradeOrderDto) {
-        CapitalServiceOuterClass.CapitalTradeOrderDto capitalTradeOrderDto = CapitalServiceOuterClass.CapitalTradeOrderDto.newBuilder()
-                .setSelfUserId(tradeOrderDto.getSelfUserId())
-                .setOppositeUserId(tradeOrderDto.getOppositeUserId())
-                .setOrderTitle(tradeOrderDto.getOrderTitle())
-                .setMerchantOrderNo(tradeOrderDto.getMerchantOrderNo())
-                .setAmount(tradeOrderDto.getAmount().toPlainString())
-                .build();
-
+        CapitalServiceOuterClass.CapitalTradeOrderDto capitalTradeOrderDto = CapitalServiceOuterClass.CapitalTradeOrderDto.newBuilder().setSelfUserId(tradeOrderDto.getSelfUserId()).setOppositeUserId(tradeOrderDto.getOppositeUserId()).setOrderTitle(tradeOrderDto.getOrderTitle()).setMerchantOrderNo(tradeOrderDto.getMerchantOrderNo()).setAmount(tradeOrderDto.getAmount().toPlainString()).build();
         CapitalServiceGrpc.CapitalServiceBlockingStub stub = CapitalServiceGrpc.newBlockingStub(capitalChannel);
         return stub.record(capitalTradeOrderDto).getMessage();
     }

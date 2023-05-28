@@ -73,7 +73,6 @@ public class ClientConfig extends AbstractConfig implements RecoveryConfig, Nett
         return nettyClientConfig.getNumTestsPerEvictionRun();
     }
 
-
     @Override
     public int getChannelMaxIdleTimeSeconds() {
         return nettyClientConfig.getChannelMaxIdleTimeSeconds();

@@ -11,6 +11,7 @@ import org.mengyun.tcctransaction.load.LoadInfo;
  */
 @LoadInfo(name = "nacos")
 public class NacosRegistryServiceProvider implements RegistryProvider {
+
     @Override
     public RegistryService provide(RegistryConfig registryConfig) {
         return new NacosRegistryServiceImpl(registryConfig);

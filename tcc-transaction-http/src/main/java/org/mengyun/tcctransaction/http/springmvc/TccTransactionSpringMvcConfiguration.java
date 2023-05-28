@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class TccTransactionSpringMvcConfiguration implements WebMvcConfigurer {
+
     @Bean
     public RequesterInterceptor requesterInterceptor() {
         return new RequesterInterceptor();

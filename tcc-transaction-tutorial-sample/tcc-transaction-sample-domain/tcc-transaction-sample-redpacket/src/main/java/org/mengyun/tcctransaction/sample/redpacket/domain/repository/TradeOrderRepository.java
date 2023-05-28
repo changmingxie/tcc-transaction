@@ -20,7 +20,6 @@ public class TradeOrderRepository {
     }
 
     public void update(TradeOrder tradeOrder) {
-
         tradeOrder.updateVersion();
         int effectCount = tradeOrderDao.update(tradeOrder);
         if (effectCount < 1) {
@@ -31,5 +30,4 @@ public class TradeOrderRepository {
     public TradeOrder findByMerchantOrderNo(String merchantOrderNo) {
         return tradeOrderDao.findByMerchantOrderNo(merchantOrderNo);
     }
-
 }

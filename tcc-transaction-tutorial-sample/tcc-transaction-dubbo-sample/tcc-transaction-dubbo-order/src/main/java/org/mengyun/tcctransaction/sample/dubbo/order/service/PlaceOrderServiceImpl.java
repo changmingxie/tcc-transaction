@@ -9,7 +9,6 @@ import org.mengyun.tcctransaction.sample.order.domain.repository.ShopRepository;
 import org.mengyun.tcctransaction.sample.order.domain.service.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -30,15 +29,11 @@ public class PlaceOrderServiceImpl {
 
     public String placeOrder(long payerUserId, long shopId, List<Pair<Long, Integer>> productQuantities, final BigDecimal redPacketPayAmount) {
         Shop shop = shopRepository.findById(shopId);
-
         Order order = orderService.createOrder(payerUserId, shop.getOwnerUserId(), productQuantities);
         order.needToPay(redPacketPayAmount, order.getTotalAmount().subtract(redPacketPayAmount));
         orderService.update(order);
-
         try {
-
             paymentService.makePayment(order.getMerchantOrderNo());
-
         } catch (ConfirmingException confirmingException) {
             //exception throws with the tcc transaction status is CONFIRMING,
             //when tcc transaction is confirming status,
@@ -52,7 +47,6 @@ public class PlaceOrderServiceImpl {
             //you can retry or cancel the operation.
             e.printStackTrace();
         }
-
         return order.getMerchantOrderNo();
     }
 }

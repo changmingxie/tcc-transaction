@@ -16,17 +16,16 @@ public class TransactionContextClientInterceptor implements ClientInterceptor {
 
     @Override
     public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(MethodDescriptor<ReqT, RespT> method, CallOptions callOptions, Channel next) {
-
         TransactionContext transactionContext = TransactionContextHolder.getCurrentTransactionContext();
         return new ForwardingClientCall.SimpleForwardingClientCall<ReqT, RespT>(next.newCall(method, callOptions)) {
 
             @Override
             public void start(Listener<RespT> responseListener, Metadata headers) {
                 if (transactionContext != null) {
-                    headers.put(TransactionContextConstants.TRANSACTION_CONTEXT_HEADER_KEY,
-                            transactionContextSerializer.serialize(transactionContext));
+                    headers.put(TransactionContextConstants.TRANSACTION_CONTEXT_HEADER_KEY, transactionContextSerializer.serialize(transactionContext));
                 }
                 super.start(new ForwardingClientCallListener.SimpleForwardingClientCallListener<RespT>(responseListener) {
+
                     @Override
                     public void onHeaders(Metadata headers) {
                         super.onHeaders(headers);

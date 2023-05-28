@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.spring.configuration;
 
-
 import com.xfvape.uid.UidGenerator;
 import com.xfvape.uid.impl.CachedUidGenerator;
 import org.mengyun.tcctransaction.ClientConfig;
@@ -16,7 +15,7 @@ import org.springframework.context.annotation.*;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@ComponentScan(value = "org.mengyun.tcctransaction", excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {XmlTccTransactionConfiguration.class})})
+@ComponentScan(value = "org.mengyun.tcctransaction", excludeFilters = { @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { XmlTccTransactionConfiguration.class }) })
 public class AnnotationTccTransactionConfiguration {
 
     @Autowired(required = false)
@@ -26,7 +25,6 @@ public class AnnotationTccTransactionConfiguration {
     public SpringBeanFactory getSpringBeanFactory() {
         return new SpringBeanFactory();
     }
-
 
     @Bean("configurableTransactionAspect")
     public ConfigurableTransactionAspect getConfigurableTransactionAspect() {
@@ -39,7 +37,7 @@ public class AnnotationTccTransactionConfiguration {
     }
 
     @Bean
-    @DependsOn({"springBeanFactory"})
+    @DependsOn({ "springBeanFactory" })
     public SpringTccClient getTccClient() {
         return new SpringTccClient(clientConfig);
     }

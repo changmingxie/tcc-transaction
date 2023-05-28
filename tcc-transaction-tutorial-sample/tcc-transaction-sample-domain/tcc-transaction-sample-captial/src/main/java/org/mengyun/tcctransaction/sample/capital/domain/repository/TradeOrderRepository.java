@@ -30,5 +30,4 @@ public class TradeOrderRepository {
     public TradeOrder findByMerchantOrderNo(String merchantOrderNo) {
         return tradeOrderDao.findByMerchantOrderNo(merchantOrderNo);
     }
-
 }

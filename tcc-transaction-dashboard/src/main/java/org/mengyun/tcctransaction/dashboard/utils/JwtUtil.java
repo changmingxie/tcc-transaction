@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.mengyun.tcctransaction.dashboard.model.SystemUser;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,13 +12,14 @@ import java.util.Map;
 /**
  * @Author huabao.fang
  * @Date 2022/6/6 15:05
- **/
+ */
 public class JwtUtil {
 
     private static final String JWT_SECRET = "tcc-transaction";
 
     // tocken存活时长 单位为秒
-    private static final Long JWT_LIVE_DURATION = 2592000L;// 30 天
+    // 30 天
+    private static final Long JWT_LIVE_DURATION = 2592000L;
 
     private JwtUtil() {
     }
@@ -86,7 +86,7 @@ public class JwtUtil {
     public static boolean isTokenExpired(String token) {
         try {
             Claims claims = getClaimsFromToken(token);
-            if(claims == null){
+            if (claims == null) {
                 return false;
             }
             Date expiration = claims.getExpiration();
@@ -95,5 +95,4 @@ public class JwtUtil {
             return false;
         }
     }
-
 }

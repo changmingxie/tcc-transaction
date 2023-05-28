@@ -16,6 +16,5 @@ public class TransactionIOException extends RuntimeException {
     }
 
     public TransactionIOException() {
-
     }
 }

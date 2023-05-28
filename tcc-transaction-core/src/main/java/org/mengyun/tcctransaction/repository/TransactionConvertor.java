@@ -11,19 +11,15 @@ public final class TransactionConvertor {
     }
 
     public static Transaction getTransaction(TransactionSerializer serializer, TransactionStore transactionStore) {
-
         Transaction transaction = serializer.deserialize(transactionStore.getContent());
-
         transaction.setStatus(TransactionStatus.valueOf(transactionStore.getStatusId()));
         transaction.setVersion(transactionStore.getVersion());
         transaction.setLastUpdateTime(transactionStore.getLastUpdateTime());
         transaction.setRetriedCount(transactionStore.getRetriedCount());
-
         return transaction;
     }
 
     public static TransactionStore getTransactionStore(TransactionSerializer serializer, String domain, Transaction transaction) {
-
         TransactionStore transactionStore = new TransactionStore();
         transactionStore.setXid(transaction.getXid());
         transactionStore.setRootXid(transaction.getRootXid());
@@ -36,8 +32,6 @@ public final class TransactionConvertor {
         transactionStore.setCreateTime(transaction.getCreateTime());
         transactionStore.setDomain(domain);
         transactionStore.setTransactionTypeId(transaction.getTransactionType().getId());
-
         return transactionStore;
     }
-
 }

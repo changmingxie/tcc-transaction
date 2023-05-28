@@ -12,7 +12,6 @@ public class SubAccount {
     private volatile int frozenAmount;
 
     public SubAccount() {
-
     }
 
     public SubAccount(long id, int balanceAmount) {

@@ -77,5 +77,4 @@ public class RegistryProperties implements RegistryConfig {
     public void setDirect(DirectRegistryProperties direct) {
         this.direct = direct;
     }
-
 }

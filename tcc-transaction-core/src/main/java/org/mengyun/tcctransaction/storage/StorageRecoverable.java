@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.storage;
 
 import org.mengyun.tcctransaction.storage.domain.DomainStore;
-
 import java.util.Date;
 import java.util.List;
 
@@ -22,5 +21,4 @@ public interface StorageRecoverable {
     DomainStore findDomain(String domain);
 
     List<DomainStore> getAllDomains();
-
 }

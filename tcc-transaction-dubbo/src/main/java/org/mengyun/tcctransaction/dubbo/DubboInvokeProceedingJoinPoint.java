@@ -7,16 +7,20 @@ import org.mengyun.tcctransaction.context.TransactionContextEditor;
 import org.mengyun.tcctransaction.exception.SystemException;
 import org.mengyun.tcctransaction.interceptor.TransactionMethodJoinPoint;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
-
 import java.lang.reflect.Method;
 
 public class DubboInvokeProceedingJoinPoint implements TransactionMethodJoinPoint {
 
     Compensable compensable;
+
     Class<? extends TransactionContextEditor> transactionContextEditorClass;
+
     private Invoker invoker;
+
     private Invocation invocation;
+
     private Method method = null;
+
     private Object target;
 
     public DubboInvokeProceedingJoinPoint(Invoker invoker, Invocation invocation, Compensable compensable, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
@@ -24,13 +28,11 @@ public class DubboInvokeProceedingJoinPoint implements TransactionMethodJoinPoin
         this.invocation = invocation;
         this.compensable = compensable;
         this.transactionContextEditorClass = transactionContextEditorClass;
-
         try {
             method = invoker.getInterface().getMethod(invocation.getMethodName(), invocation.getParameterTypes());
         } catch (NoSuchMethodException e) {
             throw new SystemException(e);
         }
-
         target = FactoryBuilder.factoryOf(getDeclaredClass()).getInstance();
     }
 

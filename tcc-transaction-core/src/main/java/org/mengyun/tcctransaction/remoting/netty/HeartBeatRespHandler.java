@@ -18,14 +18,11 @@ public class HeartBeatRespHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         RemotingCommand remotingCommand = (RemotingCommand) msg;
         if (remotingCommand.getCode() == RemotingCommandCode.HEARTBEAT_REQ) {
-
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("received heartbeat request from addr：{}, the request id:{}", NetUtils.parseSocketAddress(ctx.channel().remoteAddress()), remotingCommand.getRequestId());
             }
-
             RemotingCommand responseCommand = RemotingCommand.createCommand(RemotingCommandCode.HEARTBEAT_RESP, null);
-
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("send the heartbeat response to addr:{}, the request id:{}", NetUtils.parseSocketAddress(ctx.channel().remoteAddress()), responseCommand.getRequestId());
             }
             ctx.writeAndFlush(responseCommand);
@@ -39,7 +36,7 @@ public class HeartBeatRespHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (cause instanceof ReadTimeoutException) {
             logger.warn("client channel idle too long, maybe closed, close the channel");
-//            SecurityCenter.removeLoginUser(ctx.channel().remoteAddress().toString());
+            //            SecurityCenter.removeLoginUser(ctx.channel().remoteAddress().toString());
             ctx.close();
         }
         super.exceptionCaught(ctx, cause);

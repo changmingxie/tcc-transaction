@@ -12,7 +12,6 @@ import org.mengyun.tcctransaction.storage.TransactionStore;
 import org.mengyun.tcctransaction.storage.helper.RedisHelper;
 import org.mengyun.tcctransaction.utils.TccDateFormatUtils;
 import org.mengyun.tcctransaction.xid.TransactionXid;
-
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -21,7 +20,7 @@ import java.util.List;
 /**
  * @Author huabao.fang
  * @Date 2022/6/9 16:27
- **/
+ */
 public abstract class BaseTransactionServiceImpl implements TransactionService {
 
     private static final int DEFAULT_PAGE_SIZE = RedisHelper.SCAN_MIDDLE_COUNT;
@@ -166,7 +165,6 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
         return ResponseDto.returnSuccess();
     }
 
-
     private List<TransactionStoreDto> toTransactionStoreDtoList(List<TransactionStore> transactionStoreList) {
         List<TransactionStoreDto> transactionStoreDtoList = new ArrayList<>(transactionStoreList.size());
         transactionStoreList.forEach(transactionStore -> transactionStoreDtoList.add(toTransactionStoreDto(transactionStore)));
@@ -187,7 +185,6 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
         transactionStoreDto.setRetriedCount(transactionStore.getRetriedCount());
         transactionStoreDto.setStatusId(transactionStore.getStatusId());
         transactionStoreDto.setTransactionTypeId(transactionStore.getTransactionTypeId());
-
         transactionStoreDto.setXidString(transactionStore.getXid().toString());
         transactionStoreDto.setRootXidString(transactionStore.getRootXid().toString());
         return transactionStoreDto;

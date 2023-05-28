@@ -11,9 +11,7 @@ import org.springframework.context.annotation.ImportResource;
  * @author Nervose.Wu
  * @date 2022/6/9 11:17
  */
-@SpringBootApplication(
-        scanBasePackages = {"org.mengyun.tcctransaction.sample.feign.order", "org.mengyun.tcctransaction.sample"},
-        exclude = {DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = { "org.mengyun.tcctransaction.sample.feign.order", "org.mengyun.tcctransaction.sample" }, exclude = { DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class })
 @ImportResource(locations = "classpath*:config/spring/local/appcontext-*.xml")
 @EnableFeignClients
 public class FeignOrderApplication {

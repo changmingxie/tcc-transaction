@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.storage.helper.RedisHelper;
 import org.mengyun.tcctransaction.storage.helper.ShardHolder;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,14 +36,12 @@ public class RedisTransactionStorage extends AbstractRedisTransactionStorage {
         this.jedisPool = jedisPool;
         isSupportScan = RedisHelper.isSupportScanCommand(jedisPool);
         if (!isSupportScan) {
-            throw new UnsupportedOperationException("Redis not support 'scan' command, " +
-                    "try update redis version higher than 2.8.0 ");
+            throw new UnsupportedOperationException("Redis not support 'scan' command, " + "try update redis version higher than 2.8.0 ");
         }
     }
 
     @Override
     protected ShardHolder<Jedis> getShardHolder() {
-
         return new ShardHolder() {
 
             private List<Jedis> allShards = new ArrayList<>();
@@ -54,7 +51,6 @@ public class RedisTransactionStorage extends AbstractRedisTransactionStorage {
                 if (allShards.isEmpty()) {
                     allShards.add(jedisPool.getResource());
                 }
-
                 return allShards;
             }
 
@@ -71,5 +67,4 @@ public class RedisTransactionStorage extends AbstractRedisTransactionStorage {
     protected RedisCommands getRedisCommands(byte[] shardKey) {
         return new JedisCommands(jedisPool.getResource());
     }
-
 }

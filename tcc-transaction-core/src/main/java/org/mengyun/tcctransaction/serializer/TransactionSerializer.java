@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.serializer;
 
-
 import org.mengyun.tcctransaction.transaction.Transaction;
 
 /**

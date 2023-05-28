@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @Author huabao.fang
  * @Date 2022/5/30 14:25
- **/
+ */
 @RestController
 @RequestMapping("/api/transaction")
 public class TransactionController {
@@ -48,7 +48,6 @@ public class TransactionController {
         return transactionService.reset(requestDto);
     }
 
-
     @RequestMapping("/markDeleted")
     @ResponseBody
     public ResponseDto<Void> markDeleted(@RequestBody TransactionOperateRequestDto requestDto) {
@@ -66,5 +65,4 @@ public class TransactionController {
     public ResponseDto<Void> delete(@RequestBody TransactionOperateRequestDto requestDto) {
         return transactionService.delete(requestDto);
     }
-
 }

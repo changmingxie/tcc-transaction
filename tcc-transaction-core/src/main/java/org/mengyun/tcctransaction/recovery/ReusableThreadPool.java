@@ -5,7 +5,6 @@ import org.quartz.simpl.SimpleThreadPool;
 import org.quartz.spi.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -15,13 +14,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ReusableThreadPool implements ThreadPool {
 
     private static final Logger logger = LoggerFactory.getLogger(ReusableThreadPool.class.getSimpleName());
+
     private static volatile SimpleThreadPool instance;
+
     private static AtomicInteger inuseCounter = new AtomicInteger(0);
+
     private int threadCount = -1;
+
     private int threadPriority = Thread.NORM_PRIORITY;
+
     private boolean threadsInheritGroupOfInitializingThread = true;
+
     private boolean threadsInheritContextClassLoaderOfInitializingThread = false;
+
     private boolean makeThreadsDaemons = false;
+
     private String threadNamePrefix;
 
     public ReusableThreadPool() {

@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.storage.StorageRecoverable;
 import org.mengyun.tcctransaction.storage.TransactionStorage;
 import org.mengyun.tcctransaction.storage.TransactionStore;
 import org.mengyun.tcctransaction.transaction.Transaction;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -72,7 +71,6 @@ public class DefaultTransactionRepository implements TransactionRepository {
     public Page<Transaction> findAllUnmodifiedSince(Date date, String offset, int pageSize) {
         if (this.transactionStorage.supportStorageRecoverable()) {
             Page<TransactionStore> transactionStorePage = ((StorageRecoverable) this.transactionStorage).findAllUnmodifiedSince(this.domain, date, offset, pageSize);
-
             return getTransactionPage(transactionStorePage);
         }
         throw new UnsupportedOperationException();

@@ -8,8 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Created by changming.xie on 02/04/19.
  */
-
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PARAMETER})
+@Target({ ElementType.PARAMETER })
 public @interface UniqueIdentity {
 }

@@ -9,17 +9,27 @@ import org.mengyun.tcctransaction.remoting.netty.NettyClientConfig;
 public class NettyClientProperties extends NettyProperties implements NettyClientConfig {
 
     private long connectTimeoutMillis = 2000L;
+
     private int channelPoolMaxTotal = -1;
+
     private int channelPoolMaxIdlePerKey = 4;
+
     private int channelPoolMaxTotalPerKey = 4;
+
     private int channelPoolMinIdlePerKey = 1;
+
     private long channelPoolMaxWaitMillis = 300L;
+
     private long channelPoolTimeBetweenEvictionRunsMillis = 10 * 1000L;
+
     private long channelPoolSoftMinEvictableIdleTimeMillis = 30 * 60 * 1000L;
+
     private int numTestsPerEvictionRun = 2;
+
     //check the max idle time of client channel, if exceed, then send heartbeat message to keepalive the channel,
     //need < channelIdleTimeoutSeconds(60) in ServerConfig
     private int channelMaxIdleTimeSeconds = 20;
+
     //reconnect to the server interval
     private int reconnectIntervalSeconds = 5;
 

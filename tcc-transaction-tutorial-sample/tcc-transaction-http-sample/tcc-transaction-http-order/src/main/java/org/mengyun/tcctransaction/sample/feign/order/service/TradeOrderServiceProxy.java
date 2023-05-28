@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.sample.feign.order.service;
 
-
 import org.mengyun.tcctransaction.sample.feign.capital.api.dto.CapitalTradeOrderDto;
 import org.mengyun.tcctransaction.sample.feign.order.feign.CapitalFeignClient;
 import org.mengyun.tcctransaction.sample.feign.order.feign.RedPacketFeignClient;

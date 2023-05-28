@@ -13,6 +13,7 @@ import java.util.UUID;
 public class Order implements Serializable {
 
     private static final long serialVersionUID = -5908730245224893590L;
+
     private long id;
 
     private long payerUserId;
@@ -32,7 +33,6 @@ public class Order implements Serializable {
     private List<OrderLine> orderLines = new ArrayList<OrderLine>();
 
     public Order() {
-
     }
 
     public Order(long payerUserId, long payeeUserId) {
@@ -50,11 +50,8 @@ public class Order implements Serializable {
     }
 
     public BigDecimal getTotalAmount() {
-
         BigDecimal totalAmount = BigDecimal.ZERO;
-
         for (OrderLine orderLine : orderLines) {
-
             totalAmount = totalAmount.add(orderLine.getTotalAmount());
         }
         return totalAmount;
@@ -104,7 +101,6 @@ public class Order implements Serializable {
     public void cancelPayment() {
         this.status = "PAY_FAILED";
     }
-
 
     public long getVersion() {
         return version;

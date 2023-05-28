@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.sample.grpc.order.service;
 
-
 import org.mengyun.tcctransaction.sample.grpc.capital.api.dto.CapitalTradeOrderDto;
 import org.mengyun.tcctransaction.sample.grpc.order.grpc.CapitalGrpcClient;
 import org.mengyun.tcctransaction.sample.grpc.order.grpc.RedPacketGrpcClient;

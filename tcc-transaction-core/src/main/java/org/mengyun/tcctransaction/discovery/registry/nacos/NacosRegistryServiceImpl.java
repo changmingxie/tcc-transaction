@@ -10,7 +10,6 @@ import org.mengyun.tcctransaction.exception.RegistryException;
 import org.mengyun.tcctransaction.utils.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.Properties;
@@ -55,26 +54,15 @@ public class NacosRegistryServiceImpl extends AbstractRegistryService {
             throw new IllegalArgumentException("invalid address：" + address.toString());
         }
         namingService.registerInstance(properties.getServiceName(), properties.getGroup(), addressString.substring(0, index), address.getPort(), getClusterName());
-
         logger.info("Registered with nacos");
     }
 
-
     @Override
     protected void doSubscribe() throws Exception {
-        setServerAddresses(namingService.selectInstances(properties.getServiceName(), properties.getGroup(), Collections.singletonList(getClusterName()), true)
-                .stream()
-                .map(each -> each.getIp() + ":" + each.getPort())
-                .collect(Collectors.toList())
-        );
+        setServerAddresses(namingService.selectInstances(properties.getServiceName(), properties.getGroup(), Collections.singletonList(getClusterName()), true).stream().map(each -> each.getIp() + ":" + each.getPort()).collect(Collectors.toList()));
         namingService.subscribe(properties.getServiceName(), properties.getGroup(), Collections.singletonList(getClusterName()), event -> {
             try {
-                setServerAddresses(((NamingEvent) event).getInstances()
-                        .stream()
-                        .filter(each -> each.isEnabled() && each.isHealthy())
-                        .map(each -> each.getIp() + ":" + each.getPort())
-                        .collect(Collectors.toList())
-                );
+                setServerAddresses(((NamingEvent) event).getInstances().stream().filter(each -> each.isEnabled() && each.isHealthy()).map(each -> each.getIp() + ":" + each.getPort()).collect(Collectors.toList()));
             } catch (Exception e) {
                 logger.warn("Failed to update server addresses", e);
             }

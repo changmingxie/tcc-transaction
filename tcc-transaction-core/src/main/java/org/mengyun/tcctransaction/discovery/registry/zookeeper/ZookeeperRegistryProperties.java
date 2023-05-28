@@ -5,11 +5,17 @@ package org.mengyun.tcctransaction.discovery.registry.zookeeper;
  * @date 2022/5/12 18:30
  */
 public class ZookeeperRegistryProperties {
+
     private String connectString = "127.0.0.1:2181";
+
     private int sessionTimeout = 10 * 1000;
+
     private int connectTimeout = 2 * 1000;
+
     private String digest;
+
     private int baseSleepTime = 500;
+
     private int maxRetries = 3;
 
     public String getConnectString() {

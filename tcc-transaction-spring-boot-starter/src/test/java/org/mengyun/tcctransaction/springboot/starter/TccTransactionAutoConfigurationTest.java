@@ -15,18 +15,16 @@ import org.springframework.context.annotation.Configuration;
  * @date 2022/5/26 15:25
  */
 public class TccTransactionAutoConfigurationTest {
-    private ApplicationContextRunner runner = new ApplicationContextRunner()
-            .withInitializer(new ConfigFileApplicationContextInitializer())
-            .withUserConfiguration(TestConfig.class);
+
+    private ApplicationContextRunner runner = new ApplicationContextRunner().withInitializer(new ConfigFileApplicationContextInitializer()).withUserConfiguration(TestConfig.class);
 
     @Test
     public void tccClient() {
-        runner.withPropertyValues("spring.application.name=tccClient", "spring.config.name=application-client")
-                .run(context -> Assertions.assertThat(context).hasSingleBean(TccClient.class));
+        runner.withPropertyValues("spring.application.name=tccClient", "spring.config.name=application-client").run(context -> Assertions.assertThat(context).hasSingleBean(TccClient.class));
     }
 
     @Configuration
-    @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, RedisAutoConfiguration.class})
+    @EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class, RedisAutoConfiguration.class })
     static class TestConfig {
     }
 }

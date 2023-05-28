@@ -2,13 +2,12 @@ package org.mengyun.tcctransaction.dashboard.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 
 /**
  * @Author huabao.fang
  * @Date 2022/6/6 14:52
- **/
+ */
 public class SystemUser implements UserDetails {
 
     private String username;

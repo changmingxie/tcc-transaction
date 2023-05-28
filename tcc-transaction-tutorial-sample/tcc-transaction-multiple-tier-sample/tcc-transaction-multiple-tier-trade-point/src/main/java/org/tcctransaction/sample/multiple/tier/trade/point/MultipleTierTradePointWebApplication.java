@@ -1,6 +1,5 @@
 package org.tcctransaction.sample.multiple.tier.trade.point;
 
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

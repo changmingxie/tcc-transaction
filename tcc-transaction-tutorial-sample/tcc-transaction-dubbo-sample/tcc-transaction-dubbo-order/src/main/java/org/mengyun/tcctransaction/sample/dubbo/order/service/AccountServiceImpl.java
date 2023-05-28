@@ -4,7 +4,6 @@ import org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalAccountService
 import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 
 /**
@@ -18,7 +17,6 @@ public class AccountServiceImpl {
 
     @Autowired
     CapitalAccountService capitalAccountService;
-
 
     public BigDecimal getRedPacketAccountByUserId(long userId) {
         return redPacketAccountService.getRedPacketAccountByUserId(userId);

@@ -3,7 +3,6 @@ package org.mengyun.tcctransaction.serializer;
 import org.mengyun.tcctransaction.remoting.exception.RemotingCommandException;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommandCode;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +13,6 @@ public class TccRemotingCommandSerializer implements RemotingCommandSerializer {
 
     @Override
     public byte[] serialize(RemotingCommand remotingCommand) {
-
         // String remark
         byte[] remarkBytes = null;
         int remarkLength = 0;
@@ -22,14 +20,11 @@ public class TccRemotingCommandSerializer implements RemotingCommandSerializer {
             remarkBytes = remotingCommand.getRemark().getBytes(CHARSET_UTF8);
             remarkLength = remarkBytes.length;
         }
-
         int bodyLength = 0;
         if (remotingCommand.getBody() != null && remotingCommand.getBody().length > 0) {
             bodyLength = remotingCommand.getBody().length;
         }
-
         int totalLength = calTotalLength(remarkLength, bodyLength);
-
         ByteBuffer byteBuffer = ByteBuffer.allocate(totalLength);
         //byte RemotingCommandCode
         byteBuffer.put(remotingCommand.getCode().value());
@@ -37,7 +32,6 @@ public class TccRemotingCommandSerializer implements RemotingCommandSerializer {
         byteBuffer.putInt(remotingCommand.getRequestId());
         //int serviceCode
         byteBuffer.putInt(remotingCommand.getServiceCode());
-
         //byte[] remarkBytes
         if (remarkBytes != null) {
             //int remarkLength
@@ -46,7 +40,6 @@ public class TccRemotingCommandSerializer implements RemotingCommandSerializer {
         } else {
             byteBuffer.putInt(0);
         }
-
         if (remotingCommand.getBody() != null) {
             //int bodyLength
             byteBuffer.putInt(bodyLength);
@@ -55,7 +48,6 @@ public class TccRemotingCommandSerializer implements RemotingCommandSerializer {
         } else {
             byteBuffer.putInt(0);
         }
-
         return byteBuffer.array();
     }
 
@@ -79,7 +71,6 @@ public class TccRemotingCommandSerializer implements RemotingCommandSerializer {
             byteBuffer.get(remarkContent);
             remotingCommand.setRemark(new String(remarkContent, CHARSET_UTF8));
         }
-
         //int bodyLength
         int bodyLength = byteBuffer.getInt();
         if (bodyLength > 0) {
@@ -90,7 +81,6 @@ public class TccRemotingCommandSerializer implements RemotingCommandSerializer {
             byteBuffer.get(body);
             remotingCommand.setBody(body);
         }
-
         return remotingCommand;
     }
 
@@ -99,7 +89,6 @@ public class TccRemotingCommandSerializer implements RemotingCommandSerializer {
         if (original == null) {
             return null;
         }
-
         RemotingCommand cloned = new RemotingCommand();
         cloned.setCode(original.getCode());
         cloned.setRequestId(original.getRequestId());
@@ -109,18 +98,13 @@ public class TccRemotingCommandSerializer implements RemotingCommandSerializer {
         return cloned;
     }
 
-
     private int calTotalLength(int remarkLength, int bodyLength) {
         // byte RemotingCommandCode(~)
-        int length = 1
-                // requestId
-                + 4
-                // serviceCode
-                + 4
-                // String remark
-                + 4 + remarkLength
-                // HashMap<String, String> extFields
-                + 4 + bodyLength;
+        int length = 1 + // requestId
+        4 + // serviceCode
+        4 + // String remark
+        4 + remarkLength + // HashMap<String, String> extFields
+        4 + bodyLength;
         return length;
     }
 }

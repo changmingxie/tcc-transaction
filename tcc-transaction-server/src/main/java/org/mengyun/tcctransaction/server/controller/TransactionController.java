@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Author huabao.fang
  * @Date 2022/5/19 12:19
  * 事件管理
- **/
+ */
 @RestController
 @RequestMapping("transaction")
 public class TransactionController {
@@ -79,6 +79,4 @@ public class TransactionController {
     public ResponseDto<Void> delete(@RequestBody TransactionOperateRequestDto requestDto) {
         return transactionService.delete(requestDto);
     }
-
-
 }

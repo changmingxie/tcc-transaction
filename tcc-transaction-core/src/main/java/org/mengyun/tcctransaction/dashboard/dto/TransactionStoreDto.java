@@ -1,27 +1,36 @@
 package org.mengyun.tcctransaction.dashboard.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.mengyun.tcctransaction.api.Xid;
 
 /**
  * @Author huabao.fang
  * @Date 2022/5/25 14:14
- **/
+ */
 public class TransactionStoreDto {
 
     private String domain;
+
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     private Xid xid;
+
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     private Xid rootXid;
+
     private String rootDomain;
+
     private String content;
+
     private String createTime;
+
     private String lastUpdateTime;
+
     private long version;
+
     private int retriedCount;
+
     private int statusId;
+
     private int transactionTypeId;
 
     private String xidString;

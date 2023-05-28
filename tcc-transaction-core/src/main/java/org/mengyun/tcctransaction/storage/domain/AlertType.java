@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * @Author huabao.fang
  * @Date 2022/6/13 22:54
- **/
+ */
 public enum AlertType {
 
     // 钉钉告警

@@ -7,9 +7,13 @@ public class RemotingCommand {
     private static AtomicInteger requestIdGenerator = new AtomicInteger(0);
 
     private int requestId = requestIdGenerator.getAndIncrement();
+
     private RemotingCommandCode code;
+
     private String remark;
+
     private int serviceCode;
+
     private byte[] body;
 
     public static RemotingCommand createServiceResponseCommand(String remark) {
@@ -34,7 +38,6 @@ public class RemotingCommand {
         this.serviceCode = serviceCode;
     }
 
-
     public byte[] getBody() {
         return body;
     }
@@ -58,7 +61,6 @@ public class RemotingCommand {
     public void setCode(RemotingCommandCode code) {
         this.code = code;
     }
-
 
     public boolean isRequestCommand() {
         return code.isRequestCode();

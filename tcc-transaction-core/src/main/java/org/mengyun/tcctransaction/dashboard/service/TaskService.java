@@ -3,13 +3,12 @@ package org.mengyun.tcctransaction.dashboard.service;
 import org.mengyun.tcctransaction.dashboard.dto.ModifyCronDto;
 import org.mengyun.tcctransaction.dashboard.dto.ResponseDto;
 import org.mengyun.tcctransaction.dashboard.dto.TaskDto;
-
 import java.util.List;
 
 /**
  * @Author huabao.fang
  * @Date 2022/5/30 10:08
- **/
+ */
 public interface TaskService {
 
     /**
@@ -50,5 +49,4 @@ public interface TaskService {
      * @return
      */
     ResponseDto<Void> delete(String domain);
-
 }

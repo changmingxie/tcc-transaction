@@ -5,7 +5,6 @@ package org.mengyun.tcctransaction.discovery.loadbalance;
  * @date 2022/5/12 18:39
  */
 public enum LoadBalanceType {
-    Random,
-    RoundRobin,
-    ;
+
+    Random, RoundRobin
 }

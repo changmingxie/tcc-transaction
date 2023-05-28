@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.recovery;
 
-
 /**
  * Created by changming.xie on 6/1/16.
  */

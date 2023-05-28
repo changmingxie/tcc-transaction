@@ -16,13 +16,12 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
 
 /**
  * @Author huabao.fang
  * @Date 2022/5/30 14:19
- **/
+ */
 @Conditional(TccServerStorageCondition.class)
 @Service
 public class TccServerTransactionServiceImpl implements TransactionService {
@@ -52,7 +51,6 @@ public class TccServerTransactionServiceImpl implements TransactionService {
         if (CollectionUtils.isEmpty(instances)) {
             return ResponseDto.returnFail(ResponseCodeEnum.TRANSACTION_DETAIL_NO_INSTANCES);
         }
-
         String errorMessage = "";
         String errorCode = "";
         for (ServiceInstance instance : instances) {
@@ -68,14 +66,12 @@ public class TccServerTransactionServiceImpl implements TransactionService {
             } catch (Exception e) {
                 logger.warn("request detailRequestUrl:{} failed!", detailRequestUrl, e);
             }
-
         }
         if (StringUtils.isEmpty(errorMessage)) {
             return ResponseDto.returnFail(ResponseCodeEnum.TRANSACTION_CONTENT_VISUALIZE_ERROR);
         } else {
             return ResponseDto.returnFail(errorCode, errorMessage);
         }
-
     }
 
     @Override

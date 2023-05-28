@@ -4,7 +4,6 @@ import org.mengyun.tcctransaction.sample.capital.domain.repository.CapitalAccoun
 import org.mengyun.tcctransaction.sample.dubbo.capital.api.CapitalAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 
 /**

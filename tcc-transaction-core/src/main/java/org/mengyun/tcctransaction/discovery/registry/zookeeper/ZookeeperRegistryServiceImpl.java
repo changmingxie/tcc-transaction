@@ -17,7 +17,6 @@ import org.mengyun.tcctransaction.exception.RegistryException;
 import org.mengyun.tcctransaction.utils.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -46,25 +45,20 @@ public class ZookeeperRegistryServiceImpl extends AbstractRegistryService {
         setClusterName(registryConfig.getClusterName());
         this.targetPath = BASE_PATH + getClusterName();
         this.properties = registryConfig.getZookeeperRegistryProperties();
-        CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-                .connectString(properties.getConnectString())
-                .sessionTimeoutMs(properties.getSessionTimeout())
-                .connectionTimeoutMs(properties.getConnectTimeout())
-                .retryPolicy(new ExponentialBackoffRetry(properties.getBaseSleepTime(), properties.getMaxRetries()));
-
+        CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder().connectString(properties.getConnectString()).sessionTimeoutMs(properties.getSessionTimeout()).connectionTimeoutMs(properties.getConnectTimeout()).retryPolicy(new ExponentialBackoffRetry(properties.getBaseSleepTime(), properties.getMaxRetries()));
         if (StringUtils.isNotEmpty(properties.getDigest())) {
-            builder.authorization("digest", properties.getDigest().getBytes())
-                    .aclProvider(new ACLProvider() {
-                        @Override
-                        public List<ACL> getDefaultAcl() {
-                            return ZooDefs.Ids.CREATOR_ALL_ACL;
-                        }
+            builder.authorization("digest", properties.getDigest().getBytes()).aclProvider(new ACLProvider() {
 
-                        @Override
-                        public List<ACL> getAclForPath(String path) {
-                            return ZooDefs.Ids.CREATOR_ALL_ACL;
-                        }
-                    });
+                @Override
+                public List<ACL> getDefaultAcl() {
+                    return ZooDefs.Ids.CREATOR_ALL_ACL;
+                }
+
+                @Override
+                public List<ACL> getAclForPath(String path) {
+                    return ZooDefs.Ids.CREATOR_ALL_ACL;
+                }
+            });
         }
         this.curator = builder.build();
     }
@@ -86,19 +80,13 @@ public class ZookeeperRegistryServiceImpl extends AbstractRegistryService {
     @Override
     protected void doRegister(InetSocketAddress address) throws Exception {
         createParentNode();
-
-        registeredPath = curator.create()
-                .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-                .forPath(targetPath + "/node", NetUtils.parseSocketAddress(address).getBytes());
+        registeredPath = curator.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(targetPath + "/node", NetUtils.parseSocketAddress(address).getBytes());
         logger.info("Registered with zookeeper");
-
         curator.getConnectionStateListenable().addListener((client, newState) -> {
             if (newState == ConnectionState.RECONNECTED) {
                 try {
                     if (curator.checkExists().forPath(registeredPath) == null) {
-                        registeredPath = curator.create()
-                                .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-                                .forPath(targetPath + "/node", NetUtils.parseSocketAddress(address).getBytes());
+                        registeredPath = curator.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(targetPath + "/node", NetUtils.parseSocketAddress(address).getBytes());
                         logger.info("Re-registered with zookeeper");
                     }
                 } catch (Exception e) {
@@ -111,10 +99,9 @@ public class ZookeeperRegistryServiceImpl extends AbstractRegistryService {
     @Override
     protected void doSubscribe() throws Exception {
         createParentNode();
-
         PathChildrenCache pathChildrenCache = new PathChildrenCache(curator, targetPath, false);
         pathChildrenCache.getListenable().addListener((curator, pathChildrenCacheEvent) -> {
-            switch (pathChildrenCacheEvent.getType()) {
+            switch(pathChildrenCacheEvent.getType()) {
                 case CHILD_ADDED:
                 case CHILD_REMOVED:
                 case CHILD_UPDATED:
@@ -153,10 +140,7 @@ public class ZookeeperRegistryServiceImpl extends AbstractRegistryService {
     private void createParentNode() throws Exception {
         if (curator.checkExists().forPath(targetPath) == null) {
             try {
-                curator.create()
-                        .creatingParentsIfNeeded()
-                        .withMode(CreateMode.PERSISTENT)
-                        .forPath(targetPath, "".getBytes());
+                curator.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath(targetPath, "".getBytes());
             } catch (KeeperException.NodeExistsException ignore) {
             }
         }

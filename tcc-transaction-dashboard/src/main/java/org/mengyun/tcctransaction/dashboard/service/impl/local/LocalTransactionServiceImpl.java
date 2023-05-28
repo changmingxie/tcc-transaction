@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 /**
  * @Author huabao.fang
  * @Date 2022/6/9 16:27
- **/
+ */
 @Conditional(LocalStorageCondition.class)
 @Service
 public class LocalTransactionServiceImpl extends BaseTransactionServiceImpl {

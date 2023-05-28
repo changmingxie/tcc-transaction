@@ -10,13 +10,16 @@ public class InvocationContext implements Serializable {
     private static final long serialVersionUID = -7969140711432461165L;
 
     private Class targetClass;
+
     private String confirmMethodName;
+
     private String cancelMethodName;
+
     private Class[] parameterTypes;
+
     private Object[] args;
 
     public InvocationContext() {
-
     }
 
     public InvocationContext(Class targetClass, String confirmMethodName, String cancelMethodName, Class[] parameterTypes, Object... args) {

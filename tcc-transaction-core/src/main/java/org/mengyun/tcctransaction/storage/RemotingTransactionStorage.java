@@ -9,7 +9,6 @@ import org.mengyun.tcctransaction.remoting.protocol.RemotingCommandCode;
 import org.mengyun.tcctransaction.serializer.TransactionStoreSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -28,9 +27,7 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
         if (transactionStore.getContent().length > this.storeConfig.getMaxTransactionSize()) {
             throw new TransactionIOException(String.format("cur transaction size(%dB) is bigger than maxTransactionSize(%dB), consider to reduce parameter size or adjust maxTransactionSize", transactionStore.getContent().length, this.storeConfig.getMaxTransactionSize()));
         }
-
         int result = doCreate(transactionStore);
-
         if (result > 0) {
             return result;
         } else {
@@ -42,7 +39,6 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
     @Override
     public int update(TransactionStore transactionStore) {
         int result = doUpdate(transactionStore);
-
         if (result > 0) {
             return result;
         } else {
@@ -93,16 +89,12 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
     public void close() {
     }
 
-
     private int doWrite(int serviceCode, TransactionStore transactionStore) {
         RemotingCommand requestCommand = RemotingCommand.createCommand(RemotingCommandCode.SERVICE_REQ, null);
         requestCommand.setServiceCode(serviceCode);
         requestCommand.setBody(serializer.serialize(transactionStore));
-
         RemotingCommand responseCommand = null;
-
         responseCommand = remotingClient.invokeSync(requestCommand, this.storeConfig.getRequestTimeoutMillis());
-
         if (responseCommand.getCode() == RemotingCommandCode.SERVICE_RESP) {
             return Byte.valueOf(responseCommand.getBody()[0]).intValue();
         } else {
@@ -113,20 +105,15 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
     private TransactionStore doRead(int serviceCode, String domain, Xid xid) {
         RemotingCommand requestCommand = RemotingCommand.createCommand(RemotingCommandCode.SERVICE_REQ, null);
         requestCommand.setServiceCode(serviceCode);
-
         byte[] domainBytes = domain.getBytes(StandardCharsets.UTF_8);
         byte[] xidBytes = xid.getXid().getBytes(StandardCharsets.UTF_8);
         byte domainByteLength = (byte) domainBytes.length;
-
         ByteBuffer byteBuffer = ByteBuffer.allocate(1 + domainBytes.length + xidBytes.length);
         byteBuffer.put(domainByteLength);
         byteBuffer.put(domainBytes);
         byteBuffer.put(xidBytes);
-
         requestCommand.setBody(byteBuffer.array());
-
         RemotingCommand responseCommand = remotingClient.invokeSync(requestCommand, this.storeConfig.getRequestTimeoutMillis());
-
         if (responseCommand.getCode() == RemotingCommandCode.SERVICE_RESP) {
             return serializer.deserialize(responseCommand.getBody());
         } else {

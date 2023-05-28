@@ -5,9 +5,11 @@ import java.util.List;
 /**
  * @Author huabao.fang
  * @Date 2022/5/23 07:13
- **/
+ */
 public class TransactionPageDto {
+
     private String nextOffset;
+
     private List<TransactionStoreDto> items;
 
     private int total;

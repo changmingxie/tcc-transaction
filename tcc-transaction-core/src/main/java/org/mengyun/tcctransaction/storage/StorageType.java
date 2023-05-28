@@ -6,19 +6,12 @@ import java.util.Map;
 public enum StorageType {
 
     MEMORY("MEMORY"),
-
     JDBC("JDBC"),
-
     REDIS_CLUSTER("REDIS_CLUSTER"),
-
     REDIS("REDIS"),
-
     SHARD_REDIS("SHARD_REDIS"),
-
     ROCKSDB("ROCKSDB"),
-
     REMOTING("REMOTING"),
-
     CUSTOMIZED("CUSTOMIZED");
 
     private static Map<StorageType, String> storageClassNameMap = new HashMap<>();
@@ -46,5 +39,4 @@ public enum StorageType {
     public String value() {
         return this.value;
     }
-
 }

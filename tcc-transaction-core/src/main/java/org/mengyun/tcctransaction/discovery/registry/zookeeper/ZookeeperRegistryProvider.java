@@ -11,6 +11,7 @@ import org.mengyun.tcctransaction.load.LoadInfo;
  */
 @LoadInfo(name = "zookeeper")
 public class ZookeeperRegistryProvider implements RegistryProvider {
+
     @Override
     public RegistryService provide(RegistryConfig registryConfig) {
         return new ZookeeperRegistryServiceImpl(registryConfig);

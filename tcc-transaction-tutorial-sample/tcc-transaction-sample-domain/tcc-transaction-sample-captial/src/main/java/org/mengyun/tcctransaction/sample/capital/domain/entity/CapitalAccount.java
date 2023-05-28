@@ -1,8 +1,6 @@
 package org.mengyun.tcctransaction.sample.capital.domain.entity;
 
-
 import org.mengyun.tcctransaction.sample.exception.InsufficientBalanceException;
-
 import java.math.BigDecimal;
 
 /**
@@ -26,7 +24,6 @@ public class CapitalAccount {
         return balanceAmount;
     }
 
-
     public long getId() {
         return id;
     }
@@ -36,13 +33,10 @@ public class CapitalAccount {
     }
 
     public void transferFrom(BigDecimal amount) {
-
         this.balanceAmount = this.balanceAmount.subtract(amount);
-
         if (BigDecimal.ZERO.compareTo(this.balanceAmount) > 0) {
             throw new InsufficientBalanceException();
         }
-
         transferAmount = transferAmount.add(amount.negate());
     }
 

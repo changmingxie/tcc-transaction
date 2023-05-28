@@ -4,7 +4,6 @@ import org.mengyun.tcctransaction.sample.order.domain.entity.Product;
 import org.mengyun.tcctransaction.sample.order.infrastructure.dao.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 /**

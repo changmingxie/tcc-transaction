@@ -8,7 +8,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.mengyun.tcctransaction.api.Compensable;
 import org.mengyun.tcctransaction.context.ThreadLocalTransactionContextEditor;
 import org.mengyun.tcctransaction.transaction.TransactionManager;
-
 import java.lang.reflect.Method;
 
 /**
@@ -25,16 +24,12 @@ public abstract class CompensableTransactionAspect {
 
     @Pointcut("@annotation(org.mengyun.tcctransaction.api.Compensable)")
     public void compensableTransactionPointcut() {
-
     }
 
     @Around("compensableTransactionPointcut()")
     public Object interceptCompensableMethod(ProceedingJoinPoint pjp) throws Throwable {
-
         Method method = ((MethodSignature) pjp.getSignature()).getMethod();
-
         Compensable compensable = method.getAnnotation(Compensable.class);
-
         return compensableTransactionInterceptor.interceptCompensableMethod(new AspectJTransactionMethodJoinPoint(pjp, compensable, ThreadLocalTransactionContextEditor.class));
     }
 

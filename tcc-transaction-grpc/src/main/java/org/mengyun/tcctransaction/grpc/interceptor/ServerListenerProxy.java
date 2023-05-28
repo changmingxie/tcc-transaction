@@ -3,7 +3,6 @@ package org.mengyun.tcctransaction.grpc.interceptor;
 import io.grpc.ServerCall;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.context.TransactionContextHolder;
-
 import java.util.Objects;
 
 /**
@@ -11,7 +10,9 @@ import java.util.Objects;
  * @date 2022/6/24 17:43
  */
 public class ServerListenerProxy<ReqT> extends ServerCall.Listener<ReqT> {
+
     private ServerCall.Listener<ReqT> target;
+
     private TransactionContext context;
 
     public ServerListenerProxy(TransactionContext context, ServerCall.Listener<ReqT> target) {

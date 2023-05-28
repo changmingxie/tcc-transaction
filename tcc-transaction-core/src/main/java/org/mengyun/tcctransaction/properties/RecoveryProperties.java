@@ -9,27 +9,43 @@ import org.mengyun.tcctransaction.recovery.RecoveryConfig;
 public class RecoveryProperties implements RecoveryConfig {
 
     private int maxRetryCount = 30;
+
     private int recoverDuration = 30;
 
     // max time in seconds, if zero, do not allow trying be treated as failed, should be less then maxRetryCount * retryInterval(from cronExpression)
     private int maxTimeTreatTryingAsFailed = 0;
 
     private String cronExpression = "0/30 * * * * ? ";
+
     private int fetchPageSize = 200;
+
     private int concurrentRecoveryThreadCount = Runtime.getRuntime().availableProcessors() * 2;
+
     //only used by client
     private boolean isRecoveryEnabled = true;
+
     private int quartzThreadPoolThreadCount = Runtime.getRuntime().availableProcessors() * 2 + 1;
+
     private String quartzDataSourceDriver = "com.mysql.jdbc.Driver";
+
     private String quartzDataSourceUrl = "jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true&connectTimeout=1000&socketTimeout=5000";
+
     private String quartzDataSourceUser = "root";
+
     private String quartzDataSourcePassword = "welcome1";
+
     private String quartzDataSourceValidationQuery = "select 1";
+
     private int quartzDataSourceCheckoutTimeout = 2000;
+
     private int quartzDataSourceInitialPoolSize = 1;
+
     private int quartzDataSourceMinPoolSize = 1;
+
     private int quartzDataSourceMaxPoolSize = 10;
+
     private boolean quartzClustered = false;
+
     private boolean updateJobForcibly = false;
 
     @Override

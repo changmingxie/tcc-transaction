@@ -17,7 +17,7 @@ public class TradeController {
     /**
      * default request url: http://localhost:8881/place
      */
-    @RequestMapping(value = "place", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "place", method = { RequestMethod.POST, RequestMethod.GET })
     @ResponseBody
     public String place() {
         tradeService.place();

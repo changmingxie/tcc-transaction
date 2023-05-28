@@ -6,14 +6,13 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import java.util.List;
 
 /**
  * @Author huabao.fang
  * @Date 2022/5/30 10:10
  * ,url = "http://localhost:9998"
- **/
+ */
 @FeignClient(value = DashboardConstant.TCC_SERVER_GROUP)
 public interface TccServerFeignClient {
 
@@ -35,7 +34,6 @@ public interface TccServerFeignClient {
     @RequestMapping("/domain/delete")
     @ResponseBody
     ResponseDto<Void> deleteDomain(@RequestBody DomainStoreRequestDto requestDto);
-
 
     /**
      * 事件分页查询
@@ -70,5 +68,4 @@ public interface TccServerFeignClient {
     @RequestMapping("/transaction/delete")
     @ResponseBody
     ResponseDto<Void> transactionDelete(@RequestBody TransactionOperateRequestDto requestDto);
-
 }

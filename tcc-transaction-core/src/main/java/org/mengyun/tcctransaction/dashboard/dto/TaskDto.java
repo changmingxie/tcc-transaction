@@ -3,13 +3,19 @@ package org.mengyun.tcctransaction.dashboard.dto;
 /**
  * @Author huabao.fang
  * @Date 2022/5/24 18:29
- **/
+ */
 public class TaskDto {
+
     private String schedulerName;
+
     private String domain;
+
     private String jobGroup;
+
     private String jobName;
+
     private String status;
+
     private String cronExpression;
 
     public TaskDto() {

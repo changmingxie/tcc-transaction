@@ -6,7 +6,6 @@ import org.mengyun.tcctransaction.exception.SystemException;
 import org.mengyun.tcctransaction.storage.domain.AlertType;
 import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.mengyun.tcctransaction.utils.ByteUtils;
-
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,26 +14,35 @@ import java.util.Map;
 /**
  * @Author huabao.fang
  * @Date 2022/6/14 12:50
- **/
+ */
 public class DomainStoreMapSerializer {
 
     public static final String DOMAIN = "DOMAIN";
+
     public static final String PHONE_NUMBERS = "PHONE_NUMBERS";
+
     public static final String ALERT_TYPE = "ALERT_TYPE";
+
     public static final String THRESHOLD = "THRESHOLD";
+
     public static final String INTERVAL_MINUTES = "INTERVAL_MINUTES";
+
     public static final String LAST_ALERT_TIME = "LAST_ALERT_TIME";
+
     public static final String DING_ROBOT_URL = "DING_ROBOT_URL";
+
     public static final String CREATE_TIME = "CREATE_TIME";
+
     public static final String LAST_UPDATE_TIME = "LAST_UPDATE_TIME";
+
     public static final String VERSION = "VERSION";
+
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private DomainStoreMapSerializer() {
     }
 
     public static Map<byte[], byte[]> serialize(DomainStore domainStore) {
-
         Map<byte[], byte[]> map = new HashMap<>();
         putBytesIfValueExist(map, DOMAIN, domainStore.getDomain());
         putBytesIfValueExist(map, PHONE_NUMBERS, domainStore.getPhoneNumbers());
@@ -67,18 +75,14 @@ public class DomainStoreMapSerializer {
         } else {
             throw new SystemException("value class:[" + value.getClass().getSimpleName() + "] not support");
         }
-
         map.put(key.getBytes(), valueBytes);
     }
 
     public static DomainStore deserialize(Map<byte[], byte[]> map) {
-
         Map<String, byte[]> propertyMap = new HashMap<>();
-
         for (Map.Entry<byte[], byte[]> entry : map.entrySet()) {
             propertyMap.put(new String(entry.getKey()), entry.getValue());
         }
-
         DomainStore domainStore = new DomainStore();
         domainStore.setDomain(new String(propertyMap.get(DOMAIN)));
         domainStore.setPhoneNumbers(propertyMap.get(PHONE_NUMBERS) == null ? null : new String(propertyMap.get(PHONE_NUMBERS)));
@@ -93,10 +97,7 @@ public class DomainStoreMapSerializer {
         } catch (ParseException e) {
             throw new SystemException(e);
         }
-
         domainStore.setVersion(ByteUtils.bytesToLong(propertyMap.get(VERSION)));
-
         return domainStore;
     }
-
 }

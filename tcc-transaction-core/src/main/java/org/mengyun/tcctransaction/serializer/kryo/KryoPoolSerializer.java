@@ -7,7 +7,6 @@ import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import com.esotericsoftware.kryo.util.Pool;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
 import org.objenesis.strategy.StdInstantiatorStrategy;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -33,29 +32,23 @@ public class KryoPoolSerializer<T> implements ObjectSerializer<T> {
         init();
     }
 
-
     protected void init() {
-
         kryoPool = new Pool<Kryo>(true, true, initPoolSize) {
+
             @Override
             protected Kryo create() {
                 Kryo kryo = new Kryo();
                 kryo.setReferences(true);
                 kryo.setRegistrationRequired(false);
-
-                ((DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy())
-                        .setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
-
+                ((DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
                 initHook(kryo);
                 return kryo;
             }
         };
-
         List<Kryo> preCreatedKryos = new ArrayList<>();
         for (int i = 0; i < initPoolSize; i++) {
             preCreatedKryos.add(kryoPool.obtain());
         }
-
         for (Kryo kryo : preCreatedKryos) {
             kryoPool.free(kryo);
         }
@@ -63,18 +56,13 @@ public class KryoPoolSerializer<T> implements ObjectSerializer<T> {
 
     @Override
     public byte[] serialize(final T object) {
-
         Kryo kryo = kryoPool.obtain();
         try {
-
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             Output output = new Output(byteArrayOutputStream);
-
             kryo.writeClassAndObject(output, object);
             output.flush();
-
             return byteArrayOutputStream.toByteArray();
-
         } finally {
             if (kryo != null) {
                 kryoPool.free(kryo);
@@ -84,15 +72,11 @@ public class KryoPoolSerializer<T> implements ObjectSerializer<T> {
 
     @Override
     public T deserialize(final byte[] bytes) {
-
         Kryo kryo = kryoPool.obtain();
         try {
-
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
             Input input = new Input(byteArrayInputStream);
-
             return (T) kryo.readClassAndObject(input);
-
         } finally {
             if (kryo != null) {
                 kryoPool.free(kryo);
@@ -102,12 +86,9 @@ public class KryoPoolSerializer<T> implements ObjectSerializer<T> {
 
     @Override
     public T clone(final T object) {
-
         Kryo kryo = kryoPool.obtain();
         try {
-
             return kryo.copy(object);
-
         } finally {
             if (kryo != null) {
                 kryoPool.free(kryo);
@@ -116,6 +97,5 @@ public class KryoPoolSerializer<T> implements ObjectSerializer<T> {
     }
 
     protected void initHook(Kryo kryo) {
-
     }
 }

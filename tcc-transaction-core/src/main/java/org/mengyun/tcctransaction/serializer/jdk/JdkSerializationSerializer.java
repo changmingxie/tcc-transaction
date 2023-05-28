@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.serializer.jdk;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.mengyun.tcctransaction.serializer.ObjectSerializer;
-
 import java.io.Serializable;
 
 /**

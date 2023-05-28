@@ -9,7 +9,6 @@ import org.mengyun.tcctransaction.remoting.protocol.RemotingCommandCode;
 import org.mengyun.tcctransaction.utils.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,10 +22,10 @@ public abstract class AbstractNettyRemoting {
 
     protected Pair<RequestProcessor<ChannelHandlerContext>, ExecutorService> defaultRequestProcessor;
 
-    protected ConcurrentMap<Integer /* requestId */, ResponseFuture> responseTable = new ConcurrentHashMap<>(256);
+    protected ConcurrentMap<Integer, ResponseFuture> /* requestId */
+    responseTable = new ConcurrentHashMap<>(256);
 
     protected void processMessageReceived(ChannelHandlerContext ctx, RemotingCommand cmd) {
-
         if (cmd.isRequestCommand()) {
             processRequestCommand(ctx, cmd);
         } else {
@@ -35,7 +34,6 @@ public abstract class AbstractNettyRemoting {
     }
 
     private void processResponseCommand(RemotingCommand cmd) {
-
         final int opaqueId = cmd.getRequestId();
         final ResponseFuture responseFuture = responseTable.get(opaqueId);
         if (responseFuture != null) {
@@ -45,20 +43,15 @@ public abstract class AbstractNettyRemoting {
     }
 
     private void processRequestCommand(ChannelHandlerContext ctx, RemotingCommand cmd) {
-
         Pair<RequestProcessor<ChannelHandlerContext>, ExecutorService> pair = this.defaultRequestProcessor;
-
         Runnable run = () -> {
             try {
                 RemotingCommand responseCommand = pair.getLeft().processRequest(ctx, cmd);
-
                 responseCommand.setCode(RemotingCommandCode.SERVICE_RESP);
                 responseCommand.setRequestId(cmd.getRequestId());
                 ctx.writeAndFlush(responseCommand);
-
             } catch (Exception e) {
                 logger.error("processRequest failed, command code:{}, service code:{}", cmd.getCode(), cmd.getServiceCode(), e);
-
                 StringWriter errors = new StringWriter();
                 e.printStackTrace(new PrintWriter(errors));
                 RemotingCommand responseCommand = RemotingCommand.createCommand(RemotingCommandCode.SYSTEM_EXCEPTION_RESP, errors.toString());
@@ -66,17 +59,13 @@ public abstract class AbstractNettyRemoting {
                 ctx.writeAndFlush(responseCommand);
             }
         };
-
         try {
             pair.getRight().submit(run);
         } catch (RejectedExecutionException e) {
             if ((System.currentTimeMillis() % 10000) == 0) {
-                logger.error("{},too many requests and system thread pool busy, RejectedExecutionException request code:{}",
-                        NetUtils.parseSocketAddress(ctx.channel().remoteAddress()), cmd.getCode());
+                logger.error("{},too many requests and system thread pool busy, RejectedExecutionException request code:{}", NetUtils.parseSocketAddress(ctx.channel().remoteAddress()), cmd.getCode());
             }
-
-            final RemotingCommand response = RemotingCommand.createCommand(RemotingCommandCode.SYSTEM_BUSY_RESP,
-                    "[OVERLOAD]system busy, start flow control for a while");
+            final RemotingCommand response = RemotingCommand.createCommand(RemotingCommandCode.SYSTEM_BUSY_RESP, "[OVERLOAD]system busy, start flow control for a while");
             response.setRequestId(cmd.getRequestId());
             ctx.writeAndFlush(response);
         }

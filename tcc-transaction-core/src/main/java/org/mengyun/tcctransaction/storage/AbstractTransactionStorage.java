@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.storage;
 
-
 import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.serializer.TransactionStoreSerializer;
 
@@ -23,21 +22,14 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
         if (transactionStore.getContent().length > this.storeConfig.getMaxTransactionSize()) {
             throw new TransactionIOException(String.format("cur transaction size(%dB) is bigger than maxTransactionSize(%dB), consider to reduce parameter size or adjust maxTransactionSize", transactionStore.getContent().length, this.storeConfig.getMaxTransactionSize()));
         }
-
         int result = doCreate(transactionStore);
-
         if (result > 0) {
             return result;
         } else {
-
             TransactionStore foundTransactionStore = findByXid(transactionStore.getDomain(), transactionStore.getXid());
-
-            if (foundTransactionStore != null && transactionStore.getRequestId() != null
-                    && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId())
-                    && transactionStore.getVersion() == foundTransactionStore.getVersion()) {
+            if (foundTransactionStore != null && transactionStore.getRequestId() != null && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId()) && transactionStore.getVersion() == foundTransactionStore.getVersion()) {
                 return 1;
             }
-
             throw new TransactionIOException(transactionStore.simpleDetail());
         }
     }
@@ -45,19 +37,14 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
     @Override
     public int update(TransactionStore transactionStore) {
         int result = doUpdate(transactionStore);
-
         if (result > 0) {
             return result;
         } else {
             //compare the content except the version
             TransactionStore foundTransactionStore = findByXid(transactionStore.getDomain(), transactionStore.getXid());
-
-            if (foundTransactionStore != null && transactionStore.getRequestId() != null
-                    && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId())
-                    && transactionStore.getVersion() == foundTransactionStore.getVersion()) {
+            if (foundTransactionStore != null && transactionStore.getRequestId() != null && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId()) && transactionStore.getVersion() == foundTransactionStore.getVersion()) {
                 return 1;
             }
-
             throw new TransactionOptimisticLockException(transactionStore.simpleDetail());
         }
     }
@@ -107,5 +94,4 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
     protected abstract int doCompletelyDelete(TransactionStore transactionStore);
 
     protected abstract TransactionStore doFindOne(String domain, Xid xid, boolean isMarkDeleted);
-
 }

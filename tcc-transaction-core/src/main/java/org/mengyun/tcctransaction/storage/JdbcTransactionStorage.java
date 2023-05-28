@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.storage.domain.AlertType;
 import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.mengyun.tcctransaction.xid.TransactionXid;
-
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,12 +20,15 @@ import java.util.List;
 public class JdbcTransactionStorage extends AbstractTransactionStorage implements StorageRecoverable {
 
     private static final int MARK_DELETED_YES = 1;
+
     private static final int MARK_DELETED_NO = 0;
 
     private static final String SQL_SELECT_PREFIX_FOR_TCC_TRANSACTION = "SELECT DOMAIN,ROOT_XID,XID,CONTENT,STATUS,TRANSACTION_TYPE,CREATE_TIME,LAST_UPDATE_TIME,RETRIED_COUNT,VERSION,IS_DELETE,ROOT_DOMAIN,REQUEST_ID FROM ";
+
     private static final String SQL_SELECT_PREFIX_FOR_TCC_DOMAIN = "SELECT DOMAIN, PHONE_NUMBERS, ALERT_TYPE, THRESHOLD, INTERVAL_MINUTES,LAST_ALERT_TIME,DING_ROBOT_URL,CREATE_TIME,LAST_UPDATE_TIME,VERSION FROM ";
 
     private String tbSuffix;
+
     private DataSource dataSource;
 
     public JdbcTransactionStorage(TransactionStoreSerializer serializer, StoreConfig storeConfig) {
@@ -45,25 +47,16 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
 
     @Override
     protected int doCreate(TransactionStore transactionStore) {
-
         if (doFindOne(transactionStore.getDomain(), transactionStore.getXid(), false) != null) {
             return 0;
         }
-
         Connection connection = null;
         PreparedStatement stmt = null;
-
         try {
             connection = this.getConnection();
-
             StringBuilder builder = new StringBuilder();
-            builder
-                    .append("INSERT INTO ")
-                    .append(getTableName())
-                    .append("(ROOT_XID,XID,TRANSACTION_TYPE,CONTENT,STATUS,RETRIED_COUNT,CREATE_TIME,LAST_UPDATE_TIME,VERSION,ROOT_DOMAIN,DOMAIN,REQUEST_ID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-
+            builder.append("INSERT INTO ").append(getTableName()).append("(ROOT_XID,XID,TRANSACTION_TYPE,CONTENT,STATUS,RETRIED_COUNT,CREATE_TIME,LAST_UPDATE_TIME,VERSION,ROOT_DOMAIN,DOMAIN,REQUEST_ID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
             stmt = connection.prepareStatement(builder.toString());
-
             stmt.setString(1, transactionStore.getRootXid().toString());
             stmt.setString(2, transactionStore.getXid().toString());
             stmt.setInt(3, transactionStore.getTransactionTypeId());
@@ -81,7 +74,6 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
                 stmt.setNull(12, Types.INTEGER);
             }
             return stmt.executeUpdate();
-
         } catch (SQLException e) {
             throw new TransactionIOException(e);
         } finally {
@@ -94,19 +86,12 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     protected int doUpdate(TransactionStore transactionStore) {
         Connection connection = null;
         PreparedStatement stmt = null;
-
-
         try {
             connection = this.getConnection();
-
             StringBuilder builder = new StringBuilder();
-            builder.append("UPDATE " + getTableName() + " SET " +
-                    "CONTENT = ?,STATUS = ?,REQUEST_ID = ?,LAST_UPDATE_TIME = ?, RETRIED_COUNT = ?,VERSION = VERSION+1 WHERE XID = ? AND VERSION = ?");
-
+            builder.append("UPDATE " + getTableName() + " SET " + "CONTENT = ?,STATUS = ?,REQUEST_ID = ?,LAST_UPDATE_TIME = ?, RETRIED_COUNT = ?,VERSION = VERSION+1 WHERE XID = ? AND VERSION = ?");
             builder.append(StringUtils.isNotEmpty(transactionStore.getDomain()) ? " AND DOMAIN = ?" : "");
-
             stmt = connection.prepareStatement(builder.toString());
-
             stmt.setBytes(1, transactionStore.getContent());
             stmt.setInt(2, transactionStore.getStatusId());
             if (transactionStore.getRequestId() != null) {
@@ -115,20 +100,16 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
                 stmt.setNull(3, Types.INTEGER);
             }
             stmt.setTimestamp(4, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
-
             stmt.setInt(5, transactionStore.getRetriedCount());
             stmt.setString(6, transactionStore.getXid().toString());
-            stmt.setLong(7, transactionStore.getVersion()-1);
-
+            stmt.setLong(7, transactionStore.getVersion() - 1);
             if (StringUtils.isNotEmpty(transactionStore.getDomain())) {
                 stmt.setString(8, transactionStore.getDomain());
             }
-
             return stmt.executeUpdate();
-
         } catch (Throwable e) {
             throw new TransactionIOException(e);
-        }finally {
+        } finally {
             closeStatement(stmt);
             this.releaseConnection(connection);
         }
@@ -138,27 +119,18 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     protected int doDelete(TransactionStore transactionStore) {
         Connection connection = null;
         PreparedStatement stmt = null;
-
         try {
             connection = this.getConnection();
-
             StringBuilder builder = new StringBuilder();
-            builder.append("DELETE FROM " + getTableName() +
-                    " WHERE XID = ?");
-
+            builder.append("DELETE FROM " + getTableName() + " WHERE XID = ?");
             builder.append(StringUtils.isNotEmpty(transactionStore.getDomain()) ? " AND DOMAIN = ?" : "");
-
             stmt = connection.prepareStatement(builder.toString());
-
             stmt.setString(1, transactionStore.getXid().toString());
-
             if (StringUtils.isNotEmpty(transactionStore.getDomain())) {
                 stmt.setString(2, transactionStore.getDomain());
             }
-
             stmt.executeUpdate();
             return 1;
-
         } catch (SQLException e) {
             throw new TransactionIOException(e);
         } finally {
@@ -185,38 +157,25 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     private int doMarkDeleted(TransactionStore transactionStore, boolean isMarkDeleted) {
         Connection connection = null;
         PreparedStatement stmt = null;
-
         Date lastUpdateTime = transactionStore.getLastUpdateTime();
         long currentVersion = transactionStore.getVersion();
-
         transactionStore.setLastUpdateTime(new Date());
         transactionStore.setVersion(transactionStore.getVersion() + 1);
-
         try {
             connection = this.getConnection();
-
             StringBuilder builder = new StringBuilder();
-            builder.append("UPDATE " + getTableName() + " SET " +
-                    "IS_DELETE = ?,LAST_UPDATE_TIME = ?, VERSION = VERSION+1 WHERE XID = ? AND VERSION = ?");
-
+            builder.append("UPDATE " + getTableName() + " SET " + "IS_DELETE = ?,LAST_UPDATE_TIME = ?, VERSION = VERSION+1 WHERE XID = ? AND VERSION = ?");
             builder.append(StringUtils.isNotEmpty(transactionStore.getDomain()) ? " AND DOMAIN = ?" : "");
-
             stmt = connection.prepareStatement(builder.toString());
-
             stmt.setInt(1, isMarkDeleted ? MARK_DELETED_YES : MARK_DELETED_NO);
             stmt.setTimestamp(2, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
-
             stmt.setString(3, transactionStore.getXid().toString());
             stmt.setLong(4, currentVersion);
-
             if (StringUtils.isNotEmpty(transactionStore.getDomain())) {
                 stmt.setString(5, transactionStore.getDomain());
             }
-
             int result = stmt.executeUpdate();
-
             return result;
-
         } catch (Throwable e) {
             throw new TransactionIOException(e);
         } finally {
@@ -255,7 +214,6 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             stmt = connection.prepareStatement(builder.toString());
             stmt.setString(1, domain);
             stmt.setInt(2, isMarkDeleted ? MARK_DELETED_YES : MARK_DELETED_NO);
-
             resultSet = stmt.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getInt(1);
@@ -278,20 +236,15 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
 
     @Override
     public void registerDomain(DomainStore domainStore) {
-
         DomainStore record = findDomain(domainStore.getDomain());
         if (record != null) {
             return;
         }
-
         domainStore.setVersion(1);
         executeUpdate(connection -> {
-
             StringBuilder builder = new StringBuilder();
-            builder.append("INSERT INTO " + getDomainTableName() +
-                    "(DOMAIN,PHONE_NUMBERS,ALERT_TYPE,THRESHOLD,INTERVAL_MINUTES,LAST_ALERT_TIME,DING_ROBOT_URL,CREATE_TIME,LAST_UPDATE_TIME,VERSION)");
+            builder.append("INSERT INTO " + getDomainTableName() + "(DOMAIN,PHONE_NUMBERS,ALERT_TYPE,THRESHOLD,INTERVAL_MINUTES,LAST_ALERT_TIME,DING_ROBOT_URL,CREATE_TIME,LAST_UPDATE_TIME,VERSION)");
             builder.append(" VALUES (?,?,?,?,?,?,?,?,?,?)");
-
             PreparedStatement stmt = connection.prepareStatement(builder.toString());
             stmt.setString(1, domainStore.getDomain());
             stmt.setString(2, domainStore.getPhoneNumbers());
@@ -303,7 +256,6 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             stmt.setTimestamp(8, new Timestamp(domainStore.getCreateTime().getTime()));
             stmt.setTimestamp(9, new Timestamp(domainStore.getLastUpdateTime().getTime()));
             stmt.setLong(10, domainStore.getVersion());
-
             return stmt;
         });
     }
@@ -311,17 +263,8 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     @Override
     public void updateDomain(DomainStore domainStore) {
         executeUpdate(connection -> {
-
             StringBuilder builder = new StringBuilder();
-            builder.append("UPDATE " + getDomainTableName() + " SET " +
-                    "PHONE_NUMBERS = ?," +
-                    "ALERT_TYPE = ?," +
-                    "THRESHOLD = ?," +
-                    "INTERVAL_MINUTES = ?," +
-                    "LAST_ALERT_TIME = ?," +
-                    "DING_ROBOT_URL = ?," +
-                    "LAST_UPDATE_TIME = ?, VERSION = VERSION+1 WHERE DOMAIN = ? AND VERSION = ?");
-
+            builder.append("UPDATE " + getDomainTableName() + " SET " + "PHONE_NUMBERS = ?," + "ALERT_TYPE = ?," + "THRESHOLD = ?," + "INTERVAL_MINUTES = ?," + "LAST_ALERT_TIME = ?," + "DING_ROBOT_URL = ?," + "LAST_UPDATE_TIME = ?, VERSION = VERSION+1 WHERE DOMAIN = ? AND VERSION = ?");
             PreparedStatement stmt = connection.prepareStatement(builder.toString());
             stmt.setString(1, domainStore.getPhoneNumbers());
             stmt.setString(2, domainStore.getAlertType().name());
@@ -332,7 +275,6 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             stmt.setTimestamp(7, new Timestamp(domainStore.getLastUpdateTime().getTime()));
             stmt.setString(8, domainStore.getDomain());
             stmt.setLong(9, domainStore.getVersion());
-
             return stmt;
         });
     }
@@ -340,30 +282,23 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     @Override
     public void removeDomain(String domain) {
         executeUpdate(connection -> {
-
             StringBuilder builder = new StringBuilder();
-            builder.append("DELETE FROM " + getDomainTableName() +
-                    " WHERE DOMAIN = ?");
-
+            builder.append("DELETE FROM " + getDomainTableName() + " WHERE DOMAIN = ?");
             PreparedStatement stmt = connection.prepareStatement(builder.toString());
             stmt.setString(1, domain);
-
             return stmt;
         });
     }
 
     @Override
     public DomainStore findDomain(String domain) {
-
         List<DomainStore> list = executeDomainQuery(connection -> {
             StringBuilder builder = new StringBuilder();
             builder.append(SQL_SELECT_PREFIX_FOR_TCC_DOMAIN + getDomainTableName() + " WHERE DOMAIN = ?");
-
             PreparedStatement stmt = connection.prepareStatement(builder.toString());
             stmt.setString(1, domain);
             return stmt;
         });
-
         if (!CollectionUtils.isEmpty(list)) {
             return list.get(0);
         }
@@ -390,35 +325,25 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     }
 
     private Page<TransactionStore> pageList(String domain, Date date, String offset, int pageSize, boolean isMarkDeleted) {
-
         List<TransactionStore> transactions = new ArrayList<>();
-
         Connection connection = null;
         PreparedStatement stmt = null;
-
         int currentOffset = StringUtils.isEmpty(offset) ? 0 : Integer.parseInt(offset);
-
         try {
             connection = this.getConnection();
-
             StringBuilder builder = new StringBuilder();
             builder.append(SQL_SELECT_PREFIX_FOR_TCC_TRANSACTION + getTableName() + " WHERE LAST_UPDATE_TIME < ?");
             builder.append(" AND IS_DELETE = ?");
             builder.append(StringUtils.isNotEmpty(domain) ? " AND DOMAIN = ?" : "");
             builder.append(" ORDER BY TRANSACTION_ID ASC");
             builder.append(String.format(" LIMIT %s, %d", currentOffset, pageSize));
-
             stmt = connection.prepareStatement(builder.toString());
-
             stmt.setTimestamp(1, new Timestamp(date.getTime()));
             stmt.setInt(2, isMarkDeleted ? MARK_DELETED_YES : MARK_DELETED_NO);
-
             if (StringUtils.isNotEmpty(domain)) {
                 stmt.setString(3, domain);
             }
-
             ResultSet resultSet = stmt.executeQuery();
-
             this.constructTransactions(resultSet, transactions);
         } catch (Throwable e) {
             throw new TransactionIOException(e);
@@ -426,14 +351,11 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             closeStatement(stmt);
             this.releaseConnection(connection);
         }
-
         return new Page<>(String.valueOf(currentOffset + transactions.size()), transactions);
     }
 
     private TransactionStore doFind(String domain, Xid xid, boolean isMarkDeleted) {
-
         List<TransactionStore> transactions = doFinds(domain, Arrays.asList(xid), isMarkDeleted);
-
         if (!CollectionUtils.isEmpty(transactions)) {
             return transactions.get(0);
         }
@@ -441,47 +363,34 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     }
 
     private List<TransactionStore> doFinds(String domain, List<Xid> xids, boolean isMarkDeleted) {
-
         List<TransactionStore> transactions = new ArrayList<>();
-
         if (CollectionUtils.isEmpty(xids)) {
             return transactions;
         }
-
         Connection connection = null;
         PreparedStatement stmt = null;
-
         try {
             connection = this.getConnection();
-
             StringBuilder builder = new StringBuilder();
             builder.append(SQL_SELECT_PREFIX_FOR_TCC_TRANSACTION + getTableName() + " WHERE");
-
             if (!CollectionUtils.isEmpty(xids)) {
                 for (Xid xid : xids) {
                     builder.append(" ( XID = ? ) OR");
                 }
                 builder.delete(builder.length() - 2, builder.length());
             }
-
             builder.append(StringUtils.isNotEmpty(domain) ? " AND DOMAIN = ?" : "");
             builder.append(" AND IS_DELETE = ?");
-
             stmt = connection.prepareStatement(builder.toString());
-
             int i = 0;
-
             for (Xid xid : xids) {
                 stmt.setString(++i, xid.toString());
             }
-
             if (StringUtils.isNotEmpty(domain)) {
                 stmt.setString(++i, domain);
             }
-
             stmt.setInt(++i, isMarkDeleted ? MARK_DELETED_YES : MARK_DELETED_NO);
             ResultSet resultSet = stmt.executeQuery();
-
             this.constructTransactions(resultSet, transactions);
         } catch (Throwable e) {
             throw new TransactionIOException(e);
@@ -489,7 +398,6 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             closeStatement(stmt);
             this.releaseConnection(connection);
         }
-
         return transactions;
     }
 
@@ -573,17 +481,12 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     }
 
     private int executeUpdate(StatementBuilder builder) {
-
         Connection connection = null;
         PreparedStatement stmt = null;
-
         try {
             connection = this.getConnection();
-
             stmt = builder.build(connection);
-
             return stmt.executeUpdate();
-
         } catch (SQLException e) {
             throw new TransactionIOException(e);
         } finally {
@@ -593,19 +496,13 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     }
 
     private <T> List<T> executeQuery(StatementBuilder builder, ResultSetConvertor<T> resultSetConvertor) {
-
         Connection connection = null;
         PreparedStatement stmt = null;
-
         try {
             connection = this.getConnection();
-
             stmt = builder.build(connection);
-
             ResultSet resultSet = stmt.executeQuery();
-
             return resultSetConvertor.convert(resultSet);
-
         } catch (SQLException e) {
             throw new TransactionIOException(e);
         } finally {
@@ -614,12 +511,13 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
         }
     }
 
-
     private interface StatementBuilder {
+
         PreparedStatement build(Connection connection) throws SQLException;
     }
 
     private interface ResultSetConvertor<T> {
+
         List<T> convert(ResultSet resultSet) throws SQLException;
     }
 }

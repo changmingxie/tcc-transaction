@@ -10,6 +10,7 @@ import org.mengyun.tcctransaction.serializer.TransactionStoreSerializer;
 public class ClientRecoveryProcessor implements RequestProcessor<ChannelHandlerContext> {
 
     private RecoveryExecutor recoveryExecutor;
+
     private TransactionStoreSerializer serializer;
 
     public ClientRecoveryProcessor(TransactionStoreSerializer serializer, RecoveryExecutor recoveryExecutor) {
@@ -19,9 +20,7 @@ public class ClientRecoveryProcessor implements RequestProcessor<ChannelHandlerC
 
     @Override
     public RemotingCommand processRequest(ChannelHandlerContext ctx, RemotingCommand request) {
-
-
-        switch (request.getServiceCode()) {
+        switch(request.getServiceCode()) {
             case RemotingServiceCode.RECOVER_COMMIT:
                 recoveryExecutor.commit(serializer.deserialize(request.getBody()));
                 return RemotingCommand.createServiceResponseCommand(null);

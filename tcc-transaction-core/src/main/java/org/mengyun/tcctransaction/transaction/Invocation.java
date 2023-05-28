@@ -1,6 +1,7 @@
 package org.mengyun.tcctransaction.transaction;
 
 public class Invocation {
+
     private String methodName;
 
     private InvocationContext invocationContext;
@@ -25,5 +26,4 @@ public class Invocation {
     public Class[] getParameterTypes() {
         return invocationContext.getParameterTypes();
     }
-
 }

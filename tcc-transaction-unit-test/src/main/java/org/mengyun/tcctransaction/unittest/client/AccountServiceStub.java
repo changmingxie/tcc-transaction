@@ -8,7 +8,6 @@ import org.mengyun.tcctransaction.unittest.service.AccountService;
 import org.mengyun.tcctransaction.unittest.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -22,15 +21,11 @@ public class AccountServiceStub implements AccountService {
     @EnableTcc
     @Override
     public void transferTo(TransactionContext transactionContext, long accountId, int amount) {
-
         TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
-
         CompletableFuture future = CompletableFuture.runAsync(() -> {
-
             TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
             accountService.transferTo(transactionContext, accountId, amount);
         });
-
         try {
             future.get();
         } catch (InterruptedException | ExecutionException e) {
@@ -41,14 +36,11 @@ public class AccountServiceStub implements AccountService {
     @EnableTcc
     @Override
     public void transferToWithTimeout(TransactionContext transactionContext, long accountId, int amount) {
-
         TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
-
         CompletableFuture future = CompletableFuture.runAsync(() -> {
             TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
             accountService.transferToWithTimeout(transactionContext, accountId, amount);
         });
-
         try {
             future.get(1000L, TimeUnit.MILLISECONDS);
         } catch (Throwable e) {
@@ -59,14 +51,12 @@ public class AccountServiceStub implements AccountService {
     @EnableTcc
     @Override
     public void transferToWithTimeoutBeforeBranchTransactionStart(TransactionContext transactionContext, long accountId, int amount) {
-
         TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
         CompletableFuture future = CompletableFuture.runAsync(new Runnable() {
+
             @Override
             public void run() {
-
                 TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
-
                 if (transactionContext1.getStatus().equals(TransactionStatus.TRYING)) {
                     try {
                         Thread.sleep(3000L);
@@ -77,7 +67,6 @@ public class AccountServiceStub implements AccountService {
                 accountService.transferTo(transactionContext, accountId, amount);
             }
         });
-
         try {
             future.get(1000L, TimeUnit.MILLISECONDS);
         } catch (Throwable e) {
@@ -88,13 +77,11 @@ public class AccountServiceStub implements AccountService {
     @EnableTcc
     @Override
     public void transferToWithException(TransactionContext transactionContext, long accountId, int amount) {
-
         TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
         CompletableFuture future = CompletableFuture.runAsync(() -> {
             TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
             accountService.transferToWithException(transactionContext, accountId, amount);
         });
-
         try {
             future.get();
         } catch (Throwable e) {
@@ -102,17 +89,14 @@ public class AccountServiceStub implements AccountService {
         }
     }
 
-
     @EnableTcc
     @Override
     public void transferFrom(TransactionContext transactionContext, long accountId, int amount) {
-
         TransactionContext transactionContext1 = TransactionContextHolder.getCurrentTransactionContext();
         CompletableFuture future = CompletableFuture.runAsync(() -> {
             TransactionContextHolder.setCurrentTransactionContext(transactionContext1);
             accountService.transferFrom(transactionContext, accountId, amount);
         });
-
         try {
             future.get();
         } catch (InterruptedException | ExecutionException e) {

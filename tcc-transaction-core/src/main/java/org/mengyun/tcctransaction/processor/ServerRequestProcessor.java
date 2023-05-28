@@ -17,7 +17,6 @@ import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.xid.TransactionXid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.nio.charset.StandardCharsets;
 
 public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerContext> {
@@ -38,7 +37,6 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
 
     @Override
     public RemotingCommand processRequest(ChannelHandlerContext ctx, RemotingCommand request) {
-
         if (request.getServiceCode() == RemotingServiceCode.FIND) {
             return readProcess(request);
         } else if (request.getServiceCode() == RemotingServiceCode.REGISTER) {
@@ -49,45 +47,35 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
     }
 
     private RemotingCommand register(ChannelHandlerContext ctx, RemotingCommand request) {
-
         //store the domain and the channel map
         String domain = new String(request.getBody());
         Channel channel = ctx.channel();
         channel.attr(AttributeKey.valueOf(MixAll.DOMAIN)).set(domain);
-
         doRegister(domain, channel);
-
         RemotingCommand remotingCommand = RemotingCommand.createServiceResponseCommand(null);
-        remotingCommand.setBody(new byte[]{(byte) 1});
+        remotingCommand.setBody(new byte[] { (byte) 1 });
         return remotingCommand;
     }
 
     private RemotingCommand readProcess(RemotingCommand request) {
-
         byte[] content = request.getBody();
         byte domainBytesLength = content[0];
         byte[] domainBytes = new byte[domainBytesLength];
         byte[] xidBytes = new byte[content.length - domainBytes.length - 1];
-
         System.arraycopy(content, 1, domainBytes, 0, domainBytesLength);
         System.arraycopy(content, 1 + domainBytes.length, xidBytes, 0, content.length - domainBytes.length - 1);
-
         Xid xid = new TransactionXid(new String(xidBytes, StandardCharsets.UTF_8));
         String domain = new String(domainBytes, StandardCharsets.UTF_8);
-
         TransactionStore transaction = transactionStorage.findByXid(domain, xid);
-
         RemotingCommand remotingCommand = RemotingCommand.createServiceResponseCommand(null);
         remotingCommand.setBody(serializer.serialize(transaction));
         return remotingCommand;
     }
 
     private RemotingCommand writeProcess(ChannelHandlerContext ctx, RemotingCommand request) {
-
         TransactionStore transaction = serializer.deserialize(request.getBody());
-
         int result = -1;
-        switch (request.getServiceCode()) {
+        switch(request.getServiceCode()) {
             case RemotingServiceCode.CREATE:
                 try {
                     result = transactionStorage.create(transaction);
@@ -106,16 +94,14 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
                 result = transactionStorage.delete(transaction);
                 break;
         }
-
         if (result > 0) {
             //store the domain and the channel map
             String domain = transaction.getDomain();
             Channel channel = ctx.channel();
             registerChannel(domain, channel);
         }
-
         RemotingCommand remotingCommand = RemotingCommand.createServiceResponseCommand(null);
-        remotingCommand.setBody(new byte[]{(byte) result});
+        remotingCommand.setBody(new byte[] { (byte) result });
         return remotingCommand;
     }
 
@@ -144,5 +130,4 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
     public void registerChannel(String domain, Channel channel) {
         FactoryBuilder.factoryOf(ChannelGroupMap.class).getInstance().registerChannel(domain, channel);
     }
-
 }

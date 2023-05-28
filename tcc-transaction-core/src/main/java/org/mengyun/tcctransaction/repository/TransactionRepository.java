@@ -3,7 +3,6 @@ package org.mengyun.tcctransaction.repository;
 import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.storage.Page;
 import org.mengyun.tcctransaction.transaction.Transaction;
-
 import java.io.Closeable;
 import java.util.Date;
 
@@ -28,6 +27,5 @@ public interface TransactionRepository extends Closeable {
 
     @Override
     default void close() {
-
     }
 }

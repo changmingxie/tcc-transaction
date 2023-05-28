@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.sample.capital.infrastructure.dao;
 
-
 import org.mengyun.tcctransaction.sample.capital.domain.entity.TradeOrder;
 
 /**

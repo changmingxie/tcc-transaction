@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisDataException;
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -15,17 +14,28 @@ import java.util.Map;
 public class RedisHelper {
 
     public static final String SEPARATOR = ":";
+
     // 内置第二分割符，解决查询事件列表时Domain包含关系问题
     public static final String SECOND_SEPARATOR = "$$:";
+
     public static final String DELETED_KEY_PREFIX = "DELETE:";
+
     public static final String DOMAIN_KEY_PREFIX = "_TCCDOMAIN:";
+
     public static final int DELETED_KEY_KEEP_TIME = 3 * 24 * 3600;
+
     public static final String LEFT_BIG_BRACKET = "{";
+
     public static final String RIGHT_BIG_BRACKET = "}";
+
     private static final Logger log = LoggerFactory.getLogger(RedisHelper.class.getSimpleName());
+
     public static final int SCAN_COUNT = 30;
+
     public static final int SCAN_MIDDLE_COUNT = 1000;
+
     public static final String SCAN_TEST_PATTERN = "*";
+
     public static final String REDIS_SCAN_INIT_CURSOR = ShardOffset.SCAN_INIT_CURSOR;
 
     private RedisHelper() {
@@ -113,7 +123,6 @@ public class RedisHelper {
             log.info("Redis **NOT** support scan command");
             return false;
         }
-
         log.info("Redis support scan command");
         return true;
     }
@@ -124,7 +133,6 @@ public class RedisHelper {
 
     public static boolean isSupportScanCommand(ShardedJedisPool shardedJedisPool) {
         Collection<Jedis> allShards = shardedJedisPool.getResource().getAllShards();
-
         for (Jedis jedis : allShards) {
             try {
                 jedis.connect();
@@ -137,19 +145,16 @@ public class RedisHelper {
                 }
             }
         }
-
         return true;
     }
 
     public static boolean isSupportScanCommand(JedisCluster jedisCluster) {
         Map<String, JedisPool> jedisPoolMap = jedisCluster.getClusterNodes();
-
         for (Map.Entry<String, JedisPool> entry : jedisPoolMap.entrySet()) {
             if (!isSupportScanCommand(entry.getValue())) {
                 return false;
             }
         }
-
         return true;
     }
 

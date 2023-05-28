@@ -16,7 +16,6 @@ import org.rocksdb.RocksDBException;
 import org.rocksdb.RocksIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,24 +50,19 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
     }
 
     public void init() {
-
         if (!initialized) {
-
             synchronized (this) {
-
                 if (!initialized) {
                     if (options == null)
                         // the Options class contains a set of configurable DB options
                         // that determines the behaviour of the database.
                         options = new Options().setCreateIfMissing(true).setKeepLogFileNum(1L);
                     String filePath = this.location;
-
                     try {
                         db = RocksDB.open(options, filePath);
                     } catch (RocksDBException e) {
                         throw new SystemException("open rocksdb failed.", e);
                     }
-
                     initialized = true;
                 }
             }
@@ -77,7 +71,6 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
 
     @Override
     protected int doCreate(TransactionStore transactionStore) {
-
         try {
             byte[] key = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
             if (db.get(key) != null) {
@@ -92,13 +85,11 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
 
     @Override
     protected int doUpdate(TransactionStore transactionStore) {
-
         try {
             TransactionStore foundTransaction = doFindOne(transactionStore.getDomain(), transactionStore.getXid(), false);
             if (foundTransaction == null || foundTransaction.getVersion() != transactionStore.getVersion() - 1) {
                 return 0;
             }
-
             byte[] key = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
             db.put(key, getSerializer().serialize(transactionStore));
             return 1;
@@ -109,7 +100,6 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
 
     @Override
     protected int doDelete(TransactionStore transactionStore) {
-
         try {
             byte[] key = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
             db.delete(key);
@@ -167,9 +157,7 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
 
     @Override
     Page<byte[]> findKeysFromOneShard(String domain, RocksDB shard, String currentCursor, int maxFindCount, boolean isMarkDeleted) {
-
         Page<byte[]> page = new Page<>();
-
         try (final RocksIterator iterator = shard.newIterator()) {
             if (ShardOffset.SCAN_INIT_CURSOR.equals(currentCursor)) {
                 iterator.seekToFirst();
@@ -189,12 +177,10 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
                 }
                 iterator.next();
             }
-
             String nextCursor = ShardOffset.SCAN_INIT_CURSOR;
             if (iterator.isValid() && count == maxFindCount) {
                 nextCursor = new String(iterator.key());
             }
-
             page.setAttachment(nextCursor);
         }
         return page;
@@ -219,34 +205,27 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
         return count;
     }
 
-
     @Override
     protected List<TransactionStore> findTransactionsFromOneShard(String domain, RocksDB shard, Set keys) {
-
         List<byte[]> allValues = new ArrayList<>();
-
         try {
             allValues = shard.multiGetAsList(Lists.newLinkedList(keys));
         } catch (RocksDBException e) {
             log.error("get transactionStore data from RocksDb failed.");
         }
-
         List<TransactionStore> list = new ArrayList<>();
-
         for (byte[] value : allValues) {
-
             if (value != null) {
                 list.add(getSerializer().deserialize(value));
             }
         }
-
         return list;
     }
-
 
     @Override
     protected ShardHolder<RocksDB> getShardHolder() {
         return new ShardHolder<RocksDB>() {
+
             @Override
             public List<RocksDB> getAllShards() {
                 return Lists.newArrayList(db);
@@ -254,25 +233,21 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
 
             @Override
             public void close() throws IOException {
-
             }
         };
     }
 
     @Override
     public void close() {
-
         if (db != null) {
             db.close();
         }
-
         if (options != null) {
             options.close();
         }
     }
 
     private TransactionStore doFind(RocksDB db, byte[] key) {
-
         try {
             byte[] values = db.get(key);
             if (ArrayUtils.isNotEmpty(values)) {
