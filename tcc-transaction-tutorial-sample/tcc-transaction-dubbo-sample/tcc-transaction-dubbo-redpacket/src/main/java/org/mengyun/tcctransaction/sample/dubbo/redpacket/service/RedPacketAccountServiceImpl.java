@@ -4,7 +4,6 @@ import org.mengyun.tcctransaction.sample.dubbo.redpacket.api.RedPacketAccountSer
 import org.mengyun.tcctransaction.sample.redpacket.domain.repository.RedPacketAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 
 /**

@@ -18,6 +18,7 @@ public class ClientRecoveryExecutor implements RecoveryExecutor {
     private static final Logger logger = LoggerFactory.getLogger(ClientRecoveryExecutor.class.getSimpleName());
 
     private TransactionRepository transactionRepository;
+
     private TransactionSerializer transactionSerializer;
 
     public ClientRecoveryExecutor(TransactionSerializer transactionSerializer, TransactionRepository transactionRepository) {
@@ -27,15 +28,13 @@ public class ClientRecoveryExecutor implements RecoveryExecutor {
 
     @Override
     public void rollback(TransactionStore transactionStore) {
-
         Transaction transaction = TransactionConvertor.getTransaction(transactionSerializer, transactionStore);
-
         transaction.setRetriedCount(transaction.getRetriedCount() + 1);
         transaction.setStatus(TransactionStatus.CANCELLING);
         try {
             transactionRepository.update(transaction);
         } catch (TransactionOptimisticLockException e) {
-            logger.debug("multiple instances try to recovery<rollback> the same transaction<{}>, this instance ignore the recovery.",transactionStore.getXid());
+            logger.debug("multiple instances try to recovery<rollback> the same transaction<{}>, this instance ignore the recovery.", transactionStore.getXid());
             return;
         }
         transaction.rollback();
@@ -44,9 +43,7 @@ public class ClientRecoveryExecutor implements RecoveryExecutor {
 
     @Override
     public void commit(TransactionStore transactionStore) {
-
         Transaction transaction = TransactionConvertor.getTransaction(transactionSerializer, transactionStore);
-
         transaction.setRetriedCount(transaction.getRetriedCount() + 1);
         transaction.setStatus(TransactionStatus.CONFIRMING);
         try {

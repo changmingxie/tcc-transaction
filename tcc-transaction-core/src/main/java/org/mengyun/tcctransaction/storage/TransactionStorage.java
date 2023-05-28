@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.storage;
 
 import org.mengyun.tcctransaction.api.Xid;
-
 import java.io.Closeable;
 
 /**
@@ -30,7 +29,5 @@ public interface TransactionStorage extends Closeable {
 
     @Override
     default void close() {
-
     }
-
 }

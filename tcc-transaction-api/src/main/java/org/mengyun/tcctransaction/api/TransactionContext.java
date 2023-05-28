@@ -10,16 +10,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TransactionContext implements Serializable {
 
     private static final long serialVersionUID = -8199390103169700387L;
+
     private Xid xid;
+
     private Xid rootXid;
+
     private String rootDomain;
 
     private TransactionStatus status = TransactionStatus.TRYING;
+
     private ParticipantStatus participantStatus = ParticipantStatus.TRYING;
+
     private Map<String, String> attachments = new ConcurrentHashMap<>();
 
     public TransactionContext() {
-
     }
 
     public TransactionContext(String rootDomain, Xid rootXid, Xid xid, TransactionStatus status) {

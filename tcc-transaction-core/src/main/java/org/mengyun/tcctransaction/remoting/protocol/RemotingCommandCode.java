@@ -2,11 +2,14 @@ package org.mengyun.tcctransaction.remoting.protocol;
 
 public enum RemotingCommandCode {
 
-    SERVICE_REQ((byte) 0, true),/*业务请求消息*/
-    SERVICE_RESP((byte) 1, false), /*TWO_WAY消息，需要业务应答*/
-
-    HEARTBEAT_REQ((byte) 5, true), /*心跳请求消息*/
-    HEARTBEAT_RESP((byte) 6, false),/*心跳应答消息*/
+    SERVICE_REQ((byte) 0, true),
+    /*业务请求消息*/
+    SERVICE_RESP((byte) 1, false),
+    /*TWO_WAY消息，需要业务应答*/
+    HEARTBEAT_REQ((byte) 5, true),
+    /*心跳请求消息*/
+    HEARTBEAT_RESP((byte) 6, false),
+    /*心跳应答消息*/
     SYSTEM_BUSY_RESP((byte) 7, false),
     SYSTEM_EXCEPTION_RESP((byte) 8, false);
 
@@ -33,7 +36,6 @@ public enum RemotingCommandCode {
         } else if (value == SYSTEM_EXCEPTION_RESP.value()) {
             return SYSTEM_EXCEPTION_RESP;
         }
-
         throw new IllegalArgumentException(String.format("unknown RemotingCommand Type of value :%d", value));
     }
 

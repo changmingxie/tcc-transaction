@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.discovery.registry;
 
 import org.mengyun.tcctransaction.exception.RegistryException;
-
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;

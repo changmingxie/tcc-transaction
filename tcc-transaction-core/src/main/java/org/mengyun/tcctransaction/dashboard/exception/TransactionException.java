@@ -6,10 +6,11 @@ import org.mengyun.tcctransaction.dashboard.enums.ResponseCodeEnum;
  * @Author huabao.fang
  * @Date 2022/6/7 00:28
  * 命名需要调整 TODO
- **/
+ */
 public class TransactionException extends RuntimeException {
 
     private final String errorCode;
+
     private final String errorMessage;
 
     public TransactionException(String errorCode, String errorMessage) {

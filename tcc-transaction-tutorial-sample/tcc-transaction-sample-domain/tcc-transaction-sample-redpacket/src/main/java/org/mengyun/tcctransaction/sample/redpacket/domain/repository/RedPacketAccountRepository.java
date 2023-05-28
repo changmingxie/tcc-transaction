@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.sample.redpacket.domain.repository;
 
-
 import org.mengyun.tcctransaction.sample.exception.InsufficientBalanceException;
 import org.mengyun.tcctransaction.sample.redpacket.domain.entity.RedPacketAccount;
 import org.mengyun.tcctransaction.sample.redpacket.infrastructure.dao.RedPacketAccountDao;
@@ -17,7 +16,6 @@ public class RedPacketAccountRepository {
     RedPacketAccountDao redPacketAccountDao;
 
     public RedPacketAccount findByUserId(long userId) {
-
         return redPacketAccountDao.findByUserId(userId);
     }
 

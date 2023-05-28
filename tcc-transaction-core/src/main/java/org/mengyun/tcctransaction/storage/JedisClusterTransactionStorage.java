@@ -5,7 +5,6 @@ import org.mengyun.tcctransaction.storage.helper.JedisClusterCommands;
 import org.mengyun.tcctransaction.storage.helper.RedisCommands;
 import org.mengyun.tcctransaction.storage.helper.ShardHolder;
 import redis.clients.jedis.*;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -41,7 +40,6 @@ public class JedisClusterTransactionStorage extends AbstractRedisTransactionStor
 
         @Override
         public void close() throws IOException {
-
             for (Jedis jedis : allShards) {
                 try {
                     if (jedis != null) {
@@ -55,56 +53,40 @@ public class JedisClusterTransactionStorage extends AbstractRedisTransactionStor
 
         @Override
         public List<Jedis> getAllShards() {
-
             if (allShards.isEmpty()) {
-
                 Map<String, JedisPool> clusterNodes = jedisCluster.getClusterNodes();
-
                 Set<String> masterNodeKeys = getMasterNodeKeys(clusterNodes);
-
                 for (String masterNodeKey : masterNodeKeys) {
-
                     JedisPool jedisPool = clusterNodes.get(masterNodeKey);
-
                     if (jedisPool != null) {
                         Jedis jedis = clusterNodes.get(masterNodeKey).getResource();
                         allShards.add(jedis);
                     }
                 }
-
                 allShards.sort(new AbstractRedisTransactionStorage.JedisComparator());
             }
-
             return allShards;
         }
 
         private Set<String> getMasterNodeKeys(Map<String, JedisPool> clusterNodes) {
             Set<String> masterNodeKeys = new HashSet<>();
-
             for (Map.Entry<String, JedisPool> entry : clusterNodes.entrySet()) {
-
                 try (Jedis jedis = entry.getValue().getResource()) {
-
                     List<Object> slots = jedis.clusterSlots();
-
                     for (Object slotInfoObj : slots) {
                         List<Object> slotInfo = (List<Object>) slotInfoObj;
-
                         if (slotInfo.size() <= MASTER_NODE_INDEX) {
                             continue;
                         }
-
                         // hostInfos
                         List<Object> hostInfos = (List<Object>) slotInfo.get(MASTER_NODE_INDEX);
                         if (hostInfos.isEmpty()) {
                             continue;
                         }
-
                         // at this time, we just use master, discard slave information
                         HostAndPort node = generateHostAndPort(hostInfos);
                         masterNodeKeys.add(JedisClusterInfoCache.getNodeKey(node));
                     }
-
                     break;
                 } catch (Exception e) {
                     // try next jedispool
@@ -119,11 +101,8 @@ public class JedisClusterTransactionStorage extends AbstractRedisTransactionStor
             return new HostAndPort(host, port);
         }
 
-
         private String encode(final byte[] data) {
             return new String(data, StandardCharsets.UTF_8);
         }
     }
-
 }
-

@@ -9,13 +9,12 @@ import org.mengyun.tcctransaction.storage.TransactionStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 /**
  * @Author huabao.fang
  * @Date 2022/5/30 14:17
- **/
+ */
 @Conditional(TccServerStorageCondition.class)
 @Service
 public class TccServerDomainServiceImpl implements DomainService {

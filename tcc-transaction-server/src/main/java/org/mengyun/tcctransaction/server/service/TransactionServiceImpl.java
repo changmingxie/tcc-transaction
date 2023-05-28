@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 /**
  * @Author huabao.fang
  * @Date 2022/5/24 23:17
- **/
+ */
 @Service
 public class TransactionServiceImpl extends BaseTransactionServiceImpl {
 
@@ -55,5 +55,4 @@ public class TransactionServiceImpl extends BaseTransactionServiceImpl {
         }
         return ResponseDto.returnSuccess(transactionStoreDto);
     }
-
 }

@@ -3,7 +3,6 @@ package org.mengyun.tcctransaction.discovery.registry.direct;
 import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.discovery.registry.AbstractRegistryService;
 import org.mengyun.tcctransaction.discovery.registry.RegistryConfig;
-
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -32,9 +31,7 @@ public class DirectRegistryServiceImpl extends AbstractRegistryService {
             throw new IllegalArgumentException("ServerAddresses cant be blank");
         }
         try {
-            setServerAddresses(Arrays
-                    .stream(serverAddresses.split(","))
-                    .collect(Collectors.toList()));
+            setServerAddresses(Arrays.stream(serverAddresses.split(",")).collect(Collectors.toList()));
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to parse serverAddresses:" + serverAddresses);
         }

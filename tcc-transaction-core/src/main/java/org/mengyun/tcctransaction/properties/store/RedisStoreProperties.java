@@ -10,19 +10,17 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisStoreProperties extends AbstractJedisStoreProperties {
 
     private String host = "127.0.0.1";
+
     private int port = 6379;
+
     private int database = 0;
+
     private JedisPool instance;
 
     public JedisPool getJedisPool() {
         if (instance == null) {
             JedisPoolConfig config = getJedisPoolConfig();
-            instance = new JedisPool(config, host, port, getConnectionTimeout(), getSoTimeout(), getPassword(), database,
-                    null,
-                    false,
-                    null,
-                    null,
-                    null);
+            instance = new JedisPool(config, host, port, getConnectionTimeout(), getSoTimeout(), getPassword(), database, null, false, null, null, null);
         }
         return instance;
     }

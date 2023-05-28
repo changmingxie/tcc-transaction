@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * @Author huabao.fang
  * @Date 2022/6/7 00:26
- **/
+ */
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
@@ -33,11 +33,9 @@ public class ControllerExceptionHandler {
             TransactionException transactionException = (TransactionException) e.getCause();
             return ResponseDto.returnFail(transactionException.getErrorCode(), transactionException.getErrorMessage());
         }
-
         if (e instanceof BadCredentialsException) {
             return ResponseDto.returnFail(ResponseCodeEnum.LOGIN_PASSWORD_ILLEGAL, e.getMessage());
         }
-
         if (e instanceof AuthenticationException) {
             return ResponseDto.returnFail(ResponseCodeEnum.LOGIN_ERROR_WITH_MESSAGE, e.getMessage());
         }

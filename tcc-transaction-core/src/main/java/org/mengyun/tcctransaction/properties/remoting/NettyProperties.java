@@ -9,13 +9,19 @@ import org.mengyun.tcctransaction.remoting.netty.NettyConfig;
 public class NettyProperties implements NettyConfig {
 
     private int workerThreadSize = Runtime.getRuntime().availableProcessors() * 2;
+
     private int socketBacklog = 512;
+
     private int socketRcvBufSize = 153600;
+
     private int socketSndBufSize = 153600;
+
     private int frameMaxLength = 1024 * 1024 * 2;
+
     private int workSelectorThreadSize = Runtime.getRuntime().availableProcessors();
 
     private int requestProcessThreadSize = Runtime.getRuntime().availableProcessors() * 2 + 1;
+
     private int requestProcessThreadQueueCapacity = 1024;
 
     @Override

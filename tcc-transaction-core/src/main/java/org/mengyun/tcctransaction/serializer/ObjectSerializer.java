@@ -21,6 +21,5 @@ public interface ObjectSerializer<T> {
      */
     T deserialize(byte[] bytes);
 
-
     T clone(T object);
 }

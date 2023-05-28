@@ -6,28 +6,35 @@ import java.util.Date;
 /**
  * @Author huabao.fang
  * @Date 2022/6/13 22:48
- **/
+ */
 public class DomainStore implements Serializable {
 
     private static final long serialVersionUID = -7979140711432461167L;
 
     private String domain;
+
     // 告警手机号列表,多个以英文逗号分割
     private String phoneNumbers;
+
     // 告警类型: DING-钉钉, SMS-短信, PHONE-电话
     private AlertType alertType;
+
     //告警阈值
     private int threshold;
+
     // 告警间隔时间(单位为分钟) 避免频繁告警
     private int intervalMinutes;
 
     // 上次告警时间
     private Date lastAlertTime;
+
     // 钉钉机器人地址
     private String dingRobotUrl;
 
     private Date createTime = new Date();
+
     private Date lastUpdateTime = new Date();
+
     private long version = 0L;
 
     public DomainStore() {

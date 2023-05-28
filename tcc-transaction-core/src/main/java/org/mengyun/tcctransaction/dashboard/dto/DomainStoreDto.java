@@ -3,7 +3,7 @@ package org.mengyun.tcctransaction.dashboard.dto;
 /**
  * @Author huabao.fang
  * @Date 2022/6/14 14:17
- **/
+ */
 public class DomainStoreDto {
 
     private String domain;
@@ -27,7 +27,9 @@ public class DomainStoreDto {
     private String dingRobotUrl;
 
     private String createTime;
+
     private String lastUpdateTime;
+
     private long version = 0L;
 
     public String getDomain() {

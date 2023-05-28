@@ -9,7 +9,6 @@ import org.mengyun.tcctransaction.dashboard.enums.ResponseCodeEnum;
 import org.mengyun.tcctransaction.dashboard.exception.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,7 +21,7 @@ import java.util.Arrays;
 /**
  * @Author huabao.fang
  * @Date 2022/6/15 00:21
- **/
+ */
 public class AlertUtils {
 
     private static Logger logger = LoggerFactory.getLogger(AlertUtils.class);
@@ -78,22 +77,17 @@ public class AlertUtils {
      */
     private static JsonNode buildDingRequestParams(String phoneNumbers, String content) {
         ObjectNode params = jackson.createObjectNode();
-
         params.put("msgtype", "text");
-
         ObjectNode textField = jackson.createObjectNode();
         textField.put("content", content);
         params.set("text", textField);
-
         ObjectNode atField = jackson.createObjectNode();
         ArrayNode atMobilesField = jackson.createArrayNode();
         Arrays.stream(phoneNumbers.split(",")).forEach(atMobilesField::add);
         atField.set("atMobiles", atMobilesField);
         atField.put("isAtAll", false);
         params.set("at", atField);
-
         return params;
-
     }
 
     private static JsonNode doPost(String url, JsonNode params) {
@@ -134,6 +128,5 @@ public class AlertUtils {
         } catch (JsonProcessingException e) {
             throw new TransactionException(ResponseCodeEnum.ALERT_DING_ERROR.getCode(), "failed to deserialize response");
         }
-
     }
 }

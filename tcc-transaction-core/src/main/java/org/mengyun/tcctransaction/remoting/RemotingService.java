@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.remoting;
 
 import io.netty.channel.ChannelHandler;
-
 import java.util.concurrent.ExecutorService;
 
 public interface RemotingService<T> {

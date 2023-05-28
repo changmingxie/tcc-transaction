@@ -10,5 +10,4 @@ public class TccTransactionServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(TccTransactionServerApplication.class, args);
     }
-
 }

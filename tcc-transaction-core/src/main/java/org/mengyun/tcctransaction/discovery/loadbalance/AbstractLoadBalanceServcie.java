@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.discovery.loadbalance;
 
 import org.mengyun.tcctransaction.utils.CollectionUtils;
-
 import java.util.List;
 
 /**

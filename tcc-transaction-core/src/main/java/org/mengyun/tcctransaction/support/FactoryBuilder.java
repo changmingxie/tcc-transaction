@@ -9,29 +9,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class FactoryBuilder {
 
-
     private static List<BeanFactory> beanFactories = new ArrayList<>();
+
     private static ConcurrentHashMap<Class, SingeltonFactory> classFactoryMap = new ConcurrentHashMap<>();
 
     private FactoryBuilder() {
-
     }
 
     public static <T> SingeltonFactory<T> factoryOf(Class<T> clazz) {
-
         if (!classFactoryMap.containsKey(clazz)) {
-
             for (BeanFactory beanFactory : beanFactories) {
                 if (beanFactory.isFactoryOf(clazz)) {
                     classFactoryMap.putIfAbsent(clazz, new SingeltonFactory<T>(clazz, beanFactory.getBean(clazz)));
                 }
             }
-
             if (!classFactoryMap.containsKey(clazz)) {
                 classFactoryMap.putIfAbsent(clazz, new SingeltonFactory<T>(clazz));
             }
         }
-
         return classFactoryMap.get(clazz);
     }
 
@@ -55,15 +50,12 @@ public final class FactoryBuilder {
         }
 
         public T getInstance() {
-
             if (instance == null) {
                 synchronized (SingeltonFactory.class) {
                     if (instance == null) {
                         try {
                             ClassLoader loader = Thread.currentThread().getContextClassLoader();
-
                             Class<?> clazz = loader.loadClass(className);
-
                             instance = (T) clazz.newInstance();
                         } catch (Exception e) {
                             throw new RuntimeException("Failed to create an instance of " + className, e);
@@ -71,7 +63,6 @@ public final class FactoryBuilder {
                     }
                 }
             }
-
             return instance;
         }
 
@@ -83,9 +74,7 @@ public final class FactoryBuilder {
             if (other == null || getClass() != other.getClass()) {
                 return false;
             }
-
             SingeltonFactory that = (SingeltonFactory) other;
-
             return className.equals(that.className);
         }
 

@@ -10,22 +10,17 @@ import java.util.List;
 public final class CollectionUtils {
 
     private CollectionUtils() {
-
     }
 
     public static boolean isEmpty(Collection collection) {
         return (collection == null || collection.isEmpty());
     }
 
-
     public static List merge(List firstList, List secondList) {
-
         List mergedList = new ArrayList<>();
-
         if (firstList != null) {
             mergedList.addAll(firstList);
         }
-
         if (secondList != null) {
             mergedList.addAll(secondList);
         }

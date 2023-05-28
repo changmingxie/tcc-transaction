@@ -8,13 +8,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.mengyun.tcctransaction.exception.SystemException;
 import org.mengyun.tcctransaction.storage.domain.DomainStore;
-
 import java.io.IOException;
 
 /**
  * @Author huabao.fang
  * @Date 2022/6/29 12:21
- **/
+ */
 public class TccDomainStoreSerializer implements ObjectSerializer<DomainStore> {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();

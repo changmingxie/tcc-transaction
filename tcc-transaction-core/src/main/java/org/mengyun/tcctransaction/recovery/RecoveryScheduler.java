@@ -5,7 +5,6 @@ import org.mengyun.tcctransaction.exception.SystemException;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,8 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RecoveryScheduler {
 
     public static final String JOB_NAME = "TCC_JOB_%s";
+
     public static final String TRIGGER_NAME = "TCC_TRIGGER_%s";
+
     private static final Logger logger = LoggerFactory.getLogger(RecoveryScheduler.class.getSimpleName());
+
     private RecoveryConfig recoveryConfig;
 
     private Map<String, Scheduler> schedulers = new ConcurrentHashMap<>();
@@ -48,7 +50,6 @@ public class RecoveryScheduler {
         if (!schedulers.containsKey(domain)) {
             return;
         }
-
         synchronized (RecoveryScheduler.class) {
             Scheduler scheduler = schedulers.get(domain);
             if (scheduler == null) {
@@ -73,22 +74,16 @@ public class RecoveryScheduler {
         schedulers.clear();
     }
 
-
     public Scheduler getScheduler(String domain) {
         return schedulers.get(domain);
     }
 
     private void scheduleJob(Scheduler scheduler, String domain) {
-
         String jobName = String.format(JOB_NAME, domain);
         String triggerName = String.format(TRIGGER_NAME, domain);
-
         JobDetail jobDetail = JobBuilder.newJob(QuartzRecoveryTask.class).withIdentity(jobName).build();
         jobDetail.getJobDataMap().put(MixAll.DOMAIN, domain);
-        CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerName)
-                .withSchedule(CronScheduleBuilder.cronSchedule(recoveryConfig.getCronExpression())
-                        .withMisfireHandlingInstructionDoNothing()).build();
-
+        CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerName).withSchedule(CronScheduleBuilder.cronSchedule(recoveryConfig.getCronExpression()).withMisfireHandlingInstructionDoNothing()).build();
         try {
             if (!scheduler.checkExists(JobKey.jobKey(jobName))) {
                 scheduler.scheduleJob(jobDetail, cronTrigger);
@@ -126,7 +121,6 @@ public class RecoveryScheduler {
         conf.put("org.quartz.threadPool.class", ReusableThreadPool.class.getName());
         conf.put("org.quartz.threadPool.threadCount", String.valueOf(recoveryConfig.getQuartzThreadPoolThreadCount()));
         conf.put("org.quartz.scheduler.skipUpdateCheck", "false");
-
         if (recoveryConfig.isQuartzClustered()) {
             conf.put("org.quartz.jobStore.isClustered", String.valueOf(recoveryConfig.isQuartzClustered()));
             conf.put("org.quartz.scheduler.instanceId", "AUTO");
@@ -148,7 +142,6 @@ public class RecoveryScheduler {
             conf.put("org.quartz.jobStore.misfireThreshold", "1000");
             conf.put("org.quartz.scheduler.idleWaitTime", "5000");
         }
-
         try {
             SchedulerFactory factory = new org.quartz.impl.StdSchedulerFactory(conf);
             return factory.getScheduler();

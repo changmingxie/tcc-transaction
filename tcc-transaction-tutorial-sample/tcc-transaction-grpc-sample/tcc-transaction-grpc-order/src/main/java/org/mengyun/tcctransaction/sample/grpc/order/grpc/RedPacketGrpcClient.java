@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceGrpc
 import org.mengyun.tcctransaction.sample.grpc.redpacket.api.RedPacketServiceOuterClass;
 import org.mengyun.tcctransaction.sample.grpc.redpacket.api.dto.RedPacketTradeOrderDto;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 
 /**
@@ -28,14 +27,7 @@ public class RedPacketGrpcClient {
 
     @EnableTcc
     public String record(RedPacketTradeOrderDto tradeOrderDto) {
-        RedPacketServiceOuterClass.RedPacketTradeOrderDto redPacketTradeOrderDto = RedPacketServiceOuterClass.RedPacketTradeOrderDto.newBuilder()
-                .setSelfUserId(tradeOrderDto.getSelfUserId())
-                .setOppositeUserId(tradeOrderDto.getOppositeUserId())
-                .setOrderTitle(tradeOrderDto.getOrderTitle())
-                .setMerchantOrderNo(tradeOrderDto.getMerchantOrderNo())
-                .setAmount(tradeOrderDto.getAmount().toPlainString())
-                .build();
-
+        RedPacketServiceOuterClass.RedPacketTradeOrderDto redPacketTradeOrderDto = RedPacketServiceOuterClass.RedPacketTradeOrderDto.newBuilder().setSelfUserId(tradeOrderDto.getSelfUserId()).setOppositeUserId(tradeOrderDto.getOppositeUserId()).setOrderTitle(tradeOrderDto.getOrderTitle()).setMerchantOrderNo(tradeOrderDto.getMerchantOrderNo()).setAmount(tradeOrderDto.getAmount().toPlainString()).build();
         RedPacketServiceGrpc.RedPacketServiceBlockingStub stub = RedPacketServiceGrpc.newBlockingStub(redPacketChannel);
         return stub.record(redPacketTradeOrderDto).getMessage();
     }

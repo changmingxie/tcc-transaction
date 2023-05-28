@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.sample.redpacket.infrastructure.dao;
 
-
 import org.mengyun.tcctransaction.sample.redpacket.domain.entity.TradeOrder;
 
 /**

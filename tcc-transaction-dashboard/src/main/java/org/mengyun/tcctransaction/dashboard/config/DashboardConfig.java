@@ -10,13 +10,12 @@ import org.springframework.cloud.zookeeper.CuratorFrameworkCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
 
 /**
  * @Author huabao.fang
  * @Date 2022/6/12 00:46
- **/
+ */
 @EnableConfigurationProperties
 @Configuration
 public class DashboardConfig {
@@ -31,18 +30,18 @@ public class DashboardConfig {
     public CuratorFrameworkCustomizer curatorFrameworkCustomizer(DashboardProperties dashboardProperties) {
         return builder -> {
             if (StringUtils.isNotEmpty(dashboardProperties.getRegistry().getZookeeperRegistryProperties().getDigest())) {
-                builder.authorization("digest", dashboardProperties.getRegistry().getZookeeperRegistryProperties().getDigest().getBytes())
-                        .aclProvider(new ACLProvider() {
-                            @Override
-                            public List<ACL> getDefaultAcl() {
-                                return ZooDefs.Ids.CREATOR_ALL_ACL;
-                            }
+                builder.authorization("digest", dashboardProperties.getRegistry().getZookeeperRegistryProperties().getDigest().getBytes()).aclProvider(new ACLProvider() {
 
-                            @Override
-                            public List<ACL> getAclForPath(String path) {
-                                return ZooDefs.Ids.CREATOR_ALL_ACL;
-                            }
-                        });
+                    @Override
+                    public List<ACL> getDefaultAcl() {
+                        return ZooDefs.Ids.CREATOR_ALL_ACL;
+                    }
+
+                    @Override
+                    public List<ACL> getAclForPath(String path) {
+                        return ZooDefs.Ids.CREATOR_ALL_ACL;
+                    }
+                });
             }
         };
     }

@@ -6,11 +6,15 @@ import org.mengyun.tcctransaction.properties.registry.RegistryProperties;
 /**
  * @Author huabao.fang
  * @Date 2022/6/12 00:32
- **/
+ */
 public class DashboardProperties {
+
     private String userName = "admin";
+
     private String password = "123456";
+
     private ConnectionMode connectionMode;
+
     private RegistryProperties registry;
 
     public DashboardProperties() {

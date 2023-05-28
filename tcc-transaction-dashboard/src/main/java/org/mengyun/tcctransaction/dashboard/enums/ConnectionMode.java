@@ -7,11 +7,13 @@ import java.util.Map;
  * @Author huabao.fang
  * @Date 2022/6/9 20:52
  * 存储链接模式
- **/
+ */
 public enum ConnectionMode {
-    EMBEDDED,// 嵌入模式
-    SERVER //   server模式
-    ;
+
+    // 嵌入模式
+    EMBEDDED,
+    //   server模式
+    SERVER;
 
     private static Map<String, ConnectionMode> connectionModeMap = new HashMap<>();
 

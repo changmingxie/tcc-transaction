@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 public class ByteUtils {
 
     public static final byte[] TRUE;
+
     public static final byte[] FALSE;
 
     static {
@@ -17,7 +18,6 @@ public class ByteUtils {
 
     private ByteUtils() {
     }
-
 
     public static byte[] longToBytes(long num) {
         return String.valueOf(num).getBytes();
@@ -49,5 +49,4 @@ public class ByteUtils {
         ByteBuffer allocate = ByteBuffer.wrap(bytes);
         return allocate.getInt() != 0;
     }
-
 }

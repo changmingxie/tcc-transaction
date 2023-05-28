@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +25,7 @@ import java.util.Set;
 /**
  * @Author huabao.fang
  * @Date 2022/5/30 11:51
- **/
+ */
 @Conditional(TccServerStorageCondition.class)
 @Service
 public class TccServerTaskServiceImpl implements TaskService {
@@ -80,11 +79,8 @@ public class TccServerTaskServiceImpl implements TaskService {
             TriggerKey triggerKey = selectTriggerKey(requestDto.getDomain());
             CronTrigger currentCronTrigger = (CronTrigger) tccClient.getScheduler().getScheduler(requestDto.getDomain()).getTrigger(triggerKey);
             String currentCron = currentCronTrigger.getCronExpression();
-            if (StringUtils.isNotEmpty(requestDto.getCronExpression())
-                    && !requestDto.getCronExpression().equals(currentCron)) {
-                CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey.getName())
-                        .withSchedule(CronScheduleBuilder.cronSchedule(requestDto.getCronExpression())
-                                .withMisfireHandlingInstructionDoNothing()).build();
+            if (StringUtils.isNotEmpty(requestDto.getCronExpression()) && !requestDto.getCronExpression().equals(currentCron)) {
+                CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey.getName()).withSchedule(CronScheduleBuilder.cronSchedule(requestDto.getCronExpression()).withMisfireHandlingInstructionDoNothing()).build();
                 tccClient.getScheduler().getScheduler(requestDto.getDomain()).rescheduleJob(triggerKey, cronTrigger);
             }
             logger.info("domain:{} update cron from {} to {} success", requestDto.getDomain(), currentCron, requestDto.getCronExpression());
@@ -92,7 +88,6 @@ public class TccServerTaskServiceImpl implements TaskService {
             logger.error("modifyCron error", e);
             return ResponseDto.returnFail(ResponseCodeEnum.TASK_MODIFY_CRON_ERROR);
         }
-
         return ResponseDto.returnSuccess();
     }
 

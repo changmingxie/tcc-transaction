@@ -3,7 +3,6 @@ package org.mengyun.tcctransaction.serializer;
 import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.storage.TransactionStore;
 import org.mengyun.tcctransaction.xid.TransactionXid;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -21,17 +20,14 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         if (transactionStore == null) {
             return new byte[0];
         }
-
         byte existFlag = 0;
         if (transactionStore.getRequestId() != null) {
             existFlag |= REQUEST_ID_EXIST_FLAG_POS;
         }
-
         Xid xid = transactionStore.getXid();
         Xid roodXid = transactionStore.getRootXid();
         int xidLength = xid.getXid().getBytes().length;
         int rootXidLength = roodXid.getXid().getBytes().length;
-
         //domain
         byte[] domainBytes = null;
         int domainLength = 0;
@@ -51,9 +47,7 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         if (transactionStore.getContent() != null && transactionStore.getContent().length > 0) {
             contentLength = transactionStore.getContent().length;
         }
-
         int totalLen = calTotalLength(domainLength, rootDomainLength, xidLength, rootXidLength, contentLength, transactionStore.getRequestId() != null);
-
         ByteBuffer byteBuffer = ByteBuffer.allocate(totalLen);
         byteBuffer.put(existFlag);
         //domain
@@ -94,7 +88,6 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         if (bytes == null || bytes.length == 0) {
             return null;
         }
-
         TransactionStore transactionStore = new TransactionStore();
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
         byte existFlag = byteBuffer.get();
@@ -165,33 +158,21 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
 
     private int calTotalLength(int domainLength, int rootDomainLength, int xidLength, int rootXidLength, int contentLength, boolean existRequestId) {
         // existFlag to distinguish whether optional params existed
-        int totalLength = 1
-                //String domain
-                + 4 + domainLength
-                //String rootDomainLength
-                + 4 + rootDomainLength
-                //TransactionXid xid
-                + 4 + xidLength
-                //TransactionXid rootXid
-                + 4 + rootXidLength
-                //byte[] content
-                + 4 + contentLength
-                //Date createTime
-                + 8
-                //Date lastUpdateTime
-                + 8
-                //long version
-                + 8
-                //int retriedCount
-                + 4
-                //int statusId
-                + 4
-                //int transactionTypeId
-                + 4;
+        int totalLength = 1 + //String domain
+        4 + domainLength + //String rootDomainLength
+        4 + rootDomainLength + //TransactionXid xid
+        4 + xidLength + //TransactionXid rootXid
+        4 + rootXidLength + //byte[] content
+        4 + contentLength + //Date createTime
+        8 + //Date lastUpdateTime
+        8 + //long version
+        8 + //int retriedCount
+        4 + //int statusId
+        4 + //int transactionTypeId
+        4;
         if (existRequestId) {
-            totalLength = totalLength
-                    //Integer requestId
-                    + 4;
+            totalLength = totalLength + //Integer requestId
+            4;
         }
         return totalLength;
     }

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Created by changmingxie on 10/25/15.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 public @interface Compensable {
 
     public Propagation propagation() default Propagation.REQUIRED;

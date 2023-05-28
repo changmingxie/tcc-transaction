@@ -4,10 +4,8 @@ package org.mengyun.tcctransaction.api;
  * Created by changming.xie on 1/18/17.
  */
 public enum Propagation {
-    REQUIRED(0),
-    SUPPORTS(1),
-    MANDATORY(2),
-    REQUIRES_NEW(3);
+
+    REQUIRED(0), SUPPORTS(1), MANDATORY(2), REQUIRES_NEW(3);
 
     private final int value;
 

@@ -17,7 +17,7 @@ public abstract class AbstractJedisStoreProperties {
     private JedisPoolConfig poolConfig = new JedisPoolConfig();
 
     protected JedisPoolConfig getJedisPoolConfig() {
-        return poolConfig;
+        return getPoolConfigurations();
     }
 
     public String getPassword() {
@@ -45,10 +45,14 @@ public abstract class AbstractJedisStoreProperties {
     }
 
     public JedisPoolConfig getPoolConfig() {
-        return poolConfig;
+        return getPoolConfigurations();
     }
 
     public void setPoolConfig(JedisPoolConfig poolConfig) {
         this.poolConfig = poolConfig;
+    }
+
+    private JedisPoolConfig getPoolConfigurations() {
+        return poolConfig;
     }
 }

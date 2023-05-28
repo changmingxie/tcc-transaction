@@ -10,5 +10,4 @@ public interface CapitalTradeOrderService {
 
     @EnableTcc
     public String record(CapitalTradeOrderDto tradeOrderDto);
-
 }

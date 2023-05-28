@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.mengyun.tcctransaction.exception.SystemException;
 import org.mengyun.tcctransaction.serializer.TransactionSerializer;
 import org.mengyun.tcctransaction.transaction.Transaction;
-
 import java.io.IOException;
 
 /**
@@ -20,13 +19,12 @@ public class JacksonTransactionSerializer implements TransactionSerializer {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     static {
-//        objectMapper.enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.NON_FINAL,"@class");
+        //        objectMapper.enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.NON_FINAL,"@class");
         objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-//        objectMapper.activateDefaultTyping();
+        //        objectMapper.activateDefaultTyping();
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-
     }
 
     @Override
@@ -51,5 +49,4 @@ public class JacksonTransactionSerializer implements TransactionSerializer {
     public Transaction clone(Transaction object) {
         return deserialize(serialize(object));
     }
-
 }

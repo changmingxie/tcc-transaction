@@ -1,14 +1,17 @@
 package org.mengyun.tcctransaction.remoting.netty;
 
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class ResponseFuture {
+
     private boolean sendRequestSuccess;
+
     private Throwable cause;
+
     private Object response;
+
     private RemotingCommand responseCommand;
 
     private CountDownLatch countDownLatch = new CountDownLatch(1);

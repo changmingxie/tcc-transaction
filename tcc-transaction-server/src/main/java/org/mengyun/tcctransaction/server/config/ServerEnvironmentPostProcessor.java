@@ -10,14 +10,13 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
-
 import java.util.Optional;
 import java.util.Properties;
 
 /**
  * @Author huabao.fang
  * @Date 2022/7/18 13:23
- **/
+ */
 public class ServerEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     private Logger logger = LoggerFactory.getLogger(ServerEnvironmentPostProcessor.class);
@@ -28,7 +27,8 @@ public class ServerEnvironmentPostProcessor implements EnvironmentPostProcessor 
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         MutablePropertySources propertySources = environment.getPropertySources();
         PropertySource<?> propertySource = selectApplicationConfigPropertySource(propertySources);
-        if (propertySource != null) {// 读取application.yml文件内容来动态调整配置
+        if (propertySource != null) {
+            // 读取application.yml文件内容来动态调整配置
             rebuildRegistryProperties(environment);
             PropertiesPropertySource tccServerPropertySource = new PropertiesPropertySource("tccServerProperties", tccServerProperties);
             propertySources.addLast(tccServerPropertySource);
@@ -48,19 +48,16 @@ public class ServerEnvironmentPostProcessor implements EnvironmentPostProcessor 
         } else if (RegistryType.zookeeper.name().equals(registryType)) {
             putIntoTccServerProperties("spring.cloud.nacos.discovery.enabled", "false");
             putIntoTccServerProperties("spring.cloud.zookeeper.enabled", "true");
-
             putIntoTccServerProperties("spring.cloud.zookeeper.connect-string", environment.getProperty("spring.tcc.registry.zookeeper.connect-string"));
         } else if (RegistryType.nacos.name().equals(registryType)) {
             putIntoTccServerProperties("spring.cloud.nacos.discovery.enabled", "true");
             putIntoTccServerProperties("spring.cloud.zookeeper.enabled", "false");
-
             putIntoTccServerProperties("spring.cloud.nacos.discovery.server-addr", environment.getProperty("spring.tcc.registry.nacos.server-addr"));
             putIntoTccServerProperties("spring.cloud.nacos.discovery.username", environment.getProperty("spring.tcc.registry.nacos.username"));
             putIntoTccServerProperties("spring.cloud.nacos.discovery.password", environment.getProperty("spring.tcc.registry.nacos.password"));
         } else {
             logger.warn("unable to reset the registry config of spring clound for {}", registryType);
         }
-
     }
 
     private void putIntoTccServerProperties(String key, String value) {
@@ -68,7 +65,5 @@ public class ServerEnvironmentPostProcessor implements EnvironmentPostProcessor 
             return;
         }
         this.tccServerProperties.put(key, value);
-
     }
-
 }

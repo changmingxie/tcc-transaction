@@ -1,6 +1,5 @@
 package org.mengyun.tcctransaction.sample.order.domain.repository;
 
-
 import org.mengyun.tcctransaction.sample.order.domain.entity.Order;
 import org.mengyun.tcctransaction.sample.order.domain.entity.OrderLine;
 import org.mengyun.tcctransaction.sample.order.infrastructure.dao.OrderDao;
@@ -23,7 +22,6 @@ public class OrderRepository {
 
     public void create(Order order) {
         orderDao.insert(order);
-
         for (OrderLine orderLine : order.getOrderLines()) {
             orderLineDao.insert(orderLine);
         }
@@ -32,7 +30,6 @@ public class OrderRepository {
     public void update(Order order) {
         order.updateVersion();
         int effectCount = orderDao.update(order);
-
         if (effectCount < 1) {
             throw new OptimisticLockingFailureException("update order failed");
         }

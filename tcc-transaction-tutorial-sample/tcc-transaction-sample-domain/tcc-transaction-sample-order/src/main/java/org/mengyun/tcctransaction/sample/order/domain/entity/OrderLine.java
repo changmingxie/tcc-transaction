@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public class OrderLine implements Serializable {
 
     private static final long serialVersionUID = 2300754647209250837L;
+
     private long id;
 
     private long productId;
@@ -18,7 +19,6 @@ public class OrderLine implements Serializable {
     private BigDecimal unitPrice;
 
     public OrderLine() {
-
     }
 
     public OrderLine(Long productId, Integer quantity, BigDecimal unitPrice) {

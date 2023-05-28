@@ -5,7 +5,6 @@ import org.mengyun.tcctransaction.serializer.SerializerType;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ShardedJedisPool;
-
 import javax.sql.DataSource;
 
 public interface StoreConfig {
@@ -43,5 +42,4 @@ public interface StoreConfig {
     int getMaxTransactionSize();
 
     int getMaxAttempts();
-
 }

@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.storage.StoreConfig;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ShardedJedisPool;
-
 import javax.sql.DataSource;
 
 /**
@@ -17,29 +16,45 @@ import javax.sql.DataSource;
 public class StoreProperties implements StoreConfig {
 
     private StorageType storageType = StorageType.MEMORY;
+
     // only user by client
     private StorageMode storageMode = StorageMode.ALONE;
+
     //only used by client
     private SerializerType serializerType = SerializerType.KRYO;
+
     //only used by client
     private String transactionSerializerClassName;
+
     private int kryoPoolSize = 512;
-    private int maxTransactionSize = 1 * 1024 * 1024; // 1M
+
+    // 1M
+    private int maxTransactionSize = 1 * 1024 * 1024;
+
     //only used by client
     private int maxAttempts = 2;
+
     private String domain = "TCC";
+
     private String transactionStorageClass;
+
     //the timout of remoting storage request
     private long requestTimeoutMillis = 2000L;
+
     private String location = "/tmp";
+
     private String tbSuffix;
+
     // only used by client & storageType is REMOTING
     private String remoteCluster = "default";
-    private JdbcStoreProperties jdbc = new JdbcStoreProperties();
-    private RedisStoreProperties redis = new RedisStoreProperties();
-    private ShardRedisStoreProperties shardRedis = new ShardRedisStoreProperties();
-    private RedisClusterStoreProperties redisCluster = new RedisClusterStoreProperties();
 
+    private JdbcStoreProperties jdbc = new JdbcStoreProperties();
+
+    private RedisStoreProperties redis = new RedisStoreProperties();
+
+    private ShardRedisStoreProperties shardRedis = new ShardRedisStoreProperties();
+
+    private RedisClusterStoreProperties redisCluster = new RedisClusterStoreProperties();
 
     @Override
     public StorageType getStorageType() {
@@ -171,12 +186,10 @@ public class StoreProperties implements StoreConfig {
         return redis.getJedisPool();
     }
 
-
     @Override
     public ShardedJedisPool getShardedJedisPool() {
         return shardRedis.getShardedJedisPool();
     }
-
 
     @Override
     public JedisCluster getJedisCluster() {
@@ -211,5 +224,4 @@ public class StoreProperties implements StoreConfig {
     public void setRedisCluster(RedisClusterStoreProperties redisCluster) {
         this.redisCluster = redisCluster;
     }
-
 }

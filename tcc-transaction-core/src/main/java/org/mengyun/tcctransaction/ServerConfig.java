@@ -43,7 +43,6 @@ public class ServerConfig extends AbstractConfig implements NettyServerConfig, R
         return nettyServerConfig.getFlowMonitorPrintIntervalMinutes();
     }
 
-
     @Override
     public String getRegistryAddress() {
         return serverRegistryConfig.getRegistryAddress();

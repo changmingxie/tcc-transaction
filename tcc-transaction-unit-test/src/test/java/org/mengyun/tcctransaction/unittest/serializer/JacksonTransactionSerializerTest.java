@@ -8,32 +8,23 @@ import org.mengyun.tcctransaction.dashboard.dto.TransactionStoreDto;
 import org.mengyun.tcctransaction.serializer.json.JacksonTransactionSerializer;
 import org.mengyun.tcctransaction.transaction.Transaction;
 import org.mengyun.tcctransaction.xid.TransactionXid;
-
 import java.io.IOException;
 
 /**
  * @Author huabao.fang
  * @Date 2022/7/21 23:10
- **/
+ */
 public class JacksonTransactionSerializerTest {
 
     private JacksonTransactionSerializer serializer = new JacksonTransactionSerializer();
 
     @Test
     public void test() {
-        Transaction transaction = new Transaction(new TransactionContext(
-                "TCC:TEST",
-                new TransactionXid("xxxxxxxxxxxxxx"),
-                new TransactionXid("yyyyyyyyyyyyyy"),
-                TransactionStatus.TRYING
-        ));
+        Transaction transaction = new Transaction(new TransactionContext("TCC:TEST", new TransactionXid("xxxxxxxxxxxxxx"), new TransactionXid("yyyyyyyyyyyyyy"), TransactionStatus.TRYING));
         byte[] bytes = serializer.serialize(transaction);
         Transaction newTransaction = serializer.deserialize(bytes);
-
         assert transaction.getXid().equals(newTransaction.getXid());
-
     }
-
 
     /**
      * 问题：
@@ -52,7 +43,7 @@ public class JacksonTransactionSerializerTest {
         TransactionStoreDto transactionStoreDto = new TransactionStoreDto();
         transactionStoreDto.setXid(new TransactionXid("xxxxxxxxxx"));
         byte[] bytes = objectMapper.writeValueAsBytes(transactionStoreDto);
-//        System.out.println(new String(bytes));
+        //        System.out.println(new String(bytes));
         TransactionStoreDto newTransactionStoreDto = objectMapper.readValue(bytes, TransactionStoreDto.class);
         assert transactionStoreDto.getXid().equals(newTransactionStoreDto.getXid());
     }

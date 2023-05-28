@@ -15,8 +15,7 @@ public class NettyEncoder extends MessageToByteEncoder<RemotingCommand> {
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, RemotingCommand message,
-                          ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, RemotingCommand message, ByteBuf out) throws Exception {
         out.writeBytes(serializer.serialize(message));
         ctx.flush();
     }

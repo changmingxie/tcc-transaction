@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.api.Compensable;
 import org.tcctransaction.sample.multiple.tier.pay.account.api.PayAccountService;
 import org.tcctransaction.sample.multiple.tier.pay.api.PayService;
 import org.tcctransaction.sample.multiple.tier.pay.point.api.PayPointService;
-
 import java.util.Calendar;
 
 @DubboService
@@ -23,9 +22,7 @@ public class PayServiceImpl implements PayService {
     @Compensable(confirmMethod = "confirm", cancelMethod = "cancel")
     public void deduct() {
         System.out.println("PayServiceImpl.place called at : " + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss SSS"));
-
         payAccountService.deduct();
-
         payPointService.deduct();
     }
 

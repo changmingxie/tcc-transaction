@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.springboot.starter;
 
 import org.springframework.boot.autoconfigure.AutoConfigurationImportFilter;
 import org.springframework.boot.autoconfigure.AutoConfigurationMetadata;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

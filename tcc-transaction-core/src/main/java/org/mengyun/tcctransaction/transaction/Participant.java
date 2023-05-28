@@ -5,7 +5,6 @@ import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.context.TransactionContextEditor;
-
 import java.io.Serializable;
 
 /**
@@ -18,14 +17,16 @@ public class Participant implements Serializable {
     Class<? extends TransactionContextEditor> transactionContextEditorClass;
 
     private Xid rootXid;
+
     private String rootDomain;
 
     private Xid xid;
+
     private InvocationContext invocationContext;
+
     private ParticipantStatus status = ParticipantStatus.TRYING;
 
     public Participant() {
-
     }
 
     public Participant(String rootDomain, Xid rootXid, Xid xid, InvocationContext invocationContext, Class<? extends TransactionContextEditor> transactionContextEditorClass) {
@@ -56,11 +57,9 @@ public class Participant implements Serializable {
         return xid;
     }
 
-
     public void setXid(Xid xid) {
         this.xid = xid;
     }
-
 
     public Class<? extends TransactionContextEditor> getTransactionContextEditorClass() {
         return transactionContextEditorClass;

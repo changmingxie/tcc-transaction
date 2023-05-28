@@ -5,19 +5,16 @@ import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.xid.TransactionXid;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/***
- *
+/**
  * @author Nervose.Wu
  * @date 2022/6/17 17:16
  */
-
 public class TransactionContextSerializer implements ObjectSerializer<TransactionContext> {
 
     private static byte[] mapSerialize(Map<String, String> map) {
@@ -25,22 +22,18 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
         if (null == map || map.isEmpty()) {
             return new byte[0];
         }
-
         int totalLength = 0;
         int kvLength;
         Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, String> entry = it.next();
             if (entry.getKey() != null && entry.getValue() != null) {
-                kvLength =
-                        // keySize + Key
-                        2 + entry.getKey().getBytes(StandardCharsets.UTF_8).length
-                                // valSize + val
-                                + 4 + entry.getValue().getBytes(StandardCharsets.UTF_8).length;
+                kvLength = // keySize + Key
+                2 + entry.getKey().getBytes(StandardCharsets.UTF_8).length + // valSize + val
+                4 + entry.getValue().getBytes(StandardCharsets.UTF_8).length;
                 totalLength += kvLength;
             }
         }
-
         ByteBuffer content = ByteBuffer.allocate(totalLength);
         byte[] key;
         byte[] val;
@@ -50,15 +43,12 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
             if (entry.getKey() != null && entry.getValue() != null) {
                 key = entry.getKey().getBytes(StandardCharsets.UTF_8);
                 val = entry.getValue().getBytes(StandardCharsets.UTF_8);
-
                 content.putShort((short) key.length);
                 content.put(key);
-
                 content.putInt(val.length);
                 content.put(val);
             }
         }
-
         return content.array();
     }
 
@@ -66,10 +56,8 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
         if (bytes == null || bytes.length == 0) {
             return null;
         }
-
         Map<String, String> map = new ConcurrentHashMap<>();
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
-
         short keySize;
         byte[] keyContent;
         int valSize;
@@ -78,11 +66,9 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
             keySize = byteBuffer.getShort();
             keyContent = new byte[keySize];
             byteBuffer.get(keyContent);
-
             valSize = byteBuffer.getInt();
             valContent = new byte[valSize];
             byteBuffer.get(valContent);
-
             map.put(new String(keyContent, StandardCharsets.UTF_8), new String(valContent, StandardCharsets.UTF_8));
         }
         return map;
@@ -99,16 +85,13 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
         int xidLength = xid.getXid().getBytes().length;
         int rootXidLength = rootXid.getXid().getBytes().length;
         int rootDomainLength = transactionContext.getRootDomain().getBytes().length;
-
         byte[] attachmentsBytes = null;
         int attachmentsLength = 0;
         if (transactionContext.getAttachments() != null && !transactionContext.getAttachments().isEmpty()) {
             attachmentsBytes = mapSerialize(transactionContext.getAttachments());
             attachmentsLength = attachmentsBytes.length;
         }
-
         int totalLen = calTotalLength(xidLength, rootXidLength, rootDomainLength, attachmentsLength);
-
         ByteBuffer byteBuffer = ByteBuffer.allocate(totalLen);
         // TransactionXid xid
         byteBuffer.putInt(xidLength);
@@ -130,7 +113,6 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
         } else {
             byteBuffer.putInt(0);
         }
-
         return byteBuffer.array();
     }
 
@@ -140,7 +122,6 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
             return null;
         }
         TransactionContext transactionContext = new TransactionContext();
-
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
         // TransactionXid xid
         int xidLength = byteBuffer.getInt();
@@ -154,13 +135,11 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
         byteBuffer.get(rootXidContent);
         TransactionXid rootXid = new TransactionXid(new String(rootXidContent, StandardCharsets.UTF_8));
         transactionContext.setRootXid(rootXid);
-
         // rootDomain
         int rootDomainLength = byteBuffer.getInt();
         byte[] rootDomainContent = new byte[rootDomainLength];
         byteBuffer.get(rootDomainContent);
         transactionContext.setRootDomain(new String(rootDomainContent, StandardCharsets.UTF_8));
-
         // int status
         transactionContext.setStatus(TransactionStatus.valueOf(byteBuffer.getInt()));
         // int participantStatus
@@ -172,7 +151,6 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
             transactionContext.setAttachments(mapDeserialize(attachmentsBytes));
         }
         transactionContext.setAttachments(new ConcurrentHashMap<>());
-
         return transactionContext;
     }
 
@@ -192,16 +170,11 @@ public class TransactionContextSerializer implements ObjectSerializer<Transactio
 
     private int calTotalLength(int xidLength, int rootXidLength, int rootDomainLength, int attachmentsLength) {
         // TransactionXid xid
-        return 4 + xidLength
-                // TransactionXid rootXid
-                + 4 + rootXidLength
-                // TransactionXid rootDomain
-                + 4 + rootDomainLength
-                // int status
-                + 4
-                // int participantStatus
-                + 4
-                // Map<String, String> attachments
-                + 4 + attachmentsLength;
+        return 4 + xidLength + // TransactionXid rootXid
+        4 + rootXidLength + // TransactionXid rootDomain
+        4 + rootDomainLength + // int status
+        4 + // int participantStatus
+        4 + // Map<String, String> attachments
+        4 + attachmentsLength;
     }
 }

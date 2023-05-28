@@ -7,11 +7,12 @@ import java.util.Objects;
  * @author Nervose.Wu
  * @date 2022/5/24 17:44
  */
-
 public class HostAndPort implements Serializable {
 
     private String host;
+
     private int port;
+
     private int database = 0;
 
     public String getHost() {
@@ -47,9 +48,7 @@ public class HostAndPort implements Serializable {
             return false;
         }
         HostAndPort that = (HostAndPort) o;
-        return port == that.port &&
-                database == that.database &&
-                Objects.equals(host, that.host);
+        return port == that.port && database == that.database && Objects.equals(host, that.host);
     }
 
     @Override

@@ -7,7 +7,6 @@ import org.mengyun.tcctransaction.sample.order.domain.repository.OrderRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 /**
@@ -25,16 +24,13 @@ public class OrderServiceImpl {
     @Transactional
     public Order createOrder(long payerUserId, long payeeUserId, List<Pair<Long, Integer>> productQuantities) {
         Order order = orderFactory.buildOrder(payerUserId, payeeUserId, productQuantities);
-
         orderRepository.create(order);
-
         return order;
     }
 
     public void update(Order order) {
         orderRepository.update(order);
     }
-
 
     public Order findOrderByMerchantOrderNo(String orderNo) {
         return orderRepository.findByMerchantOrderNo(orderNo);

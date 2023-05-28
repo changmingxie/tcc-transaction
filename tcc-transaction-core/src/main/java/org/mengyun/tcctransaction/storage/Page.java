@@ -12,7 +12,6 @@ public class Page<T> {
     private Object attachment;
 
     public Page() {
-
     }
 
     public Page(String nextOffset, List<T> data) {
@@ -34,7 +33,6 @@ public class Page<T> {
 
     public void setData(List<T> data) {
         this.data.clear();
-
         if (data != null) {
             this.data.addAll(data);
         }

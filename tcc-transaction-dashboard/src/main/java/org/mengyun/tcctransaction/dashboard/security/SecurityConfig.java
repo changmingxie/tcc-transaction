@@ -20,7 +20,7 @@ import org.springframework.web.filter.CorsFilter;
 /**
  * @Author huabao.fang
  * @Date 2022/6/6 10:10
- **/
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -33,32 +33,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().cors() // 解决post请求报405问题
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 这里采用jwt方案，设置不使用session
-
-        http.authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers(
-                        "/",
-                        "/static/**",
-                        "/index.html",
-                        "/*.png",
-                        "/robots.txt",
-                        "/favicon.ico",
-                        "/api/user/login"
-                ).permitAll().and()
-                .authorizeRequests().anyRequest().authenticated().and().exceptionHandling() //鉴权不需要
-                .authenticationEntryPoint(new TccAuthenticationEntryPoint()).accessDeniedHandler(new TccAccessDeniedHandler());
-
+        // 解决post请求报405问题
+        http.csrf().disable().cors().and().sessionManagement().sessionCreationPolicy(// 这里采用jwt方案，设置不使用session
+        SessionCreationPolicy.STATELESS);
+        http.authorizeRequests().requestMatchers(CorsUtils::isPreFlightRequest).permitAll().antMatchers("/", "/static/**", "/index.html", "/*.png", "/robots.txt", "/favicon.ico", "/api/user/login").permitAll().and().authorizeRequests().anyRequest().authenticated().and().//鉴权不需要
+        exceptionHandling().authenticationEntryPoint(new TccAuthenticationEntryPoint()).accessDeniedHandler(new TccAccessDeniedHandler());
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
-//        auth.inMemoryAuthentication().passwordEncoder(passwordEncoder())
-//                .withUser("admin").password(passwordEncoder().encode("12345")).authorities("ADMIN");
+        //        auth.inMemoryAuthentication().passwordEncoder(passwordEncoder())
+        //                .withUser("admin").password(passwordEncoder().encode("12345")).authorities("ADMIN");
     }
 
     @Bean
@@ -72,21 +59,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-//    @Bean
-//    public FilterRegistrationBean corsFilter()
-//    {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
-//        config.addAllowedOrigin("*");
-//        config.addAllowedHeader("*");
-//        config.addAllowedMethod("*");
-//        source.registerCorsConfiguration("/**", config);
-//        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-//        bean.setOrder(0);
-//        return bean;
-//    }
-
+    //    @Bean
+    //    public FilterRegistrationBean corsFilter()
+    //    {
+    //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    //        CorsConfiguration config = new CorsConfiguration();
+    //        config.setAllowCredentials(true);
+    //        config.addAllowedOrigin("*");
+    //        config.addAllowedHeader("*");
+    //        config.addAllowedMethod("*");
+    //        source.registerCorsConfiguration("/**", config);
+    //        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+    //        bean.setOrder(0);
+    //        return bean;
+    //    }
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();

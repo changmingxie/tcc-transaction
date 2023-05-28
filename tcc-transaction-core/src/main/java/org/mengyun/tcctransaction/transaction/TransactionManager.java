@@ -10,7 +10,6 @@ import org.mengyun.tcctransaction.exception.SystemException;
 import org.mengyun.tcctransaction.repository.TransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -24,27 +23,18 @@ import java.util.concurrent.TimeUnit;
 public class TransactionManager {
 
     private static final Logger logger = LoggerFactory.getLogger(TransactionManager.class.getSimpleName());
-    private static final ThreadLocal<Deque<Transaction>> CURRENT = new ThreadLocal<>();
 
+    private static final ThreadLocal<Deque<Transaction>> CURRENT = new ThreadLocal<>();
 
     private int threadPoolSize = Runtime.getRuntime().availableProcessors() * 2 + 1;
 
     private int threadQueueSize = 1024;
 
-    private ExecutorService asyncTerminatorExecutorService = new ThreadPoolExecutor(threadPoolSize,
-            threadPoolSize,
-            0L,
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(threadQueueSize), new ThreadPoolExecutor.AbortPolicy());
+    private ExecutorService asyncTerminatorExecutorService = new ThreadPoolExecutor(threadPoolSize, threadPoolSize, 0L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(threadQueueSize), new ThreadPoolExecutor.AbortPolicy());
 
-    private ExecutorService asyncSaveExecutorService = new ThreadPoolExecutor(threadPoolSize,
-            threadPoolSize,
-            0L,
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(threadQueueSize * 2), new ThreadPoolExecutor.CallerRunsPolicy());
+    private ExecutorService asyncSaveExecutorService = new ThreadPoolExecutor(threadPoolSize, threadPoolSize, 0L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(threadQueueSize * 2), new ThreadPoolExecutor.CallerRunsPolicy());
 
     private TransactionRepository transactionRepository;
-
 
     public TransactionManager(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
@@ -62,18 +52,15 @@ public class TransactionManager {
     }
 
     public Transaction propagationNewBegin(TransactionContext transactionContext) {
-
         Transaction transaction = new Transaction(transactionContext);
-
         //for performance tuning, at create stage do not persistent
-//        transactionRepository.create(transaction);
+        //        transactionRepository.create(transaction);
         registerTransaction(transaction);
         return transaction;
     }
 
     public Transaction propagationExistBegin(TransactionContext transactionContext) throws NoExistedTransactionException {
         Transaction transaction = transactionRepository.findByXid(transactionContext.getXid());
-
         if (transaction != null) {
             registerTransaction(transaction);
             return transaction;
@@ -85,7 +72,6 @@ public class TransactionManager {
     public void enlistParticipant(Participant participant) {
         Transaction transaction = this.getCurrentTransaction();
         transaction.enlistParticipant(participant);
-
         if (transaction.getVersion() == 0L) {
             // transaction.getVersion() is zero which means never persistent before, need call create to persistent.
             transactionRepository.create(transaction);
@@ -95,17 +81,12 @@ public class TransactionManager {
     }
 
     public void commit(boolean asyncCommit) {
-
         final Transaction transaction = getCurrentTransaction();
-
         transaction.setStatus(TransactionStatus.CONFIRMING);
-
         transactionRepository.update(transaction);
-
         if (asyncCommit) {
             try {
                 long statTime = System.currentTimeMillis();
-
                 asyncTerminatorExecutorService.submit(() -> commitTransaction(transaction));
                 logger.debug("async submit cost time:{}", System.currentTimeMillis() - statTime);
             } catch (Throwable commitException) {
@@ -117,16 +98,11 @@ public class TransactionManager {
         }
     }
 
-
     public void rollback(boolean asyncRollback) {
-
         final Transaction transaction = getCurrentTransaction();
         transaction.setStatus(TransactionStatus.CANCELLING);
-
         transactionRepository.update(transaction);
-
         if (asyncRollback) {
-
             try {
                 asyncTerminatorExecutorService.submit(() -> rollbackTransaction(transaction));
             } catch (Throwable rollbackException) {
@@ -134,25 +110,21 @@ public class TransactionManager {
                 throw new CancellingException(rollbackException);
             }
         } else {
-
             rollbackTransaction(transaction);
         }
     }
-
 
     private void commitTransaction(Transaction transaction) {
         try {
             transaction.commit();
             transactionRepository.delete(transaction);
         } catch (Throwable commitException) {
-
             //try save updated transaction
             try {
                 transactionRepository.update(transaction);
             } catch (Exception e) {
                 //ignore any exception here
             }
-
             logger.warn("compensable transaction confirm failed, recovery job will try to confirm later.", commitException);
             throw new ConfirmingException(commitException);
         }
@@ -163,14 +135,12 @@ public class TransactionManager {
             transaction.rollback();
             transactionRepository.delete(transaction);
         } catch (Throwable rollbackException) {
-
             //try save updated transaction
             try {
                 transactionRepository.update(transaction);
             } catch (Exception e) {
                 //ignore any exception here
             }
-
             logger.warn("compensable transaction rollback failed, recovery job will try to rollback later.", rollbackException);
             throw new CancellingException(rollbackException);
         }
@@ -188,13 +158,10 @@ public class TransactionManager {
         return transactions != null && !transactions.isEmpty();
     }
 
-
     private void registerTransaction(Transaction transaction) {
-
         if (CURRENT.get() == null) {
             CURRENT.set(new LinkedList<Transaction>());
         }
-
         CURRENT.get().push(transaction);
     }
 
@@ -212,7 +179,6 @@ public class TransactionManager {
         }
     }
 
-
     public void changeStatus(TransactionStatus status) {
         changeStatus(status, false);
     }
@@ -220,7 +186,6 @@ public class TransactionManager {
     public void changeStatus(TransactionStatus status, boolean asyncSave) {
         Transaction transaction = this.getCurrentTransaction();
         transaction.setStatus(status);
-
         if (asyncSave) {
             asyncSaveExecutorService.submit(new AsyncSaveTask(transaction));
         } else {
@@ -238,13 +203,10 @@ public class TransactionManager {
 
         @Override
         public void run() {
-
             //only can be TRY_SUCCESS
             try {
                 if (transaction != null && transaction.getStatus().equals(TransactionStatus.TRY_SUCCESS)) {
-
                     Transaction foundTransaction = transactionRepository.findByXid(transaction.getXid());
-
                     if (foundTransaction != null && foundTransaction.getStatus().equals(TransactionStatus.TRYING)) {
                         transactionRepository.update(transaction);
                     }
@@ -254,5 +216,4 @@ public class TransactionManager {
             }
         }
     }
-
 }

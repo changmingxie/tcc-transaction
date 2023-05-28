@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.context;
 
 import org.mengyun.tcctransaction.api.TransactionContext;
-
 import java.lang.reflect.Method;
 
 /**
@@ -14,6 +13,5 @@ public interface TransactionContextEditor {
     void set(TransactionContext transactionContext, Object target, Method method, Object[] args);
 
     default void clear(TransactionContext transactionContext, Object target, Method method, Object[] args) {
-
     }
 }

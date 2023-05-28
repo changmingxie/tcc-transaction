@@ -5,11 +5,13 @@ import org.mengyun.tcctransaction.dashboard.enums.ResponseCodeEnum;
 /**
  * @Author huabao.fang
  * @Date 2021/2/20 17:18
- **/
+ */
 public class ResponseDto<T> {
 
     private String code;
+
     private String message;
+
     private T data;
 
     public ResponseDto() {
@@ -69,5 +71,4 @@ public class ResponseDto<T> {
     public String getCodeAndMessage() {
         return this.code + "-" + this.message;
     }
-
 }

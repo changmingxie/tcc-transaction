@@ -17,6 +17,4 @@ public interface NettyConfig {
     int getRequestProcessThreadSize();
 
     int getRequestProcessThreadQueueCapacity();
-
-
 }

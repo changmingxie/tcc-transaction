@@ -10,7 +10,6 @@ import org.mengyun.tcctransaction.storage.StorageRecoverable;
 import org.mengyun.tcctransaction.storage.domain.AlertType;
 import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.mengyun.tcctransaction.utils.TccDateFormatUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * @Author huabao.fang
  * @Date 2022/6/9 17:03
- **/
+ */
 public abstract class BaseDomainServiceImpl implements DomainService {
 
     @Override
@@ -100,5 +99,4 @@ public abstract class BaseDomainServiceImpl implements DomainService {
         domainStoreDto.setVersion(domainStore.getVersion());
         return domainStoreDto;
     }
-
 }

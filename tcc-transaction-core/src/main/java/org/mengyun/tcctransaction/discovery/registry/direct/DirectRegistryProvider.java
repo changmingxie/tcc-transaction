@@ -11,6 +11,7 @@ import org.mengyun.tcctransaction.load.LoadInfo;
  */
 @LoadInfo(name = "direct")
 public class DirectRegistryProvider implements RegistryProvider {
+
     @Override
     public RegistryService provide(RegistryConfig registryConfig) {
         return new DirectRegistryServiceImpl(registryConfig);

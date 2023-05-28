@@ -7,6 +7,6 @@ import org.springframework.context.annotation.FilterType;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@ComponentScan(value = "org.mengyun.tcctransaction", excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {AnnotationTccTransactionConfiguration.class})})
+@ComponentScan(value = "org.mengyun.tcctransaction", excludeFilters = { @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { AnnotationTccTransactionConfiguration.class }) })
 public class XmlTccTransactionConfiguration {
 }

@@ -4,13 +4,18 @@ package org.mengyun.tcctransaction.discovery.registry.nacos;
  * @author Nervose.Wu
  * @date 2022/5/12 18:31
  */
-
 public class NacosRegistryProperties {
+
     private String serverAddr = "127.0.0.1:8848";
+
     private String namespace = "public";
+
     private String group = "TCC_GROUP";
+
     private String username = "nacos";
+
     private String password = "nacos";
+
     private String serviceName = "tcc-server";
 
     public String getServerAddr() {

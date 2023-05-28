@@ -8,6 +8,7 @@ import org.mengyun.tcctransaction.load.LoadInfo;
  */
 @LoadInfo(name = "RoundRobin")
 public class RoundRobinLoadBalanceProvider implements LoadBalanceProvider {
+
     @Override
     public LoadBalanceServcie provide() {
         return new RoundRobinLoadBalanceServcieImpl();

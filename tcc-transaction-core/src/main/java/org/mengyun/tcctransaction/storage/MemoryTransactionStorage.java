@@ -9,7 +9,6 @@ import org.mengyun.tcctransaction.storage.helper.ShardHolder;
 import org.mengyun.tcctransaction.storage.helper.ShardOffset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,28 +28,21 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
 
     @Override
     protected List<TransactionStore> findTransactionsFromOneShard(String domain, Map<String, TransactionStore> shard, Set keys) {
-
         List<TransactionStore> list = new ArrayList<>();
-
         for (Object key : keys) {
             list.add(shard.get(key));
         }
-
         return list;
     }
 
     @Override
     Page<String> findKeysFromOneShard(String domain, Map<String, TransactionStore> shard, String currentCursor, int maxFindCount, boolean isMarkDeleted) {
-
         Page<String> page = new Page<>();
         Iterator<String> iterator = shard.keySet().iterator();
         int iteratorIndex = 0;
         int currentIndex = Integer.parseInt(currentCursor);
-
         int count = 0;
-
         while (iterator.hasNext() && count < maxFindCount) {
-
             if (iteratorIndex < currentIndex) {
                 iteratorIndex++;
                 continue;
@@ -67,13 +59,10 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
             iteratorIndex++;
         }
         String nextCursor = ShardOffset.SCAN_INIT_CURSOR;
-
         if (iterator.hasNext() && count == maxFindCount) {
             nextCursor = String.valueOf(iteratorIndex);
         }
-
         page.setAttachment(nextCursor);
-
         return page;
     }
 
@@ -94,6 +83,7 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     @Override
     protected ShardHolder<Map<String, TransactionStore>> getShardHolder() {
         return new ShardHolder<Map<String, TransactionStore>>() {
+
             @Override
             public List<Map<String, TransactionStore>> getAllShards() {
                 return Lists.newArrayList(db);
@@ -170,13 +160,10 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     }
 
     private void trace(String action, TransactionStore transactionStore) {
-
         StringBuilder sb = new StringBuilder();
-
         sb.append("MemoryStoreTransactionRepository." + action + "\r\n");
         sb.append("transactionStore xid:" + transactionStore.getXid() + "; status:" + transactionStore.getStatusId() + "\r\n");
-//        sb.append("content:" + new String(transactionStore.getContent()));
-
+        //        sb.append("content:" + new String(transactionStore.getContent()));
         if (log.isDebugEnabled()) {
             log.debug(sb.toString());
         }

@@ -6,14 +6,13 @@ import org.mengyun.tcctransaction.dashboard.model.LoginDto;
 import org.mengyun.tcctransaction.dashboard.security.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @Author huabao.fang
  * @Date 2022/6/6 11:22
- **/
+ */
 @RestController
 @RequestMapping("/api/user")
 public class UserController {

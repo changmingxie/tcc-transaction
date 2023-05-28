@@ -5,8 +5,6 @@ package org.mengyun.tcctransaction.serializer;
  * @date 2022/6/21 16:16
  */
 public enum SerializerType {
-    KRYO,
-    FASTJSON,
-    CUSTOMIZED,
-    ;
+
+    KRYO, FASTJSON, CUSTOMIZED
 }

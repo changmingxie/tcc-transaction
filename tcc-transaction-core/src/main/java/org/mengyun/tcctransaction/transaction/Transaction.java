@@ -1,13 +1,11 @@
 package org.mengyun.tcctransaction.transaction;
 
-
 import org.mengyun.tcctransaction.api.ParticipantStatus;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.xid.TransactionXid;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,15 +19,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Transaction implements Serializable {
 
     private List<Participant> participants = new ArrayList<>();
+
     private Map<String, Object> attachments = new ConcurrentHashMap<>();
+
     private Date createTime = new Date();
+
     private Xid xid;
+
     private Xid rootXid;
+
     private String rootDomain;
+
     private TransactionType transactionType;
+
     private TransactionStatus status;
+
     private Date lastUpdateTime = new Date();
+
     private volatile int retriedCount = 0;
+
     private long version = 0L;
 
     public Transaction() {
@@ -48,7 +56,6 @@ public class Transaction implements Serializable {
     }
 
     public Transaction(Object uniqueIdentity, String rootDomain) {
-
         this.xid = TransactionXid.withUniqueIdentity(uniqueIdentity);
         this.status = TransactionStatus.TRYING;
         this.transactionType = TransactionType.ROOT;

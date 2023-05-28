@@ -1,21 +1,32 @@
 package org.mengyun.tcctransaction.storage;
 
 import org.mengyun.tcctransaction.api.Xid;
-
 import java.util.Date;
 
 public class TransactionStore {
+
     private String domain;
+
     private String rootDomain;
+
     private Xid xid;
+
     private Xid rootXid;
+
     private byte[] content;
+
     private Date createTime = new Date();
+
     private Date lastUpdateTime = new Date();
+
     private long version = 0L;
+
     private int retriedCount = 0;
+
     private int statusId;
+
     private int transactionTypeId;
+
     private Integer requestId;
 
     public long getVersion() {
@@ -115,17 +126,6 @@ public class TransactionStore {
     }
 
     public String simpleDetail() {
-        return "{" +
-                "domain='" + domain + '\'' +
-                ", rootDomain='" + rootDomain + '\'' +
-                ", xid=" + xid +
-                ", rootXid=" + rootXid +
-                ", createTime=" + createTime +
-                ", lastUpdateTime=" + lastUpdateTime +
-                ", version=" + version +
-                ", retriedCount=" + retriedCount +
-                ", statusId=" + statusId +
-                ", transactionTypeId=" + transactionTypeId +
-                '}';
+        return "{" + "domain='" + domain + '\'' + ", rootDomain='" + rootDomain + '\'' + ", xid=" + xid + ", rootXid=" + rootXid + ", createTime=" + createTime + ", lastUpdateTime=" + lastUpdateTime + ", version=" + version + ", retriedCount=" + retriedCount + ", statusId=" + statusId + ", transactionTypeId=" + transactionTypeId + '}';
     }
 }

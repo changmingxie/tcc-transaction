@@ -1,7 +1,15 @@
 package org.mengyun.tcctransaction.api;
 
 public enum ParticipantStatus {
-    TRYING(1), CONFIRMING(2), CANCELLING(3), TRY_SUCCESS(11), TRY_FAILED(12), CONFIRM_SUCCESS(21), CANCEL_SUCCESS(31);
+
+    TRYING(1),
+    CONFIRMING(2),
+    CANCELLING(3),
+    TRY_SUCCESS(11),
+    TRY_FAILED(12),
+    CONFIRM_SUCCESS(21),
+    CANCEL_SUCCESS(31);
+
     private int id;
 
     ParticipantStatus(int id) {
@@ -9,8 +17,7 @@ public enum ParticipantStatus {
     }
 
     public static ParticipantStatus valueOf(int id) {
-
-        switch (id) {
+        switch(id) {
             case 1:
                 return TRYING;
             case 11:

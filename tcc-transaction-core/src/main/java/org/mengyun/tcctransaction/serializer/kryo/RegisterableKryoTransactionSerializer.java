@@ -9,7 +9,6 @@ import org.mengyun.tcctransaction.transaction.Participant;
 import org.mengyun.tcctransaction.transaction.Transaction;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.mengyun.tcctransaction.xid.TransactionXid;
-
 import java.util.List;
 
 /**
@@ -17,13 +16,7 @@ import java.util.List;
  */
 public class RegisterableKryoTransactionSerializer extends RegisterableKryoSerializer<Transaction> implements TransactionSerializer {
 
-    static List<Class> transactionClasses = Lists.newArrayList(
-            Transaction.class,
-            InvocationContext.class,
-            TransactionXid.class,
-            TransactionStatus.class,
-            Participant.class,
-            TransactionType.class);
+    static List<Class> transactionClasses = Lists.newArrayList(Transaction.class, InvocationContext.class, TransactionXid.class, TransactionStatus.class, Participant.class, TransactionType.class);
 
     public RegisterableKryoTransactionSerializer() {
         this(transactionClasses);

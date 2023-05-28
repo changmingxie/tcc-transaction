@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 @Qualifier("accountServiceProvider")
 public class AccountServiceImpl implements AccountService {
 
-
     @Autowired
     SubAccountRepository subAccountRepository;
 
@@ -56,12 +55,10 @@ public class AccountServiceImpl implements AccountService {
         throw new RuntimeException("mock try failed");
     }
 
-
     @Override
     public void transferToWithTimeoutBeforeBranchTransactionStart(TransactionContext transactionContext, long accountId, int amount) {
         throw new UnsupportedOperationException();
     }
-
 
     public void transferFromConfirm(TransactionContext transactionContext, long accountId, int amount) {
         TraceLog.debug(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CONFIRM_CALLED);
@@ -73,7 +70,6 @@ public class AccountServiceImpl implements AccountService {
     public void transferFromCancel(TransactionContext transactionContext, long accountId, int amount) {
         TraceLog.debug(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CANCEL_CALLED);
         SubAccount subAccount = subAccountRepository.findById(accountId);
-
         subAccount.setBalanceAmount(subAccount.getBalanceAmount() + amount);
         subAccount.setFrozenAmount(subAccount.getFrozenAmount() - amount);
         subAccountRepository.save(subAccount);

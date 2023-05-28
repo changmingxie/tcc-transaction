@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.tcctransaction.sample.multiple.tier.pay.api.PayService;
 import org.tcctransaction.sample.multiple.tier.trade.order.api.OrderService;
 import org.tcctransaction.sample.multiple.tier.trade.point.api.TradePointService;
-
 import java.util.Calendar;
 
 @Service
@@ -26,16 +25,10 @@ public class TradeService {
 
     @Compensable
     public void place() {
-
         System.out.println("TradeService.place called at : " + DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss SSS"));
-
         orderService.place();
-
         tradePointService.deduct();
-
         payService.deduct();
-
-//        throw new RuntimeException("call place at try stage failed.");
+        //        throw new RuntimeException("call place at try stage failed.");
     }
-
 }

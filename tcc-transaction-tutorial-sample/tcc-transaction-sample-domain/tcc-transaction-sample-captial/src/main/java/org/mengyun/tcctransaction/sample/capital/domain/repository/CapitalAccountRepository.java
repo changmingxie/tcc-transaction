@@ -16,7 +16,6 @@ public class CapitalAccountRepository {
     CapitalAccountDao capitalAccountDao;
 
     public CapitalAccount findByUserId(long userId) {
-
         return capitalAccountDao.findByUserId(userId);
     }
 

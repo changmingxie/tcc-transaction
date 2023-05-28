@@ -2,7 +2,6 @@ package org.mengyun.tcctransaction.discovery.loadbalance;
 
 import org.mengyun.tcctransaction.discovery.registry.ClientRegistryConfig;
 import org.mengyun.tcctransaction.load.LoadUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -15,12 +14,11 @@ public class LoadBalanceFactory {
 
     private static final Map<String, LoadBalanceProvider> CANDIDATE_LOAD_BALANCES = new HashMap<>();
 
-    private LoadBalanceFactory(){
+    private LoadBalanceFactory() {
     }
 
     static {
-        ServiceLoader.load(LoadBalanceProvider.class)
-                .forEach(each -> CANDIDATE_LOAD_BALANCES.put(LoadUtils.getServiceName(each.getClass()), each));
+        ServiceLoader.load(LoadBalanceProvider.class).forEach(each -> CANDIDATE_LOAD_BALANCES.put(LoadUtils.getServiceName(each.getClass()), each));
     }
 
     public static LoadBalanceServcie getInstance(ClientRegistryConfig clientRegistryConfig) {
@@ -29,6 +27,5 @@ public class LoadBalanceFactory {
             throw new IllegalArgumentException("invalid loadBalanceType: " + loadBalanceType);
         }
         return CANDIDATE_LOAD_BALANCES.get(loadBalanceType).provide();
-
     }
 }

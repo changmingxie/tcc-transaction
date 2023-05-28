@@ -10,6 +10,5 @@ public interface RemotingClient<T> extends RemotingService<T> {
 
     void invokeOneway(final RemotingCommand request, final long timeoutMillis);
 
-
     void invokeOneway(final String address, final RemotingCommand request, final long timeoutMillis);
 }

@@ -55,20 +55,18 @@ public class TccTransactionAutoConfiguration {
     }
 
     @Bean
-    public ClientConfig clientConfig(@Autowired ClientRegistryProperties clientRegistryProperties,
-                                     @Autowired StoreConfig storeConfig,
-                                     @Autowired RecoveryConfig recoveryConfig,
-                                     @Autowired NettyClientConfig nettyClientConfig) {
+    public ClientConfig clientConfig(@Autowired ClientRegistryProperties clientRegistryProperties, @Autowired StoreConfig storeConfig, @Autowired RecoveryConfig recoveryConfig, @Autowired NettyClientConfig nettyClientConfig) {
         return new ClientConfig(storeConfig, recoveryConfig, nettyClientConfig, clientRegistryProperties);
     }
 
     @Configuration
-    @ConditionalOnClass({TransactionContextClientInterceptor.class, GlobalClientInterceptorConfigurerAdapter.class})
+    @ConditionalOnClass({ TransactionContextClientInterceptor.class, GlobalClientInterceptorConfigurerAdapter.class })
     static class GrpcClientConfiguration {
 
         @Bean
         GlobalClientInterceptorConfigurerAdapter globalClientInterceptorConfigurerAdapter() {
             return new GlobalClientInterceptorConfigurerAdapter() {
+
                 @Override
                 public void addClientInterceptors(GlobalClientInterceptorRegistry registry) {
                     registry.addClientInterceptors(new TransactionContextClientInterceptor());
@@ -78,12 +76,13 @@ public class TccTransactionAutoConfiguration {
     }
 
     @Configuration
-    @ConditionalOnClass({TransactionContextServerInterceptor.class, GlobalServerInterceptorConfigurerAdapter.class})
+    @ConditionalOnClass({ TransactionContextServerInterceptor.class, GlobalServerInterceptorConfigurerAdapter.class })
     static class GrpcServerConfiguration {
 
         @Bean
         GlobalServerInterceptorConfigurerAdapter globalServerInterceptorConfigurerAdapter() {
             return new GlobalServerInterceptorConfigurerAdapter() {
+
                 @Override
                 public void addServerInterceptors(GlobalServerInterceptorRegistry registry) {
                     registry.addServerInterceptors(new TransactionContextServerInterceptor());

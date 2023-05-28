@@ -4,7 +4,6 @@ import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -20,6 +19,7 @@ public class RetryableTransactionStorage implements TransactionStorage, StorageR
     static final Logger logger = LoggerFactory.getLogger(RetryableTransactionStorage.class.getSimpleName());
 
     private int maxAttempts;
+
     private TransactionStorage transactionStorage;
 
     public RetryableTransactionStorage(int maxAttempts, TransactionStorage transactionStorage) {
@@ -30,7 +30,6 @@ public class RetryableTransactionStorage implements TransactionStorage, StorageR
     @Override
     public int create(TransactionStore transactionStore) {
         int requestId = ThreadLocalRandom.current().nextInt();
-
         transactionStore.setRequestId(requestId);
         try {
             return doWithRetry(() -> transactionStorage.create(transactionStore));
@@ -41,9 +40,7 @@ public class RetryableTransactionStorage implements TransactionStorage, StorageR
 
     @Override
     public int update(TransactionStore transactionStore) {
-
         int requestId = ThreadLocalRandom.current().nextInt();
-
         transactionStore.setRequestId(requestId);
         try {
             return doWithRetry(() -> transactionStorage.update(transactionStore));
@@ -54,9 +51,7 @@ public class RetryableTransactionStorage implements TransactionStorage, StorageR
 
     @Override
     public int delete(TransactionStore transactionStore) {
-
         int requestId = ThreadLocalRandom.current().nextInt();
-
         transactionStore.setRequestId(requestId);
         try {
             return doWithRetry(() -> transactionStorage.delete(transactionStore));

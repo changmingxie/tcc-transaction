@@ -18,17 +18,19 @@ import org.mengyun.tcctransaction.storage.StoreConfig;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ShardedJedisPool;
-
 import javax.sql.DataSource;
 
 public class AbstractConfig implements StoreConfig, RecoveryConfig, NettyConfig, RegistryConfig {
 
     //StoreConfig
     private StoreConfig storeConfig = new StoreProperties();
+
     //RecoveryConfig
     private RecoveryConfig recoveryConfig = new RecoveryProperties();
+
     //NettyConfig
     private NettyConfig nettyConfig = new NettyProperties();
+
     //RegistyConfig
     private RegistryConfig registryConfig = new RegistryProperties();
 

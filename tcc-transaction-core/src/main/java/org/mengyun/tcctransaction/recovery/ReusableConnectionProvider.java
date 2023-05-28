@@ -4,7 +4,6 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.quartz.utils.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,20 +15,35 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ReusableConnectionProvider implements ConnectionProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(ReusableConnectionProvider.class.getSimpleName());
+
     private static volatile ComboPooledDataSource instance;
+
     private static AtomicInteger inuseCounter = new AtomicInteger(0);
+
     private String driver;
+
     private String URL;
+
     private String user = "";
+
     private String password = "";
+
     private int initialPoolSize = 1;
+
     private int minPoolSize = 1;
+
     private int maxPoolSize = 10;
+
     private int maxStatementsPerConnection = 120;
+
     private int idleValidationSeconds = 50;
+
     private int maxIdleSeconds = 0;
+
     private int checkoutTimeout = 2000;
+
     private boolean validateOnCheckout = false;
+
     private String validationQuery;
 
     public ReusableConnectionProvider() {
@@ -44,7 +58,6 @@ public class ReusableConnectionProvider implements ConnectionProvider {
                     ComboPooledDataSource dataSource = null;
                     try {
                         dataSource = new ComboPooledDataSource();
-
                         dataSource.setDriverClass(driver);
                         dataSource.setUser(user);
                         dataSource.setPassword(password);
@@ -64,7 +77,6 @@ public class ReusableConnectionProvider implements ConnectionProvider {
                             }
                             dataSource.setIdleConnectionTestPeriod(idleValidationSeconds);
                         }
-
                         instance = dataSource;
                     } catch (Exception e) {
                         if (dataSource != null) {

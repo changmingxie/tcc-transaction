@@ -1,11 +1,9 @@
 package org.mengyun.tcctransaction.sample.feign.order.service;
 
-
 import org.mengyun.tcctransaction.sample.feign.order.feign.CapitalFeignClient;
 import org.mengyun.tcctransaction.sample.feign.order.feign.RedPacketFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 
 /**
@@ -20,7 +18,6 @@ public class AccountServiceImpl {
 
     @Autowired
     private CapitalFeignClient capitalFeignClient;
-
 
     public BigDecimal getRedPacketAccountByUserId(long userId) {
         return redPacketFeignClient.getRedPacketAccountByUserId(userId);

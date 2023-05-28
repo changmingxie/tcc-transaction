@@ -12,14 +12,13 @@ import org.mengyun.tcctransaction.utils.AlertUtils;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * @Author huabao.fang
  * @Date 2022/5/24 12:41
- **/
+ */
 @RestController
 @RequestMapping("/api/domain")
 public class DomainController {
@@ -79,22 +78,19 @@ public class DomainController {
 
     private ResponseDto<List<String>> rebuildAllDomainKeys(ResponseDto<List<String>> allDomainKeysResponseDto) {
         List<String> list = allDomainKeysResponseDto.getData();
-        if (!CollectionUtils.isEmpty(list)) {// 去掉dashbaord对应的domainKey
-            list = list.stream()
-                    .filter(domainKey -> !DashboardConstant.APPLICATION_NAME.equals(domainKey))
-                    .collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(list)) {
+            // 去掉dashbaord对应的domainKey
+            list = list.stream().filter(domainKey -> !DashboardConstant.APPLICATION_NAME.equals(domainKey)).collect(Collectors.toList());
         }
         return ResponseDto.returnSuccess(list);
     }
 
     private ResponseDto<List<DomainStoreDto>> rebuildAllDomains(ResponseDto<List<DomainStoreDto>> allDomainsResponseDto) {
         List<DomainStoreDto> list = allDomainsResponseDto.getData();
-        if (!CollectionUtils.isEmpty(list)) {// 去掉dashbaord对应的domainKey
-            list = list.stream()
-                    .filter(domainStoreDto -> !DashboardConstant.APPLICATION_NAME.equals(domainStoreDto.getDomain()))
-                    .collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(list)) {
+            // 去掉dashbaord对应的domainKey
+            list = list.stream().filter(domainStoreDto -> !DashboardConstant.APPLICATION_NAME.equals(domainStoreDto.getDomain())).collect(Collectors.toList());
         }
         return ResponseDto.returnSuccess(list);
     }
-
 }
