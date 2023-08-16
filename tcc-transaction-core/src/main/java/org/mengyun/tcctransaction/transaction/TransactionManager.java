@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.transaction;
 
+import org.mengyun.tcctransaction.ClientConfig;
 import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.Xid;
@@ -26,28 +27,20 @@ public class TransactionManager {
     private static final Logger logger = LoggerFactory.getLogger(TransactionManager.class.getSimpleName());
     private static final ThreadLocal<Deque<Transaction>> CURRENT = new ThreadLocal<>();
 
-
-    private int threadPoolSize = Runtime.getRuntime().availableProcessors() * 2 + 1;
-
-    private int threadQueueSize = 1024;
-
-    private ExecutorService asyncTerminatorExecutorService = new ThreadPoolExecutor(threadPoolSize,
-            threadPoolSize,
-            0L,
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(threadQueueSize), new ThreadPoolExecutor.AbortPolicy());
-
-    private ExecutorService asyncSaveExecutorService = new ThreadPoolExecutor(threadPoolSize,
-            threadPoolSize,
-            0L,
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(threadQueueSize * 2), new ThreadPoolExecutor.CallerRunsPolicy());
+    private ExecutorService asyncTerminatorExecutorService;
 
     private TransactionRepository transactionRepository;
 
 
-    public TransactionManager(TransactionRepository transactionRepository) {
+    public TransactionManager(TransactionRepository transactionRepository, ClientConfig clientConfig) {
         this.transactionRepository = transactionRepository;
+        this.asyncTerminatorExecutorService = new ThreadPoolExecutor(
+                clientConfig.getAsyncConfirmCancelThreadPoolSize(),
+                clientConfig.getAsyncConfirmCancelThreadPoolSize(),
+                0L,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(clientConfig.getAsyncConfirmCancelThreadPoolQueueSize()),
+                new ThreadPoolExecutor.AbortPolicy());
     }
 
     public Transaction begin(Object uniqueIdentify) {
@@ -214,45 +207,8 @@ public class TransactionManager {
 
 
     public void changeStatus(TransactionStatus status) {
-        changeStatus(status, false);
-    }
-
-    public void changeStatus(TransactionStatus status, boolean asyncSave) {
         Transaction transaction = this.getCurrentTransaction();
         transaction.setStatus(status);
-
-        if (asyncSave) {
-            asyncSaveExecutorService.submit(new AsyncSaveTask(transaction));
-        } else {
             transactionRepository.update(transaction);
-        }
     }
-
-    class AsyncSaveTask implements Runnable {
-
-        private Transaction transaction;
-
-        public AsyncSaveTask(Transaction transaction) {
-            this.transaction = transaction;
-        }
-
-        @Override
-        public void run() {
-
-            //only can be TRY_SUCCESS
-            try {
-                if (transaction != null && transaction.getStatus().equals(TransactionStatus.TRY_SUCCESS)) {
-
-                    Transaction foundTransaction = transactionRepository.findByXid(transaction.getXid());
-
-                    if (foundTransaction != null && foundTransaction.getStatus().equals(TransactionStatus.TRYING)) {
-                        transactionRepository.update(transaction);
-                    }
-                }
-            } catch (Exception e) {
-                //ignore the exception
-            }
-        }
-    }
-
 }

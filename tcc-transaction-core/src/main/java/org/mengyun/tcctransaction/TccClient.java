@@ -159,7 +159,7 @@ public class TccClient implements TccService {
             transactionStoreRecovery.setStoreMode(this.clientConfig.getStorageMode());
         }
 
-        this.transactionManager = new TransactionManager(this.transactionRepository);
+        this.transactionManager = new TransactionManager(this.transactionRepository, this.clientConfig);
     }
 
     @Override
