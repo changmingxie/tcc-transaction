@@ -15,6 +15,10 @@ public class ClientConfig extends AbstractConfig implements RecoveryConfig, Nett
 
     private ClientRegistryConfig clientRegistryConfig = new ClientRegistryProperties();
 
+    private int asyncConfirmCancelThreadPoolSize = Runtime.getRuntime().availableProcessors() * 2 + 1;
+
+    private int asyncConfirmCancelThreadPoolQueueSize = 1024;
+
     public ClientConfig() {
     }
 
@@ -97,5 +101,21 @@ public class ClientConfig extends AbstractConfig implements RecoveryConfig, Nett
     public void setClientRegistryConfig(ClientRegistryConfig clientRegistryConfig) {
         this.clientRegistryConfig = clientRegistryConfig;
         setRegistryConfig(clientRegistryConfig);
+    }
+
+    public int getAsyncConfirmCancelThreadPoolSize() {
+        return asyncConfirmCancelThreadPoolSize;
+    }
+
+    public void setAsyncConfirmCancelThreadPoolSize(int asyncConfirmCancelThreadPoolSize) {
+        this.asyncConfirmCancelThreadPoolSize = asyncConfirmCancelThreadPoolSize;
+    }
+
+    public int getAsyncConfirmCancelThreadPoolQueueSize() {
+        return asyncConfirmCancelThreadPoolQueueSize;
+    }
+
+    public void setAsyncConfirmCancelThreadPoolQueueSize(int asyncConfirmCancelThreadPoolQueueSize) {
+        this.asyncConfirmCancelThreadPoolQueueSize = asyncConfirmCancelThreadPoolQueueSize;
     }
 }
