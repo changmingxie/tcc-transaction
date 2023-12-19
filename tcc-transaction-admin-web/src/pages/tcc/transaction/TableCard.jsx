@@ -240,7 +240,11 @@ const TableCard = (props) => {
         size="small"
         bordered
         loading={loadingStatus}
-        pagination={true}
+        pagination={{
+          defaultPageSize: 10,
+          pageSizeOptions: [10,50,100,200,500,1000],
+          showSizeChanger: true,
+        }}
         scroll={{x: 1500, y: 800}}
       />
     </Card>

@@ -67,6 +67,8 @@ public abstract class BaseDomainServiceImpl implements DomainService {
             sourceDomainStore = new DomainStore();
         }
         sourceDomainStore.setDomain(requestDto.getDomain());
+        sourceDomainStore.setMaxRetryCount(requestDto.getMaxRetryCount());
+        sourceDomainStore.setMaxRecoveryRequestPerSecond(requestDto.getMaxRecoveryRequestPerSecond());
         sourceDomainStore.setPhoneNumbers(requestDto.getPhoneNumbers());
         sourceDomainStore.setAlertType(AlertType.nameOf(requestDto.getAlertType()));
         sourceDomainStore.setThreshold(requestDto.getThreshold());
@@ -89,6 +91,8 @@ public abstract class BaseDomainServiceImpl implements DomainService {
     private DomainStoreDto transferToDomainStoreDto(DomainStore domainStore) {
         DomainStoreDto domainStoreDto = new DomainStoreDto();
         domainStoreDto.setDomain(domainStore.getDomain());
+        domainStoreDto.setMaxRetryCount(domainStore.getMaxRetryCount());
+        domainStoreDto.setMaxRecoveryRequestPerSecond(domainStore.getMaxRecoveryRequestPerSecond());
         domainStoreDto.setPhoneNumbers(domainStore.getPhoneNumbers());
         domainStoreDto.setAlertType(domainStore.getAlertType() == null ? null : domainStore.getAlertType().name());
         domainStoreDto.setThreshold(domainStore.getThreshold());

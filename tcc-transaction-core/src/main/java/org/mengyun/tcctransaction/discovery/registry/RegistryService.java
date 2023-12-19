@@ -11,11 +11,11 @@ public interface RegistryService {
 
     void start();
 
-    void register(InetSocketAddress address);
+    void register(InetSocketAddress address, InetSocketAddress addressForDashboard);
 
-    void subscribe();
+    void subscribe(boolean addressForDashboard);
 
-    List<String> lookup();
+    List<String> lookup(boolean addressForDashboard);
 
     void close();
 }

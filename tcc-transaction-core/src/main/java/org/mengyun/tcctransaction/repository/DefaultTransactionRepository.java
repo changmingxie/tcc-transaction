@@ -35,8 +35,7 @@ public class DefaultTransactionRepository implements TransactionRepository {
     public int create(Transaction transaction) {
         transaction.setVersion(1L);
         TransactionStore transactionStore = getTransactionStore(transaction);
-        int result = this.transactionStorage.create(transactionStore);
-        return result;
+        return this.transactionStorage.create(transactionStore);
     }
 
     @Override
@@ -44,8 +43,7 @@ public class DefaultTransactionRepository implements TransactionRepository {
         transaction.setVersion(transaction.getVersion() + 1);
         transaction.setLastUpdateTime(new Date());
         TransactionStore transactionStore = getTransactionStore(transaction);
-        int result = this.transactionStorage.update(transactionStore);
-        return result;
+        return this.transactionStorage.update(transactionStore);
     }
 
     @Override

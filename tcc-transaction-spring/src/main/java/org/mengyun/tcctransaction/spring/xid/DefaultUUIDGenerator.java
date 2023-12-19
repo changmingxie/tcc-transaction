@@ -11,8 +11,13 @@ public class DefaultUUIDGenerator implements UUIDGenerator {
     }
 
     @Override
-    public String generate() {
+    public String generateString() {
         long value = this.uidGenerator.getUID();
         return Long.toHexString(value);
+    }
+
+    @Override
+    public Long generateLong() {
+        return this.uidGenerator.getUID();
     }
 }

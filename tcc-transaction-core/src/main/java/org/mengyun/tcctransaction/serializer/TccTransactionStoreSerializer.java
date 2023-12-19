@@ -16,6 +16,8 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
 
     private static final int REQUEST_ID_EXIST_FLAG_POS = 1 << 0;
 
+    private static final int ID_EXIST_FLAG_POS = 1 << 1;
+
     @Override
     public byte[] serialize(TransactionStore transactionStore) {
         if (transactionStore == null) {
@@ -23,8 +25,13 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         }
 
         byte existFlag = 0;
-        if (transactionStore.getRequestId() != null) {
+        boolean existRequestId = transactionStore.getRequestId() != null;
+        if (existRequestId) {
             existFlag |= REQUEST_ID_EXIST_FLAG_POS;
+        }
+        boolean existId = transactionStore.getId() != null;
+        if (existId) {
+            existFlag |= ID_EXIST_FLAG_POS;
         }
 
         Xid xid = transactionStore.getXid();
@@ -35,14 +42,14 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         //domain
         byte[] domainBytes = null;
         int domainLength = 0;
-        if (transactionStore.getDomain() != null && transactionStore.getDomain().length() > 0) {
+        if (transactionStore.getDomain() != null && !transactionStore.getDomain().isEmpty()) {
             domainBytes = transactionStore.getDomain().getBytes(StandardCharsets.UTF_8);
             domainLength = domainBytes.length;
         }
         //rootDomain
         byte[] rootDomainBytes = null;
         int rootDomainLength = 0;
-        if (transactionStore.getRootDomain() != null && transactionStore.getRootDomain().length() > 0) {
+        if (transactionStore.getRootDomain() != null && !transactionStore.getRootDomain().isEmpty()) {
             rootDomainBytes = transactionStore.getRootDomain().getBytes(StandardCharsets.UTF_8);
             rootDomainLength = rootDomainBytes.length;
         }
@@ -52,7 +59,7 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
             contentLength = transactionStore.getContent().length;
         }
 
-        int totalLen = calTotalLength(domainLength, rootDomainLength, xidLength, rootXidLength, contentLength, transactionStore.getRequestId() != null);
+        int totalLen = calTotalLength(domainLength, rootDomainLength, xidLength, rootXidLength, contentLength, existFlag);
 
         ByteBuffer byteBuffer = ByteBuffer.allocate(totalLen);
         byteBuffer.put(existFlag);
@@ -83,8 +90,11 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         byteBuffer.putInt(transactionStore.getRetriedCount());
         byteBuffer.putInt(transactionStore.getStatusId());
         byteBuffer.putInt(transactionStore.getTransactionTypeId());
-        if (transactionStore.getRequestId() != null) {
+        if (existRequestId) {
             byteBuffer.putInt(transactionStore.getRequestId());
+        }
+        if (existId) {
+            byteBuffer.putLong(transactionStore.getId());
         }
         return byteBuffer.array();
     }
@@ -140,6 +150,9 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         if ((existFlag & REQUEST_ID_EXIST_FLAG_POS) != 0) {
             transactionStore.setRequestId(byteBuffer.getInt());
         }
+        if ((existFlag & ID_EXIST_FLAG_POS) != 0) {
+            transactionStore.setId(byteBuffer.getLong());
+        }
         return transactionStore;
     }
 
@@ -160,10 +173,12 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
         cloned.setDomain(original.getDomain());
         cloned.setRootXid(original.getRootXid());
         cloned.setRootDomain(original.getRootDomain());
+        cloned.setRequestId(original.getRequestId());
+        cloned.setId(original.getId());
         return cloned;
     }
 
-    private int calTotalLength(int domainLength, int rootDomainLength, int xidLength, int rootXidLength, int contentLength, boolean existRequestId) {
+    private int calTotalLength(int domainLength, int rootDomainLength, int xidLength, int rootXidLength, int contentLength, byte existFlag) {
         // existFlag to distinguish whether optional params existed
         int totalLength = 1
                 //String domain
@@ -188,10 +203,15 @@ public class TccTransactionStoreSerializer implements TransactionStoreSerializer
                 + 4
                 //int transactionTypeId
                 + 4;
-        if (existRequestId) {
+        if ((existFlag & REQUEST_ID_EXIST_FLAG_POS) != 0) {
             totalLength = totalLength
                     //Integer requestId
                     + 4;
+        }
+        if ((existFlag & ID_EXIST_FLAG_POS) != 0) {
+            totalLength = totalLength
+                    //Long id
+                    + 8;
         }
         return totalLength;
     }

@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.properties.registry;
 
 import org.mengyun.tcctransaction.discovery.registry.RegistryConfig;
-import org.mengyun.tcctransaction.discovery.registry.RegistryType;
 import org.mengyun.tcctransaction.discovery.registry.direct.DirectRegistryProperties;
 import org.mengyun.tcctransaction.discovery.registry.nacos.NacosRegistryProperties;
 import org.mengyun.tcctransaction.discovery.registry.zookeeper.ZookeeperRegistryProperties;
@@ -13,8 +12,6 @@ import org.mengyun.tcctransaction.discovery.registry.zookeeper.ZookeeperRegistry
 public class RegistryProperties implements RegistryConfig {
 
     private String clusterName = "default";
-
-    private RegistryType registryType = RegistryType.direct;
 
     private String customRegistryName;
 
@@ -31,15 +28,6 @@ public class RegistryProperties implements RegistryConfig {
 
     public void setClusterName(String clusterName) {
         this.clusterName = clusterName;
-    }
-
-    @Override
-    public RegistryType getRegistryType() {
-        return registryType;
-    }
-
-    public void setRegistryType(RegistryType registryType) {
-        this.registryType = registryType;
     }
 
     @Override

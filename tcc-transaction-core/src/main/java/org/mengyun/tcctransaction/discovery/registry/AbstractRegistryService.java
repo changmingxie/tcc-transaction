@@ -18,32 +18,34 @@ public abstract class AbstractRegistryService implements RegistryService {
 
     private volatile List<String> serverAddresses = new ArrayList<>();
 
+    private volatile List<String> serverAddressesForDashboard = new ArrayList<>();
+
     @Override
     public void start() {
         //do nothing by default
     }
 
     @Override
-    public void register(InetSocketAddress address) {
+    public void register(InetSocketAddress address, InetSocketAddress addressForDashboard) {
         try {
-            doRegister(address);
+            doRegister(address, addressForDashboard);
         } catch (Exception e) {
             throw new RegistryException(e);
         }
     }
 
     @Override
-    public void subscribe() {
+    public void subscribe(boolean addressForDashboard) {
         try {
-            doSubscribe();
+            doSubscribe(addressForDashboard);
         } catch (Exception e) {
             throw new RegistryException(e);
         }
     }
 
     @Override
-    public List<String> lookup() {
-        return serverAddresses;
+    public List<String> lookup(boolean addressForDashboard) {
+        return addressForDashboard ? serverAddressesForDashboard : serverAddresses;
     }
 
     @Override
@@ -51,13 +53,17 @@ public abstract class AbstractRegistryService implements RegistryService {
         //do nothing by default
     }
 
-    protected abstract void doRegister(InetSocketAddress address) throws Exception;
+    protected abstract void doRegister(InetSocketAddress address, InetSocketAddress addressForDashboard) throws Exception;
 
-    protected abstract void doSubscribe() throws Exception;
+    protected abstract void doSubscribe(boolean addressForDashboard) throws Exception;
 
-    protected void setServerAddresses(List<String> serverAddresses) {
+    protected void setServerAddresses(List<String> address, boolean addressForDashboard) {
         Collections.shuffle(serverAddresses, ThreadLocalRandom.current());
-        this.serverAddresses = serverAddresses;
+        if (addressForDashboard) {
+            this.serverAddressesForDashboard = address;
+        } else {
+            this.serverAddresses = address;
+        }
     }
 
     protected String getClusterName() {

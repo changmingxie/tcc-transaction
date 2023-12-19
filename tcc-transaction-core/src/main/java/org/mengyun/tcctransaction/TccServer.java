@@ -7,6 +7,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.AttributeKey;
 import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.constants.MixAll;
+import org.mengyun.tcctransaction.constants.RemotingServiceCode;
 import org.mengyun.tcctransaction.discovery.registry.RegistryFactory;
 import org.mengyun.tcctransaction.discovery.registry.RegistryService;
 import org.mengyun.tcctransaction.exception.SystemException;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,11 +53,13 @@ public class TccServer implements TccService {
 
     private RecoveryExecutor recoveryExecutor;
 
-    private RequestProcessor requestProcessor;
+    private RequestProcessor<ChannelHandlerContext> requestProcessor;
 
     private TransactionStoreRecovery transactionStoreRecovery;
 
     private ExecutorService requestProcessExecutor;
+
+    private ExecutorService registerRequestProcessExecutor;
 
     private TransactionStoreSerializer transactionStoreSerializer;
 
@@ -65,9 +69,9 @@ public class TccServer implements TccService {
 
     private RecoveryScheduler scheduler;
 
-    private RemotingServer remotingServer;
+    private RemotingServer<ChannelHandlerContext> remotingServer;
 
-    private RegistryService registryService;
+    private List<RegistryService> registryServices;
 
     public TccServer(ServerConfig serverConfig) {
         if (serverConfig != null) {
@@ -83,7 +87,7 @@ public class TccServer implements TccService {
 
         this.remotingServer = new NettyRemotingServer(this.remotingCommandSerializer, this.serverConfig);
 
-        this.registryService = RegistryFactory.getInstance(this.serverConfig);
+        this.registryServices = RegistryFactory.getInstance(this.serverConfig);
 
         this.transactionStorage = TransactionStorageFactory.create(transactionStoreSerializer, this.serverConfig,false);
 
@@ -117,11 +121,11 @@ public class TccServer implements TccService {
     @PreDestroy
     public void shutdown() throws Exception {
 
+        logger.info("start shutdown TccServer");
+
         this.isShutdown = true;
 
-        if (this.registryService != null) {
-            this.registryService.close();
-        }
+        this.registryServices.forEach(RegistryService::close);
 
         if (this.remotingServer != null) {
             this.remotingServer.shutdown();
@@ -133,6 +137,10 @@ public class TccServer implements TccService {
 
         if (this.requestProcessExecutor != null) {
             this.requestProcessExecutor.shutdown();
+        }
+
+        if (this.registerRequestProcessExecutor != null) {
+            this.registerRequestProcessExecutor.shutdown();
         }
 
         if (this.transactionStoreRecovery != null) {
@@ -170,6 +178,21 @@ public class TccServer implements TccService {
                     }
                 });
 
+        this.registerRequestProcessExecutor = new ThreadPoolExecutor(1,
+                1,
+                1000L * 60,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>(this.serverConfig.getRequestProcessThreadQueueCapacity()),
+                new ThreadFactory() {
+                    private AtomicInteger threadIndex = new AtomicInteger(0);
+
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        return new Thread(r, String.format("ClientRegisterThread_%d", threadIndex.getAndIncrement()));
+                    }
+                });
+
+        remotingServer.registerProcessor(RemotingServiceCode.REGISTER, this.requestProcessor, registerRequestProcessExecutor);
         remotingServer.registerDefaultProcessor(this.requestProcessor, this.requestProcessExecutor);
 
         remotingServer.registerChannelHandlers(new UnregisterScheduleHandler());
@@ -184,10 +207,16 @@ public class TccServer implements TccService {
         } else {
             inetSocketAddress = new InetSocketAddress(NetUtils.getLocalAddress(), serverConfig.getListenPort());
         }
-        this.registryService.start();
-        this.registryService.register(inetSocketAddress);
-
-        logger.info("succeeded to register with address {}", inetSocketAddress);
+        InetSocketAddress inetSocketAddressForDashboard;
+        if (StringUtils.isNotEmpty(this.serverConfig.getRegistryAddressForDashboard())) {
+            inetSocketAddressForDashboard = NetUtils.toInetSocketAddress(this.serverConfig.getRegistryAddressForDashboard());
+        } else {
+            inetSocketAddressForDashboard = new InetSocketAddress(NetUtils.getLocalAddress(), serverConfig.getRegistryPortForDashboard());
+        }
+        for (RegistryService registryService : this.registryServices) {
+            registryService.start();
+            registryService.register(inetSocketAddress, inetSocketAddressForDashboard);
+        }
     }
 
     public RecoveryScheduler getScheduler() {

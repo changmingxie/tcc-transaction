@@ -2,9 +2,7 @@ package org.mengyun.tcctransaction.discovery.registry;
 
 import org.mengyun.tcctransaction.load.LoadUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 
 /**
  * @author Nervose.Wu
@@ -21,8 +19,23 @@ public class RegistryFactory {
     private RegistryFactory() {
     }
 
-    public static RegistryService getInstance(RegistryConfig registryConfig) {
-        return CANDIDATE_REGISTRY_PROVIDERS.get(registryConfig.getRegistryType().name()).provide(registryConfig);
+    public static List<RegistryService> getInstance(ServerRegistryConfig serverRegistryConfig) {
+        if (serverRegistryConfig.getRegistryTypes() == null) {
+            return Collections.emptyList();
+        }
+        List<RegistryService> registryServices = new ArrayList<>();
+        Set<RegistryType> handled = new HashSet<>();
+        for (RegistryType registryType : serverRegistryConfig.getRegistryTypes()) {
+            if (!handled.contains(registryType)) {
+                handled.add(registryType);
+                registryServices.add(CANDIDATE_REGISTRY_PROVIDERS.get(registryType.name()).provide(serverRegistryConfig));
+            }
+        }
+        return registryServices;
+    }
+
+    public static RegistryService getInstance(ClientRegistryConfig clientRegistryConfig) {
+        return CANDIDATE_REGISTRY_PROVIDERS.get(clientRegistryConfig.getRegistryType().name()).provide(clientRegistryConfig);
     }
 
     public static RegistryProvider findRegistryProviderByName(String name) {

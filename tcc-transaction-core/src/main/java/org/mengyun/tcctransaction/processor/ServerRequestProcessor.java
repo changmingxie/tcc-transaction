@@ -128,7 +128,7 @@ public class ServerRequestProcessor implements RequestProcessor<ChannelHandlerCo
     public void registerDomain(String domain) {
         try {
             if (transactionStorage.supportStorageRecoverable()) {
-                ((StorageRecoverable) transactionStorage).registerDomain(new DomainStore(domain));
+                ((StorageRecoverable) transactionStorage).registerDomain(new DomainStore(domain, this.scheduler.getRecoveryConfig().getMaxRetryCount()));
             } else {
                 logger.warn("transactionStorage:{} not StorageRecoverable, do not regist domain", transactionStorage.getClass().getSimpleName());
             }

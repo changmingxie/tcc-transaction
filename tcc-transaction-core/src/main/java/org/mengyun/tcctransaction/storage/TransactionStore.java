@@ -5,6 +5,8 @@ import org.mengyun.tcctransaction.api.Xid;
 import java.util.Date;
 
 public class TransactionStore {
+
+    private Long id;
     private String domain;
     private String rootDomain;
     private Xid xid;
@@ -114,9 +116,18 @@ public class TransactionStore {
         this.requestId = requestId;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String simpleDetail() {
         return "{" +
-                "domain='" + domain + '\'' +
+                "id=" + id +
+                ", domain='" + domain + '\'' +
                 ", rootDomain='" + rootDomain + '\'' +
                 ", xid=" + xid +
                 ", rootXid=" + rootXid +

@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.storage;
 
+import io.netty.channel.ChannelHandlerContext;
 import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.constants.RemotingServiceCode;
 import org.mengyun.tcctransaction.exception.SystemException;
@@ -17,7 +18,7 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
 
     static final Logger logger = LoggerFactory.getLogger(RocksDbTransactionStorage.class.getSimpleName());
 
-    private RemotingClient remotingClient;
+    private RemotingClient<ChannelHandlerContext> remotingClient;
 
     public RemotingTransactionStorage(TransactionStoreSerializer serializer, StoreConfig storeConfig) {
         super(serializer, storeConfig);
@@ -93,7 +94,6 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
     public void close() {
     }
 
-
     private int doWrite(int serviceCode, TransactionStore transactionStore) {
         RemotingCommand requestCommand = RemotingCommand.createCommand(RemotingCommandCode.SERVICE_REQ, null);
         requestCommand.setServiceCode(serviceCode);
@@ -134,11 +134,11 @@ public class RemotingTransactionStorage extends AbstractTransactionStorage {
         }
     }
 
-    public RemotingClient getRemotingClient() {
+    public RemotingClient<ChannelHandlerContext> getRemotingClient() {
         return remotingClient;
     }
 
-    public void setRemotingClient(RemotingClient remotingClient) {
+    public void setRemotingClient(RemotingClient<ChannelHandlerContext> remotingClient) {
         this.remotingClient = remotingClient;
     }
 

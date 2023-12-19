@@ -34,7 +34,8 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
 
             if (foundTransactionStore != null && transactionStore.getRequestId() != null
                     && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId())
-                    && transactionStore.getVersion() == foundTransactionStore.getVersion()) {
+                    && transactionStore.getVersion() == foundTransactionStore.getVersion()
+                    && (transactionStore.getId() == null || transactionStore.getId().equals(foundTransactionStore.getId()))) {
                 return 1;
             }
 
@@ -54,7 +55,8 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
 
             if (foundTransactionStore != null && transactionStore.getRequestId() != null
                     && transactionStore.getRequestId().equals(foundTransactionStore.getRequestId())
-                    && transactionStore.getVersion() == foundTransactionStore.getVersion()) {
+                    && transactionStore.getVersion() == foundTransactionStore.getVersion()
+                    && (transactionStore.getId() == null || transactionStore.getId().equals(foundTransactionStore.getId()))) {
                 return 1;
             }
 
@@ -69,14 +71,12 @@ public abstract class AbstractTransactionStorage implements TransactionStorage, 
 
     @Override
     public TransactionStore findByXid(String domain, Xid transactionXid) {
-        TransactionStore transactionStore = doFindOne(domain, transactionXid, false);
-        return transactionStore;
+        return doFindOne(domain, transactionXid, false);
     }
 
     @Override
     public TransactionStore findMarkDeletedByXid(String domain, Xid transactionXid) {
-        TransactionStore transactionStore = doFindOne(domain, transactionXid, true);
-        return transactionStore;
+        return doFindOne(domain, transactionXid, true);
     }
 
     @Override

@@ -18,7 +18,5 @@ public interface RegistryConfig {
 
     DirectRegistryProperties getDirectRegistryProperties();
 
-    RegistryType getRegistryType();
-
     String getCustomRegistryName();
 }

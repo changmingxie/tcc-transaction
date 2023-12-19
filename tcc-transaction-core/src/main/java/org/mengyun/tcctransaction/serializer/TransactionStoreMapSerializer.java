@@ -16,6 +16,7 @@ import java.util.Map;
  */
 public class TransactionStoreMapSerializer {
 
+    public static final String ID = "ID";
     public static final String XID = "XID";
     public static final String ROOT_XID = "ROOT_XID";
     public static final String ROOT_DOMAIN = "ROOT_DOMAIN";
@@ -52,6 +53,9 @@ public class TransactionStoreMapSerializer {
         if (transactionStore.getRequestId() != null) {
             map.put(REQUEST_ID.getBytes(), ByteUtils.intToBytes(transactionStore.getRequestId()));
         }
+        if (transactionStore.getId() != null) {
+            map.put(ID.getBytes(), ByteUtils.longToBytes(transactionStore.getId()));
+        }
         return map;
     }
 
@@ -78,6 +82,10 @@ public class TransactionStoreMapSerializer {
 
         if (propertyMap.containsKey(REQUEST_ID)) {
             transactionStore.setRequestId(ByteUtils.bytesToInt(propertyMap.get(REQUEST_ID)));
+        }
+
+        if (propertyMap.containsKey(ID)) {
+            transactionStore.setId(ByteUtils.bytesToLong(propertyMap.get(ID)));
         }
 
         transactionStore.setStatusId(ByteUtils.bytesToInt(propertyMap.get(STATUS)));

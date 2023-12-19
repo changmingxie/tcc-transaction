@@ -19,6 +19,8 @@ import java.util.Map;
 public class DomainStoreMapSerializer {
 
     public static final String DOMAIN = "DOMAIN";
+    public static final String MAX_RETRY_COUNT = "MAX_RETRY_COUNT";
+    public static final String MAX_RECOVERY_REQUEST_PER_SECOND = "MAX_RECOVERY_REQUEST_PER_SECOND";
     public static final String PHONE_NUMBERS = "PHONE_NUMBERS";
     public static final String ALERT_TYPE = "ALERT_TYPE";
     public static final String THRESHOLD = "THRESHOLD";
@@ -37,6 +39,8 @@ public class DomainStoreMapSerializer {
 
         Map<byte[], byte[]> map = new HashMap<>();
         putBytesIfValueExist(map, DOMAIN, domainStore.getDomain());
+        putBytesIfValueExist(map, MAX_RETRY_COUNT, domainStore.getMaxRetryCount());
+        putBytesIfValueExist(map, MAX_RECOVERY_REQUEST_PER_SECOND, domainStore.getMaxRecoveryRequestPerSecond());
         putBytesIfValueExist(map, PHONE_NUMBERS, domainStore.getPhoneNumbers());
         putBytesIfValueExist(map, ALERT_TYPE, domainStore.getAlertType());
         putBytesIfValueExist(map, THRESHOLD, domainStore.getThreshold());
@@ -81,6 +85,8 @@ public class DomainStoreMapSerializer {
 
         DomainStore domainStore = new DomainStore();
         domainStore.setDomain(new String(propertyMap.get(DOMAIN)));
+        domainStore.setMaxRetryCount(propertyMap.get(MAX_RETRY_COUNT) == null ? 3 : ByteUtils.bytesToInt(propertyMap.get(MAX_RETRY_COUNT)));
+        domainStore.setMaxRecoveryRequestPerSecond(propertyMap.get(MAX_RECOVERY_REQUEST_PER_SECOND) == null ? 100 : ByteUtils.bytesToInt(propertyMap.get(MAX_RECOVERY_REQUEST_PER_SECOND)));
         domainStore.setPhoneNumbers(propertyMap.get(PHONE_NUMBERS) == null ? null : new String(propertyMap.get(PHONE_NUMBERS)));
         domainStore.setAlertType(propertyMap.get(ALERT_TYPE) == null ? null : AlertType.nameOf(new String(propertyMap.get(ALERT_TYPE))));
         domainStore.setThreshold(propertyMap.get(THRESHOLD) == null ? 0 : ByteUtils.bytesToInt(propertyMap.get(THRESHOLD)));

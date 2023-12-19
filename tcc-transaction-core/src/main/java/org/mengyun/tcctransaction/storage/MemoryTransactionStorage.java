@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<String, TransactionStore>> {
 
@@ -118,7 +117,9 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     protected int doUpdate(TransactionStore transactionStore) {
         trace("update", transactionStore);
         if (db.compute(buildMemoryKey(transactionStore), (key, oldValue) -> {
-            if (oldValue == null || oldValue.getVersion() != transactionStore.getVersion() - 1) {
+            if (oldValue == null
+                    || oldValue.getVersion() != transactionStore.getVersion() - 1
+                    || (transactionStore.getId() != null && !transactionStore.getId().equals(oldValue.getId()))) {
                 return oldValue;
             } else {
                 return transactionStore;
@@ -132,7 +133,15 @@ public class MemoryTransactionStorage extends AbstractKVTransactionStorage<Map<S
     @Override
     protected int doDelete(TransactionStore transactionStore) {
         trace("delete", transactionStore);
-        db.remove(buildMemoryKey(transactionStore));
+        db.compute(buildMemoryKey(transactionStore), (key, oldValue) -> {
+            if (oldValue == null
+                    || oldValue.getVersion() != transactionStore.getVersion()
+                    || (transactionStore.getId() != null && !transactionStore.getId().equals(oldValue.getId()))) {
+                return oldValue;
+            } else {
+                return null;
+            }
+        });
         return 1;
     }
 

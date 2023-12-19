@@ -1,1 +1,0 @@
-org.springframework.boot.env.EnvironmentPostProcessor=org.mengyun.tcctransaction.server.config.ServerEnvironmentPostProcessor

@@ -161,8 +161,8 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
 
     @Override
     public void shutdown() {
-        this.workEventLoopGroup.shutdownGracefully().syncUninterruptibly();
         this.bossEventLoopGroup.shutdownGracefully().syncUninterruptibly();
+        this.workEventLoopGroup.shutdownGracefully().syncUninterruptibly();
         this.eventExecutorGroup.shutdownGracefully();
 
         this.serverBootstrap = null;
@@ -171,6 +171,11 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
     @Override
     public void registerDefaultProcessor(RequestProcessor<ChannelHandlerContext> processor, ExecutorService executor) {
         this.defaultRequestProcessor = new ImmutablePair<>(processor, executor);
+    }
+
+    @Override
+    public void registerProcessor(int requestCode, RequestProcessor<ChannelHandlerContext> processor, ExecutorService executor) {
+        this.processorTable.put(requestCode, new ImmutablePair<>(processor, executor));
     }
 
     @Override

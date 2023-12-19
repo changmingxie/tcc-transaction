@@ -8,6 +8,7 @@ import org.mengyun.tcctransaction.exception.CancellingException;
 import org.mengyun.tcctransaction.exception.ConfirmingException;
 import org.mengyun.tcctransaction.exception.NoExistedTransactionException;
 import org.mengyun.tcctransaction.exception.SystemException;
+import org.mengyun.tcctransaction.remoting.exception.RemotingTimeoutException;
 import org.mengyun.tcctransaction.repository.TransactionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +35,11 @@ public class TransactionManager {
 
     public TransactionManager(TransactionRepository transactionRepository, ClientConfig clientConfig) {
         this.transactionRepository = transactionRepository;
-        this.asyncTerminatorExecutorService = new ThreadPoolExecutor(
-                clientConfig.getAsyncConfirmCancelThreadPoolSize(),
+        this.asyncTerminatorExecutorService = new ThreadPoolExecutor(clientConfig.getAsyncConfirmCancelThreadPoolSize(),
                 clientConfig.getAsyncConfirmCancelThreadPoolSize(),
                 0L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(clientConfig.getAsyncConfirmCancelThreadPoolQueueSize()),
-                new ThreadPoolExecutor.AbortPolicy());
+                new ArrayBlockingQueue<>(clientConfig.getAsyncConfirmCancelThreadPoolQueueSize()), new ThreadPoolExecutor.DiscardPolicy());
     }
 
     public Transaction begin(Object uniqueIdentify) {
@@ -48,7 +47,17 @@ public class TransactionManager {
         //for performance tuning, at create stage do not persistent
         if (transaction.getXid().getFormatId() == Xid.CUSTOMIZED) {
             //for customized xid, ensure the transaction is created only once before tcc stage
-            transactionRepository.create(transaction);
+            try {
+                transactionRepository.create(transaction);
+            } catch (RemotingTimeoutException exception) {
+                try {
+                    //Try to avoid transaction stuck at trying status.
+                    transactionRepository.delete(transaction);
+                } catch (Exception rollbackException) {
+                    logger.warn("delete transaction failed", rollbackException);
+                }
+                throw exception;
+            }
         }
         registerTransaction(transaction);
         return transaction;
@@ -111,24 +120,26 @@ public class TransactionManager {
     }
 
 
-    public void rollback(boolean asyncRollback) {
+    public void rollback(boolean asyncRollback, boolean needDelay) {
 
         final Transaction transaction = getCurrentTransaction();
         transaction.setStatus(TransactionStatus.CANCELLING);
 
         transactionRepository.update(transaction);
 
-        if (asyncRollback) {
+        if (!needDelay) {
+            if (asyncRollback) {
 
-            try {
-                asyncTerminatorExecutorService.submit(() -> rollbackTransaction(transaction));
-            } catch (Throwable rollbackException) {
-                logger.warn("compensable transaction async rollback failed, recovery job will try to rollback later.", rollbackException);
-                throw new CancellingException(rollbackException);
+                try {
+                    asyncTerminatorExecutorService.submit(() -> rollbackTransaction(transaction));
+                } catch (Throwable rollbackException) {
+                    logger.warn("compensable transaction async rollback failed, recovery job will try to rollback later.", rollbackException);
+                    throw new CancellingException(rollbackException);
+                }
+            } else {
+
+                rollbackTransaction(transaction);
             }
-        } else {
-
-            rollbackTransaction(transaction);
         }
     }
 
@@ -205,10 +216,9 @@ public class TransactionManager {
         }
     }
 
-
     public void changeStatus(TransactionStatus status) {
         Transaction transaction = this.getCurrentTransaction();
         transaction.setStatus(status);
-            transactionRepository.update(transaction);
+        transactionRepository.update(transaction);
     }
 }

@@ -8,6 +8,12 @@ public class DomainStoreRequestDto {
 
     private String domain;
 
+    // 最大重试次数
+    private int maxRetryCount;
+
+    // 恢复任务最大TPS
+    private int maxRecoveryRequestPerSecond;
+
     // 告警手机号列表,多个以英文逗号分割
     private String phoneNumbers;
 
@@ -69,5 +75,21 @@ public class DomainStoreRequestDto {
 
     public void setDingRobotUrl(String dingRobotUrl) {
         this.dingRobotUrl = dingRobotUrl;
+    }
+
+    public int getMaxRetryCount() {
+        return maxRetryCount;
+    }
+
+    public void setMaxRetryCount(int maxRetryCount) {
+        this.maxRetryCount = maxRetryCount;
+    }
+
+    public int getMaxRecoveryRequestPerSecond() {
+        return maxRecoveryRequestPerSecond;
+    }
+
+    public void setMaxRecoveryRequestPerSecond(int maxRecoveryRequestPerSecond) {
+        this.maxRecoveryRequestPerSecond = maxRecoveryRequestPerSecond;
     }
 }

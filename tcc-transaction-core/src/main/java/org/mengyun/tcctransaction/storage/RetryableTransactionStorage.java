@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  */
 public class RetryableTransactionStorage implements TransactionStorage, StorageRecoverable {
 
-    static final Logger logger = LoggerFactory.getLogger(RetryableTransactionStorage.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(RetryableTransactionStorage.class.getSimpleName());
 
     private int maxAttempts;
     private TransactionStorage transactionStorage;
@@ -54,15 +54,7 @@ public class RetryableTransactionStorage implements TransactionStorage, StorageR
 
     @Override
     public int delete(TransactionStore transactionStore) {
-
-        int requestId = ThreadLocalRandom.current().nextInt();
-
-        transactionStore.setRequestId(requestId);
-        try {
-            return doWithRetry(() -> transactionStorage.delete(transactionStore));
-        } finally {
-            transactionStore.setRequestId(null);
-        }
+        return doWithRetry(() -> transactionStorage.delete(transactionStore));
     }
 
     @Override
@@ -97,13 +89,16 @@ public class RetryableTransactionStorage implements TransactionStorage, StorageR
 
     private int doWithRetry(IntSupplier supplier) {
         int curAttempts = 0;
+        StringBuilder errorInfo = new StringBuilder();
         do {
             curAttempts++;
             try {
                 return supplier.getAsInt();
             } catch (Exception e) {
+                errorInfo.append("attempt times:").append(curAttempts).append("  errorInfo:").append(e.getMessage()).append(";");
                 logger.debug("current attempt: {} failed", curAttempts, e);
                 if (curAttempts >= maxAttempts) {
+                    logger.error(errorInfo.toString());
                     throw e;
                 }
             }
@@ -112,12 +107,15 @@ public class RetryableTransactionStorage implements TransactionStorage, StorageR
 
     private <T> T doWithRetry(Supplier<T> supplier) {
         int curAttempts = 0;
+        StringBuilder errorInfo = new StringBuilder();
         do {
             curAttempts++;
             try {
                 return supplier.get();
             } catch (Exception e) {
+                errorInfo.append("attempt times:").append(curAttempts).append("errorInfo:").append(e.getMessage()).append(";");
                 logger.debug("current attempt: {} failed", curAttempts, e);
+                logger.error(errorInfo.toString());
                 if (curAttempts >= maxAttempts) {
                     throw e;
                 }

@@ -3,12 +3,14 @@ package org.mengyun.tcctransaction.recovery;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.util.concurrent.RateLimiter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.mengyun.tcctransaction.alert.AlertManager;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.common.TransactionType;
 import org.mengyun.tcctransaction.repository.StorageMode;
 import org.mengyun.tcctransaction.storage.*;
+import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +34,7 @@ public class TransactionStoreRecovery implements Closeable {
 
     public static final int MAX_ERROR_COUNT_SHREDHOLD = 15;
 
-    static final Logger logger = LoggerFactory.getLogger(TransactionStoreRecovery.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(TransactionStoreRecovery.class.getSimpleName());
     private final AtomicInteger triggerMaxRetryPrintCount = new AtomicInteger();
     private final AtomicInteger recoveryFailedPrintCount = new AtomicInteger();
     private final Lock logSync = new ReentrantLock();
@@ -48,6 +50,8 @@ public class TransactionStoreRecovery implements Closeable {
     private StorageMode storageMode = StorageMode.ALONE;
 
     private ObjectMapper jackson = new ObjectMapper();
+
+    private ConcurrentHashMap<String, RateLimiter> rateLimiterMap = new ConcurrentHashMap<>();
 
     public TransactionStoreRecovery(TransactionStorage transactionStorage, RecoveryExecutor recoveryExecutor, RecoveryConfig recoveryConfig) {
         this.transactionStorage = transactionStorage;
@@ -76,25 +80,38 @@ public class TransactionStoreRecovery implements Closeable {
 
     public void startRecover(String domain) {
 
+        DomainStore domainStore = ((StorageRecoverable) transactionStorage).findDomain(domain);
+        rateLimiterMap.compute(domain, (key, old) -> {
+                    if (old == null) {
+                        return RateLimiter.create(domainStore.getMaxRecoveryRequestPerSecond());
+                    } else {
+                        old.setRate(domainStore.getMaxRecoveryRequestPerSecond());
+                        return old;
+                    }
+                }
+        );
+
         try {
             String offset = null;
 
             int totalCount = 0;
+            int reachRetryLimitCount=0;
             do {
 
                 Page<TransactionStore> page = loadErrorTransactionsByPage(domain, offset);
 
                 if (!page.getData().isEmpty()) {
-                    concurrentRecoveryErrorTransactions(page.getData());
+                    concurrentRecoveryErrorTransactions(page.getData(),domainStore.getMaxRetryCount());
                     offset = page.getNextOffset();
                     totalCount += page.getData().size();
+                    reachRetryLimitCount += page.getData().stream().filter(each -> each.getRetriedCount() > domainStore.getMaxRetryCount()).count();
                 } else {
                     break;
                 }
             } while (true);
 
             // 告警
-            AlertManager.tryAlert(domain, totalCount, transactionStorage);
+            AlertManager.tryAlert(domain, reachRetryLimitCount, transactionStorage);
 
             logger.debug("total recovery count {} from repository:{}", totalCount, transactionStorage.getClass().getName());
         } catch (Throwable e) {
@@ -106,43 +123,35 @@ public class TransactionStoreRecovery implements Closeable {
 
         long currentTimeInMillis = Instant.now().toEpochMilli();
 
-        return ((StorageRecoverable) transactionStorage).findAllUnmodifiedSince(domain, new Date(currentTimeInMillis - recoveryConfig.getRecoverDuration() * 1000), offset, recoveryConfig.getFetchPageSize());
+        return ((StorageRecoverable) transactionStorage).findAllUnmodifiedSince(domain, new Date(currentTimeInMillis - recoveryConfig.getRecoverDuration() * 1000L), offset, recoveryConfig.getFetchPageSize());
     }
 
 
-    private void concurrentRecoveryErrorTransactions(List<TransactionStore> transactions) throws InterruptedException, ExecutionException {
+    private void concurrentRecoveryErrorTransactions(List<TransactionStore> transactions, int maxRetryCount) throws InterruptedException, ExecutionException {
 
         initLogStatistics();
 
         List<RecoverTask> tasks = new ArrayList<>();
         for (TransactionStore transaction : transactions) {
-            tasks.add(new RecoverTask(transaction));
+            tasks.add(new RecoverTask(transaction, maxRetryCount));
         }
 
-        List<Future<Void>> futures = recoveryExecutorService.invokeAll(tasks, CONCURRENT_RECOVERY_TIMEOUT, TimeUnit.SECONDS);
+        long timeout = (long) (CONCURRENT_RECOVERY_TIMEOUT + tasks.size() / rateLimiterMap.get(transactions.get(0).getDomain()).getRate());
+        List<Future<Void>> futures = recoveryExecutorService.invokeAll(tasks, timeout, TimeUnit.SECONDS);
 
-        for (Future future : futures) {
+        for (Future<Void> future : futures) {
             future.get();
         }
     }
 
-    private void recoverErrorTransactions(List<TransactionStore> transactions) {
+    private void recoverErrorTransaction(TransactionStore transactionStore, int maxRetryCount) {
 
-        initLogStatistics();
-
-        for (TransactionStore transaction : transactions) {
-            recoverErrorTransaction(transaction);
-        }
-    }
-
-    private void recoverErrorTransaction(TransactionStore transactionStore) {
-
-        if (transactionStore.getRetriedCount() > recoveryConfig.getMaxRetryCount()) {
+        if (transactionStore.getRetriedCount() > maxRetryCount) {
 
             logSync.lock();
             try {
                 if (triggerMaxRetryPrintCount.get() < logMaxPrintCount) {
-                    logger.error(
+                    logger.warn(
                             "recover failed with max retry count,will not try again. domain:{}, xid:{}, rootDomain:{}, rootXid:{}, status:{},retried count:{}",
                             transactionStore.getDomain(),
                             transactionStore.getXid(),
@@ -152,7 +161,7 @@ public class TransactionStoreRecovery implements Closeable {
                             transactionStore.getRetriedCount());
                     triggerMaxRetryPrintCount.incrementAndGet();
                 } else if (triggerMaxRetryPrintCount.get() == logMaxPrintCount) {
-                    logger.error("Too many transactionStore's retried count max then MaxRetryCount during one page transactions recover process , will not print errors again!");
+                    logger.warn("Too many transactionStore's retried count max then MaxRetryCount during one page transactions recover process , will not print errors again!");
                 }
 
             } finally {
@@ -177,7 +186,7 @@ public class TransactionStoreRecovery implements Closeable {
                         tryTreatAsFailed(transactionStore, TransactionStatus.CANCELLING);
                         break;
                     default:
-                        //ignore it.
+                        //the transactionStore status is TRYING, ignore it.
                         break;
 
                 }
@@ -244,7 +253,7 @@ public class TransactionStoreRecovery implements Closeable {
                 try {
                     if (recoveryFailedPrintCount.get() < logMaxPrintCount) {
                         try {
-                            logger.error("recover failed, txid:{}, status:{},retried count:{},transactionStore content:{}",
+                            logger.warn("recover failed, txid:{}, status:{},retried count:{},transactionStore content:{}",
                                     transactionStore.getXid(),
                                     transactionStore.getStatusId(),
                                     transactionStore.getRetriedCount(),
@@ -254,7 +263,7 @@ public class TransactionStoreRecovery implements Closeable {
                         }
                         recoveryFailedPrintCount.incrementAndGet();
                     } else if (recoveryFailedPrintCount.get() == logMaxPrintCount) {
-                        logger.error("Too many transactionStore's recover error during one page transactions recover process , will not print errors again!");
+                        logger.warn("Too many transactionStore's recover error during one page transactions recover process , will not print errors again!");
                     }
                 } finally {
                     logSync.unlock();
@@ -268,7 +277,7 @@ public class TransactionStoreRecovery implements Closeable {
         Date currentTime = new Date();
         int maxTimeTreatTryingAsFailed = recoveryConfig.getMaxTimeTreatTryingAsFailed();
         if (maxTimeTreatTryingAsFailed > 0
-                && (currentTime.getTime() - lastUpdateTime.getTime()) > maxTimeTreatTryingAsFailed * 1000) {
+                && (currentTime.getTime() - lastUpdateTime.getTime()) > maxTimeTreatTryingAsFailed * 1000L) {
             //update the status to cancel or try failed, waiting for the recovery task to recover
             transactionStore.setVersion(transactionStore.getVersion() + 1);
             transactionStore.setStatusId(transactionStatus.getId());
@@ -277,10 +286,12 @@ public class TransactionStoreRecovery implements Closeable {
     }
 
     private void rollbackTransaction(TransactionStore transactionStore) {
+        rateLimiterMap.get(transactionStore.getDomain()).acquire();
         recoveryExecutor.rollback(transactionStore);
     }
 
     private void commitTransaction(TransactionStore transactionStore) {
+        rateLimiterMap.get(transactionStore.getDomain()).acquire();
         recoveryExecutor.commit(transactionStore);
     }
 
@@ -295,15 +306,18 @@ public class TransactionStoreRecovery implements Closeable {
 
     class RecoverTask implements Callable<Void> {
 
-        TransactionStore transaction;
+        private TransactionStore transaction;
 
-        public RecoverTask(TransactionStore transaction) {
+        private int maxRetryCount;
+
+        public RecoverTask(TransactionStore transaction, int maxRetryCount) {
             this.transaction = transaction;
+            this.maxRetryCount = maxRetryCount;
         }
 
         @Override
         public Void call() throws Exception {
-            recoverErrorTransaction(transaction);
+            recoverErrorTransaction(transaction, maxRetryCount);
             return null;
         }
     }

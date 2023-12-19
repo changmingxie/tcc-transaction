@@ -6,7 +6,9 @@ import org.mengyun.tcctransaction.api.TransactionContext;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.api.Xid;
 import org.mengyun.tcctransaction.common.TransactionType;
+import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.xid.TransactionXid;
+import org.mengyun.tcctransaction.xid.UUIDGenerator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,10 +34,16 @@ public class Transaction implements Serializable {
     private volatile int retriedCount = 0;
     private long version = 0L;
 
+    /**
+     * Use wrapper types for compatibility.
+     */
+    private Long id;
+
     public Transaction() {
     }
 
     public Transaction(TransactionContext transactionContext) {
+        this.id = FactoryBuilder.factoryOf(UUIDGenerator.class).getInstance().generateLong();
         this.xid = transactionContext.getXid();
         this.rootXid = transactionContext.getRootXid();
         this.rootDomain = transactionContext.getRootDomain();
@@ -49,6 +57,7 @@ public class Transaction implements Serializable {
 
     public Transaction(Object uniqueIdentity, String rootDomain) {
 
+        this.id = FactoryBuilder.factoryOf(UUIDGenerator.class).getInstance().generateLong();
         this.xid = TransactionXid.withUniqueIdentity(uniqueIdentity);
         this.status = TransactionStatus.TRYING;
         this.transactionType = TransactionType.ROOT;
@@ -164,5 +173,13 @@ public class Transaction implements Serializable {
 
     public void setRootXid(Xid rootXid) {
         this.rootXid = rootXid;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

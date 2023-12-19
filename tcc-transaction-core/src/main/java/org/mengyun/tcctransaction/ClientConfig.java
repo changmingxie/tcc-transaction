@@ -1,6 +1,8 @@
 package org.mengyun.tcctransaction;
 
 import org.mengyun.tcctransaction.discovery.registry.ClientRegistryConfig;
+import org.mengyun.tcctransaction.discovery.registry.RegistryRole;
+import org.mengyun.tcctransaction.discovery.registry.RegistryType;
 import org.mengyun.tcctransaction.properties.registry.ClientRegistryProperties;
 import org.mengyun.tcctransaction.properties.remoting.NettyClientProperties;
 import org.mengyun.tcctransaction.recovery.RecoveryConfig;
@@ -86,6 +88,16 @@ public class ClientConfig extends AbstractConfig implements RecoveryConfig, Nett
     @Override
     public int getReconnectIntervalSeconds() {
         return nettyClientConfig.getReconnectIntervalSeconds();
+    }
+
+    @Override
+    public RegistryType getRegistryType() {
+        return clientRegistryConfig.getRegistryType();
+    }
+
+    @Override
+    public RegistryRole getRegistryRole() {
+        return clientRegistryConfig.getRegistryRole();
     }
 
     @Override

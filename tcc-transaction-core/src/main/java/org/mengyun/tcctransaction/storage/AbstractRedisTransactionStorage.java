@@ -57,7 +57,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
         try (RedisCommands commands = getRedisCommands(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid()))) {
 
-            commands.del(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid()));
+            deleteByScriptCommand(commands, transactionStore);
 
             return 1;
         } catch (Exception e) {
@@ -117,7 +117,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
         try (RedisCommands commands = getRedisCommands(redisKey)) {
 
-            Long startTime = System.currentTimeMillis();
+            long startTime = System.currentTimeMillis();
 
             Map<byte[], byte[]> content = commands.hgetAll(redisKey);
 
@@ -154,23 +154,49 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
     protected Long updateByScriptCommand(RedisCommands commands, TransactionStore transactionStore) {
 
-            List<byte[]> params = new ArrayList<>();
+        List<byte[]> params = new ArrayList<>();
 
-            for (Map.Entry<byte[], byte[]> entry : TransactionStoreMapSerializer.serialize(transactionStore)
-                    .entrySet()) {
-                params.add(entry.getKey());
-                params.add(entry.getValue());
-            }
+        for (Map.Entry<byte[], byte[]> entry : TransactionStoreMapSerializer.serialize(transactionStore).entrySet()) {
+            params.add(entry.getKey());
+            params.add(entry.getValue());
+        }
 
-            Object result = commands.eval(String.format(
+        Object result;
+        if (transactionStore.getId() == null) {
+            result = commands.eval(String.format(
                             "if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
                             transactionStore.getVersion() - 1).getBytes(),
                     Arrays.asList(RedisHelper.getRedisKey(
                             transactionStore.getDomain(),
                             transactionStore.getXid())),
                     params);
-            return (Long) result;
+        } else {
+            result = commands.eval(String.format(
+                            "if redis.call('hget',KEYS[1],'VERSION') == '%s' and redis.call('hget',KEYS[1],'ID') =='%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
+                            transactionStore.getVersion() - 1, transactionStore.getId()).getBytes(),
+                    Arrays.asList(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid())),
+                    params);
+        }
+        return (Long) result;
 
+    }
+
+    protected Long deleteByScriptCommand(RedisCommands commands, TransactionStore transactionStore) {
+        Object result;
+        if (transactionStore.getId() == null) {
+            result = commands.eval(String.format(
+                            "if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('del', KEYS[1]); return 1; end; return 0;",
+                            transactionStore.getVersion()).getBytes(),
+                    Arrays.asList(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid())),
+                    Collections.emptyList());
+        } else {
+            result = commands.eval(String.format(
+                            "if redis.call('hget',KEYS[1],'VERSION') == '%s' and redis.call('hget',KEYS[1],'ID') =='%s' then redis.call('del', KEYS[1]); return 1; end; return 0;",
+                            transactionStore.getVersion(), transactionStore.getId()).getBytes(),
+                    Arrays.asList(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid())),
+                    Collections.emptyList());
+        }
+        return (Long) result;
     }
 
     @Override
@@ -334,7 +360,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
         ScanParams scanParams = RedisHelper.scanArgs(scanPattern, 1000);
 
         List<DomainStore> domainStoreList = new ArrayList<>();
-        try (ShardHolder shardHolder = getShardHolder()) {
+        try (ShardHolder<Jedis> shardHolder = getShardHolder()) {
             List<Jedis> allShards = shardHolder.getAllShards();
             for (Jedis jedis : allShards) {
                 List<byte[]> keyList = new ArrayList<>();

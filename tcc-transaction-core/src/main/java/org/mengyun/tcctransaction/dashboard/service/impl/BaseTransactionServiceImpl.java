@@ -103,6 +103,9 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     @Override
     public ResponseDto<Void> confirm(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
+        if (transactionStore == null) {
+            return ResponseDto.returnSuccess();
+        }
         transactionStore.setStatusId(TransactionStatus.CONFIRMING.getId());
         transactionStore.setVersion(transactionStore.getVersion() + 1);
         transactionStore.setLastUpdateTime(new Date());
@@ -113,6 +116,9 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     @Override
     public ResponseDto<Void> cancel(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
+        if (transactionStore == null) {
+            return ResponseDto.returnSuccess();
+        }
         transactionStore.setStatusId(TransactionStatus.CANCELLING.getId());
         transactionStore.setVersion(transactionStore.getVersion() + 1);
         transactionStore.setLastUpdateTime(new Date());
@@ -123,6 +129,9 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     @Override
     public ResponseDto<Void> reset(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
+        if (transactionStore == null) {
+            return ResponseDto.returnSuccess();
+        }
         transactionStore.setRetriedCount(0);
         transactionStore.setVersion(transactionStore.getVersion() + 1);
         transactionStore.setLastUpdateTime(new Date());
@@ -138,6 +147,9 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     @Override
     public ResponseDto<Void> markDeleted(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
+        if (transactionStore == null) {
+            return ResponseDto.returnSuccess();
+        }
         getTransactionStorage().markDeleted(transactionStore);
         return ResponseDto.returnSuccess();
     }
@@ -150,6 +162,9 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     @Override
     public ResponseDto<Void> restore(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findMarkDeletedByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
+        if (transactionStore == null) {
+            return ResponseDto.returnSuccess();
+        }
         getTransactionStorage().restore(transactionStore);
         return ResponseDto.returnSuccess();
     }
@@ -162,6 +177,9 @@ public abstract class BaseTransactionServiceImpl implements TransactionService {
     @Override
     public ResponseDto<Void> delete(TransactionOperateRequestDto requestDto) {
         TransactionStore transactionStore = getTransactionStorage().findMarkDeletedByXid(requestDto.getDomain(), new TransactionXid(requestDto.getXidString()));
+        if (transactionStore == null) {
+            return ResponseDto.returnSuccess();
+        }
         getTransactionStorage().completelyDelete(transactionStore);
         return ResponseDto.returnSuccess();
     }

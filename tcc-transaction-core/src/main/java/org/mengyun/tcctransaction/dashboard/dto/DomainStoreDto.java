@@ -8,6 +8,12 @@ public class DomainStoreDto {
 
     private String domain;
 
+    // 最大重试次数
+    private int maxRetryCount;
+
+    // 恢复任务最大TPS
+    private int maxRecoveryRequestPerSecond;
+
     // 告警手机号列表,多个以英文逗号分割
     private String phoneNumbers;
 
@@ -36,6 +42,14 @@ public class DomainStoreDto {
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public int getMaxRetryCount() {
+        return maxRetryCount;
+    }
+
+    public void setMaxRetryCount(int maxRetryCount) {
+        this.maxRetryCount = maxRetryCount;
     }
 
     public String getCreateTime() {
@@ -108,5 +122,13 @@ public class DomainStoreDto {
 
     public void setLastAlertTime(String lastAlertTime) {
         this.lastAlertTime = lastAlertTime;
+    }
+
+    public int getMaxRecoveryRequestPerSecond() {
+        return maxRecoveryRequestPerSecond;
+    }
+
+    public void setMaxRecoveryRequestPerSecond(int maxRecoveryRequestPerSecond) {
+        this.maxRecoveryRequestPerSecond = maxRecoveryRequestPerSecond;
     }
 }

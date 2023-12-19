@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction.dashboard.controller;
 
 import org.mengyun.tcctransaction.dashboard.config.DashboardProperties;
-import org.mengyun.tcctransaction.dashboard.constants.DashboardConstant;
 import org.mengyun.tcctransaction.dashboard.dto.DomainStoreDto;
 import org.mengyun.tcctransaction.dashboard.dto.DomainStoreRequestDto;
 import org.mengyun.tcctransaction.dashboard.dto.ResponseDto;
@@ -9,12 +8,10 @@ import org.mengyun.tcctransaction.dashboard.enums.ConnectionMode;
 import org.mengyun.tcctransaction.dashboard.service.DomainService;
 import org.mengyun.tcctransaction.dashboard.service.TaskService;
 import org.mengyun.tcctransaction.utils.AlertUtils;
-import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author huabao.fang
@@ -79,21 +76,11 @@ public class DomainController {
 
     private ResponseDto<List<String>> rebuildAllDomainKeys(ResponseDto<List<String>> allDomainKeysResponseDto) {
         List<String> list = allDomainKeysResponseDto.getData();
-        if (!CollectionUtils.isEmpty(list)) {// 去掉dashbaord对应的domainKey
-            list = list.stream()
-                    .filter(domainKey -> !DashboardConstant.APPLICATION_NAME.equals(domainKey))
-                    .collect(Collectors.toList());
-        }
         return ResponseDto.returnSuccess(list);
     }
 
     private ResponseDto<List<DomainStoreDto>> rebuildAllDomains(ResponseDto<List<DomainStoreDto>> allDomainsResponseDto) {
         List<DomainStoreDto> list = allDomainsResponseDto.getData();
-        if (!CollectionUtils.isEmpty(list)) {// 去掉dashbaord对应的domainKey
-            list = list.stream()
-                    .filter(domainStoreDto -> !DashboardConstant.APPLICATION_NAME.equals(domainStoreDto.getDomain()))
-                    .collect(Collectors.toList());
-        }
         return ResponseDto.returnSuccess(list);
     }
 

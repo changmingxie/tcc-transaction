@@ -36,6 +36,18 @@ const Page = (props) => {
       width: 150
     },
     {
+      title: '恢复任务最大重试次数',
+      key: 'maxRetryCount',
+      dataIndex: 'maxRetryCount',
+      width: 150
+    },
+    {
+      title: '恢复任务最大TPS',
+      key: 'maxRecoveryRequestPerSecond',
+      dataIndex: 'maxRecoveryRequestPerSecond',
+      width: 150
+    },
+    {
       title: '手机号',
       key: 'phoneNumbers',
       dataIndex: 'phoneNumbers',
@@ -254,7 +266,7 @@ const Page = (props) => {
         <Form
           name="basic"
           form={form}
-          labelCol={{span: 6}}
+          labelCol={{span: 8}}
           wrapperCol={{span: 16}}
           autoComplete="off"
         >
@@ -262,6 +274,20 @@ const Page = (props) => {
             label="domain"
             name="domain"
             rules={[{required: true, message: '请输入domain'}]}>
+            <Input/>
+          </Form.Item>
+          <Form.Item
+            label="恢复任务最大重试次数"
+            name="maxRetryCount"
+            initialValue={3}
+            rules={[{required: true, message: '请输入恢复任务最大重试次数'}]}>
+            <Input/>
+          </Form.Item>
+          <Form.Item
+            label="恢复任务最大TPS"
+            initialValue={100}
+            name="maxRecoveryRequestPerSecond"
+            rules={[{required: true, message: '请输入恢复任务最大TPS'}]}>
             <Input/>
           </Form.Item>
           <Form.Item
@@ -320,7 +346,7 @@ const Page = (props) => {
         <Form
           name="basic"
           form={modifyForm}
-          labelCol={{span: 6}}
+          labelCol={{span: 8}}
           wrapperCol={{span: 16}}
           autoComplete="off"
         >
@@ -330,6 +356,20 @@ const Page = (props) => {
             initialValue={waitModifyDomain.domain}
             rules={[{required: true, message: '请输入domain'}]}>
             <Input disabled/>
+          </Form.Item>
+          <Form.Item
+            label="恢复任务最大重试次数"
+            name="maxRetryCount"
+            initialValue={waitModifyDomain.maxRetryCount}
+            rules={[{required: true, message: '请输入恢复任务最大重试次数'}]}>
+            <Input/>
+          </Form.Item>
+          <Form.Item
+            label="恢复任务最大TPS"
+            name="maxRecoveryRequestPerSecond"
+            initialValue={waitModifyDomain.maxRecoveryRequestPerSecond}
+            rules={[{required: true, message: '请输入恢复任务最大TPS'}]}>
+            <Input/>
           </Form.Item>
           <Form.Item
             label="手机号列表"

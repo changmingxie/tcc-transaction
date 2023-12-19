@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -21,6 +22,8 @@ public abstract class AbstractNettyRemoting {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractNettyRemoting.class);
 
+    protected final HashMap<Integer /* serviceCode */, Pair<RequestProcessor<ChannelHandlerContext>, ExecutorService>> processorTable =
+            new HashMap<>(64);
     protected Pair<RequestProcessor<ChannelHandlerContext>, ExecutorService> defaultRequestProcessor;
 
     protected ConcurrentMap<Integer /* requestId */, ResponseFuture> responseTable = new ConcurrentHashMap<>(256);
@@ -45,8 +48,8 @@ public abstract class AbstractNettyRemoting {
     }
 
     private void processRequestCommand(ChannelHandlerContext ctx, RemotingCommand cmd) {
-
-        Pair<RequestProcessor<ChannelHandlerContext>, ExecutorService> pair = this.defaultRequestProcessor;
+        Pair<RequestProcessor<ChannelHandlerContext>, ExecutorService> matched = this.processorTable.get(cmd.getServiceCode());
+        Pair<RequestProcessor<ChannelHandlerContext>, ExecutorService> pair = matched != null ? matched : this.defaultRequestProcessor;
 
         Runnable run = () -> {
             try {

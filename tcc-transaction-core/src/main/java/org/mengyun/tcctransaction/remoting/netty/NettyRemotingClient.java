@@ -168,6 +168,11 @@ public class NettyRemotingClient extends AbstractNettyRemoting implements Remoti
     }
 
     @Override
+    public void registerProcessor(int requestCode, RequestProcessor<ChannelHandlerContext> processor, ExecutorService executor) {
+        this.processorTable.put(requestCode, new ImmutablePair<>(processor, executor));
+    }
+
+    @Override
     public void registerChannelHandlers(ChannelHandler[] channelHandlers) {
         this.channelHandlers = channelHandlers;
     }

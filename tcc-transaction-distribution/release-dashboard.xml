@@ -26,8 +26,9 @@
             <outputDirectory>conf</outputDirectory>
         </file>
         <file>
-            <source>../tcc-transaction-dashboard/target/tcc-transaction-dashboard.jar</source>
+            <source>../tcc-transaction-dashboard/target/tcc-transaction-dashboard-exec.jar</source>
             <outputDirectory>lib</outputDirectory>
+            <destName>tcc-transaction-dashboard.jar</destName>
         </file>
     </files>
 </assembly>

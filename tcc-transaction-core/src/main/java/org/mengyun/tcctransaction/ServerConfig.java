@@ -1,11 +1,14 @@
 package org.mengyun.tcctransaction;
 
+import org.mengyun.tcctransaction.discovery.registry.RegistryType;
 import org.mengyun.tcctransaction.discovery.registry.ServerRegistryConfig;
 import org.mengyun.tcctransaction.properties.registry.ServerRegistryProperties;
 import org.mengyun.tcctransaction.properties.remoting.NettyServerProperties;
 import org.mengyun.tcctransaction.recovery.RecoveryConfig;
 import org.mengyun.tcctransaction.remoting.netty.NettyServerConfig;
 import org.mengyun.tcctransaction.storage.StoreConfig;
+
+import java.util.List;
 
 public class ServerConfig extends AbstractConfig implements NettyServerConfig, RecoveryConfig, StoreConfig, ServerRegistryConfig {
 
@@ -45,8 +48,23 @@ public class ServerConfig extends AbstractConfig implements NettyServerConfig, R
 
 
     @Override
+    public List<RegistryType> getRegistryTypes() {
+        return serverRegistryConfig.getRegistryTypes();
+    }
+
+    @Override
     public String getRegistryAddress() {
         return serverRegistryConfig.getRegistryAddress();
+    }
+
+    @Override
+    public int getRegistryPortForDashboard() {
+        return serverRegistryConfig.getRegistryPortForDashboard();
+    }
+
+    @Override
+    public String getRegistryAddressForDashboard() {
+        return serverRegistryConfig.getRegistryAddressForDashboard();
     }
 
     public void setNettyServerConfig(NettyServerConfig nettyServerConfig) {
