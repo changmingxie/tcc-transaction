@@ -26,8 +26,9 @@
             <outputDirectory>conf</outputDirectory>
         </file>
         <file>
-            <source>../tcc-transaction-server/target/tcc-transaction-server.jar</source>
+            <source>../tcc-transaction-server/target/tcc-transaction-server-exec.jar</source>
             <outputDirectory>lib</outputDirectory>
+            <destName>tcc-transaction-server.jar</destName>
         </file>
     </files>
 </assembly>

@@ -6,5 +6,9 @@ package org.mengyun.tcctransaction.discovery.registry;
  */
 public interface ClientRegistryConfig extends RegistryConfig {
 
+    RegistryType getRegistryType();
+
+    RegistryRole getRegistryRole();
+
     String getLoadBalanceType();
 }

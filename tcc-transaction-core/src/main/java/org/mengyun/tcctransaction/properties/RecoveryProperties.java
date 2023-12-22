@@ -2,6 +2,11 @@ package org.mengyun.tcctransaction.properties;
 
 import org.mengyun.tcctransaction.recovery.RecoveryConfig;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author Nervose.Wu
  * @date 2022/5/24 09:45
@@ -10,10 +15,8 @@ public class RecoveryProperties implements RecoveryConfig {
 
     private int maxRetryCount = 30;
     private int recoverDuration = 30;
-
-    // max time in seconds, if zero, do not allow trying be treated as failed, should be less then maxRetryCount * retryInterval(from cronExpression)
+    // max time in seconds, if less than 1, do not allow trying be treated as failed, should be less then maxRetryCount * retryInterval(from cronExpression)
     private int maxTimeTreatTryingAsFailed = 0;
-
     private String cronExpression = "0/30 * * * * ? ";
     private int fetchPageSize = 200;
     private int concurrentRecoveryThreadCount = Runtime.getRuntime().availableProcessors() * 2;
@@ -31,6 +34,12 @@ public class RecoveryProperties implements RecoveryConfig {
     private int quartzDataSourceMaxPoolSize = 10;
     private boolean quartzClustered = false;
     private boolean updateJobForcibly = false;
+    //only used by client
+    private String customConnectionProviderClassName;
+    private Map<String, String> customConnectionProviderProperties = new HashMap<>();
+    private boolean enableDelayCancel = false;
+    //only used by client
+    private Set<Class<? extends Exception>> delayCancelExceptions =new HashSet<>();
 
     @Override
     public int getMaxRetryCount() {
@@ -192,6 +201,39 @@ public class RecoveryProperties implements RecoveryConfig {
 
     public void setQuartzDataSourceMaxPoolSize(int quartzDataSourceMaxPoolSize) {
         this.quartzDataSourceMaxPoolSize = quartzDataSourceMaxPoolSize;
+    }
+
+    public String getCustomConnectionProviderClassName() {
+        return customConnectionProviderClassName;
+    }
+
+    public void setCustomConnectionProviderClassName(String customConnectionProviderClassName) {
+        this.customConnectionProviderClassName = customConnectionProviderClassName;
+    }
+
+    public Map<String, String> getCustomConnectionProviderProperties() {
+        return customConnectionProviderProperties;
+    }
+
+    public void setCustomConnectionProviderProperties(Map<String, String> customConnectionProviderProperties) {
+        this.customConnectionProviderProperties = customConnectionProviderProperties;
+    }
+    @Override
+    public boolean isEnableDelayCancel() {
+        return enableDelayCancel;
+    }
+
+    public void setEnableDelayCancel(boolean enableDelayCancel) {
+        this.enableDelayCancel = enableDelayCancel;
+    }
+
+    @Override
+    public Set<Class<? extends Exception>> getDelayCancelExceptions() {
+        return delayCancelExceptions;
+    }
+
+    public void setDelayCancelExceptions(Set<Class<? extends Exception>> delayCancelExceptions) {
+        this.delayCancelExceptions = delayCancelExceptions;
     }
 
     public int getMaxTimeTreatTryingAsFailed() {

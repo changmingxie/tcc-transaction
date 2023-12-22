@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.interceptor;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.mengyun.tcctransaction.api.ParticipantStatus;
 import org.mengyun.tcctransaction.api.TransactionStatus;
 import org.mengyun.tcctransaction.exception.IllegalTransactionStatusException;
@@ -11,6 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.net.SocketTimeoutException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -22,8 +27,15 @@ public class CompensableTransactionInterceptor {
 
     private TransactionManager transactionManager;
 
+    private Set<Class<? extends Exception>> globalDelayCancelExceptions = new HashSet<>();
+
     public void setTransactionManager(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public void addExtraDelayCancelExceptions(Set<Class<? extends Exception>> extraDelayCancelExceptions) {
+        this.globalDelayCancelExceptions.add(SocketTimeoutException.class);
+        this.globalDelayCancelExceptions.addAll(extraDelayCancelExceptions);
     }
 
     public Object interceptCompensableMethod(TransactionMethodJoinPoint pjp) throws Throwable {
@@ -53,6 +65,10 @@ public class CompensableTransactionInterceptor {
 
         boolean asyncCancel = compensableMethodContext.getAnnotation().asyncCancel();
 
+        Set<Class<? extends Exception>> allDelayCancelExceptions = new HashSet<>();
+        allDelayCancelExceptions.addAll(this.globalDelayCancelExceptions);
+        allDelayCancelExceptions.addAll(Arrays.asList(compensableMethodContext.getAnnotation().delayCancelExceptions()));
+
         try {
 
             transaction = transactionManager.begin(compensableMethodContext.getUniqueIdentity());
@@ -60,9 +76,8 @@ public class CompensableTransactionInterceptor {
             try {
                 returnValue = compensableMethodContext.proceed();
             } catch (Throwable tryingException) {
-
                 try {
-                    transactionManager.rollback(asyncCancel);
+                    transactionManager.rollback(asyncCancel, isDelayCancelException(tryingException, allDelayCancelExceptions));
                 } catch (Exception rollbackException) {
                     logger.warn("compensable transaction rollback failed, recovery job will try to rollback later", rollbackException);
                 }
@@ -134,7 +149,7 @@ public class CompensableTransactionInterceptor {
                                 || transaction.getStatus().equals(TransactionStatus.TRY_FAILED)
                                 || transaction.getStatus().equals(TransactionStatus.CANCELLING)
                                 || ParticipantStatus.TRY_SUCCESS.equals(transactionStatusFromConsumer)) {
-                            transactionManager.rollback(asyncCancel);
+                            transactionManager.rollback(asyncCancel, false);
                         } else {
                             //in this case, transaction's Status is TRYING and transactionStatusFromConsumer is TRY_FAILED
                             // this may happen if timeout exception throws during rpc call.
@@ -155,5 +170,22 @@ public class CompensableTransactionInterceptor {
         Method method = compensableMethodContext.getMethod();
 
         return ReflectionUtils.getNullValue(method.getReturnType());
+    }
+
+    private boolean isDelayCancelException(Throwable throwable, Set<Class<? extends Exception>> delayCancelExceptions) {
+
+        Throwable rootCause = ExceptionUtils.getRootCause(throwable);
+
+        if (delayCancelExceptions != null) {
+            for (Class<? extends Exception> delayCancelException : delayCancelExceptions) {
+
+                if (delayCancelException.isAssignableFrom(throwable.getClass())
+                        || (rootCause != null && delayCancelException.isAssignableFrom(rootCause.getClass()))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

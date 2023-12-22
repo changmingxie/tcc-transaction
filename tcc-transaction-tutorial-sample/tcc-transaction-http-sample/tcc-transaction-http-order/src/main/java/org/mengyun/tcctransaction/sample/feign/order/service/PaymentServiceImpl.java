@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.SocketTimeoutException;
 import java.util.Calendar;
 
 /**
@@ -26,7 +27,7 @@ public class PaymentServiceImpl {
     private OrderRepository orderRepository;
 
 
-    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", asyncConfirm = true)
+    @Compensable(confirmMethod = "confirmMakePayment", cancelMethod = "cancelMakePayment", asyncConfirm = true, delayCancelExceptions = {SocketTimeoutException.class})
     @Transactional
     public void makePayment(String orderNo) {
 

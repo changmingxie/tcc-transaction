@@ -10,9 +10,6 @@ public interface DashboardConstant {
     String SECURITY_JWT_PREFIX = "Bearer ";
     String SECURITY_HEADER_AUTHORIZATION = "Authorization";
 
-    String APPLICATION_NAME = "tcc-transaction-dashboard";
-
-
     String TCC_SERVER_GROUP = "tcc-transaction-server";
 
 

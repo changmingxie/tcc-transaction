@@ -1,5 +1,7 @@
 package org.mengyun.tcctransaction.xid;
 
 public interface UUIDGenerator {
-    String generate();
+    String generateString();
+
+    Long generateLong();
 }

@@ -12,5 +12,8 @@ public interface RemotingService<T> {
 
     void registerDefaultProcessor(final RequestProcessor<T> processor, final ExecutorService executor);
 
+    void registerProcessor(final int requestCode, final RequestProcessor<T> processor,
+                           final ExecutorService executor);
+
     void registerChannelHandlers(ChannelHandler... channelHandlers);
 }

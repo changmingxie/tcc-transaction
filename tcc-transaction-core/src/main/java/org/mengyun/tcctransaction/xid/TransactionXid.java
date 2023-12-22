@@ -31,7 +31,7 @@ public class TransactionXid implements Xid, Serializable {
         int formatId = Xid.AUTO;
         String xid = null;
         if (uniqueIdentity == null) {
-            xid = FactoryBuilder.factoryOf(UUIDGenerator.class).getInstance().generate();
+            xid = FactoryBuilder.factoryOf(UUIDGenerator.class).getInstance().generateString();
         } else {
             xid = uniqueIdentity.toString();
             formatId = Xid.CUSTOMIZED;
@@ -40,7 +40,7 @@ public class TransactionXid implements Xid, Serializable {
     }
 
     public static TransactionXid withUuid() {
-        return new TransactionXid(FactoryBuilder.factoryOf(UUIDGenerator.class).getInstance().generate());
+        return new TransactionXid(FactoryBuilder.factoryOf(UUIDGenerator.class).getInstance().generateString());
     }
 
     @Override

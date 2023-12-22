@@ -21,22 +21,22 @@ public class DirectRegistryServiceImpl extends AbstractRegistryService {
     }
 
     @Override
-    protected void doRegister(InetSocketAddress address) throws Exception {
+    protected void doRegister(InetSocketAddress address, InetSocketAddress addressForDashboard) {
         //do nothing
     }
 
     @Override
-    protected void doSubscribe() throws Exception {
-        String serverAddresses = properties.getServerAddresses();
-        if (StringUtils.isBlank(serverAddresses)) {
-            throw new IllegalArgumentException("ServerAddresses cant be blank");
+    protected void doSubscribe(boolean addressForDashboard) {
+        String addresses = addressForDashboard ? properties.getServerAddressesForDashboard() : properties.getServerAddresses();
+        if (StringUtils.isBlank(addresses)) {
+            throw new IllegalArgumentException("ServerAddresses/ServerAddressesForDashboard cant be blank");
         }
         try {
             setServerAddresses(Arrays
-                    .stream(serverAddresses.split(","))
-                    .collect(Collectors.toList()));
+                    .stream(addresses.split(","))
+                    .collect(Collectors.toList()), addressForDashboard);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to parse serverAddresses:" + serverAddresses);
+            throw new IllegalArgumentException("Failed to parse serverAddresses/serverAddressesForDashboard:" + addresses);
         }
     }
 }

@@ -10,6 +10,7 @@ import org.mengyun.tcctransaction.context.ThreadLocalTransactionContextEditor;
 import org.mengyun.tcctransaction.transaction.TransactionManager;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 
 /**
  * Created by changmingxie on 10/30/15.
@@ -21,6 +22,10 @@ public abstract class CompensableTransactionAspect {
 
     public void setTransactionManager(TransactionManager transactionManager) {
         this.compensableTransactionInterceptor.setTransactionManager(transactionManager);
+    }
+
+    public void addExtraDelayCancelExceptions(Set<Class<? extends Exception>> extraDelayCancelExceptions) {
+        this.compensableTransactionInterceptor.addExtraDelayCancelExceptions(extraDelayCancelExceptions);
     }
 
     @Pointcut("@annotation(org.mengyun.tcctransaction.api.Compensable)")

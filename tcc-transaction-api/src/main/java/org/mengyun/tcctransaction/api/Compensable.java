@@ -21,4 +21,6 @@ public @interface Compensable {
     public boolean asyncConfirm() default false;
 
     public boolean asyncCancel() default false;
+
+    public Class<? extends Exception>[] delayCancelExceptions() default {};
 }

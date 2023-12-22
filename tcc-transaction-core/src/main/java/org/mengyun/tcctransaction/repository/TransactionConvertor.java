@@ -36,6 +36,7 @@ public final class TransactionConvertor {
         transactionStore.setCreateTime(transaction.getCreateTime());
         transactionStore.setDomain(domain);
         transactionStore.setTransactionTypeId(transaction.getTransactionType().getId());
+        transactionStore.setId(transaction.getId());
 
         return transactionStore;
     }

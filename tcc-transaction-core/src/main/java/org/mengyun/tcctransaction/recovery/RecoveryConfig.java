@@ -1,6 +1,9 @@
 package org.mengyun.tcctransaction.recovery;
 
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Created by changming.xie on 6/1/16.
  */
@@ -41,6 +44,14 @@ public interface RecoveryConfig {
     int getQuartzThreadPoolThreadCount();
 
     boolean isQuartzClustered();
+
+    String getCustomConnectionProviderClassName();
+
+    Map<String, String> getCustomConnectionProviderProperties();
+
+    boolean isEnableDelayCancel();
+
+    Set<Class<? extends Exception>> getDelayCancelExceptions();
 
     int getMaxTimeTreatTryingAsFailed();
 }

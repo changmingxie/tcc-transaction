@@ -11,6 +11,8 @@ public class ZookeeperRegistryProperties {
     private String digest;
     private int baseSleepTime = 500;
     private int maxRetries = 3;
+    private String backupConnectString;
+    private String backupDigest;
 
     public String getConnectString() {
         return connectString;
@@ -58,5 +60,21 @@ public class ZookeeperRegistryProperties {
 
     public void setMaxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
+    }
+
+    public String getBackupConnectString() {
+        return backupConnectString;
+    }
+
+    public void setBackupConnectString(String backupConnectString) {
+        this.backupConnectString = backupConnectString;
+    }
+
+    public String getBackupDigest() {
+        return backupDigest;
+    }
+
+    public void setBackupDigest(String backupDigest) {
+        this.backupDigest = backupDigest;
     }
 }

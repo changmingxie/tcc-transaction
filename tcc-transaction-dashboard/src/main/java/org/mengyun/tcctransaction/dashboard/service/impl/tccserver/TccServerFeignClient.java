@@ -12,9 +12,8 @@ import java.util.List;
 /**
  * @Author huabao.fang
  * @Date 2022/5/30 10:10
- * ,url = "http://localhost:9998"
  **/
-@FeignClient(value = DashboardConstant.TCC_SERVER_GROUP)
+@FeignClient(value = DashboardConstant.TCC_SERVER_GROUP, path = "${feign.path:/tcc-transaction-server}")
 public interface TccServerFeignClient {
 
     @RequestMapping("/domain/allDomainKeys")

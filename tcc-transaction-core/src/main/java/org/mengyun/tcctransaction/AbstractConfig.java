@@ -1,7 +1,6 @@
 package org.mengyun.tcctransaction;
 
 import org.mengyun.tcctransaction.discovery.registry.RegistryConfig;
-import org.mengyun.tcctransaction.discovery.registry.RegistryType;
 import org.mengyun.tcctransaction.discovery.registry.direct.DirectRegistryProperties;
 import org.mengyun.tcctransaction.discovery.registry.nacos.NacosRegistryProperties;
 import org.mengyun.tcctransaction.discovery.registry.zookeeper.ZookeeperRegistryProperties;
@@ -20,6 +19,8 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ShardedJedisPool;
 
 import javax.sql.DataSource;
+import java.util.Map;
+import java.util.Set;
 
 public class AbstractConfig implements StoreConfig, RecoveryConfig, NettyConfig, RegistryConfig {
 
@@ -236,6 +237,26 @@ public class AbstractConfig implements StoreConfig, RecoveryConfig, NettyConfig,
     }
 
     @Override
+    public String getCustomConnectionProviderClassName() {
+        return recoveryConfig.getCustomConnectionProviderClassName();
+    }
+
+    @Override
+    public Map<String, String> getCustomConnectionProviderProperties() {
+        return recoveryConfig.getCustomConnectionProviderProperties();
+    }
+
+    @Override
+    public boolean isEnableDelayCancel() {
+        return recoveryConfig.isEnableDelayCancel();
+    }
+
+    @Override
+    public Set<Class<? extends Exception>> getDelayCancelExceptions() {
+        return recoveryConfig.getDelayCancelExceptions();
+    }
+
+    @Override
     public boolean isUpdateJobForcibly() {
         return recoveryConfig.isUpdateJobForcibly();
     }
@@ -288,11 +309,6 @@ public class AbstractConfig implements StoreConfig, RecoveryConfig, NettyConfig,
     @Override
     public DirectRegistryProperties getDirectRegistryProperties() {
         return registryConfig.getDirectRegistryProperties();
-    }
-
-    @Override
-    public RegistryType getRegistryType() {
-        return registryConfig.getRegistryType();
     }
 
     @Override

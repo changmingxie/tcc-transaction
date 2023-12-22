@@ -23,8 +23,8 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     private static final int MARK_DELETED_YES = 1;
     private static final int MARK_DELETED_NO = 0;
 
-    private static final String SQL_SELECT_PREFIX_FOR_TCC_TRANSACTION = "SELECT DOMAIN,ROOT_XID,XID,CONTENT,STATUS,TRANSACTION_TYPE,CREATE_TIME,LAST_UPDATE_TIME,RETRIED_COUNT,VERSION,IS_DELETE,ROOT_DOMAIN,REQUEST_ID FROM ";
-    private static final String SQL_SELECT_PREFIX_FOR_TCC_DOMAIN = "SELECT DOMAIN, PHONE_NUMBERS, ALERT_TYPE, THRESHOLD, INTERVAL_MINUTES,LAST_ALERT_TIME,DING_ROBOT_URL,CREATE_TIME,LAST_UPDATE_TIME,VERSION FROM ";
+    private static final String SQL_SELECT_PREFIX_FOR_TCC_TRANSACTION = "SELECT DOMAIN,ROOT_XID,XID,CONTENT,STATUS,TRANSACTION_TYPE,CREATE_TIME,LAST_UPDATE_TIME,RETRIED_COUNT,VERSION,IS_DELETE,ROOT_DOMAIN,REQUEST_ID,ID FROM ";
+    private static final String SQL_SELECT_PREFIX_FOR_TCC_DOMAIN = "SELECT DOMAIN, MAX_RETRY_COUNT, MAX_RECOVERY_REQUEST_PER_SECOND,  PHONE_NUMBERS, ALERT_TYPE, THRESHOLD, INTERVAL_MINUTES,LAST_ALERT_TIME,DING_ROBOT_URL,CREATE_TIME,LAST_UPDATE_TIME,VERSION FROM ";
 
     private String tbSuffix;
     private DataSource dataSource;
@@ -60,25 +60,30 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             builder
                     .append("INSERT INTO ")
                     .append(getTableName())
-                    .append("(ROOT_XID,XID,TRANSACTION_TYPE,CONTENT,STATUS,RETRIED_COUNT,CREATE_TIME,LAST_UPDATE_TIME,VERSION,ROOT_DOMAIN,DOMAIN,REQUEST_ID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+                    .append("(ROOT_XID,XID,TRANSACTION_TYPE,CONTENT,STATUS,RETRIED_COUNT,CREATE_TIME,LAST_UPDATE_TIME,VERSION,ROOT_DOMAIN,DOMAIN,REQUEST_ID,ID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             stmt = connection.prepareStatement(builder.toString());
-
-            stmt.setString(1, transactionStore.getRootXid().toString());
-            stmt.setString(2, transactionStore.getXid().toString());
-            stmt.setInt(3, transactionStore.getTransactionTypeId());
-            stmt.setBytes(4, transactionStore.getContent());
-            stmt.setInt(5, transactionStore.getStatusId());
-            stmt.setInt(6, transactionStore.getRetriedCount());
-            stmt.setTimestamp(7, new Timestamp(transactionStore.getCreateTime().getTime()));
-            stmt.setTimestamp(8, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
-            stmt.setLong(9, transactionStore.getVersion());
-            stmt.setString(10, transactionStore.getRootDomain());
-            stmt.setString(11, transactionStore.getDomain());
+            int parameterIndex = 1;
+            stmt.setString(parameterIndex++, transactionStore.getRootXid().toString());
+            stmt.setString(parameterIndex++, transactionStore.getXid().toString());
+            stmt.setInt(parameterIndex++, transactionStore.getTransactionTypeId());
+            stmt.setBytes(parameterIndex++, transactionStore.getContent());
+            stmt.setInt(parameterIndex++, transactionStore.getStatusId());
+            stmt.setInt(parameterIndex++, transactionStore.getRetriedCount());
+            stmt.setTimestamp(parameterIndex++, new Timestamp(transactionStore.getCreateTime().getTime()));
+            stmt.setTimestamp(parameterIndex++, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
+            stmt.setLong(parameterIndex++, transactionStore.getVersion());
+            stmt.setString(parameterIndex++, transactionStore.getRootDomain());
+            stmt.setString(parameterIndex++, transactionStore.getDomain());
             if (transactionStore.getRequestId() != null) {
-                stmt.setInt(12, transactionStore.getRequestId());
+                stmt.setInt(parameterIndex++, transactionStore.getRequestId());
             } else {
-                stmt.setNull(12, Types.INTEGER);
+                stmt.setNull(parameterIndex++, Types.INTEGER);
+            }
+            if (transactionStore.getId() != null) {
+                stmt.setLong(parameterIndex++, transactionStore.getId());
+            } else {
+                stmt.setNull(parameterIndex++, Types.BIGINT);
             }
             return stmt.executeUpdate();
 
@@ -104,24 +109,29 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
                     "CONTENT = ?,STATUS = ?,REQUEST_ID = ?,LAST_UPDATE_TIME = ?, RETRIED_COUNT = ?,VERSION = VERSION+1 WHERE XID = ? AND VERSION = ?");
 
             builder.append(StringUtils.isNotEmpty(transactionStore.getDomain()) ? " AND DOMAIN = ?" : "");
-
+            builder.append(transactionStore.getId() != null ? " AND ID = ?" : "");
             stmt = connection.prepareStatement(builder.toString());
 
-            stmt.setBytes(1, transactionStore.getContent());
-            stmt.setInt(2, transactionStore.getStatusId());
+            int parameterIndex = 1;
+            stmt.setBytes(parameterIndex++, transactionStore.getContent());
+            stmt.setInt(parameterIndex++, transactionStore.getStatusId());
             if (transactionStore.getRequestId() != null) {
-                stmt.setInt(3, transactionStore.getRequestId());
+                stmt.setInt(parameterIndex++, transactionStore.getRequestId());
             } else {
-                stmt.setNull(3, Types.INTEGER);
+                stmt.setNull(parameterIndex++, Types.INTEGER);
             }
-            stmt.setTimestamp(4, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
+            stmt.setTimestamp(parameterIndex++, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
 
-            stmt.setInt(5, transactionStore.getRetriedCount());
-            stmt.setString(6, transactionStore.getXid().toString());
-            stmt.setLong(7, transactionStore.getVersion()-1);
+            stmt.setInt(parameterIndex++, transactionStore.getRetriedCount());
+            stmt.setString(parameterIndex++, transactionStore.getXid().toString());
+            stmt.setLong(parameterIndex++, transactionStore.getVersion() - 1);
 
             if (StringUtils.isNotEmpty(transactionStore.getDomain())) {
-                stmt.setString(8, transactionStore.getDomain());
+                stmt.setString(parameterIndex++, transactionStore.getDomain());
+            }
+
+            if (transactionStore.getId() != null) {
+                stmt.setLong(parameterIndex++, transactionStore.getId());
             }
 
             return stmt.executeUpdate();
@@ -144,16 +154,21 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
 
             StringBuilder builder = new StringBuilder();
             builder.append("DELETE FROM " + getTableName() +
-                    " WHERE XID = ?");
+                    " WHERE XID = ? AND VERSION =?");
 
             builder.append(StringUtils.isNotEmpty(transactionStore.getDomain()) ? " AND DOMAIN = ?" : "");
+            builder.append(transactionStore.getId()!=null ? " AND ID = ?" : "");
 
             stmt = connection.prepareStatement(builder.toString());
-
-            stmt.setString(1, transactionStore.getXid().toString());
+            int parameterIndex = 1;
+            stmt.setString(parameterIndex++, transactionStore.getXid().toString());
+            stmt.setLong(parameterIndex++, transactionStore.getVersion());
 
             if (StringUtils.isNotEmpty(transactionStore.getDomain())) {
-                stmt.setString(2, transactionStore.getDomain());
+                stmt.setString(parameterIndex++, transactionStore.getDomain());
+            }
+            if (transactionStore.getId() != null) {
+                stmt.setLong(parameterIndex++, transactionStore.getId());
             }
 
             stmt.executeUpdate();
@@ -201,18 +216,23 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
 
             builder.append(StringUtils.isNotEmpty(transactionStore.getDomain()) ? " AND DOMAIN = ?" : "");
 
+            builder.append(transactionStore.getId()!=null ? " AND ID = ?" : "");
+
             stmt = connection.prepareStatement(builder.toString());
 
-            stmt.setInt(1, isMarkDeleted ? MARK_DELETED_YES : MARK_DELETED_NO);
-            stmt.setTimestamp(2, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
+            int parameterIndex = 1;
+            stmt.setInt(parameterIndex++, isMarkDeleted ? MARK_DELETED_YES : MARK_DELETED_NO);
+            stmt.setTimestamp(parameterIndex++, new Timestamp(transactionStore.getLastUpdateTime().getTime()));
 
-            stmt.setString(3, transactionStore.getXid().toString());
-            stmt.setLong(4, currentVersion);
+            stmt.setString(parameterIndex++, transactionStore.getXid().toString());
+            stmt.setLong(parameterIndex++, currentVersion);
 
             if (StringUtils.isNotEmpty(transactionStore.getDomain())) {
-                stmt.setString(5, transactionStore.getDomain());
+                stmt.setString(parameterIndex++, transactionStore.getDomain());
             }
-
+            if (transactionStore.getId() != null) {
+                stmt.setLong(parameterIndex++, transactionStore.getId());
+            }
             int result = stmt.executeUpdate();
 
             return result;
@@ -314,7 +334,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
 
             StringBuilder builder = new StringBuilder();
             builder.append("UPDATE " + getDomainTableName() + " SET " +
-                    "PHONE_NUMBERS = ?," +
+                    "MAX_RETRY_COUNT = ?,MAX_RECOVERY_REQUEST_PER_SECOND = ?,PHONE_NUMBERS = ?," +
                     "ALERT_TYPE = ?," +
                     "THRESHOLD = ?," +
                     "INTERVAL_MINUTES = ?," +
@@ -323,15 +343,17 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
                     "LAST_UPDATE_TIME = ?, VERSION = VERSION+1 WHERE DOMAIN = ? AND VERSION = ?");
 
             PreparedStatement stmt = connection.prepareStatement(builder.toString());
-            stmt.setString(1, domainStore.getPhoneNumbers());
-            stmt.setString(2, domainStore.getAlertType().name());
-            stmt.setInt(3, domainStore.getThreshold());
-            stmt.setInt(4, domainStore.getIntervalMinutes());
-            stmt.setTimestamp(5, domainStore.getLastAlertTime() == null ? null : new Timestamp(domainStore.getLastAlertTime().getTime()));
-            stmt.setString(6, domainStore.getDingRobotUrl());
-            stmt.setTimestamp(7, new Timestamp(domainStore.getLastUpdateTime().getTime()));
-            stmt.setString(8, domainStore.getDomain());
-            stmt.setLong(9, domainStore.getVersion());
+            stmt.setInt(1,domainStore.getMaxRetryCount());
+            stmt.setInt(2,domainStore.getMaxRecoveryRequestPerSecond());
+            stmt.setString(3, domainStore.getPhoneNumbers());
+            stmt.setString(4, domainStore.getAlertType().name());
+            stmt.setInt(5, domainStore.getThreshold());
+            stmt.setInt(6, domainStore.getIntervalMinutes());
+            stmt.setTimestamp(7, domainStore.getLastAlertTime() == null ? null : new Timestamp(domainStore.getLastAlertTime().getTime()));
+            stmt.setString(8, domainStore.getDingRobotUrl());
+            stmt.setTimestamp(9, new Timestamp(domainStore.getLastUpdateTime().getTime()));
+            stmt.setString(10, domainStore.getDomain());
+            stmt.setLong(11, domainStore.getVersion());
 
             return stmt;
         });
@@ -508,6 +530,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             transactionStore.setVersion(resultSet.getLong(10));
             transactionStore.setRootDomain(resultSet.getString("ROOT_DOMAIN"));
             transactionStore.setRequestId((Integer) resultSet.getObject("REQUEST_ID"));
+            transactionStore.setId((Long) resultSet.getObject("ID"));
             transactions.add(transactionStore);
         }
     }
@@ -522,15 +545,17 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
         while (resultSet.next()) {
             DomainStore domainStore = new DomainStore();
             domainStore.setDomain(resultSet.getString(1));
-            domainStore.setPhoneNumbers(resultSet.getString(2));
-            domainStore.setAlertType(AlertType.nameOf(resultSet.getString(3)));
-            domainStore.setThreshold(resultSet.getInt(4));
-            domainStore.setIntervalMinutes(resultSet.getInt(5));
-            domainStore.setLastAlertTime(resultSet.getDate(6));
-            domainStore.setDingRobotUrl(resultSet.getString(7));
-            domainStore.setCreateTime(resultSet.getTimestamp(8));
-            domainStore.setLastUpdateTime(resultSet.getTimestamp(9));
-            domainStore.setVersion(resultSet.getLong(10));
+            domainStore.setMaxRetryCount(resultSet.getInt(2));
+            domainStore.setMaxRecoveryRequestPerSecond(resultSet.getInt(3));
+            domainStore.setPhoneNumbers(resultSet.getString(4));
+            domainStore.setAlertType(AlertType.nameOf(resultSet.getString(5)));
+            domainStore.setThreshold(resultSet.getInt(6));
+            domainStore.setIntervalMinutes(resultSet.getInt(7));
+            domainStore.setLastAlertTime(resultSet.getDate(8));
+            domainStore.setDingRobotUrl(resultSet.getString(9));
+            domainStore.setCreateTime(resultSet.getTimestamp(10));
+            domainStore.setLastUpdateTime(resultSet.getTimestamp(11));
+            domainStore.setVersion(resultSet.getLong(12));
             domainStoreList.add(domainStore);
         }
         return domainStoreList;

@@ -34,7 +34,7 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
 
     private RocksDB db;
 
-    private String location = "/var/log/";
+    private String location;
 
     private volatile boolean initialized = false;
 
@@ -95,7 +95,9 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
 
         try {
             TransactionStore foundTransaction = doFindOne(transactionStore.getDomain(), transactionStore.getXid(), false);
-            if (foundTransaction == null || foundTransaction.getVersion() != transactionStore.getVersion() - 1) {
+            if (foundTransaction == null
+                    || foundTransaction.getVersion() != transactionStore.getVersion() - 1
+                    || transactionStore.getId() != null && !transactionStore.getId().equals(foundTransaction.getId())) {
                 return 0;
             }
 
@@ -111,8 +113,14 @@ public class RocksDbTransactionStorage extends AbstractKVTransactionStorage<Rock
     protected int doDelete(TransactionStore transactionStore) {
 
         try {
-            byte[] key = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
-            db.delete(key);
+            TransactionStore foundTransaction = doFindOne(transactionStore.getDomain(), transactionStore.getXid(), false);
+            if(foundTransaction == null
+                    || foundTransaction.getVersion() != transactionStore.getVersion() - 1
+                    || transactionStore.getId() != null && !transactionStore.getId().equals(foundTransaction.getId())) {
+            }else {
+                byte[] key = RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid());
+                db.delete(key);
+            }
         } catch (RocksDBException e) {
             throw new TransactionIOException(e);
         }

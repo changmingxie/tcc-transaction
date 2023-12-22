@@ -8,6 +8,7 @@ import org.mengyun.tcctransaction.constants.RemotingServiceCode;
 import org.mengyun.tcctransaction.discovery.loadbalance.LoadBalanceFactory;
 import org.mengyun.tcctransaction.discovery.loadbalance.LoadBalanceServcie;
 import org.mengyun.tcctransaction.discovery.registry.RegistryFactory;
+import org.mengyun.tcctransaction.discovery.registry.RegistryRole;
 import org.mengyun.tcctransaction.discovery.registry.RegistryService;
 import org.mengyun.tcctransaction.exception.SystemException;
 import org.mengyun.tcctransaction.processor.ClientRecoveryExecutor;
@@ -64,7 +65,7 @@ public class TccClient implements TccService {
 
     private RecoveryScheduler scheduler;
 
-    private RemotingClient remotingClient;
+    private RemotingClient<ChannelHandlerContext> remotingClient;
 
     //attribute inject
     private TransactionManager transactionManager;
@@ -121,24 +122,26 @@ public class TccClient implements TccService {
         this.transactionStoreSerializer = new TccTransactionStoreSerializer();
         this.remotingCommandSerializer = new TccRemotingCommandSerializer();
 
-        if (this.clientConfig.getStorageType() == StorageType.REMOTING) {
+        if (this.clientConfig.getRegistryRole() == RegistryRole.DASHBOARD) {
+            this.registryService = RegistryFactory.getInstance(this.clientConfig);
+        }else if (this.clientConfig.getStorageType() == StorageType.REMOTING) {
             this.registryService = RegistryFactory.getInstance(this.clientConfig);
             this.loadBalanceServcie = LoadBalanceFactory.getInstance(this.clientConfig);
             remotingClient = new NettyRemotingClient(this.remotingCommandSerializer, this.clientConfig,
                     new ServerAddressLoader() {
                         @Override
                         public String selectOneAvailableAddress() {
-                            return loadBalanceServcie.select(registryService.lookup());
+                            return loadBalanceServcie.select(registryService.lookup(false));
                         }
 
                         @Override
                         public List<String> getAllAvailableAddresses() {
-                            return registryService.lookup();
+                            return registryService.lookup(false);
                         }
 
                         @Override
                         public boolean isAvailableAddress(String address) {
-                            List<String> serverAddresses = registryService.lookup();
+                            List<String> serverAddresses = registryService.lookup(false);
                             return serverAddresses.contains(address);
                         }
                     });
@@ -167,10 +170,18 @@ public class TccClient implements TccService {
     public void start() throws Exception {
         this.isStarting = true;
 
-        if (this.clientConfig.getStorageType() == StorageType.REMOTING) {
+        if (this.clientConfig.getRegistryRole() == RegistryRole.DASHBOARD) {
             try {
                 this.registryService.start();
-                this.registryService.subscribe();
+                this.registryService.subscribe(true);
+            } catch (Exception e) {
+                logger.error("failed to initialize registryService, stop the application!", e);
+                StopUtils.stop();
+            }
+        } else if (this.clientConfig.getStorageType() == StorageType.REMOTING) {
+            try {
+                this.registryService.start();
+                this.registryService.subscribe(false);
             } catch (Exception e) {
                 logger.error("failed to initialize registryService, stop the application!", e);
                 StopUtils.stop();
@@ -293,10 +304,14 @@ public class TccClient implements TccService {
 
     private void registerDomain(String domain) {
         if (transactionStorage.supportStorageRecoverable()) {
-            ((StorageRecoverable) transactionStorage).registerDomain(new DomainStore(domain));
+            ((StorageRecoverable) transactionStorage).registerDomain(new DomainStore(domain, clientConfig.getMaxRetryCount()));
         } else {
             logger.warn("transactionStorage:{} not StorageRecoverable, do not regist domain", transactionStorage.getClass().getSimpleName());
         }
+    }
+
+    public RegistryService getRegistryService() {
+        return registryService;
     }
 
     @ChannelHandler.Sharable

@@ -2,6 +2,7 @@ package org.mengyun.tcctransaction.discovery.registry.nacos;
 
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;
+import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import org.mengyun.tcctransaction.discovery.registry.AbstractRegistryService;
@@ -28,6 +29,9 @@ public class NacosRegistryServiceImpl extends AbstractRegistryService {
 
     private NacosRegistryProperties properties;
 
+    private InetSocketAddress address;
+    private InetSocketAddress addressForDashboard;
+
     public NacosRegistryServiceImpl(RegistryConfig registryConfig) {
         setClusterName(registryConfig.getClusterName());
         this.properties = registryConfig.getNacosRegistryProperties();
@@ -48,36 +52,78 @@ public class NacosRegistryServiceImpl extends AbstractRegistryService {
     }
 
     @Override
-    protected void doRegister(InetSocketAddress address) throws Exception {
+    protected void doRegister(InetSocketAddress address, InetSocketAddress addressForDashboard) throws Exception {
+        this.address = address;
+        this.addressForDashboard = addressForDashboard;
         String addressString = NetUtils.parseSocketAddress(address);
+        boolean success = true;
         int index = addressString.indexOf(':');
         if (index == -1) {
             throw new IllegalArgumentException("invalid address：" + address.toString());
         }
-        namingService.registerInstance(properties.getServiceName(), properties.getGroup(), addressString.substring(0, index), address.getPort(), getClusterName());
-
-        logger.info("Registered with nacos");
+        try {
+            namingService.registerInstance(properties.getServiceName(), properties.getGroup(), addressString.substring(0, index), address.getPort(), getClusterName());
+        } catch (NacosException e) {
+            success = false;
+            logger.error("Cant connect to the nacos", e);
+        }
+        addressString = NetUtils.parseSocketAddress(addressForDashboard);
+        index = addressString.indexOf(':');
+        if (index == -1) {
+            throw new IllegalArgumentException("invalid addressForDashboard：" + addressForDashboard.toString());
+        }
+        try {
+            namingService.registerInstance(properties.getServiceNameForDashboard(), properties.getGroup(), addressString.substring(0, index), addressForDashboard.getPort(), getClusterName());
+        } catch (NacosException e) {
+            success = false;
+            logger.error("Cant connect to the nacos", e);
+        }
+        if (success) {
+            logger.info("Registered with nacos. {},{}", address, addressForDashboard);
+        }
     }
 
 
     @Override
-    protected void doSubscribe() throws Exception {
-        setServerAddresses(namingService.selectInstances(properties.getServiceName(), properties.getGroup(), Collections.singletonList(getClusterName()), true)
+    protected void doSubscribe(boolean addressForDashboard) throws Exception {
+        String serviceName = addressForDashboard ? properties.getServiceNameForDashboard() : properties.getServiceName();
+        setServerAddresses(namingService.selectInstances(serviceName, properties.getGroup(), Collections.singletonList(getClusterName()), true)
                 .stream()
                 .map(each -> each.getIp() + ":" + each.getPort())
-                .collect(Collectors.toList())
+                .collect(Collectors.toList()), addressForDashboard
         );
-        namingService.subscribe(properties.getServiceName(), properties.getGroup(), Collections.singletonList(getClusterName()), event -> {
+        namingService.subscribe(serviceName, properties.getGroup(), Collections.singletonList(getClusterName()), event -> {
             try {
                 setServerAddresses(((NamingEvent) event).getInstances()
                         .stream()
                         .filter(each -> each.isEnabled() && each.isHealthy())
                         .map(each -> each.getIp() + ":" + each.getPort())
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()), addressForDashboard
                 );
             } catch (Exception e) {
                 logger.warn("Failed to update server addresses", e);
             }
         });
+    }
+
+    @Override
+    public void close() {
+        if (namingService == null) {
+            return;
+        }
+        try {
+            if (address != null) {
+                String addressString = NetUtils.parseSocketAddress(address);
+                int index = addressString.indexOf(':');
+                namingService.deregisterInstance(properties.getServiceName(), properties.getGroup(), addressString.substring(0, index), address.getPort(), getClusterName());
+            }
+            if (addressForDashboard != null) {
+                String addressString = NetUtils.parseSocketAddress(addressForDashboard);
+                int index = addressString.indexOf(':');
+                namingService.deregisterInstance(properties.getServiceNameForDashboard(), properties.getGroup(), addressString.substring(0, index), addressForDashboard.getPort(), getClusterName());
+            }
+        } catch (Exception e) {
+            //ignore
+        }
     }
 }

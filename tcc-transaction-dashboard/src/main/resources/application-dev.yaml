@@ -1,4 +1,3 @@
-# dashbaord tccserver模式专项配置
 server:
   servlet:
     context-path: /tcc-transaction-dashboard
@@ -27,21 +26,22 @@ spring:
       password: 123456
       connection-mode: server
     registry:
-      registry-type: direct  # 切换tcc-server注册中心
+      registry-type: zookeeper
       registry-role: dashboard
+      zookeeper:
+        connect-string: 127.0.0.1:2181
+#        backup-connect-string: 127.0.0.1:2182
       direct:
         server-addresses-for-dashboard: localhost:12332
       nacos:
         server-addr: localhost:8848
-      zookeeper:
-        connect-string: localhost:2181
     recovery:
-#      update-job-forcibly: false
       recovery-enabled: false
       quartz-clustered: true
       quartz-data-source-url: jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true
       quartz-data-source-driver: com.mysql.jdbc.Driver
       quartz-data-source-user: root
-      quartz-data-source-password: welcome1
+      quartz-data-source-password: 123456
+
 feign:
   path: /tcc-transaction-server

@@ -1,70 +1,47 @@
 server:
   servlet:
-    context-path: /tcc-transaction-dashboard
+    context-path: /${spring.application.name}
   port: 22332
 
 logging:
   level:
     root: info
+
 spring:
   application:
     name: tcc-transaction-dashboard
+  resources:
+    static-locations: classpath:templates/
+    chain:
+      cache: false
+  freemarker:
+    enabled: true
+    cache: false
+    charset: UTF-8
+    suffix: .html
+    check-template-location: true
+    template-loader-path: classpath:/templates/
   tcc:
     dashboard:
       userName: admin
       password: 123456
       connection-mode: server
-      registry: # connection-mode为server时使用
-        registry-type: direct
-        direct:
-          server-addresses: http://localhost:12332
-    #        nacos:
-    #          server-addr: localhost:8848
-    #        zookeeper:
-    #          connect-string: localhost:2181
-    #    storage:
-    #      storage-type: memory
-    #      storage-type: rocksdb
-    #      storage-type: redis
-    #      storage-type: jdbc
-    #      storage-type: redis
-    #      storage-type: redis_cluster
-    #      storage-type: shard_redis
-    #      jdbc:
-    #        password: welcome1
-    #      redis:
-    #        host: 127.0.0.1
-    #        port: 6379
-    #        database: 0
-    #        pool-config:
-    #          max-total: 100
-    #          max-idle: 100
-    #          min-idle: 10
-    #          max-wait-millis: 300
-    #      redis-cluster:
-    #        max-attempts: 5
-    #        so-timeout: 300
-    #        connection-timeout: 1000
-    #        nodes:
-    #          - host: 127.0.0.1
-    #            port: 6379
-    #          - host: 127.0.0.1
-    #            port: 6380
-    #          - host: 127.0.0.1
-    #            port: 6381
-    #      shard-redis:
-    #        nodes:
-    #          - host: 127.0.0.1
-    #            port: 16379
-    #          - host: 127.0.0.1
-    #            port: 16380
-    #          - host: 127.0.0.1
-    #            port: 16381
+    registry:
+      registry-type: direct
+      registry-role: dashboard
+      direct:
+        server-addresses-for-dashboard: localhost:12332
+#      nacos:
+#        server-addr: localhost:8848
+#      zookeeper:
+#        connect-string: localhost:2181
     recovery:
-      #      update-job-forcibly: false
+#      update-job-forcibly: false
       recovery-enabled: false
       quartz-clustered: true
       quartz-data-source-url: jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true
       quartz-data-source-driver: com.mysql.jdbc.Driver
       quartz-data-source-user: root
       quartz-data-source-password: welcome1
+feign:
+  path: /tcc-transaction-server

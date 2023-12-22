@@ -55,6 +55,7 @@ public class TccTransactionAutoConfiguration {
     }
 
     @Bean
+    @ConfigurationProperties("spring.tcc")
     public ClientConfig clientConfig(@Autowired ClientRegistryProperties clientRegistryProperties,
                                      @Autowired StoreConfig storeConfig,
                                      @Autowired RecoveryConfig recoveryConfig,

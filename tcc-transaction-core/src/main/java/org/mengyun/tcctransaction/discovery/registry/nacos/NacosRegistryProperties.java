@@ -12,6 +12,7 @@ public class NacosRegistryProperties {
     private String username = "nacos";
     private String password = "nacos";
     private String serviceName = "tcc-server";
+    private String serviceNameForDashboard = "tcc-server-for-dashboard";
 
     public String getServerAddr() {
         return serverAddr;
@@ -59,5 +60,13 @@ public class NacosRegistryProperties {
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+
+    public String getServiceNameForDashboard() {
+        return serviceNameForDashboard;
+    }
+
+    public void setServiceNameForDashboard(String serviceNameForDashboard) {
+        this.serviceNameForDashboard = serviceNameForDashboard;
     }
 }

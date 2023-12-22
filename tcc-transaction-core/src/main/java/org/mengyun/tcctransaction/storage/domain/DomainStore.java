@@ -12,6 +12,11 @@ public class DomainStore implements Serializable {
     private static final long serialVersionUID = -7979140711432461167L;
 
     private String domain;
+    // 最大重试次数
+    private int maxRetryCount = 3;
+    // 恢复任务最大TPS
+    private int maxRecoveryRequestPerSecond = 100;
+
     // 告警手机号列表,多个以英文逗号分割
     private String phoneNumbers;
     // 告警类型: DING-钉钉, SMS-短信, PHONE-电话
@@ -33,8 +38,9 @@ public class DomainStore implements Serializable {
     public DomainStore() {
     }
 
-    public DomainStore(String domain) {
+    public DomainStore(String domain, int maxRetryCount) {
         this.domain = domain;
+        this.maxRetryCount =maxRetryCount;
         //设置默认告警类型
         this.alertType = AlertType.DING;
     }
@@ -45,6 +51,22 @@ public class DomainStore implements Serializable {
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public int getMaxRetryCount() {
+        return maxRetryCount;
+    }
+
+    public void setMaxRetryCount(int maxRetryCount) {
+        this.maxRetryCount = maxRetryCount;
+    }
+
+    public int getMaxRecoveryRequestPerSecond() {
+        return maxRecoveryRequestPerSecond;
+    }
+
+    public void setMaxRecoveryRequestPerSecond(int maxRecoveryRequestPerSecond) {
+        this.maxRecoveryRequestPerSecond = maxRecoveryRequestPerSecond;
     }
 
     public String getPhoneNumbers() {

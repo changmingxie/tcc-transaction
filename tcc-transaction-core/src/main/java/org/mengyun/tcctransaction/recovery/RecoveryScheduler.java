@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.recovery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mengyun.tcctransaction.constants.MixAll;
 import org.mengyun.tcctransaction.exception.SystemException;
 import org.quartz.*;
@@ -24,6 +25,10 @@ public class RecoveryScheduler {
 
     public RecoveryScheduler(RecoveryConfig recoveryConfig) {
         this.recoveryConfig = recoveryConfig;
+    }
+
+    public RecoveryConfig getRecoveryConfig() {
+        return recoveryConfig;
     }
 
     public void registerScheduleAndStartIfNotPresent(String domain) {
@@ -128,25 +133,31 @@ public class RecoveryScheduler {
         conf.put("org.quartz.scheduler.skipUpdateCheck", "false");
 
         if (recoveryConfig.isQuartzClustered()) {
-            conf.put("org.quartz.jobStore.isClustered", String.valueOf(recoveryConfig.isQuartzClustered()));
+            conf.put("org.quartz.jobStore.isClustered", "true");
             conf.put("org.quartz.scheduler.instanceId", "AUTO");
             conf.put("org.quartz.jobStore.class", "org.quartz.impl.jdbcjobstore.JobStoreTX");
             conf.put("org.quartz.jobStore.driverDelegateClass", "org.quartz.impl.jdbcjobstore.StdJDBCDelegate");
             conf.put("org.quartz.jobStore.useProperties", "false");
             conf.put("org.quartz.jobStore.dataSource", "myDS");
             conf.put("org.quartz.jobStore.tablePrefix", "QRTZ_");
-            conf.put("org.quartz.dataSource.myDS.connectionProvider.class", ReusableConnectionProvider.class.getName());
-            conf.put("org.quartz.dataSource.myDS.driver", recoveryConfig.getQuartzDataSourceDriver());
-            conf.put("org.quartz.dataSource.myDS.URL", recoveryConfig.getQuartzDataSourceUrl());
-            conf.put("org.quartz.dataSource.myDS.user", recoveryConfig.getQuartzDataSourceUser());
-            conf.put("org.quartz.dataSource.myDS.password", recoveryConfig.getQuartzDataSourcePassword());
-            conf.put("org.quartz.dataSource.myDS.initialPoolSize", String.valueOf(recoveryConfig.getQuartzDataSourceInitialPoolSize()));
-            conf.put("org.quartz.dataSource.myDS.minPoolSize", String.valueOf(recoveryConfig.getQuartzDataSourceMinPoolSize()));
-            conf.put("org.quartz.dataSource.myDS.maxPoolSize", String.valueOf(recoveryConfig.getQuartzDataSourceMaxPoolSize()));
-            conf.put("org.quartz.dataSource.myDS.validationQuery", recoveryConfig.getQuartzDataSourceValidationQuery());
-            conf.put("org.quartz.dataSource.myDS.checkoutTimeout", String.valueOf(recoveryConfig.getQuartzDataSourceCheckoutTimeout()));
             conf.put("org.quartz.jobStore.misfireThreshold", "1000");
             conf.put("org.quartz.scheduler.idleWaitTime", "5000");
+
+            if (StringUtils.isEmpty(recoveryConfig.getCustomConnectionProviderClassName())) {
+                conf.put("org.quartz.dataSource.myDS.connectionProvider.class", "org.mengyun.tcctransaction.recovery.ReusableConnectionProvider");
+                conf.put("org.quartz.dataSource.myDS.driver", recoveryConfig.getQuartzDataSourceDriver());
+                conf.put("org.quartz.dataSource.myDS.URL", recoveryConfig.getQuartzDataSourceUrl());
+                conf.put("org.quartz.dataSource.myDS.user", recoveryConfig.getQuartzDataSourceUser());
+                conf.put("org.quartz.dataSource.myDS.password", recoveryConfig.getQuartzDataSourcePassword());
+                conf.put("org.quartz.dataSource.myDS.initialPoolSize", String.valueOf(recoveryConfig.getQuartzDataSourceInitialPoolSize()));
+                conf.put("org.quartz.dataSource.myDS.minPoolSize", String.valueOf(recoveryConfig.getQuartzDataSourceMinPoolSize()));
+                conf.put("org.quartz.dataSource.myDS.maxPoolSize", String.valueOf(recoveryConfig.getQuartzDataSourceMaxPoolSize()));
+                conf.put("org.quartz.dataSource.myDS.validationQuery", recoveryConfig.getQuartzDataSourceValidationQuery());
+                conf.put("org.quartz.dataSource.myDS.checkoutTimeout", String.valueOf(recoveryConfig.getQuartzDataSourceCheckoutTimeout()));
+            } else {
+                conf.put("org.quartz.dataSource.myDS.connectionProvider.class", recoveryConfig.getCustomConnectionProviderClassName());
+                conf.putAll(recoveryConfig.getCustomConnectionProviderProperties());
+            }
         }
 
         try {
