@@ -24,6 +24,7 @@ public class DomainStoreMapSerializer {
     public static final String PHONE_NUMBERS = "PHONE_NUMBERS";
     public static final String ALERT_TYPE = "ALERT_TYPE";
     public static final String THRESHOLD = "THRESHOLD";
+    public static final String REACH_LIMIT_THRESHOLD = "REACH_LIMIT_THRESHOLD";
     public static final String INTERVAL_MINUTES = "INTERVAL_MINUTES";
     public static final String LAST_ALERT_TIME = "LAST_ALERT_TIME";
     public static final String DING_ROBOT_URL = "DING_ROBOT_URL";
@@ -44,6 +45,7 @@ public class DomainStoreMapSerializer {
         putBytesIfValueExist(map, PHONE_NUMBERS, domainStore.getPhoneNumbers());
         putBytesIfValueExist(map, ALERT_TYPE, domainStore.getAlertType());
         putBytesIfValueExist(map, THRESHOLD, domainStore.getThreshold());
+        putBytesIfValueExist(map, REACH_LIMIT_THRESHOLD, domainStore.getReachLimitThreshold());
         putBytesIfValueExist(map, INTERVAL_MINUTES, domainStore.getIntervalMinutes());
         putBytesIfValueExist(map, LAST_ALERT_TIME, domainStore.getLastAlertTime());
         putBytesIfValueExist(map, DING_ROBOT_URL, domainStore.getDingRobotUrl());
@@ -90,6 +92,7 @@ public class DomainStoreMapSerializer {
         domainStore.setPhoneNumbers(propertyMap.get(PHONE_NUMBERS) == null ? null : new String(propertyMap.get(PHONE_NUMBERS)));
         domainStore.setAlertType(propertyMap.get(ALERT_TYPE) == null ? null : AlertType.nameOf(new String(propertyMap.get(ALERT_TYPE))));
         domainStore.setThreshold(propertyMap.get(THRESHOLD) == null ? 0 : ByteUtils.bytesToInt(propertyMap.get(THRESHOLD)));
+        domainStore.setReachLimitThreshold(propertyMap.get(REACH_LIMIT_THRESHOLD) == null ? 0 : ByteUtils.bytesToInt(propertyMap.get(REACH_LIMIT_THRESHOLD)));
         domainStore.setIntervalMinutes(propertyMap.get(INTERVAL_MINUTES) == null ? 0 : ByteUtils.bytesToInt(propertyMap.get(INTERVAL_MINUTES)));
         domainStore.setDingRobotUrl(propertyMap.get(DING_ROBOT_URL) == null ? null : new String(propertyMap.get(DING_ROBOT_URL)));
         try {

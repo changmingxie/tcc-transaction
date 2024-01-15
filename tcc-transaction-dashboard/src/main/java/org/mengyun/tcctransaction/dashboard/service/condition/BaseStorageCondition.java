@@ -20,7 +20,7 @@ public abstract class BaseStorageCondition implements Condition {
         String storageTypeVaule = context.getEnvironment().getProperty("spring.tcc.storage.storage-type");
 
         if (StringUtils.isEmpty(connectionModeValue)) {
-            throw new IllegalArgumentException("tcc.dashboard.connectionMode is empty");
+            throw new IllegalArgumentException("spring.tcc.dashboard.connectionMode is empty is empty");
         }
 
         ConnectionMode connectionMode = ConnectionMode.nameOf(connectionModeValue.toUpperCase());

@@ -73,9 +73,15 @@ const Page = (props) => {
       }
     },
     {
-      title: '告警阈值',
+      title: '堆积告警阈值',
       key: 'threshold',
       dataIndex: 'threshold',
+      width: 100
+    },
+    {
+      title: '死信告警阈值',
+      key: 'reachLimitThreshold',
+      dataIndex: 'reachLimitThreshold',
       width: 100
     },
     {
@@ -316,8 +322,14 @@ const Page = (props) => {
             </Select>
           </Form.Item>
           <Form.Item
-            label="告警阈值"
+            label="堆积告警阈值"
             name="threshold"
+            rules={[{pattern: "[0-9]+", message: '必须为整数'}]}>
+            <Input/>
+          </Form.Item>
+          <Form.Item
+            label="死信告警阈值"
+            name="reachLimitThreshold"
             rules={[{pattern: "[0-9]+", message: '必须为整数'}]}>
             <Input/>
           </Form.Item>
@@ -398,9 +410,16 @@ const Page = (props) => {
             </Select>
           </Form.Item>
           <Form.Item
-            label="告警阈值"
+            label="堆积告警阈值"
             initialValue={String(waitModifyDomain.threshold)}
             name="threshold"
+            rules={[{pattern: "[0-9]+", message: '必须为整数'}]}>
+            <Input/>
+          </Form.Item>
+          <Form.Item
+            label="死信告警阈值"
+            initialValue={String(waitModifyDomain.reachLimitThreshold)}
+            name="reachLimitThreshold"
             rules={[{pattern: "[0-9]+", message: '必须为整数'}]}>
             <Input/>
           </Form.Item>

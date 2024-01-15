@@ -72,7 +72,7 @@ public class JedisClusterTransactionStorage extends AbstractRedisTransactionStor
                     }
                 }
 
-                allShards.sort(new AbstractRedisTransactionStorage.JedisComparator());
+                allShards.sort(new JedisComparator());
             }
 
             return allShards;

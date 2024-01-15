@@ -111,7 +111,7 @@ public class TransactionStoreRecovery implements Closeable {
             } while (true);
 
             // 告警
-            AlertManager.tryAlert(domain, reachRetryLimitCount, transactionStorage);
+            AlertManager.tryAlert(domain, totalCount, reachRetryLimitCount, transactionStorage);
 
             logger.debug("total recovery count {} from repository:{}", totalCount, transactionStorage.getClass().getName());
         } catch (Throwable e) {

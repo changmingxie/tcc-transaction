@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <assembly>
-    <id>server-${project.version}</id>
+    <id>server</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
         <format>dir</format>

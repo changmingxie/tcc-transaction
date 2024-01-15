@@ -1,0 +1,36 @@
+name: release
+run-name: auto release
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        java: [ 8 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: zulu
+      - name: Package with Maven
+        run: mvn clean package
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          append_body: true
+          files: |
+            tcc-transaction-distribution/target/tcc-transaction-dashboard.zip
+            tcc-transaction-distribution/target/tcc-transaction-server.zip

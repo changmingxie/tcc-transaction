@@ -5,9 +5,12 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ChannelGroupMap {
 
@@ -24,7 +27,8 @@ public class ChannelGroupMap {
     public Channel getChannel(String key) {
         Set<Channel> channels = channelGroup.get(key);
         if (channels != null && !channels.isEmpty()) {
-            return channels.iterator().next();
+            List<Channel> channelList = new ArrayList<>(channels);
+            return channelList.get(ThreadLocalRandom.current().nextInt(channelList.size()));
         }
         return null;
     }
