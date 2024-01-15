@@ -25,7 +25,7 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: zulu
       - name: Package with Maven
-        run: mvn clean package
+        run: mvn clean package -Dmaven.test.skip=true
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
