@@ -24,7 +24,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
     private static final int MARK_DELETED_NO = 0;
 
     private static final String SQL_SELECT_PREFIX_FOR_TCC_TRANSACTION = "SELECT DOMAIN,ROOT_XID,XID,CONTENT,STATUS,TRANSACTION_TYPE,CREATE_TIME,LAST_UPDATE_TIME,RETRIED_COUNT,VERSION,IS_DELETE,ROOT_DOMAIN,REQUEST_ID,ID FROM ";
-    private static final String SQL_SELECT_PREFIX_FOR_TCC_DOMAIN = "SELECT DOMAIN, MAX_RETRY_COUNT, MAX_RECOVERY_REQUEST_PER_SECOND,  PHONE_NUMBERS, ALERT_TYPE, THRESHOLD, INTERVAL_MINUTES,LAST_ALERT_TIME,DING_ROBOT_URL,CREATE_TIME,LAST_UPDATE_TIME,VERSION FROM ";
+    private static final String SQL_SELECT_PREFIX_FOR_TCC_DOMAIN = "SELECT DOMAIN, MAX_RETRY_COUNT, MAX_RECOVERY_REQUEST_PER_SECOND,  PHONE_NUMBERS, ALERT_TYPE, THRESHOLD, REACH_LIMIT_THRESHOLD, INTERVAL_MINUTES,LAST_ALERT_TIME,DING_ROBOT_URL,CREATE_TIME,LAST_UPDATE_TIME,VERSION FROM ";
 
     private String tbSuffix;
     private DataSource dataSource;
@@ -337,6 +337,7 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
                     "MAX_RETRY_COUNT = ?,MAX_RECOVERY_REQUEST_PER_SECOND = ?,PHONE_NUMBERS = ?," +
                     "ALERT_TYPE = ?," +
                     "THRESHOLD = ?," +
+                    "REACH_LIMIT_THRESHOLD = ?," +
                     "INTERVAL_MINUTES = ?," +
                     "LAST_ALERT_TIME = ?," +
                     "DING_ROBOT_URL = ?," +
@@ -348,12 +349,13 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             stmt.setString(3, domainStore.getPhoneNumbers());
             stmt.setString(4, domainStore.getAlertType().name());
             stmt.setInt(5, domainStore.getThreshold());
-            stmt.setInt(6, domainStore.getIntervalMinutes());
-            stmt.setTimestamp(7, domainStore.getLastAlertTime() == null ? null : new Timestamp(domainStore.getLastAlertTime().getTime()));
-            stmt.setString(8, domainStore.getDingRobotUrl());
-            stmt.setTimestamp(9, new Timestamp(domainStore.getLastUpdateTime().getTime()));
-            stmt.setString(10, domainStore.getDomain());
-            stmt.setLong(11, domainStore.getVersion());
+            stmt.setInt(6, domainStore.getReachLimitThreshold());
+            stmt.setInt(7, domainStore.getIntervalMinutes());
+            stmt.setTimestamp(8, domainStore.getLastAlertTime() == null ? null : new Timestamp(domainStore.getLastAlertTime().getTime()));
+            stmt.setString(9, domainStore.getDingRobotUrl());
+            stmt.setTimestamp(10, new Timestamp(domainStore.getLastUpdateTime().getTime()));
+            stmt.setString(11, domainStore.getDomain());
+            stmt.setLong(12, domainStore.getVersion());
 
             return stmt;
         });
@@ -550,12 +552,13 @@ public class JdbcTransactionStorage extends AbstractTransactionStorage implement
             domainStore.setPhoneNumbers(resultSet.getString(4));
             domainStore.setAlertType(AlertType.nameOf(resultSet.getString(5)));
             domainStore.setThreshold(resultSet.getInt(6));
-            domainStore.setIntervalMinutes(resultSet.getInt(7));
-            domainStore.setLastAlertTime(resultSet.getDate(8));
-            domainStore.setDingRobotUrl(resultSet.getString(9));
-            domainStore.setCreateTime(resultSet.getTimestamp(10));
-            domainStore.setLastUpdateTime(resultSet.getTimestamp(11));
-            domainStore.setVersion(resultSet.getLong(12));
+            domainStore.setReachLimitThreshold(resultSet.getInt(7));
+            domainStore.setIntervalMinutes(resultSet.getInt(8));
+            domainStore.setLastAlertTime(resultSet.getDate(9));
+            domainStore.setDingRobotUrl(resultSet.getString(10));
+            domainStore.setCreateTime(resultSet.getTimestamp(11));
+            domainStore.setLastUpdateTime(resultSet.getTimestamp(12));
+            domainStore.setVersion(resultSet.getLong(13));
             domainStoreList.add(domainStore);
         }
         return domainStoreList;

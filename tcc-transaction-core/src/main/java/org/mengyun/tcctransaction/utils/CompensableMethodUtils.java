@@ -47,7 +47,7 @@ public class CompensableMethodUtils {
         int position = -1;
 
         for (int i = 0; i < parameterTypes.length; i++) {
-            if (parameterTypes[i].equals(org.mengyun.tcctransaction.api.TransactionContext.class)) {
+            if (parameterTypes[i].equals(TransactionContext.class)) {
                 position = i;
                 break;
             }

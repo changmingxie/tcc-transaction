@@ -19,9 +19,10 @@ import java.util.Date;
 public class AlertManager {
 
     private static final String ALERT_CONTENT_TEMPLATE = "【TCC告警】\n" +
-            "Domain: $domain$\n" +
-            "当前TCC事件堆积数：$errorCount$，超过阈值: $threshold$\n" +
-            "告警间隔时间为$intervalMinutes$分钟，请及时处理！";
+            "Domain: %s\n" +
+            "当前TCC事件堆积数：%d，阈值: %d\n" +
+            "达到重置次数上限的事件堆积数：%d，阈值: %d\n" +
+            "告警间隔时间为%d分钟，请及时处理！";
     private static Logger logger = LoggerFactory.getLogger(AlertManager.class);
 
     private AlertManager() {
@@ -32,40 +33,41 @@ public class AlertManager {
      *
      * @param domain
      * @param currentErrorTransactionCount
+     * @param reachRetryLimitErrorTransactionCount
      * @param transactionStorage
      */
-    public static void tryAlert(String domain, int currentErrorTransactionCount, TransactionStorage transactionStorage) {
+    public static void tryAlert(String domain, int currentErrorTransactionCount, int reachRetryLimitErrorTransactionCount, TransactionStorage transactionStorage) {
         DomainStore domainStore = ((StorageRecoverable) transactionStorage).findDomain(domain);
         if (domainStore == null) {
             logger.warn("domainStore:{} not exist", domain);
             return;
         }
 
-        if (isPermitAlert(currentErrorTransactionCount, domainStore)) {
+        if (isPermitAlert(currentErrorTransactionCount,reachRetryLimitErrorTransactionCount, domainStore)) {
             boolean success = AlertUtils.dingAlert(domainStore.getDingRobotUrl(),
                     domainStore.getPhoneNumbers(),
-                    buildAlertContent(currentErrorTransactionCount, domainStore));
+                    buildAlertContent(currentErrorTransactionCount,reachRetryLimitErrorTransactionCount, domainStore));
             if (success) {
                 domainStore.setLastAlertTime(new Date());
                 ((StorageRecoverable) transactionStorage).updateDomain(domainStore);
             } else {
-                logger.warn("domain:{} alert failed, currentErrorTransactionCount:{}", domain, currentErrorTransactionCount);
+                logger.warn("domain:{} alert failed, currentErrorTransactionCount:{}, reachRetryLimitErrorTransactionCount{}", domain, currentErrorTransactionCount, reachRetryLimitErrorTransactionCount);
             }
         }
 
     }
 
-    private static String buildAlertContent(int currentErrorTransactionCount, DomainStore currentDomainStore) {
-        return ALERT_CONTENT_TEMPLATE.replace("$domain$", currentDomainStore.getDomain())
-                .replace("$errorCount$", String.valueOf(currentErrorTransactionCount))
-                .replace("$threshold$", String.valueOf(currentDomainStore.getThreshold()))
-                .replace("$intervalMinutes$", String.valueOf(currentDomainStore.getIntervalMinutes()));
+    private static String buildAlertContent(int currentErrorTransactionCount, int reachRetryLimitErrorTransactionCount, DomainStore currentDomainStore) {
+        return String.format(ALERT_CONTENT_TEMPLATE, currentDomainStore.getDomain(),
+                currentErrorTransactionCount, currentDomainStore.getThreshold(),
+                reachRetryLimitErrorTransactionCount, currentDomainStore.getReachLimitThreshold(),
+                currentDomainStore.getIntervalMinutes());
     }
 
-    private static boolean isPermitAlert(int currentErrorTransactionCount, DomainStore currentDomainStore) {
+    private static boolean isPermitAlert(int currentErrorTransactionCount, int reachRetryLimitErrorTransactionCount, DomainStore currentDomainStore) {
         return isLegalAlertConfig(currentDomainStore)
                 && isPermitAtAlertTime(currentDomainStore)
-                && isPermitAtThreshold(currentErrorTransactionCount, currentDomainStore);
+                && isPermitAtThreshold(currentErrorTransactionCount,reachRetryLimitErrorTransactionCount, currentDomainStore);
     }
 
     /**
@@ -78,10 +80,9 @@ public class AlertManager {
         AlertType alertType = currentDomainStore.getAlertType();
         String phoneNumbers = currentDomainStore.getPhoneNumbers();
         int intervalMinutes = currentDomainStore.getIntervalMinutes();
-        int threshold = currentDomainStore.getThreshold();
         String dingRobotUrl = currentDomainStore.getDingRobotUrl();
 
-        if (alertType == null || !AlertType.DING.equals(alertType)) {
+        if (!AlertType.DING.equals(alertType)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("alertType is {}, skip alert", alertType);
             }
@@ -96,12 +97,6 @@ public class AlertManager {
         if (intervalMinutes <= 0) {
             if (logger.isDebugEnabled()) {
                 logger.debug("intervalMinutes is less than zero, skip alert");
-            }
-            return false;
-        }
-        if (threshold <= 0) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("threshold is less than zero, skip alert");
             }
             return false;
         }
@@ -137,7 +132,8 @@ public class AlertManager {
      * @param currentDomainStore
      * @return
      */
-    private static boolean isPermitAtThreshold(int currentErrorTransactionCount, DomainStore currentDomainStore) {
-        return currentErrorTransactionCount > currentDomainStore.getThreshold();
+    private static boolean isPermitAtThreshold(int currentErrorTransactionCount, int reachRetryLimitErrorTransactionCount, DomainStore currentDomainStore) {
+        return (currentDomainStore.getThreshold() > 0 && currentErrorTransactionCount >= currentDomainStore.getThreshold())
+                || (currentDomainStore.getReachLimitThreshold() > 0 && reachRetryLimitErrorTransactionCount >= currentDomainStore.getReachLimitThreshold());
     }
 }

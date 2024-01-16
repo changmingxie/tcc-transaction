@@ -23,6 +23,8 @@ public class DomainStore implements Serializable {
     private AlertType alertType;
     //告警阈值
     private int threshold;
+    //达到重试上限的告警阈值
+    private int reachLimitThreshold;
     // 告警间隔时间(单位为分钟) 避免频繁告警
     private int intervalMinutes;
 
@@ -91,6 +93,14 @@ public class DomainStore implements Serializable {
 
     public void setThreshold(int threshold) {
         this.threshold = threshold;
+    }
+
+    public int getReachLimitThreshold() {
+        return reachLimitThreshold;
+    }
+
+    public void setReachLimitThreshold(int reachLimitThreshold) {
+        this.reachLimitThreshold = reachLimitThreshold;
     }
 
     public int getIntervalMinutes() {

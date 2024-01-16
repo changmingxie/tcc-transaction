@@ -72,6 +72,7 @@ public abstract class BaseDomainServiceImpl implements DomainService {
         sourceDomainStore.setPhoneNumbers(requestDto.getPhoneNumbers());
         sourceDomainStore.setAlertType(AlertType.nameOf(requestDto.getAlertType()));
         sourceDomainStore.setThreshold(requestDto.getThreshold());
+        sourceDomainStore.setReachLimitThreshold(requestDto.getReachLimitThreshold());
         sourceDomainStore.setIntervalMinutes(requestDto.getIntervalMinutes());
         sourceDomainStore.setDingRobotUrl(requestDto.getDingRobotUrl());
         return sourceDomainStore;
@@ -96,6 +97,7 @@ public abstract class BaseDomainServiceImpl implements DomainService {
         domainStoreDto.setPhoneNumbers(domainStore.getPhoneNumbers());
         domainStoreDto.setAlertType(domainStore.getAlertType() == null ? null : domainStore.getAlertType().name());
         domainStoreDto.setThreshold(domainStore.getThreshold());
+        domainStoreDto.setReachLimitThreshold(domainStore.getReachLimitThreshold());
         domainStoreDto.setIntervalMinutes(domainStore.getIntervalMinutes());
         domainStoreDto.setLastAlertTime(TccDateFormatUtils.formatDate(domainStore.getLastAlertTime()));
         domainStoreDto.setDingRobotUrl(domainStore.getDingRobotUrl());
