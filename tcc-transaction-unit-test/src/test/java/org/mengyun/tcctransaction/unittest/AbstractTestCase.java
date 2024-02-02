@@ -1,5 +1,6 @@
 package org.mengyun.tcctransaction.unittest;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mengyun.tcctransaction.unittest.entity.SubAccount;
@@ -25,13 +26,14 @@ public abstract class AbstractTestCase {
         buildAccount();
     }
 
-
     private void initMethodCallSeq() {
         TraceLog.clear();
     }
 
 
     private void buildAccount() {
+
+        subAccountRepository.init();
         SubAccount subAccountFrom = subAccountRepository.findById(1L);
         subAccountFrom.setBalanceAmount(100);
         subAccountFrom.setFrozenAmount(0);

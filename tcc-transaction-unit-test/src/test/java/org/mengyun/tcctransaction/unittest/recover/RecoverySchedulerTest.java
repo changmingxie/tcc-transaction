@@ -23,13 +23,12 @@ public class RecoverySchedulerTest {
     private static String quartzDataSourcePassword = "welcome1";
     private static String quartzDataSourceValidationQuery = "select 1";
 
-    public static void main(String[] args) throws IOException {
-        String domain = "eee6";
-        Scheduler scheduler = createScheduler(domain);
-        scheduleJob(scheduler, domain);
-        start(scheduler);
-        System.in.read();
-    }
+//    public static void main(String[] args) throws IOException {
+//        String domain = "eee6";
+//        Scheduler scheduler = createScheduler(domain);
+//        scheduleJob(scheduler, domain);
+//        start(scheduler);
+//    }
 
     private static void start(Scheduler scheduler) {
 
@@ -94,25 +93,6 @@ public class RecoverySchedulerTest {
     @Test
     public void test1() throws IOException {
         startSchedulerAndJob(DOMAIN);
-        System.in.read();
-    }
-
-    @Test
-    public void test2() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
-    }
-
-    @Test
-    public void test3() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
-    }
-
-    @Test
-    public void test4() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
     }
 
     @Test
@@ -124,12 +104,11 @@ public class RecoverySchedulerTest {
             JobKey jobKey = new JobKey("TccServerRecoverJob_" + domain, "DEFAULT");
             JobDetail jobDetail = scheduler.getJobDetail(jobKey);
             scheduler.pauseJob(jobKey);
-            sleep(35 * 1000);
+            sleep(1 * 1000);
             scheduler.resumeJob(jobKey);
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
-        System.in.read();
     }
 
     private void startSchedulerAndJob(String domain) {
