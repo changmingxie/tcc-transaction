@@ -13,15 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
         "classpath:/tcc-transaction-ut-with-memory-storage.xml"})
 public class SerializerTest extends AbstractTestCase {
 
-
-    @Test
-    public void test() {
-        long value = 1234l;
-
-        byte[] bytes = Longs.toByteArray(value);
-
-    }
-
     @Test
     public void given_remoting_command_when_serialize_deserialize_then_original_and_serialized_equals() {
 

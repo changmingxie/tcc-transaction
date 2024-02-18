@@ -66,7 +66,7 @@ public class RemotingStorageTest {
     }
 
     @Test
-    public void performance_test_remoting_transaction_storage_crud() throws InterruptedException {
+    public void performanceTestRemotingTransactionStorageCrud() throws InterruptedException {
 
         ClientConfig clientConfig = ClientConfig.DEFAULT;
 

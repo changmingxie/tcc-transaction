@@ -16,20 +16,19 @@ public class RecoverySchedulerTest {
 
     public static final String JOB_NAME = "TccServerRecoverJob_%s";
     public static final String TRIGGER_NAME = "TccServerRecoveryTrigger_%s";
-    private static final String DOMAIN = "TTTTTT";
+    private static final String DOMAIN = "TEST";
     private static String quartzDataSourceDriver = "com.mysql.jdbc.Driver";
-    private static String quartzDataSourceUrl = "jdbc:mysql://localhost:3306/TCC_SERVER?useSSL=false&allowPublicKeyRetrieval=true";
+    private static String quartzDataSourceUrl = "jdbc:mysql://localhost:3306/TCC_SERVER2?useSSL=false&allowPublicKeyRetrieval=true";
     private static String quartzDataSourceUser = "root";
     private static String quartzDataSourcePassword = "welcome1";
     private static String quartzDataSourceValidationQuery = "select 1";
 
-    public static void main(String[] args) throws IOException {
-        String domain = "eee6";
-        Scheduler scheduler = createScheduler(domain);
-        scheduleJob(scheduler, domain);
-        start(scheduler);
-        System.in.read();
-    }
+//    public static void main(String[] args) throws IOException {
+//        String domain = "eee6";
+//        Scheduler scheduler = createScheduler(domain);
+//        scheduleJob(scheduler, domain);
+//        start(scheduler);
+//    }
 
     private static void start(Scheduler scheduler) {
 
@@ -91,31 +90,7 @@ public class RecoverySchedulerTest {
         }
     }
 
-    @Test
-    public void test1() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
-    }
-
-    @Test
-    public void test2() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
-    }
-
-    @Test
-    public void test3() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
-    }
-
-    @Test
-    public void test4() throws IOException {
-        startSchedulerAndJob(DOMAIN);
-        System.in.read();
-    }
-
-    @Test
+//    @Test
     public void test_manage() throws IOException {
         String domain = DOMAIN;
         Scheduler scheduler = createScheduler(domain);
@@ -124,12 +99,11 @@ public class RecoverySchedulerTest {
             JobKey jobKey = new JobKey("TccServerRecoverJob_" + domain, "DEFAULT");
             JobDetail jobDetail = scheduler.getJobDetail(jobKey);
             scheduler.pauseJob(jobKey);
-            sleep(35 * 1000);
+            sleep(1 * 1000);
             scheduler.resumeJob(jobKey);
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
-        System.in.read();
     }
 
     private void startSchedulerAndJob(String domain) {

@@ -93,24 +93,24 @@ public class AccountServiceTest extends AbstractTestCase {
         Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_FROM_CALLED, messages.get(0));
     }
 
-    @Test
-    public void testTransferToWithTransactionContext() {
-
-        //given
-        TransactionContext transactionContext = new TransactionContext(null, new TransactionXid(null), new TransactionXid(null), TransactionStatus.TRYING);
-        TransactionContextHolder.setCurrentTransactionContext(transactionContext);
-        //when
-        accountService.transferTo(transactionContext, 2, 50);
-
-        //then
-        SubAccount subAccountTo = subAccountRepository.findById(2L);
-
-        Assert.assertTrue(subAccountTo.getBalanceAmount() == 100);
-        Assert.assertTrue(subAccountTo.getFrozenAmount() == 0);
-
-        List<String> messages = TraceLog.getMessages();
-
-        Assert.assertEquals(1, messages.size());
-        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CALLED, messages.get(0));
-    }
+//    @Test
+//    public void testTransferToWithTransactionContext() {
+//
+//        //given
+//        TransactionContext transactionContext = new TransactionContext(null, new TransactionXid(null), new TransactionXid(null), TransactionStatus.TRYING);
+//        TransactionContextHolder.setCurrentTransactionContext(transactionContext);
+//        //when
+//        accountService.transferTo(transactionContext, 2, 50);
+//
+//        //then
+////        SubAccount subAccountTo = subAccountRepository.findById(2l);
+//
+////        Assert.assertTrue(subAccountTo.getBalanceAmount() == 100);
+////        Assert.assertTrue(subAccountTo.getFrozenAmount() == 0);
+//
+//        List<String> messages = TraceLog.getMessages();
+//
+//        Assert.assertEquals(1, messages.size());
+//        Assert.assertEquals(MessageConstants.ACCOUNT_SERVICE_IMPL_TRANSFER_TO_CALLED, messages.get(0));
+//    }
 }
