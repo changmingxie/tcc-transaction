@@ -8,6 +8,7 @@ import org.mengyun.tcctransaction.storage.domain.DomainStore;
 import org.mengyun.tcctransaction.storage.helper.RedisCommands;
 import org.mengyun.tcctransaction.storage.helper.RedisHelper;
 import org.mengyun.tcctransaction.storage.helper.ShardHolder;
+import org.mengyun.tcctransaction.utils.ByteUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ScanParams;
@@ -144,8 +145,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
         }
 
         Object result = commands.eval(
-                "if redis.call('exists', KEYS[1]) == 0 then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;"
-                        .getBytes(),
+                "if redis.call('exists', KEYS[1]) == 0 then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;".getBytes(),
                 Arrays.asList(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid())),
                 params);
 
@@ -155,6 +155,10 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
     protected Long updateByScriptCommand(RedisCommands commands, TransactionStore transactionStore) {
 
         List<byte[]> params = new ArrayList<>();
+        params.add(ByteUtils.longToBytes(transactionStore.getVersion() - 1));
+        if (transactionStore.getId() != null) {
+            params.add(ByteUtils.longToBytes(transactionStore.getId()));
+        }
 
         for (Map.Entry<byte[], byte[]> entry : TransactionStoreMapSerializer.serialize(transactionStore).entrySet()) {
             params.add(entry.getKey());
@@ -163,17 +167,13 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
         Object result;
         if (transactionStore.getId() == null) {
-            result = commands.eval(String.format(
-                            "if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
-                            transactionStore.getVersion() - 1).getBytes(),
-                    Arrays.asList(RedisHelper.getRedisKey(
-                            transactionStore.getDomain(),
-                            transactionStore.getXid())),
+            result = commands.eval(
+                    "if redis.call('hget',KEYS[1],'VERSION') == ARGV[1] then redis.call('hmset', KEYS[1], unpack(ARGV,2)); return 1; end; return 0;".getBytes(),
+                    Arrays.asList(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid())),
                     params);
         } else {
-            result = commands.eval(String.format(
-                            "if redis.call('hget',KEYS[1],'VERSION') == '%s' and redis.call('hget',KEYS[1],'ID') =='%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
-                            transactionStore.getVersion() - 1, transactionStore.getId()).getBytes(),
+            result = commands.eval(
+                    "if redis.call('hget',KEYS[1],'VERSION') == ARGV[1] and redis.call('hget',KEYS[1],'ID') == ARGV[2] then redis.call('hmset', KEYS[1], unpack(ARGV,3)); return 1; end; return 0;".getBytes(),
                     Arrays.asList(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid())),
                     params);
         }
@@ -183,18 +183,19 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
 
     protected Long deleteByScriptCommand(RedisCommands commands, TransactionStore transactionStore) {
         Object result;
+        List<byte[]> params = new ArrayList<>();
+        params.add(ByteUtils.longToBytes(transactionStore.getVersion()));
         if (transactionStore.getId() == null) {
-            result = commands.eval(String.format(
-                            "if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('del', KEYS[1]); return 1; end; return 0;",
-                            transactionStore.getVersion()).getBytes(),
+            result = commands.eval(
+                    "if redis.call('hget',KEYS[1],'VERSION') == ARGV[1] then redis.call('del', KEYS[1]); return 1; end; return 0;".getBytes(),
                     Arrays.asList(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid())),
-                    Collections.emptyList());
+                    params);
         } else {
-            result = commands.eval(String.format(
-                            "if redis.call('hget',KEYS[1],'VERSION') == '%s' and redis.call('hget',KEYS[1],'ID') =='%s' then redis.call('del', KEYS[1]); return 1; end; return 0;",
-                            transactionStore.getVersion(), transactionStore.getId()).getBytes(),
+            params.add(ByteUtils.longToBytes(transactionStore.getId()));
+            result = commands.eval(
+                    "if redis.call('hget',KEYS[1],'VERSION') == ARGV[1] and redis.call('hget',KEYS[1],'ID') == ARGV[2] then redis.call('del', KEYS[1]); return 1; end; return 0;".getBytes(),
                     Arrays.asList(RedisHelper.getRedisKey(transactionStore.getDomain(), transactionStore.getXid())),
-                    Collections.emptyList());
+                    params);
         }
         return (Long) result;
     }
@@ -276,8 +277,7 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
             }
 
             Object result = commands.eval(
-                    "if redis.call('exists', KEYS[1]) == 0 then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;"
-                            .getBytes(),
+                    "if redis.call('exists', KEYS[1]) == 0 then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;".getBytes(),
                     Arrays.asList(domainStoreRedisKey),
                     params);
 
@@ -301,16 +301,15 @@ public abstract class AbstractRedisTransactionStorage extends AbstractKVTransact
         byte[] domainStoreRedisKey = RedisHelper.getDomainStoreRedisKey(domainStore.getDomain());
 
         try (RedisCommands commands = getRedisCommands(domainStoreRedisKey)) {
-
             List<byte[]> params = new ArrayList<>();
+            params.add(ByteUtils.longToBytes(domainStore.getVersion()-1));
             for (Map.Entry<byte[], byte[]> entry : DomainStoreMapSerializer.serialize(domainStore).entrySet()) {
                 params.add(entry.getKey());
                 params.add(entry.getValue());
             }
 
-            Object result = commands.eval(String.format(
-                            "if redis.call('hget',KEYS[1],'VERSION') == '%s' then redis.call('hmset', KEYS[1], unpack(ARGV)); return 1; end; return 0;",
-                            domainStore.getVersion() - 1).getBytes(),
+            Object result = commands.eval(
+                    "if redis.call('hget',KEYS[1],'VERSION') == ARGV[1] then redis.call('hmset', KEYS[1], unpack(ARGV,2)); return 1; end; return 0;".getBytes(),
                     Arrays.asList(domainStoreRedisKey),
                     params);
 
