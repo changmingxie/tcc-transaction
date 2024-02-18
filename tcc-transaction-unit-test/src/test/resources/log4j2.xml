@@ -34,7 +34,7 @@
 
     <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效 -->
     <loggers>
-        <root level="info">
+        <root level="error">
             <appender-ref ref="RollingFile"/>
             <appender-ref ref="Console"/>
             <appender-ref ref="log"/>

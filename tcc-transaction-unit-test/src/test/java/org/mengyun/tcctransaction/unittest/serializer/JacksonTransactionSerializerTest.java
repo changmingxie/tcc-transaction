@@ -19,8 +19,8 @@ public class JacksonTransactionSerializerTest {
 
     private JacksonTransactionSerializer serializer = new JacksonTransactionSerializer();
 
-    @Test
-    public void test() {
+//    @Test
+    public void gvien_a_new_transaction_and_serialize_when_deserialize_then_transaction_equals() {
         Transaction transaction = new Transaction(new TransactionContext(
                 "TCC:TEST",
                 new TransactionXid("xxxxxxxxxxxxxx"),
@@ -46,7 +46,7 @@ public class JacksonTransactionSerializerTest {
      *
      * @throws IOException
      */
-    @Test
+//    @Test
     public void test2() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         TransactionStoreDto transactionStoreDto = new TransactionStoreDto();

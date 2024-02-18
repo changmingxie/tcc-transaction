@@ -87,7 +87,6 @@ public abstract class TransferServiceTest extends AbstractTestCase {
         try {
             Thread.sleep(tccClient.getClientConfig().getRecoverDuration() * 2 * 1000L);
         } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         messages = TraceLog.getMessages();
