@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.mengyun.tcctransaction.remoting.RequestProcessor;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommandCode;
+import org.mengyun.tcctransaction.stats.StatsManager;
 import org.mengyun.tcctransaction.utils.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +27,11 @@ public abstract class AbstractNettyRemoting {
             new HashMap<>(64);
     protected Pair<RequestProcessor<ChannelHandlerContext>, ExecutorService> defaultRequestProcessor;
 
+    protected StatsManager statsManager;
+
     protected ConcurrentMap<Integer /* requestId */, ResponseFuture> responseTable = new ConcurrentHashMap<>(256);
 
     protected void processMessageReceived(ChannelHandlerContext ctx, RemotingCommand cmd) {
-
         if (cmd.isRequestCommand()) {
             processRequestCommand(ctx, cmd);
         } else {
@@ -54,7 +56,7 @@ public abstract class AbstractNettyRemoting {
         Runnable run = () -> {
             try {
                 RemotingCommand responseCommand = pair.getLeft().processRequest(ctx, cmd);
-
+                responseCommand.setOriginalCommand(cmd);
                 responseCommand.setCode(RemotingCommandCode.SERVICE_RESP);
                 responseCommand.setRequestId(cmd.getRequestId());
                 ctx.writeAndFlush(responseCommand);
@@ -65,6 +67,7 @@ public abstract class AbstractNettyRemoting {
                 StringWriter errors = new StringWriter();
                 e.printStackTrace(new PrintWriter(errors));
                 RemotingCommand responseCommand = RemotingCommand.createCommand(RemotingCommandCode.SYSTEM_EXCEPTION_RESP, errors.toString());
+                responseCommand.setOriginalCommand(cmd);
                 responseCommand.setRequestId(cmd.getRequestId());
                 ctx.writeAndFlush(responseCommand);
             }
@@ -80,6 +83,7 @@ public abstract class AbstractNettyRemoting {
 
             final RemotingCommand response = RemotingCommand.createCommand(RemotingCommandCode.SYSTEM_BUSY_RESP,
                     "[OVERLOAD]system busy, start flow control for a while");
+            response.setOriginalCommand(cmd);
             response.setRequestId(cmd.getRequestId());
             ctx.writeAndFlush(response);
         }

@@ -59,6 +59,7 @@
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-spring</module>
         <module>tcc-transaction-dashboard</module>
+        <module>tcc-transaction-prometheus-exporter</module>
         <module>tcc-transaction-server</module>
         <module>tcc-transaction-dubbo</module>
         <module>tcc-transaction-bom</module>

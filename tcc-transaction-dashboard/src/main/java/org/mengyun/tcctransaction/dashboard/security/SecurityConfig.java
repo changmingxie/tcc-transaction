@@ -45,7 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/*.png",
                         "/robots.txt",
                         "/favicon.ico",
-                        "/api/user/login"
+                        "/api/user/login",
+                        "/prometheus/metrics"
                 ).permitAll().and()
                 .authorizeRequests().anyRequest().authenticated().and().exceptionHandling() //鉴权不需要
                 .authenticationEntryPoint(new TccAuthenticationEntryPoint()).accessDeniedHandler(new TccAccessDeniedHandler());

@@ -6,6 +6,8 @@ import org.mengyun.tcctransaction.dashboard.dto.*;
 import org.mengyun.tcctransaction.dashboard.enums.ResponseCodeEnum;
 import org.mengyun.tcctransaction.dashboard.service.TransactionService;
 import org.mengyun.tcctransaction.dashboard.service.condition.TccServerStorageCondition;
+import org.mengyun.tcctransaction.stats.StatsDto;
+import org.mengyun.tcctransaction.stats.StatsSupplier;
 import org.mengyun.tcctransaction.storage.TransactionStorage;
 import org.mengyun.tcctransaction.utils.CollectionUtils;
 import org.slf4j.Logger;
@@ -17,7 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author huabao.fang
@@ -25,11 +30,13 @@ import java.util.List;
  **/
 @Conditional(TccServerStorageCondition.class)
 @Service
-public class TccServerTransactionServiceImpl implements TransactionService {
+public class TccServerTransactionServiceImpl implements TransactionService, StatsSupplier {
 
     private Logger logger = LoggerFactory.getLogger(TccServerTransactionServiceImpl.class);
 
     private static final String REQUEST_METHOD_TRANSACTION_DETAIL = "transaction/detail";
+
+    private static final String REQUEST_METHOD_STATS = "server/stats";
 
     @Autowired
     private TccServerFeignClient tccServerFeignClient;
@@ -40,6 +47,20 @@ public class TccServerTransactionServiceImpl implements TransactionService {
     @Autowired
     private RestTemplate restTemplate;
 
+    private final ExecutorService executorService = new ThreadPoolExecutor(5,
+            5,
+            0,
+            TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<>(100),
+            new ThreadFactory() {
+                private final AtomicInteger threadIndex = new AtomicInteger(0);
+
+                @Override
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, String.format("StatsDtoObtainThread_%d", threadIndex.getAndIncrement()));
+                }
+            });
+
     @Override
     public ResponseDto<TransactionPageDto> list(TransactionPageRequestDto requestDto) {
         return tccServerFeignClient.transactionList(requestDto);
@@ -48,7 +69,7 @@ public class TccServerTransactionServiceImpl implements TransactionService {
     @Override
     public ResponseDto<TransactionStoreDto> detail(TransactionDetailRequestDto requestDto) {
 
-        List<Server> servers = springClientFactory.getLoadBalancer(DashboardConstant.TCC_SERVER_GROUP).getReachableServers();
+        List<Server> servers = getServers();
         if (CollectionUtils.isEmpty(servers)) {
             return ResponseDto.returnFail(ResponseCodeEnum.TRANSACTION_DETAIL_NO_INSTANCES);
         }
@@ -114,5 +135,45 @@ public class TccServerTransactionServiceImpl implements TransactionService {
     @Override
     public TransactionStorage getTransactionStorage() {
         return null;
+    }
+
+    @Override
+    public List<StatsDto> getStatsDtoList() {
+        CompletionService<StatsDto> completionService = new ExecutorCompletionService<>(executorService);
+        int added = 0;
+        for (Server server : getServers()) {
+            try {
+                completionService.submit(() -> getStatsDto(server));
+                added++;
+            } catch (RejectedExecutionException e) {
+                logger.warn("system thread pool busy", e);
+            }
+        }
+        List<StatsDto> res = new ArrayList<>();
+        for (int i = 0; i < added; i++) {
+            try {
+                StatsDto statsDto = completionService.take().get();
+                if (statsDto != null) {
+                    res.add(statsDto);
+                }
+            } catch (Exception e) {
+                logger.warn("request server stats failed!", e);
+            }
+        }
+        return res;
+    }
+
+    public StatsDto getStatsDto(Server server) {
+        String statsRequestUrl = "http://"
+                .concat(server.getHostPort())
+                .concat("/")
+                .concat(DashboardConstant.TCC_SERVER_GROUP)
+                .concat("/")
+                .concat(REQUEST_METHOD_STATS);
+        return restTemplate.getForObject(statsRequestUrl, StatsDto.class);
+    }
+
+    private List<Server> getServers(){
+        return springClientFactory.getLoadBalancer(DashboardConstant.TCC_SERVER_GROUP).getReachableServers();
     }
 }

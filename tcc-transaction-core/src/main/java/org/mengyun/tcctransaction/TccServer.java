@@ -26,6 +26,7 @@ import org.mengyun.tcctransaction.serializer.RemotingCommandSerializer;
 import org.mengyun.tcctransaction.serializer.TccRemotingCommandSerializer;
 import org.mengyun.tcctransaction.serializer.TccTransactionStoreSerializer;
 import org.mengyun.tcctransaction.serializer.TransactionStoreSerializer;
+import org.mengyun.tcctransaction.stats.StatsManager;
 import org.mengyun.tcctransaction.storage.StorageType;
 import org.mengyun.tcctransaction.storage.TransactionStorage;
 import org.mengyun.tcctransaction.storage.TransactionStorageFactory;
@@ -73,6 +74,8 @@ public class TccServer implements TccService {
 
     private List<RegistryService> registryServices;
 
+    private StatsManager statsManager;
+
     public TccServer(ServerConfig serverConfig) {
         if (serverConfig != null) {
             this.serverConfig = serverConfig;
@@ -85,7 +88,11 @@ public class TccServer implements TccService {
             throw new SystemException(String.format("unsupported StorageType<%s> in server side.", this.serverConfig.getStorageType().value()));
         }
 
-        this.remotingServer = new NettyRemotingServer(this.remotingCommandSerializer, this.serverConfig);
+        String instance = StringUtils.isNotEmpty(this.serverConfig.getRegistryAddress())
+                ? this.serverConfig.getRegistryAddress() : (NetUtils.getLocalAddress() + ":" + this.serverConfig.getListenPort());
+        this.statsManager = new StatsManager(instance);
+
+        this.remotingServer = new NettyRemotingServer(this.remotingCommandSerializer, this.serverConfig, this.statsManager);
 
         this.registryServices = RegistryFactory.getInstance(this.serverConfig);
 
@@ -229,6 +236,10 @@ public class TccServer implements TccService {
 
     public RecoveryExecutor getRecoveryExecutor() {
         return recoveryExecutor;
+    }
+
+    public StatsManager getStatsManager() {
+        return statsManager;
     }
 
     @ChannelHandler.Sharable

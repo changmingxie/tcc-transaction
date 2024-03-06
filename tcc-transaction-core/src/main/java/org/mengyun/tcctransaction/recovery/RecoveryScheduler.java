@@ -37,16 +37,20 @@ public class RecoveryScheduler {
     }
 
     public Scheduler registerScheduleIfNotPresent(String domain) {
-        if (!schedulers.containsKey(domain)) {
-            synchronized (RecoveryScheduler.class) {
-                if (!schedulers.containsKey(domain)) {
-                    Scheduler scheduler = createScheduler(domain);
-                    scheduleJob(scheduler, domain);
-                    schedulers.put(domain, scheduler);
-                }
-            }
+        Scheduler scheduler = schedulers.get(domain);
+        if (scheduler != null) {
+            return scheduler;
         }
-        return schedulers.get(domain);
+        synchronized (RecoveryScheduler.class) {
+            scheduler = schedulers.get(domain);
+            if (scheduler != null) {
+                return scheduler;
+            }
+            scheduler = createScheduler(domain);
+            scheduleJob(scheduler, domain);
+            schedulers.put(domain, scheduler);
+            return scheduler;
+        }
     }
 
     public void unregisterSchedule(String domain) {

@@ -45,6 +45,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mengyun</groupId>
+            <artifactId>tcc-transaction-prometheus-exporter</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>

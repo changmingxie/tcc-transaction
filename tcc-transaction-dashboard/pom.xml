@@ -103,6 +103,12 @@
             <artifactId>tcc-transaction-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.mengyun</groupId>
+            <artifactId>tcc-transaction-prometheus-exporter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
