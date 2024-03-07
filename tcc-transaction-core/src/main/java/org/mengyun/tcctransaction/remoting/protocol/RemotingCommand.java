@@ -12,6 +12,13 @@ public class RemotingCommand {
     private int serviceCode;
     private byte[] body;
 
+    /**
+     * temporary information used for statistics
+     */
+    private transient long receiveTime;
+
+    private transient RemotingCommand originalCommand;
+
     public static RemotingCommand createServiceResponseCommand(String remark) {
         RemotingCommand cmd = new RemotingCommand();
         cmd.setCode(RemotingCommandCode.SERVICE_RESP);
@@ -70,5 +77,21 @@ public class RemotingCommand {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public long getReceiveTime() {
+        return receiveTime;
+    }
+
+    public void setReceiveTime(long receiveTime) {
+        this.receiveTime = receiveTime;
+    }
+
+    public RemotingCommand getOriginalCommand() {
+        return originalCommand;
+    }
+
+    public void setOriginalCommand(RemotingCommand originalCommand) {
+        this.originalCommand = originalCommand;
     }
 }

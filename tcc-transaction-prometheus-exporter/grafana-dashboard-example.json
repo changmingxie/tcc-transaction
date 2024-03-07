@@ -1,0 +1,391 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 231,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "expr": "((sum(rate(TCC_SERVER_SUCCESS_RPC_REQUEST_NUMS_total{Instance=~\"$instance\",ServiceCode=~\"$serviceCode\"}[2m])) by ()) or on() vector(0))\n+ ((sum(rate(TCC_SERVER_FAIL_RPC_REQUEST_NUMS_total{Instance=~\"$instance\",ServiceCode=~\"$serviceCode\"}[2m])) by ()) or on() vector(0))",
+          "legendFormat": "QPS",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "请求QPS",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "expr": "(sum(rate(TCC_SERVER_RPC_REQUEST_COSTS_DISTRIBUTION_count{Instance=~\"$instance\",ServiceCode=~\"$serviceCode\"}[2m])) by (Instance,ServiceCode)) /\n((sum(rate(TCC_SERVER_RPC_REQUEST_COSTS_DISTRIBUTION_sum{Instance=~\"$instance\",ServiceCode=~\"$serviceCode\"}[2m])) by (Instance,ServiceCode)) )",
+          "legendFormat": "{{Instance}}-{{ServiceCode}} avg",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.9, rate(TCC_SERVER_RPC_REQUEST_COSTS_DISTRIBUTION_bucket{Instance=~\"$instance\",ServiceCode=~\"$serviceCode\"}[2m]) )",
+          "hide": false,
+          "legendFormat": "{{Instance}}-{{ServiceCode}} 90",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.99, rate(TCC_SERVER_RPC_REQUEST_COSTS_DISTRIBUTION_bucket{Instance=~\"$instance\",ServiceCode=~\"$serviceCode\"}[2m]) )",
+          "hide": false,
+          "legendFormat": "{{Instance}}-{{ServiceCode}} 99",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "expr": "histogram_quantile(1, rate(TCC_SERVER_RPC_REQUEST_COSTS_DISTRIBUTION_bucket{Instance=~\"$instance\",ServiceCode=~\"$serviceCode\"}[2m]) )",
+          "hide": false,
+          "legendFormat": "{{Instance}}-{{ServiceCode}} max",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "请求耗时",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 105,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "%"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "expr": "100*(sum(rate(TCC_SERVER_SUCCESS_RPC_REQUEST_NUMS_total{Instance=~\"$instance\",ServiceCode=~\"$serviceCode\"}[2m])) by () or on() vector(0)) /\n((sum(rate(TCC_SERVER_SUCCESS_RPC_REQUEST_NUMS_total{Instance=~\"$instance\",ServiceCode=~\"$serviceCode\"}[2m])) by () or on() vector(0)) + ((sum(rate(TCC_SERVER_FAIL_RPC_REQUEST_NUMS_total{Instance=~\"$instance\",ServiceCode=~\"$serviceCode\"}[2m])) by () or on() vector(0))))",
+          "legendFormat": "成功率",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "请求成功率",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false
+        },
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(TCC_SERVER_SUCCESS_RPC_REQUEST_NUMS_total,Instance)",
+        "description": "实例",
+        "hide": 0,
+        "includeAll": false,
+        "label": "实例",
+        "multi": true,
+        "name": "instance",
+        "options": [],
+        "query": {
+          "query": "label_values(TCC_SERVER_SUCCESS_RPC_REQUEST_NUMS_total,Instance)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false
+        },
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(TCC_SERVER_SUCCESS_RPC_REQUEST_NUMS_total,ServiceCode)",
+        "description": "请求方法",
+        "hide": 0,
+        "includeAll": false,
+        "label": "请求方法",
+        "multi": true,
+        "name": "serviceCode",
+        "options": [],
+        "query": {
+          "query": "label_values(TCC_SERVER_SUCCESS_RPC_REQUEST_NUMS_total,ServiceCode)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "TCC监控仪表盘",
+  "uid": "ScbBKUFec4",
+  "version": 14,
+  "weekStart": ""
+}

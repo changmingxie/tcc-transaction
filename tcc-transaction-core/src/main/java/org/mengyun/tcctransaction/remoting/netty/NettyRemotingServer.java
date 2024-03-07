@@ -24,7 +24,9 @@ import org.mengyun.tcctransaction.remoting.exception.RemotingException;
 import org.mengyun.tcctransaction.remoting.exception.RemotingSendRequestException;
 import org.mengyun.tcctransaction.remoting.exception.RemotingTimeoutException;
 import org.mengyun.tcctransaction.remoting.protocol.RemotingCommand;
+import org.mengyun.tcctransaction.remoting.protocol.RemotingCommandCode;
 import org.mengyun.tcctransaction.serializer.RemotingCommandSerializer;
+import org.mengyun.tcctransaction.stats.StatsManager;
 import org.mengyun.tcctransaction.support.FactoryBuilder;
 import org.mengyun.tcctransaction.utils.NetUtils;
 import org.slf4j.Logger;
@@ -54,10 +56,11 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
 
     private RemotingCommandSerializer serializer;
 
-    public NettyRemotingServer(RemotingCommandSerializer serializer, NettyServerConfig nettyServerConfig) {
+    public NettyRemotingServer(RemotingCommandSerializer serializer, NettyServerConfig nettyServerConfig, StatsManager statsManager) {
         this.nettyServerConfig = nettyServerConfig;
         this.serializer = serializer;
         this.serverBootstrap = new ServerBootstrap();
+        this.statsManager = statsManager;
 
         if (useEpoll()) {
 
@@ -141,6 +144,7 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
                                 new NettyEncoder(serializer),
                                 new ReadTimeoutHandler(nettyServerConfig.getChannelIdleTimeoutSeconds()),
                                 new HeartBeatRespHandler(),
+                                new NettyServerMetricsHandler(statsManager),
                                 new NettyServerHandler()
                         );
 
@@ -241,7 +245,38 @@ public class NettyRemotingServer extends AbstractNettyRemoting implements Remoti
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, RemotingCommand cmd) throws Exception {
             ServerFlowMonitor.count();
+            cmd.setReceiveTime(System.currentTimeMillis());
             processMessageReceived(ctx, cmd);
+        }
+    }
+
+    @ChannelHandler.Sharable
+    class NettyServerMetricsHandler extends ChannelOutboundHandlerAdapter {
+        private StatsManager statsManage;
+
+        public NettyServerMetricsHandler(StatsManager statsManage) {
+            this.statsManage = statsManage;
+        }
+
+        @Override
+        public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+            try {
+                if (msg instanceof RemotingCommand) {
+                    RemotingCommand remotingCommand = (RemotingCommand) msg;
+                    if (remotingCommand.getCode() == RemotingCommandCode.SERVICE_RESP && remotingCommand.getOriginalCommand() != null) {
+                        RemotingCommand originCommand = remotingCommand.getOriginalCommand();
+                        statsManage.incRpcRequestCost(originCommand.getServiceCode(), System.currentTimeMillis() - originCommand.getReceiveTime());
+                        if (RemotingCommandCode.isFail(remotingCommand.getCode())) {
+                            statsManage.incFailRpcRequestNum(originCommand.getServiceCode());
+                        } else {
+                            statsManage.incSuccessRpcRequestNum(originCommand.getServiceCode());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.warn("failed to record stats data", e);
+            }
+            super.write(ctx, msg, promise);
         }
     }
 }

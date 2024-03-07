@@ -1,5 +1,7 @@
 package org.mengyun.tcctransaction.springboot.starter;
 
+import io.prometheus.client.CollectorRegistry;
+import io.prometheus.client.exporter.MetricsServlet;
 import net.devh.springboot.autoconfigure.grpc.client.GlobalClientInterceptorConfigurerAdapter;
 import net.devh.springboot.autoconfigure.grpc.client.GlobalClientInterceptorRegistry;
 import net.devh.springboot.autoconfigure.grpc.server.GlobalServerInterceptorConfigurerAdapter;
@@ -7,6 +9,7 @@ import net.devh.springboot.autoconfigure.grpc.server.GlobalServerInterceptorRegi
 import org.mengyun.tcctransaction.ClientConfig;
 import org.mengyun.tcctransaction.grpc.interceptor.TransactionContextClientInterceptor;
 import org.mengyun.tcctransaction.grpc.interceptor.TransactionContextServerInterceptor;
+import org.mengyun.tcctransaction.prometheus.exporter.PrometheusMetricsCollector;
 import org.mengyun.tcctransaction.properties.RecoveryProperties;
 import org.mengyun.tcctransaction.properties.registry.ClientRegistryProperties;
 import org.mengyun.tcctransaction.properties.remoting.NettyClientProperties;
@@ -14,11 +17,14 @@ import org.mengyun.tcctransaction.properties.store.StoreProperties;
 import org.mengyun.tcctransaction.recovery.RecoveryConfig;
 import org.mengyun.tcctransaction.remoting.netty.NettyClientConfig;
 import org.mengyun.tcctransaction.spring.annotation.EnableTccTransaction;
+import org.mengyun.tcctransaction.stats.StatsSupplier;
 import org.mengyun.tcctransaction.storage.StoreConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -90,6 +96,23 @@ public class TccTransactionAutoConfiguration {
                     registry.addServerInterceptors(new TransactionContextServerInterceptor());
                 }
             };
+        }
+    }
+
+    @Configuration
+    @ConditionalOnClass({PrometheusMetricsCollector.class})
+    static class PrometheusExporterConfiguration {
+
+        @Bean
+        @ConditionalOnBean(StatsSupplier.class)
+        public ServletRegistrationBean<MetricsServlet> metricsServletServletRegistrationBean(@Autowired StatsSupplier statsSupplier) {
+            ServletRegistrationBean<MetricsServlet> bean = new ServletRegistrationBean<>();
+            PrometheusMetricsCollector collector = new PrometheusMetricsCollector(statsSupplier);
+            CollectorRegistry.defaultRegistry.register(collector);
+            bean.setServlet(new MetricsServlet());
+            bean.setLoadOnStartup(1);
+            bean.addUrlMappings("/prometheus/metrics");
+            return bean;
         }
     }
 }

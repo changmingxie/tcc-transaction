@@ -34,7 +34,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <revision>2.0.2</revision>
+        <revision>2.1.0</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -59,6 +59,7 @@
         <module>tcc-transaction-core</module>
         <module>tcc-transaction-spring</module>
         <module>tcc-transaction-dashboard</module>
+        <module>tcc-transaction-prometheus-exporter</module>
         <module>tcc-transaction-server</module>
         <module>tcc-transaction-dubbo</module>
         <module>tcc-transaction-bom</module>
