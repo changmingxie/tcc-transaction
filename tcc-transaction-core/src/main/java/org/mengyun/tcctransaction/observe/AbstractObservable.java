@@ -1,8 +1,11 @@
 package org.mengyun.tcctransaction.observe;
 
-import com.alibaba.nacos.common.utils.ConcurrentHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Nervose.Wu
@@ -11,7 +14,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractObservable<T> implements Observable<T> {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbstractObservable.class);
-    protected final ConcurrentHashSet<Observer<T>> observers = new ConcurrentHashSet<>();
+    protected final Set<Observer<T>> observers = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     protected volatile boolean closed = false;
 
@@ -26,7 +29,7 @@ public abstract class AbstractObservable<T> implements Observable<T> {
     }
 
     @Override
-    public ConcurrentHashSet<Observer<T>> getObservers() {
+    public Set<Observer<T>> getObservers() {
         return observers;
     }
 
